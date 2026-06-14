@@ -1,0 +1,74 @@
+# IDE and user-local settings
+.vs/
+.idea/
+.vscode/
+*.suo
+*.user
+*.rsuser
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+*.opendb
+*.sdf
+*.ncb
+*.aps
+
+# Solution and project build output
+/Binaries/
+**/x64/
+**/x86/
+**/[Ww]in32/
+**/[Oo]bj/
+
+# C/C++ compiler and linker intermediates
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.idb
+*.ilk
+*.ipdb
+*.tlog
+*.lastbuildstate
+*.recipe
+*.exp
+*.res
+*.tmp
+*.log
+*.binlog
+
+# ServerCore is built from source into this directory.
+/Libraries/Libs/ServerCore/
+
+# PacketGenerator/Python output
+__pycache__/
+*.py[cod]
+/Tools/PacketGenerator/build/
+/Tools/PacketGenerator/dist/
+/Tools/PacketGenerator/*.spec
+
+# Test and coverage output
+[Tt]est[Rr]esult*/
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.coveragexml
+
+# Local environment and OS files
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Required toolchain files are intentionally committed.
+# Do not add generic bin/, Debug/, Release/, *.exe, or *.lib rules.
+!/Common/protoc-21.12-win64/bin/
+!/Common/protoc-21.12-win64/bin/**
+!/Libraries/Libs/Protobuf/Debug/
+!/Libraries/Libs/Protobuf/Debug/*.lib
+!/Libraries/Libs/Protobuf/Release/
+!/Libraries/Libs/Protobuf/Release/*.lib
