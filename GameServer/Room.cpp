@@ -146,7 +146,7 @@ void Room::HandleMove(Protocol::C_MOVE pkt)
 
 void Room::UpdateTick()
 {
-	cout << "Update Room" << endl;
+	//cout << "Update Room" << endl;
 
 	DoTimer(100, &Room::UpdateTick);
 }
