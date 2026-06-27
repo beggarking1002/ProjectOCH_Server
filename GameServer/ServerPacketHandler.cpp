@@ -26,11 +26,13 @@ bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 	for (int32 i = 0; i < 3; i++)
 	{
 		Protocol::ObjectInfo* player = loginPkt.add_players();
-		Protocol::PosInfo* posInfo = player->mutable_pos_info();
-		posInfo->set_x(Utils::GetRandom(0.f, 100.f));
-		posInfo->set_y(Utils::GetRandom(0.f, 100.f));
-		posInfo->set_z(Utils::GetRandom(0.f, 100.f));
-		posInfo->set_yaw(Utils::GetRandom(0.f, 45.f));
+		player->set_object_id(i + 1);
+		player->set_object_type(Protocol::ObjectType::OBJECT_TYPE_CREATURE);
+		player->set_creature_type(Protocol::CreatureType::CREATURE_TYPE_PLAYER);
+
+		Protocol::AxialCoord* axial = player->mutable_axial();
+		axial->set_q(Utils::GetRandom<int32>(0, 20));
+		axial->set_r(Utils::GetRandom<int32>(0, 20));
 	}
 
 	loginPkt.set_success(true);
@@ -81,7 +83,7 @@ bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 	if (room == nullptr)
 		return false;
 
-	room->DoAsync(&Room::HandleMove, pkt);
+	room->DoAsync(&Room::HandleMove, player, pkt);
 	//room->HandleMove(pkt);
 
 	return true;

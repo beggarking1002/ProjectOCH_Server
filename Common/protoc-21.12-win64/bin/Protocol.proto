@@ -1,7 +1,6 @@
 syntax = "proto3";
 package Protocol;
 
-import "Enum.proto";
 import "Struct.proto";
 
 message C_LOGIN
@@ -48,12 +47,13 @@ message S_DESPAWN
 
 message C_MOVE
 {
-	PosInfo info = 1;
+	AxialCoord target = 1;
 }
 
 message S_MOVE
 {
-	PosInfo info = 1;
+	uint64 object_id = 1;
+	AxialCoord axial = 2;
 }
 
 message C_CHAT

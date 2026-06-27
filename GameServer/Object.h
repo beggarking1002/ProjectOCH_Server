@@ -11,7 +11,7 @@ public:
 
 public:
 	Protocol::ObjectInfo* objectInfo;
-	Protocol::PosInfo* posInfo;
+	Protocol::AxialCoord* axial;
 
 public:
 	atomic<weak_ptr<Room>> room;

@@ -24,10 +24,8 @@ bool Room::EnterRoom(ObjectRef object, bool randPos /*= true*/)
 	// 랜덤 위치
 	if (randPos)
 	{
-		object->posInfo->set_x(Utils::GetRandom(0.f, 500.f));
-		object->posInfo->set_y(Utils::GetRandom(0.f, 500.f));
-		object->posInfo->set_z(100.f);
-		object->posInfo->set_yaw(Utils::GetRandom(0.f, 100.f));
+		object->axial->set_q(Utils::GetRandom<int32>(0, 20));
+		object->axial->set_r(Utils::GetRandom<int32>(0, 20));
 	}
 
 	// 입장 사실을 신입 플레이어에게 알린다
@@ -122,23 +120,28 @@ bool Room::HandleLeavePlayer(PlayerRef player)
 	return LeaveRoom(player);
 }
 
-void Room::HandleMove(Protocol::C_MOVE pkt)
+void Room::HandleMove(PlayerRef player, Protocol::C_MOVE pkt)
 {
-	const uint64 objectId = pkt.info().object_id();
+	if (player == nullptr)
+		return;
+
+	const uint64 objectId = player->objectInfo->object_id();
 	if (_objects.find(objectId) == _objects.end())
 		return;
 
 	// 적용
-	PlayerRef player = dynamic_pointer_cast<Player>(_objects[objectId]);
-	player->posInfo->CopyFrom(pkt.info());
+	player = dynamic_pointer_cast<Player>(_objects[objectId]);
+	if (player == nullptr)
+		return;
+
+	player->axial->CopyFrom(pkt.target());
 
 	// 이동 사실을 알린다 (본인 포함? 빼고?)
 	{
 		Protocol::S_MOVE movePkt;
-		{
-			Protocol::PosInfo* info = movePkt.mutable_info();
-			info->CopyFrom(pkt.info());
-		}
+		movePkt.set_object_id(objectId);
+		movePkt.mutable_axial()->CopyFrom(*player->axial);
+
 		SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(movePkt);
 		Broadcast(sendBuffer);
 	}

@@ -46,39 +46,39 @@ struct TableStruct_Struct_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Struct_2eproto;
 namespace Protocol {
+class AxialCoord;
+struct AxialCoordDefaultTypeInternal;
+extern AxialCoordDefaultTypeInternal _AxialCoord_default_instance_;
 class ObjectInfo;
 struct ObjectInfoDefaultTypeInternal;
 extern ObjectInfoDefaultTypeInternal _ObjectInfo_default_instance_;
-class PosInfo;
-struct PosInfoDefaultTypeInternal;
-extern PosInfoDefaultTypeInternal _PosInfo_default_instance_;
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
+template<> ::Protocol::AxialCoord* Arena::CreateMaybeMessage<::Protocol::AxialCoord>(Arena*);
 template<> ::Protocol::ObjectInfo* Arena::CreateMaybeMessage<::Protocol::ObjectInfo>(Arena*);
-template<> ::Protocol::PosInfo* Arena::CreateMaybeMessage<::Protocol::PosInfo>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace Protocol {
 
 // ===================================================================
 
-class PosInfo final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.PosInfo) */ {
+class AxialCoord final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.AxialCoord) */ {
  public:
-  inline PosInfo() : PosInfo(nullptr) {}
-  ~PosInfo() override;
-  explicit PROTOBUF_CONSTEXPR PosInfo(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline AxialCoord() : AxialCoord(nullptr) {}
+  ~AxialCoord() override;
+  explicit PROTOBUF_CONSTEXPR AxialCoord(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  PosInfo(const PosInfo& from);
-  PosInfo(PosInfo&& from) noexcept
-    : PosInfo() {
+  AxialCoord(const AxialCoord& from);
+  AxialCoord(AxialCoord&& from) noexcept
+    : AxialCoord() {
     *this = ::std::move(from);
   }
 
-  inline PosInfo& operator=(const PosInfo& from) {
+  inline AxialCoord& operator=(const AxialCoord& from) {
     CopyFrom(from);
     return *this;
   }
-  inline PosInfo& operator=(PosInfo&& from) noexcept {
+  inline AxialCoord& operator=(AxialCoord&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -101,20 +101,20 @@ class PosInfo final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const PosInfo& default_instance() {
+  static const AxialCoord& default_instance() {
     return *internal_default_instance();
   }
-  static inline const PosInfo* internal_default_instance() {
-    return reinterpret_cast<const PosInfo*>(
-               &_PosInfo_default_instance_);
+  static inline const AxialCoord* internal_default_instance() {
+    return reinterpret_cast<const AxialCoord*>(
+               &_AxialCoord_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     0;
 
-  friend void swap(PosInfo& a, PosInfo& b) {
+  friend void swap(AxialCoord& a, AxialCoord& b) {
     a.Swap(&b);
   }
-  inline void Swap(PosInfo* other) {
+  inline void Swap(AxialCoord* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -127,7 +127,7 @@ class PosInfo final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(PosInfo* other) {
+  void UnsafeArenaSwap(AxialCoord* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -135,14 +135,14 @@ class PosInfo final :
 
   // implements Message ----------------------------------------------
 
-  PosInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<PosInfo>(arena);
+  AxialCoord* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<AxialCoord>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const PosInfo& from);
+  void CopyFrom(const AxialCoord& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const PosInfo& from) {
-    PosInfo::MergeImpl(*this, from);
+  void MergeFrom( const AxialCoord& from) {
+    AxialCoord::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -160,15 +160,15 @@ class PosInfo final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(PosInfo* other);
+  void InternalSwap(AxialCoord* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "Protocol.PosInfo";
+    return "Protocol.AxialCoord";
   }
   protected:
-  explicit PosInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit AxialCoord(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -182,68 +182,28 @@ class PosInfo final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kObjectIdFieldNumber = 1,
-    kXFieldNumber = 2,
-    kYFieldNumber = 3,
-    kZFieldNumber = 4,
-    kYawFieldNumber = 5,
-    kStateFieldNumber = 6,
+    kQFieldNumber = 1,
+    kRFieldNumber = 2,
   };
-  // uint64 object_id = 1;
-  void clear_object_id();
-  uint64_t object_id() const;
-  void set_object_id(uint64_t value);
+  // int32 q = 1;
+  void clear_q();
+  int32_t q() const;
+  void set_q(int32_t value);
   private:
-  uint64_t _internal_object_id() const;
-  void _internal_set_object_id(uint64_t value);
+  int32_t _internal_q() const;
+  void _internal_set_q(int32_t value);
   public:
 
-  // float x = 2;
-  void clear_x();
-  float x() const;
-  void set_x(float value);
+  // int32 r = 2;
+  void clear_r();
+  int32_t r() const;
+  void set_r(int32_t value);
   private:
-  float _internal_x() const;
-  void _internal_set_x(float value);
+  int32_t _internal_r() const;
+  void _internal_set_r(int32_t value);
   public:
 
-  // float y = 3;
-  void clear_y();
-  float y() const;
-  void set_y(float value);
-  private:
-  float _internal_y() const;
-  void _internal_set_y(float value);
-  public:
-
-  // float z = 4;
-  void clear_z();
-  float z() const;
-  void set_z(float value);
-  private:
-  float _internal_z() const;
-  void _internal_set_z(float value);
-  public:
-
-  // float yaw = 5;
-  void clear_yaw();
-  float yaw() const;
-  void set_yaw(float value);
-  private:
-  float _internal_yaw() const;
-  void _internal_set_yaw(float value);
-  public:
-
-  // .Protocol.MoveState state = 6;
-  void clear_state();
-  ::Protocol::MoveState state() const;
-  void set_state(::Protocol::MoveState value);
-  private:
-  ::Protocol::MoveState _internal_state() const;
-  void _internal_set_state(::Protocol::MoveState value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:Protocol.PosInfo)
+  // @@protoc_insertion_point(class_scope:Protocol.AxialCoord)
  private:
   class _Internal;
 
@@ -251,12 +211,8 @@ class PosInfo final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    uint64_t object_id_;
-    float x_;
-    float y_;
-    float z_;
-    float yaw_;
-    int state_;
+    int32_t q_;
+    int32_t r_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -385,27 +341,28 @@ class ObjectInfo final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kPosInfoFieldNumber = 3,
+    kAxialFieldNumber = 4,
     kObjectIdFieldNumber = 1,
     kObjectTypeFieldNumber = 2,
+    kCreatureTypeFieldNumber = 3,
   };
-  // .Protocol.PosInfo pos_info = 3;
-  bool has_pos_info() const;
+  // .Protocol.AxialCoord axial = 4;
+  bool has_axial() const;
   private:
-  bool _internal_has_pos_info() const;
+  bool _internal_has_axial() const;
   public:
-  void clear_pos_info();
-  const ::Protocol::PosInfo& pos_info() const;
-  PROTOBUF_NODISCARD ::Protocol::PosInfo* release_pos_info();
-  ::Protocol::PosInfo* mutable_pos_info();
-  void set_allocated_pos_info(::Protocol::PosInfo* pos_info);
+  void clear_axial();
+  const ::Protocol::AxialCoord& axial() const;
+  PROTOBUF_NODISCARD ::Protocol::AxialCoord* release_axial();
+  ::Protocol::AxialCoord* mutable_axial();
+  void set_allocated_axial(::Protocol::AxialCoord* axial);
   private:
-  const ::Protocol::PosInfo& _internal_pos_info() const;
-  ::Protocol::PosInfo* _internal_mutable_pos_info();
+  const ::Protocol::AxialCoord& _internal_axial() const;
+  ::Protocol::AxialCoord* _internal_mutable_axial();
   public:
-  void unsafe_arena_set_allocated_pos_info(
-      ::Protocol::PosInfo* pos_info);
-  ::Protocol::PosInfo* unsafe_arena_release_pos_info();
+  void unsafe_arena_set_allocated_axial(
+      ::Protocol::AxialCoord* axial);
+  ::Protocol::AxialCoord* unsafe_arena_release_axial();
 
   // uint64 object_id = 1;
   void clear_object_id();
@@ -425,6 +382,15 @@ class ObjectInfo final :
   void _internal_set_object_type(::Protocol::ObjectType value);
   public:
 
+  // .Protocol.CreatureType creature_type = 3;
+  void clear_creature_type();
+  ::Protocol::CreatureType creature_type() const;
+  void set_creature_type(::Protocol::CreatureType value);
+  private:
+  ::Protocol::CreatureType _internal_creature_type() const;
+  void _internal_set_creature_type(::Protocol::CreatureType value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.ObjectInfo)
  private:
   class _Internal;
@@ -433,9 +399,10 @@ class ObjectInfo final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::Protocol::PosInfo* pos_info_;
+    ::Protocol::AxialCoord* axial_;
     uint64_t object_id_;
     int object_type_;
+    int creature_type_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -450,126 +417,46 @@ class ObjectInfo final :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
-// PosInfo
+// AxialCoord
 
-// uint64 object_id = 1;
-inline void PosInfo::clear_object_id() {
-  _impl_.object_id_ = uint64_t{0u};
+// int32 q = 1;
+inline void AxialCoord::clear_q() {
+  _impl_.q_ = 0;
 }
-inline uint64_t PosInfo::_internal_object_id() const {
-  return _impl_.object_id_;
+inline int32_t AxialCoord::_internal_q() const {
+  return _impl_.q_;
 }
-inline uint64_t PosInfo::object_id() const {
-  // @@protoc_insertion_point(field_get:Protocol.PosInfo.object_id)
-  return _internal_object_id();
+inline int32_t AxialCoord::q() const {
+  // @@protoc_insertion_point(field_get:Protocol.AxialCoord.q)
+  return _internal_q();
 }
-inline void PosInfo::_internal_set_object_id(uint64_t value) {
+inline void AxialCoord::_internal_set_q(int32_t value) {
   
-  _impl_.object_id_ = value;
+  _impl_.q_ = value;
 }
-inline void PosInfo::set_object_id(uint64_t value) {
-  _internal_set_object_id(value);
-  // @@protoc_insertion_point(field_set:Protocol.PosInfo.object_id)
-}
-
-// float x = 2;
-inline void PosInfo::clear_x() {
-  _impl_.x_ = 0;
-}
-inline float PosInfo::_internal_x() const {
-  return _impl_.x_;
-}
-inline float PosInfo::x() const {
-  // @@protoc_insertion_point(field_get:Protocol.PosInfo.x)
-  return _internal_x();
-}
-inline void PosInfo::_internal_set_x(float value) {
-  
-  _impl_.x_ = value;
-}
-inline void PosInfo::set_x(float value) {
-  _internal_set_x(value);
-  // @@protoc_insertion_point(field_set:Protocol.PosInfo.x)
+inline void AxialCoord::set_q(int32_t value) {
+  _internal_set_q(value);
+  // @@protoc_insertion_point(field_set:Protocol.AxialCoord.q)
 }
 
-// float y = 3;
-inline void PosInfo::clear_y() {
-  _impl_.y_ = 0;
+// int32 r = 2;
+inline void AxialCoord::clear_r() {
+  _impl_.r_ = 0;
 }
-inline float PosInfo::_internal_y() const {
-  return _impl_.y_;
+inline int32_t AxialCoord::_internal_r() const {
+  return _impl_.r_;
 }
-inline float PosInfo::y() const {
-  // @@protoc_insertion_point(field_get:Protocol.PosInfo.y)
-  return _internal_y();
+inline int32_t AxialCoord::r() const {
+  // @@protoc_insertion_point(field_get:Protocol.AxialCoord.r)
+  return _internal_r();
 }
-inline void PosInfo::_internal_set_y(float value) {
+inline void AxialCoord::_internal_set_r(int32_t value) {
   
-  _impl_.y_ = value;
+  _impl_.r_ = value;
 }
-inline void PosInfo::set_y(float value) {
-  _internal_set_y(value);
-  // @@protoc_insertion_point(field_set:Protocol.PosInfo.y)
-}
-
-// float z = 4;
-inline void PosInfo::clear_z() {
-  _impl_.z_ = 0;
-}
-inline float PosInfo::_internal_z() const {
-  return _impl_.z_;
-}
-inline float PosInfo::z() const {
-  // @@protoc_insertion_point(field_get:Protocol.PosInfo.z)
-  return _internal_z();
-}
-inline void PosInfo::_internal_set_z(float value) {
-  
-  _impl_.z_ = value;
-}
-inline void PosInfo::set_z(float value) {
-  _internal_set_z(value);
-  // @@protoc_insertion_point(field_set:Protocol.PosInfo.z)
-}
-
-// float yaw = 5;
-inline void PosInfo::clear_yaw() {
-  _impl_.yaw_ = 0;
-}
-inline float PosInfo::_internal_yaw() const {
-  return _impl_.yaw_;
-}
-inline float PosInfo::yaw() const {
-  // @@protoc_insertion_point(field_get:Protocol.PosInfo.yaw)
-  return _internal_yaw();
-}
-inline void PosInfo::_internal_set_yaw(float value) {
-  
-  _impl_.yaw_ = value;
-}
-inline void PosInfo::set_yaw(float value) {
-  _internal_set_yaw(value);
-  // @@protoc_insertion_point(field_set:Protocol.PosInfo.yaw)
-}
-
-// .Protocol.MoveState state = 6;
-inline void PosInfo::clear_state() {
-  _impl_.state_ = 0;
-}
-inline ::Protocol::MoveState PosInfo::_internal_state() const {
-  return static_cast< ::Protocol::MoveState >(_impl_.state_);
-}
-inline ::Protocol::MoveState PosInfo::state() const {
-  // @@protoc_insertion_point(field_get:Protocol.PosInfo.state)
-  return _internal_state();
-}
-inline void PosInfo::_internal_set_state(::Protocol::MoveState value) {
-  
-  _impl_.state_ = value;
-}
-inline void PosInfo::set_state(::Protocol::MoveState value) {
-  _internal_set_state(value);
-  // @@protoc_insertion_point(field_set:Protocol.PosInfo.state)
+inline void AxialCoord::set_r(int32_t value) {
+  _internal_set_r(value);
+  // @@protoc_insertion_point(field_set:Protocol.AxialCoord.r)
 }
 
 // -------------------------------------------------------------------
@@ -616,45 +503,65 @@ inline void ObjectInfo::set_object_type(::Protocol::ObjectType value) {
   // @@protoc_insertion_point(field_set:Protocol.ObjectInfo.object_type)
 }
 
-// .Protocol.PosInfo pos_info = 3;
-inline bool ObjectInfo::_internal_has_pos_info() const {
-  return this != internal_default_instance() && _impl_.pos_info_ != nullptr;
+// .Protocol.CreatureType creature_type = 3;
+inline void ObjectInfo::clear_creature_type() {
+  _impl_.creature_type_ = 0;
 }
-inline bool ObjectInfo::has_pos_info() const {
-  return _internal_has_pos_info();
+inline ::Protocol::CreatureType ObjectInfo::_internal_creature_type() const {
+  return static_cast< ::Protocol::CreatureType >(_impl_.creature_type_);
 }
-inline void ObjectInfo::clear_pos_info() {
-  if (GetArenaForAllocation() == nullptr && _impl_.pos_info_ != nullptr) {
-    delete _impl_.pos_info_;
+inline ::Protocol::CreatureType ObjectInfo::creature_type() const {
+  // @@protoc_insertion_point(field_get:Protocol.ObjectInfo.creature_type)
+  return _internal_creature_type();
+}
+inline void ObjectInfo::_internal_set_creature_type(::Protocol::CreatureType value) {
+  
+  _impl_.creature_type_ = value;
+}
+inline void ObjectInfo::set_creature_type(::Protocol::CreatureType value) {
+  _internal_set_creature_type(value);
+  // @@protoc_insertion_point(field_set:Protocol.ObjectInfo.creature_type)
+}
+
+// .Protocol.AxialCoord axial = 4;
+inline bool ObjectInfo::_internal_has_axial() const {
+  return this != internal_default_instance() && _impl_.axial_ != nullptr;
+}
+inline bool ObjectInfo::has_axial() const {
+  return _internal_has_axial();
+}
+inline void ObjectInfo::clear_axial() {
+  if (GetArenaForAllocation() == nullptr && _impl_.axial_ != nullptr) {
+    delete _impl_.axial_;
   }
-  _impl_.pos_info_ = nullptr;
+  _impl_.axial_ = nullptr;
 }
-inline const ::Protocol::PosInfo& ObjectInfo::_internal_pos_info() const {
-  const ::Protocol::PosInfo* p = _impl_.pos_info_;
-  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::PosInfo&>(
-      ::Protocol::_PosInfo_default_instance_);
+inline const ::Protocol::AxialCoord& ObjectInfo::_internal_axial() const {
+  const ::Protocol::AxialCoord* p = _impl_.axial_;
+  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::AxialCoord&>(
+      ::Protocol::_AxialCoord_default_instance_);
 }
-inline const ::Protocol::PosInfo& ObjectInfo::pos_info() const {
-  // @@protoc_insertion_point(field_get:Protocol.ObjectInfo.pos_info)
-  return _internal_pos_info();
+inline const ::Protocol::AxialCoord& ObjectInfo::axial() const {
+  // @@protoc_insertion_point(field_get:Protocol.ObjectInfo.axial)
+  return _internal_axial();
 }
-inline void ObjectInfo::unsafe_arena_set_allocated_pos_info(
-    ::Protocol::PosInfo* pos_info) {
+inline void ObjectInfo::unsafe_arena_set_allocated_axial(
+    ::Protocol::AxialCoord* axial) {
   if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.pos_info_);
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.axial_);
   }
-  _impl_.pos_info_ = pos_info;
-  if (pos_info) {
+  _impl_.axial_ = axial;
+  if (axial) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.ObjectInfo.pos_info)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.ObjectInfo.axial)
 }
-inline ::Protocol::PosInfo* ObjectInfo::release_pos_info() {
+inline ::Protocol::AxialCoord* ObjectInfo::release_axial() {
   
-  ::Protocol::PosInfo* temp = _impl_.pos_info_;
-  _impl_.pos_info_ = nullptr;
+  ::Protocol::AxialCoord* temp = _impl_.axial_;
+  _impl_.axial_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
   temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
@@ -666,44 +573,44 @@ inline ::Protocol::PosInfo* ObjectInfo::release_pos_info() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::Protocol::PosInfo* ObjectInfo::unsafe_arena_release_pos_info() {
-  // @@protoc_insertion_point(field_release:Protocol.ObjectInfo.pos_info)
+inline ::Protocol::AxialCoord* ObjectInfo::unsafe_arena_release_axial() {
+  // @@protoc_insertion_point(field_release:Protocol.ObjectInfo.axial)
   
-  ::Protocol::PosInfo* temp = _impl_.pos_info_;
-  _impl_.pos_info_ = nullptr;
+  ::Protocol::AxialCoord* temp = _impl_.axial_;
+  _impl_.axial_ = nullptr;
   return temp;
 }
-inline ::Protocol::PosInfo* ObjectInfo::_internal_mutable_pos_info() {
+inline ::Protocol::AxialCoord* ObjectInfo::_internal_mutable_axial() {
   
-  if (_impl_.pos_info_ == nullptr) {
-    auto* p = CreateMaybeMessage<::Protocol::PosInfo>(GetArenaForAllocation());
-    _impl_.pos_info_ = p;
+  if (_impl_.axial_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Protocol::AxialCoord>(GetArenaForAllocation());
+    _impl_.axial_ = p;
   }
-  return _impl_.pos_info_;
+  return _impl_.axial_;
 }
-inline ::Protocol::PosInfo* ObjectInfo::mutable_pos_info() {
-  ::Protocol::PosInfo* _msg = _internal_mutable_pos_info();
-  // @@protoc_insertion_point(field_mutable:Protocol.ObjectInfo.pos_info)
+inline ::Protocol::AxialCoord* ObjectInfo::mutable_axial() {
+  ::Protocol::AxialCoord* _msg = _internal_mutable_axial();
+  // @@protoc_insertion_point(field_mutable:Protocol.ObjectInfo.axial)
   return _msg;
 }
-inline void ObjectInfo::set_allocated_pos_info(::Protocol::PosInfo* pos_info) {
+inline void ObjectInfo::set_allocated_axial(::Protocol::AxialCoord* axial) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
-    delete _impl_.pos_info_;
+    delete _impl_.axial_;
   }
-  if (pos_info) {
+  if (axial) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(pos_info);
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(axial);
     if (message_arena != submessage_arena) {
-      pos_info = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, pos_info, submessage_arena);
+      axial = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, axial, submessage_arena);
     }
     
   } else {
     
   }
-  _impl_.pos_info_ = pos_info;
-  // @@protoc_insertion_point(field_set_allocated:Protocol.ObjectInfo.pos_info)
+  _impl_.axial_ = axial;
+  // @@protoc_insertion_point(field_set_allocated:Protocol.ObjectInfo.axial)
 }
 
 #ifdef __GNUC__

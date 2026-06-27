@@ -3,7 +3,16 @@ package Protocol;
 
 import "Enum.proto";
 
-message Player
+message AxialCoord
 {
-	uint64 playerId = 1;
+	int32 q = 1;
+	int32 r = 2;
+}
+
+message ObjectInfo
+{
+	uint64 object_id = 1;
+	ObjectType object_type = 2;
+	CreatureType creature_type = 3;
+	AxialCoord axial = 4;
 }

@@ -3,10 +3,9 @@
 
 Monster::Monster()
 {
-	objectInfo = new Protocol::ObjectInfo();
+	objectInfo->set_creature_type(Protocol::CreatureType::CREATURE_TYPE_MONSTER);
 }
 
 Monster::~Monster()
 {
-	delete objectInfo;
 }

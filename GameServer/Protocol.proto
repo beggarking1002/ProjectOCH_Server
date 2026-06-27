@@ -1,9 +1,7 @@
 syntax = "proto3";
 package Protocol;
 
-import "Enum.proto";
 import "Struct.proto";
-
 
 message C_LOGIN
 {
@@ -13,7 +11,7 @@ message C_LOGIN
 message S_LOGIN
 {
 	bool success = 1;
-	repeated Player players = 2;
+	repeated ObjectInfo players = 2;
 }
 
 message C_ENTER_GAME
@@ -24,6 +22,38 @@ message C_ENTER_GAME
 message S_ENTER_GAME
 {
 	bool success = 1;
+	ObjectInfo player = 2;
+}
+
+message C_LEAVE_GAME
+{
+
+}
+
+message S_LEAVE_GAME
+{
+
+}
+
+message S_SPAWN
+{
+	repeated ObjectInfo players = 1;
+}
+
+message S_DESPAWN
+{
+	repeated uint64 object_ids = 1;
+}
+
+message C_MOVE
+{
+	AxialCoord target = 1;
+}
+
+message S_MOVE
+{
+	uint64 object_id = 1;
+	AxialCoord axial = 2;
 }
 
 message C_CHAT

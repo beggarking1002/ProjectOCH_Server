@@ -4,8 +4,8 @@
 Object::Object()
 {
 	objectInfo = new Protocol::ObjectInfo();
-	posInfo = new Protocol::PosInfo();
-	objectInfo->set_allocated_pos_info(posInfo);
+	axial = new Protocol::AxialCoord();
+	objectInfo->set_allocated_axial(axial);
 }
 
 Object::~Object()

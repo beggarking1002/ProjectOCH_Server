@@ -13,7 +13,7 @@ public:
 
 	bool HandleEnterPlayer(PlayerRef player);
 	bool HandleLeavePlayer(PlayerRef player);
-	void HandleMove(Protocol::C_MOVE pkt);
+	void HandleMove(PlayerRef player, Protocol::C_MOVE pkt);
 
 public:
 	void UpdateTick();
