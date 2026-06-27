@@ -44,12 +44,14 @@ bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 
 bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 {
-	// 플레이어 생성
-	PlayerRef player = ObjectUtils::CreatePlayer(static_pointer_cast<GameSession>(session));
+	auto gameSession = static_pointer_cast<GameSession>(session);
 
-	// 방에 입장
-	GRoom->DoAsync(&Room::HandleEnterPlayer, player);
-	//GRoom->HandleEnterPlayerLocked(player);
+	PlayerRef player = gameSession->player.load();
+	if (player == nullptr)
+	{
+		player = ObjectUtils::CreatePlayer(gameSession);
+		GRoom->DoAsync(&Room::HandleEnterPlayer, player);
+	}
 
 	return true;
 }
@@ -66,7 +68,7 @@ bool Handle_C_LEAVE_GAME(PacketSessionRef& session, Protocol::C_LEAVE_GAME& pkt)
 	if (room == nullptr)
 		return false;
 
-	room->HandleLeavePlayer(player);
+	room->DoAsync(&Room::HandleLeavePlayer, gameSession);
 
 	return true;
 }
@@ -83,8 +85,7 @@ bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 	if (room == nullptr)
 		return false;
 
-	room->DoAsync(&Room::HandleMove, player, pkt);
-	//room->HandleMove(pkt);
+	room->DoAsync(&Room::HandleMove, gameSession, pkt);
 
 	return true;
 }

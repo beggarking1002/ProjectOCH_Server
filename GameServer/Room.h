@@ -12,8 +12,8 @@ public:
 	bool LeaveRoom(ObjectRef object);
 
 	bool HandleEnterPlayer(PlayerRef player);
-	bool HandleLeavePlayer(PlayerRef player);
-	void HandleMove(PlayerRef player, Protocol::C_MOVE pkt);
+	bool HandleLeavePlayer(GameSessionRef session);
+	void HandleMove(GameSessionRef session, Protocol::C_MOVE pkt);
 
 public:
 	void UpdateTick();
@@ -23,6 +23,7 @@ public:
 private:
 	bool AddObject(ObjectRef object);
 	bool RemoveObject(uint64 objectId);
+	PlayerRef GetPlayerInRoom(GameSessionRef session);
 
 private:
 	void Broadcast(SendBufferRef sendBuffer, uint64 exceptId = 0);

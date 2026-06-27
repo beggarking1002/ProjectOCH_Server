@@ -83,6 +83,8 @@ bool Room::LeaveRoom(ObjectRef object)
 
 	const uint64 objectId = object->objectInfo->object_id();
 	bool success = RemoveObject(objectId);
+	if (success == false)
+		return false;
 
 	// 퇴장 사실을 퇴장하는 플레이어에게 알린다
 	if (auto player = dynamic_pointer_cast<Player>(object))
@@ -91,7 +93,11 @@ bool Room::LeaveRoom(ObjectRef object)
 
 		SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(leaveGamePkt);
 		if (auto session = player->session.lock())
+		{
 			session->Send(sendBuffer);
+			if (session->player.load() == player)
+				session->player.store(nullptr);
+		}
 	}
 
 	// 퇴장 사실을 알린다
@@ -107,33 +113,46 @@ bool Room::LeaveRoom(ObjectRef object)
 				session->Send(sendBuffer);
 	}
 
-	return success;
+	return true;
 }
 
 bool Room::HandleEnterPlayer(PlayerRef player)
 {
+	if (player == nullptr)
+		return false;
+
+	GameSessionRef session = player->session.lock();
+	if (session == nullptr || session->player.load() != player)
+		return false;
+
+	if (player->room.load().lock())
+		return true;
+
 	return EnterRoom(player, true);
 }
 
-bool Room::HandleLeavePlayer(PlayerRef player)
+bool Room::HandleLeavePlayer(GameSessionRef session)
 {
+	PlayerRef player = GetPlayerInRoom(session);
+	if (player == nullptr)
+		return false;
+
 	return LeaveRoom(player);
 }
 
-void Room::HandleMove(PlayerRef player, Protocol::C_MOVE pkt)
+void Room::HandleMove(GameSessionRef session, Protocol::C_MOVE pkt)
 {
+	PlayerRef player = GetPlayerInRoom(session);
 	if (player == nullptr)
+		return;
+
+	if (pkt.has_target() == false)
 		return;
 
 	const uint64 objectId = player->objectInfo->object_id();
-	if (_objects.find(objectId) == _objects.end())
-		return;
-
-	// 적용
-	player = dynamic_pointer_cast<Player>(_objects[objectId]);
-	if (player == nullptr)
-		return;
-
+	cout << "C_MOVE object_id=" << objectId
+		<< " q=" << pkt.target().q()
+		<< " r=" << pkt.target().r() << endl;
 	player->axial->CopyFrom(pkt.target());
 
 	// 이동 사실을 알린다 (본인 포함? 빼고?)
@@ -186,6 +205,34 @@ bool Room::RemoveObject(uint64 objectId)
 	_objects.erase(objectId);
 
 	return true;
+}
+
+PlayerRef Room::GetPlayerInRoom(GameSessionRef session)
+{
+	if (session == nullptr)
+		return nullptr;
+
+	PlayerRef player = session->player.load();
+	if (player == nullptr)
+		return nullptr;
+
+	if (player->session.lock() != session)
+		return nullptr;
+
+	RoomRef room = player->room.load().lock();
+	if (room.get() != this)
+		return nullptr;
+
+	const uint64 objectId = player->objectInfo->object_id();
+	auto findIt = _objects.find(objectId);
+	if (findIt == _objects.end())
+		return nullptr;
+
+	PlayerRef roomPlayer = dynamic_pointer_cast<Player>(findIt->second);
+	if (roomPlayer != player)
+		return nullptr;
+
+	return player;
 }
 
 void Room::Broadcast(SendBufferRef sendBuffer, uint64 exceptId)
