@@ -34,9 +34,7 @@ bool Room::EnterRoom(ObjectRef object, bool randPos /*= true*/)
 		Protocol::S_ENTER_GAME enterGamePkt;
 		enterGamePkt.set_success(success);
 
-		Protocol::ObjectInfo* playerInfo = new Protocol::ObjectInfo();
-		playerInfo->CopyFrom(*object->objectInfo);
-		enterGamePkt.set_allocated_player(playerInfo);
+		enterGamePkt.mutable_player()->CopyFrom(*object->objectInfo);
 
 		SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(enterGamePkt);
 		if (auto session = player->session.lock())

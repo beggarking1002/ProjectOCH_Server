@@ -3,12 +3,10 @@
 
 Object::Object()
 {
-	objectInfo = new Protocol::ObjectInfo();
-	axial = new Protocol::AxialCoord();
-	objectInfo->set_allocated_axial(axial);
+	objectInfo = make_unique<Protocol::ObjectInfo>();
+	axial = objectInfo->mutable_axial();
 }
 
 Object::~Object()
 {
-	delete objectInfo;
 }
