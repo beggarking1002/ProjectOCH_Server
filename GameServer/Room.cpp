@@ -23,14 +23,7 @@ bool Room::EnterRoom(ObjectRef object, bool randPos /*= true*/)
 	if (success == false)
 	{
 		if (auto player = dynamic_pointer_cast<Player>(object))
-		{
-			Protocol::S_ENTER_GAME enterGamePkt;
-			enterGamePkt.set_success(false);
-
-			SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(enterGamePkt);
-			if (auto session = player->session.lock())
-				session->Send(sendBuffer);
-		}
+			SendEnterGame(player, false);
 
 		return false;
 	}
@@ -44,16 +37,7 @@ bool Room::EnterRoom(ObjectRef object, bool randPos /*= true*/)
 
 	// 입장 사실을 신입 플레이어에게 알린다
 	if (auto player = dynamic_pointer_cast<Player>(object))
-	{
-		Protocol::S_ENTER_GAME enterGamePkt;
-		enterGamePkt.set_success(success);
-
-		enterGamePkt.mutable_player()->CopyFrom(*object->objectInfo);
-
-		SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(enterGamePkt);
-		if (auto session = player->session.lock())
-			session->Send(sendBuffer);
-	}
+		SendEnterGame(player, true);
 
 	// 입장 사실을 다른 플레이어에게 알린다
 	{
@@ -144,7 +128,10 @@ bool Room::HandleEnterPlayer(PlayerRef player)
 		return false;
 
 	if (player->room.load().lock())
+	{
+		SendEnterGame(player, true);
 		return true;
+	}
 
 	return EnterRoom(player, true);
 }
@@ -251,6 +238,21 @@ PlayerRef Room::GetPlayerInRoom(GameSessionRef session)
 		return nullptr;
 
 	return player;
+}
+
+void Room::SendEnterGame(PlayerRef player, bool success)
+{
+	if (player == nullptr)
+		return;
+
+	Protocol::S_ENTER_GAME enterGamePkt;
+	enterGamePkt.set_success(success);
+	if (success)
+		enterGamePkt.mutable_player()->CopyFrom(*player->objectInfo);
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(enterGamePkt);
+	if (auto session = player->session.lock())
+		session->Send(sendBuffer);
 }
 
 void Room::Broadcast(SendBufferRef sendBuffer, uint64 exceptId)

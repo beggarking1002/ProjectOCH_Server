@@ -35,10 +35,9 @@ bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 
 	PlayerRef player = gameSession->player.load();
 	if (player == nullptr)
-	{
 		player = ObjectUtils::CreatePlayer(gameSession);
-		GRoom->DoAsync(&Room::HandleEnterPlayer, player);
-	}
+
+	GRoom->DoAsync(&Room::HandleEnterPlayer, player);
 
 	return true;
 }

@@ -24,6 +24,7 @@ private:
 	bool AddObject(ObjectRef object);
 	bool RemoveObject(uint64 objectId);
 	PlayerRef GetPlayerInRoom(GameSessionRef session);
+	void SendEnterGame(PlayerRef player, bool success);
 
 private:
 	void Broadcast(SendBufferRef sendBuffer, uint64 exceptId = 0);
