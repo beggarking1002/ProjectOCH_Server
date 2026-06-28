@@ -11,7 +11,6 @@ message C_LOGIN
 message S_LOGIN
 {
 	bool success = 1;
-	repeated ObjectInfo players = 2;
 }
 
 message C_ENTER_GAME
@@ -47,13 +46,15 @@ message S_DESPAWN
 
 message C_MOVE
 {
-	AxialCoord target = 1;
+	Vec2Fixed target = 1;
 }
 
 message S_MOVE
 {
-	uint64 object_id = 1;
-	AxialCoord axial = 2;
+    uint64 object_id = 1;
+    Vec2Fixed start = 2;
+    Vec2Fixed target = 3;
+    uint32 duration_ms = 4;
 }
 
 message C_CHAT

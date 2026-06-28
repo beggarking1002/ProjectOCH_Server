@@ -1362,23 +1362,23 @@ class C_MOVE final :
   enum : int {
     kTargetFieldNumber = 1,
   };
-  // .Protocol.AxialCoord target = 1;
+  // .Protocol.Vec2Fixed target = 1;
   bool has_target() const;
   private:
   bool _internal_has_target() const;
   public:
   void clear_target();
-  const ::Protocol::AxialCoord& target() const;
-  PROTOBUF_NODISCARD ::Protocol::AxialCoord* release_target();
-  ::Protocol::AxialCoord* mutable_target();
-  void set_allocated_target(::Protocol::AxialCoord* target);
+  const ::Protocol::Vec2Fixed& target() const;
+  PROTOBUF_NODISCARD ::Protocol::Vec2Fixed* release_target();
+  ::Protocol::Vec2Fixed* mutable_target();
+  void set_allocated_target(::Protocol::Vec2Fixed* target);
   private:
-  const ::Protocol::AxialCoord& _internal_target() const;
-  ::Protocol::AxialCoord* _internal_mutable_target();
+  const ::Protocol::Vec2Fixed& _internal_target() const;
+  ::Protocol::Vec2Fixed* _internal_mutable_target();
   public:
   void unsafe_arena_set_allocated_target(
-      ::Protocol::AxialCoord* target);
-  ::Protocol::AxialCoord* unsafe_arena_release_target();
+      ::Protocol::Vec2Fixed* target);
+  ::Protocol::Vec2Fixed* unsafe_arena_release_target();
 
   // @@protoc_insertion_point(class_scope:Protocol.C_MOVE)
  private:
@@ -1388,7 +1388,7 @@ class C_MOVE final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::Protocol::AxialCoord* target_;
+    ::Protocol::Vec2Fixed* target_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1517,26 +1517,46 @@ class S_MOVE final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kAxialFieldNumber = 2,
+    kStartFieldNumber = 2,
+    kTargetFieldNumber = 3,
     kObjectIdFieldNumber = 1,
+    kDurationMsFieldNumber = 4,
   };
-  // .Protocol.AxialCoord axial = 2;
-  bool has_axial() const;
+  // .Protocol.Vec2Fixed start = 2;
+  bool has_start() const;
   private:
-  bool _internal_has_axial() const;
+  bool _internal_has_start() const;
   public:
-  void clear_axial();
-  const ::Protocol::AxialCoord& axial() const;
-  PROTOBUF_NODISCARD ::Protocol::AxialCoord* release_axial();
-  ::Protocol::AxialCoord* mutable_axial();
-  void set_allocated_axial(::Protocol::AxialCoord* axial);
+  void clear_start();
+  const ::Protocol::Vec2Fixed& start() const;
+  PROTOBUF_NODISCARD ::Protocol::Vec2Fixed* release_start();
+  ::Protocol::Vec2Fixed* mutable_start();
+  void set_allocated_start(::Protocol::Vec2Fixed* start);
   private:
-  const ::Protocol::AxialCoord& _internal_axial() const;
-  ::Protocol::AxialCoord* _internal_mutable_axial();
+  const ::Protocol::Vec2Fixed& _internal_start() const;
+  ::Protocol::Vec2Fixed* _internal_mutable_start();
   public:
-  void unsafe_arena_set_allocated_axial(
-      ::Protocol::AxialCoord* axial);
-  ::Protocol::AxialCoord* unsafe_arena_release_axial();
+  void unsafe_arena_set_allocated_start(
+      ::Protocol::Vec2Fixed* start);
+  ::Protocol::Vec2Fixed* unsafe_arena_release_start();
+
+  // .Protocol.Vec2Fixed target = 3;
+  bool has_target() const;
+  private:
+  bool _internal_has_target() const;
+  public:
+  void clear_target();
+  const ::Protocol::Vec2Fixed& target() const;
+  PROTOBUF_NODISCARD ::Protocol::Vec2Fixed* release_target();
+  ::Protocol::Vec2Fixed* mutable_target();
+  void set_allocated_target(::Protocol::Vec2Fixed* target);
+  private:
+  const ::Protocol::Vec2Fixed& _internal_target() const;
+  ::Protocol::Vec2Fixed* _internal_mutable_target();
+  public:
+  void unsafe_arena_set_allocated_target(
+      ::Protocol::Vec2Fixed* target);
+  ::Protocol::Vec2Fixed* unsafe_arena_release_target();
 
   // uint64 object_id = 1;
   void clear_object_id();
@@ -1547,6 +1567,15 @@ class S_MOVE final :
   void _internal_set_object_id(uint64_t value);
   public:
 
+  // uint32 duration_ms = 4;
+  void clear_duration_ms();
+  uint32_t duration_ms() const;
+  void set_duration_ms(uint32_t value);
+  private:
+  uint32_t _internal_duration_ms() const;
+  void _internal_set_duration_ms(uint32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_MOVE)
  private:
   class _Internal;
@@ -1555,8 +1584,10 @@ class S_MOVE final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::Protocol::AxialCoord* axial_;
+    ::Protocol::Vec2Fixed* start_;
+    ::Protocol::Vec2Fixed* target_;
     uint64_t object_id_;
+    uint32_t duration_ms_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2151,24 +2182,24 @@ S_DESPAWN::mutable_object_ids() {
 
 // C_MOVE
 
-// .Protocol.AxialCoord target = 1;
+// .Protocol.Vec2Fixed target = 1;
 inline bool C_MOVE::_internal_has_target() const {
   return this != internal_default_instance() && _impl_.target_ != nullptr;
 }
 inline bool C_MOVE::has_target() const {
   return _internal_has_target();
 }
-inline const ::Protocol::AxialCoord& C_MOVE::_internal_target() const {
-  const ::Protocol::AxialCoord* p = _impl_.target_;
-  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::AxialCoord&>(
-      ::Protocol::_AxialCoord_default_instance_);
+inline const ::Protocol::Vec2Fixed& C_MOVE::_internal_target() const {
+  const ::Protocol::Vec2Fixed* p = _impl_.target_;
+  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::Vec2Fixed&>(
+      ::Protocol::_Vec2Fixed_default_instance_);
 }
-inline const ::Protocol::AxialCoord& C_MOVE::target() const {
+inline const ::Protocol::Vec2Fixed& C_MOVE::target() const {
   // @@protoc_insertion_point(field_get:Protocol.C_MOVE.target)
   return _internal_target();
 }
 inline void C_MOVE::unsafe_arena_set_allocated_target(
-    ::Protocol::AxialCoord* target) {
+    ::Protocol::Vec2Fixed* target) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.target_);
   }
@@ -2180,9 +2211,9 @@ inline void C_MOVE::unsafe_arena_set_allocated_target(
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.C_MOVE.target)
 }
-inline ::Protocol::AxialCoord* C_MOVE::release_target() {
+inline ::Protocol::Vec2Fixed* C_MOVE::release_target() {
   
-  ::Protocol::AxialCoord* temp = _impl_.target_;
+  ::Protocol::Vec2Fixed* temp = _impl_.target_;
   _impl_.target_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
@@ -2195,27 +2226,27 @@ inline ::Protocol::AxialCoord* C_MOVE::release_target() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::Protocol::AxialCoord* C_MOVE::unsafe_arena_release_target() {
+inline ::Protocol::Vec2Fixed* C_MOVE::unsafe_arena_release_target() {
   // @@protoc_insertion_point(field_release:Protocol.C_MOVE.target)
   
-  ::Protocol::AxialCoord* temp = _impl_.target_;
+  ::Protocol::Vec2Fixed* temp = _impl_.target_;
   _impl_.target_ = nullptr;
   return temp;
 }
-inline ::Protocol::AxialCoord* C_MOVE::_internal_mutable_target() {
+inline ::Protocol::Vec2Fixed* C_MOVE::_internal_mutable_target() {
   
   if (_impl_.target_ == nullptr) {
-    auto* p = CreateMaybeMessage<::Protocol::AxialCoord>(GetArenaForAllocation());
+    auto* p = CreateMaybeMessage<::Protocol::Vec2Fixed>(GetArenaForAllocation());
     _impl_.target_ = p;
   }
   return _impl_.target_;
 }
-inline ::Protocol::AxialCoord* C_MOVE::mutable_target() {
-  ::Protocol::AxialCoord* _msg = _internal_mutable_target();
+inline ::Protocol::Vec2Fixed* C_MOVE::mutable_target() {
+  ::Protocol::Vec2Fixed* _msg = _internal_mutable_target();
   // @@protoc_insertion_point(field_mutable:Protocol.C_MOVE.target)
   return _msg;
 }
-inline void C_MOVE::set_allocated_target(::Protocol::AxialCoord* target) {
+inline void C_MOVE::set_allocated_target(::Protocol::Vec2Fixed* target) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.target_);
@@ -2260,39 +2291,39 @@ inline void S_MOVE::set_object_id(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.S_MOVE.object_id)
 }
 
-// .Protocol.AxialCoord axial = 2;
-inline bool S_MOVE::_internal_has_axial() const {
-  return this != internal_default_instance() && _impl_.axial_ != nullptr;
+// .Protocol.Vec2Fixed start = 2;
+inline bool S_MOVE::_internal_has_start() const {
+  return this != internal_default_instance() && _impl_.start_ != nullptr;
 }
-inline bool S_MOVE::has_axial() const {
-  return _internal_has_axial();
+inline bool S_MOVE::has_start() const {
+  return _internal_has_start();
 }
-inline const ::Protocol::AxialCoord& S_MOVE::_internal_axial() const {
-  const ::Protocol::AxialCoord* p = _impl_.axial_;
-  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::AxialCoord&>(
-      ::Protocol::_AxialCoord_default_instance_);
+inline const ::Protocol::Vec2Fixed& S_MOVE::_internal_start() const {
+  const ::Protocol::Vec2Fixed* p = _impl_.start_;
+  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::Vec2Fixed&>(
+      ::Protocol::_Vec2Fixed_default_instance_);
 }
-inline const ::Protocol::AxialCoord& S_MOVE::axial() const {
-  // @@protoc_insertion_point(field_get:Protocol.S_MOVE.axial)
-  return _internal_axial();
+inline const ::Protocol::Vec2Fixed& S_MOVE::start() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_MOVE.start)
+  return _internal_start();
 }
-inline void S_MOVE::unsafe_arena_set_allocated_axial(
-    ::Protocol::AxialCoord* axial) {
+inline void S_MOVE::unsafe_arena_set_allocated_start(
+    ::Protocol::Vec2Fixed* start) {
   if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.axial_);
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.start_);
   }
-  _impl_.axial_ = axial;
-  if (axial) {
+  _impl_.start_ = start;
+  if (start) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.S_MOVE.axial)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.S_MOVE.start)
 }
-inline ::Protocol::AxialCoord* S_MOVE::release_axial() {
+inline ::Protocol::Vec2Fixed* S_MOVE::release_start() {
   
-  ::Protocol::AxialCoord* temp = _impl_.axial_;
-  _impl_.axial_ = nullptr;
+  ::Protocol::Vec2Fixed* temp = _impl_.start_;
+  _impl_.start_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
   temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
@@ -2304,45 +2335,150 @@ inline ::Protocol::AxialCoord* S_MOVE::release_axial() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::Protocol::AxialCoord* S_MOVE::unsafe_arena_release_axial() {
-  // @@protoc_insertion_point(field_release:Protocol.S_MOVE.axial)
+inline ::Protocol::Vec2Fixed* S_MOVE::unsafe_arena_release_start() {
+  // @@protoc_insertion_point(field_release:Protocol.S_MOVE.start)
   
-  ::Protocol::AxialCoord* temp = _impl_.axial_;
-  _impl_.axial_ = nullptr;
+  ::Protocol::Vec2Fixed* temp = _impl_.start_;
+  _impl_.start_ = nullptr;
   return temp;
 }
-inline ::Protocol::AxialCoord* S_MOVE::_internal_mutable_axial() {
+inline ::Protocol::Vec2Fixed* S_MOVE::_internal_mutable_start() {
   
-  if (_impl_.axial_ == nullptr) {
-    auto* p = CreateMaybeMessage<::Protocol::AxialCoord>(GetArenaForAllocation());
-    _impl_.axial_ = p;
+  if (_impl_.start_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Protocol::Vec2Fixed>(GetArenaForAllocation());
+    _impl_.start_ = p;
   }
-  return _impl_.axial_;
+  return _impl_.start_;
 }
-inline ::Protocol::AxialCoord* S_MOVE::mutable_axial() {
-  ::Protocol::AxialCoord* _msg = _internal_mutable_axial();
-  // @@protoc_insertion_point(field_mutable:Protocol.S_MOVE.axial)
+inline ::Protocol::Vec2Fixed* S_MOVE::mutable_start() {
+  ::Protocol::Vec2Fixed* _msg = _internal_mutable_start();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_MOVE.start)
   return _msg;
 }
-inline void S_MOVE::set_allocated_axial(::Protocol::AxialCoord* axial) {
+inline void S_MOVE::set_allocated_start(::Protocol::Vec2Fixed* start) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
-    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.axial_);
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.start_);
   }
-  if (axial) {
+  if (start) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
         ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
-                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(axial));
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(start));
     if (message_arena != submessage_arena) {
-      axial = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, axial, submessage_arena);
+      start = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, start, submessage_arena);
     }
     
   } else {
     
   }
-  _impl_.axial_ = axial;
-  // @@protoc_insertion_point(field_set_allocated:Protocol.S_MOVE.axial)
+  _impl_.start_ = start;
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_MOVE.start)
+}
+
+// .Protocol.Vec2Fixed target = 3;
+inline bool S_MOVE::_internal_has_target() const {
+  return this != internal_default_instance() && _impl_.target_ != nullptr;
+}
+inline bool S_MOVE::has_target() const {
+  return _internal_has_target();
+}
+inline const ::Protocol::Vec2Fixed& S_MOVE::_internal_target() const {
+  const ::Protocol::Vec2Fixed* p = _impl_.target_;
+  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::Vec2Fixed&>(
+      ::Protocol::_Vec2Fixed_default_instance_);
+}
+inline const ::Protocol::Vec2Fixed& S_MOVE::target() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_MOVE.target)
+  return _internal_target();
+}
+inline void S_MOVE::unsafe_arena_set_allocated_target(
+    ::Protocol::Vec2Fixed* target) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.target_);
+  }
+  _impl_.target_ = target;
+  if (target) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.S_MOVE.target)
+}
+inline ::Protocol::Vec2Fixed* S_MOVE::release_target() {
+  
+  ::Protocol::Vec2Fixed* temp = _impl_.target_;
+  _impl_.target_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::Protocol::Vec2Fixed* S_MOVE::unsafe_arena_release_target() {
+  // @@protoc_insertion_point(field_release:Protocol.S_MOVE.target)
+  
+  ::Protocol::Vec2Fixed* temp = _impl_.target_;
+  _impl_.target_ = nullptr;
+  return temp;
+}
+inline ::Protocol::Vec2Fixed* S_MOVE::_internal_mutable_target() {
+  
+  if (_impl_.target_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Protocol::Vec2Fixed>(GetArenaForAllocation());
+    _impl_.target_ = p;
+  }
+  return _impl_.target_;
+}
+inline ::Protocol::Vec2Fixed* S_MOVE::mutable_target() {
+  ::Protocol::Vec2Fixed* _msg = _internal_mutable_target();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_MOVE.target)
+  return _msg;
+}
+inline void S_MOVE::set_allocated_target(::Protocol::Vec2Fixed* target) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.target_);
+  }
+  if (target) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(target));
+    if (message_arena != submessage_arena) {
+      target = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, target, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.target_ = target;
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_MOVE.target)
+}
+
+// uint32 duration_ms = 4;
+inline void S_MOVE::clear_duration_ms() {
+  _impl_.duration_ms_ = 0u;
+}
+inline uint32_t S_MOVE::_internal_duration_ms() const {
+  return _impl_.duration_ms_;
+}
+inline uint32_t S_MOVE::duration_ms() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_MOVE.duration_ms)
+  return _internal_duration_ms();
+}
+inline void S_MOVE::_internal_set_duration_ms(uint32_t value) {
+  
+  _impl_.duration_ms_ = value;
+}
+inline void S_MOVE::set_duration_ms(uint32_t value) {
+  _internal_set_duration_ms(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_MOVE.duration_ms)
 }
 
 // -------------------------------------------------------------------

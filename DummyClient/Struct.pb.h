@@ -46,39 +46,39 @@ struct TableStruct_Struct_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Struct_2eproto;
 namespace Protocol {
-class AxialCoord;
-struct AxialCoordDefaultTypeInternal;
-extern AxialCoordDefaultTypeInternal _AxialCoord_default_instance_;
 class ObjectInfo;
 struct ObjectInfoDefaultTypeInternal;
 extern ObjectInfoDefaultTypeInternal _ObjectInfo_default_instance_;
+class Vec2Fixed;
+struct Vec2FixedDefaultTypeInternal;
+extern Vec2FixedDefaultTypeInternal _Vec2Fixed_default_instance_;
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
-template<> ::Protocol::AxialCoord* Arena::CreateMaybeMessage<::Protocol::AxialCoord>(Arena*);
 template<> ::Protocol::ObjectInfo* Arena::CreateMaybeMessage<::Protocol::ObjectInfo>(Arena*);
+template<> ::Protocol::Vec2Fixed* Arena::CreateMaybeMessage<::Protocol::Vec2Fixed>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace Protocol {
 
 // ===================================================================
 
-class AxialCoord final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.AxialCoord) */ {
+class Vec2Fixed final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.Vec2Fixed) */ {
  public:
-  inline AxialCoord() : AxialCoord(nullptr) {}
-  ~AxialCoord() override;
-  explicit PROTOBUF_CONSTEXPR AxialCoord(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline Vec2Fixed() : Vec2Fixed(nullptr) {}
+  ~Vec2Fixed() override;
+  explicit PROTOBUF_CONSTEXPR Vec2Fixed(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  AxialCoord(const AxialCoord& from);
-  AxialCoord(AxialCoord&& from) noexcept
-    : AxialCoord() {
+  Vec2Fixed(const Vec2Fixed& from);
+  Vec2Fixed(Vec2Fixed&& from) noexcept
+    : Vec2Fixed() {
     *this = ::std::move(from);
   }
 
-  inline AxialCoord& operator=(const AxialCoord& from) {
+  inline Vec2Fixed& operator=(const Vec2Fixed& from) {
     CopyFrom(from);
     return *this;
   }
-  inline AxialCoord& operator=(AxialCoord&& from) noexcept {
+  inline Vec2Fixed& operator=(Vec2Fixed&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -101,20 +101,20 @@ class AxialCoord final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const AxialCoord& default_instance() {
+  static const Vec2Fixed& default_instance() {
     return *internal_default_instance();
   }
-  static inline const AxialCoord* internal_default_instance() {
-    return reinterpret_cast<const AxialCoord*>(
-               &_AxialCoord_default_instance_);
+  static inline const Vec2Fixed* internal_default_instance() {
+    return reinterpret_cast<const Vec2Fixed*>(
+               &_Vec2Fixed_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     0;
 
-  friend void swap(AxialCoord& a, AxialCoord& b) {
+  friend void swap(Vec2Fixed& a, Vec2Fixed& b) {
     a.Swap(&b);
   }
-  inline void Swap(AxialCoord* other) {
+  inline void Swap(Vec2Fixed* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -127,7 +127,7 @@ class AxialCoord final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(AxialCoord* other) {
+  void UnsafeArenaSwap(Vec2Fixed* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -135,14 +135,14 @@ class AxialCoord final :
 
   // implements Message ----------------------------------------------
 
-  AxialCoord* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<AxialCoord>(arena);
+  Vec2Fixed* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<Vec2Fixed>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const AxialCoord& from);
+  void CopyFrom(const Vec2Fixed& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const AxialCoord& from) {
-    AxialCoord::MergeImpl(*this, from);
+  void MergeFrom( const Vec2Fixed& from) {
+    Vec2Fixed::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -160,15 +160,15 @@ class AxialCoord final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(AxialCoord* other);
+  void InternalSwap(Vec2Fixed* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "Protocol.AxialCoord";
+    return "Protocol.Vec2Fixed";
   }
   protected:
-  explicit AxialCoord(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit Vec2Fixed(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -182,28 +182,28 @@ class AxialCoord final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kQFieldNumber = 1,
-    kRFieldNumber = 2,
+    kXFieldNumber = 1,
+    kYFieldNumber = 2,
   };
-  // int32 q = 1;
-  void clear_q();
-  int32_t q() const;
-  void set_q(int32_t value);
+  // sint32 x = 1;
+  void clear_x();
+  int32_t x() const;
+  void set_x(int32_t value);
   private:
-  int32_t _internal_q() const;
-  void _internal_set_q(int32_t value);
+  int32_t _internal_x() const;
+  void _internal_set_x(int32_t value);
   public:
 
-  // int32 r = 2;
-  void clear_r();
-  int32_t r() const;
-  void set_r(int32_t value);
+  // sint32 y = 2;
+  void clear_y();
+  int32_t y() const;
+  void set_y(int32_t value);
   private:
-  int32_t _internal_r() const;
-  void _internal_set_r(int32_t value);
+  int32_t _internal_y() const;
+  void _internal_set_y(int32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:Protocol.AxialCoord)
+  // @@protoc_insertion_point(class_scope:Protocol.Vec2Fixed)
  private:
   class _Internal;
 
@@ -211,8 +211,8 @@ class AxialCoord final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    int32_t q_;
-    int32_t r_;
+    int32_t x_;
+    int32_t y_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -341,28 +341,28 @@ class ObjectInfo final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kAxialFieldNumber = 4,
+    kPositionFieldNumber = 4,
     kObjectIdFieldNumber = 1,
     kObjectTypeFieldNumber = 2,
     kCreatureTypeFieldNumber = 3,
   };
-  // .Protocol.AxialCoord axial = 4;
-  bool has_axial() const;
+  // .Protocol.Vec2Fixed position = 4;
+  bool has_position() const;
   private:
-  bool _internal_has_axial() const;
+  bool _internal_has_position() const;
   public:
-  void clear_axial();
-  const ::Protocol::AxialCoord& axial() const;
-  PROTOBUF_NODISCARD ::Protocol::AxialCoord* release_axial();
-  ::Protocol::AxialCoord* mutable_axial();
-  void set_allocated_axial(::Protocol::AxialCoord* axial);
+  void clear_position();
+  const ::Protocol::Vec2Fixed& position() const;
+  PROTOBUF_NODISCARD ::Protocol::Vec2Fixed* release_position();
+  ::Protocol::Vec2Fixed* mutable_position();
+  void set_allocated_position(::Protocol::Vec2Fixed* position);
   private:
-  const ::Protocol::AxialCoord& _internal_axial() const;
-  ::Protocol::AxialCoord* _internal_mutable_axial();
+  const ::Protocol::Vec2Fixed& _internal_position() const;
+  ::Protocol::Vec2Fixed* _internal_mutable_position();
   public:
-  void unsafe_arena_set_allocated_axial(
-      ::Protocol::AxialCoord* axial);
-  ::Protocol::AxialCoord* unsafe_arena_release_axial();
+  void unsafe_arena_set_allocated_position(
+      ::Protocol::Vec2Fixed* position);
+  ::Protocol::Vec2Fixed* unsafe_arena_release_position();
 
   // uint64 object_id = 1;
   void clear_object_id();
@@ -399,7 +399,7 @@ class ObjectInfo final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::Protocol::AxialCoord* axial_;
+    ::Protocol::Vec2Fixed* position_;
     uint64_t object_id_;
     int object_type_;
     int creature_type_;
@@ -417,46 +417,46 @@ class ObjectInfo final :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
-// AxialCoord
+// Vec2Fixed
 
-// int32 q = 1;
-inline void AxialCoord::clear_q() {
-  _impl_.q_ = 0;
+// sint32 x = 1;
+inline void Vec2Fixed::clear_x() {
+  _impl_.x_ = 0;
 }
-inline int32_t AxialCoord::_internal_q() const {
-  return _impl_.q_;
+inline int32_t Vec2Fixed::_internal_x() const {
+  return _impl_.x_;
 }
-inline int32_t AxialCoord::q() const {
-  // @@protoc_insertion_point(field_get:Protocol.AxialCoord.q)
-  return _internal_q();
+inline int32_t Vec2Fixed::x() const {
+  // @@protoc_insertion_point(field_get:Protocol.Vec2Fixed.x)
+  return _internal_x();
 }
-inline void AxialCoord::_internal_set_q(int32_t value) {
+inline void Vec2Fixed::_internal_set_x(int32_t value) {
   
-  _impl_.q_ = value;
+  _impl_.x_ = value;
 }
-inline void AxialCoord::set_q(int32_t value) {
-  _internal_set_q(value);
-  // @@protoc_insertion_point(field_set:Protocol.AxialCoord.q)
+inline void Vec2Fixed::set_x(int32_t value) {
+  _internal_set_x(value);
+  // @@protoc_insertion_point(field_set:Protocol.Vec2Fixed.x)
 }
 
-// int32 r = 2;
-inline void AxialCoord::clear_r() {
-  _impl_.r_ = 0;
+// sint32 y = 2;
+inline void Vec2Fixed::clear_y() {
+  _impl_.y_ = 0;
 }
-inline int32_t AxialCoord::_internal_r() const {
-  return _impl_.r_;
+inline int32_t Vec2Fixed::_internal_y() const {
+  return _impl_.y_;
 }
-inline int32_t AxialCoord::r() const {
-  // @@protoc_insertion_point(field_get:Protocol.AxialCoord.r)
-  return _internal_r();
+inline int32_t Vec2Fixed::y() const {
+  // @@protoc_insertion_point(field_get:Protocol.Vec2Fixed.y)
+  return _internal_y();
 }
-inline void AxialCoord::_internal_set_r(int32_t value) {
+inline void Vec2Fixed::_internal_set_y(int32_t value) {
   
-  _impl_.r_ = value;
+  _impl_.y_ = value;
 }
-inline void AxialCoord::set_r(int32_t value) {
-  _internal_set_r(value);
-  // @@protoc_insertion_point(field_set:Protocol.AxialCoord.r)
+inline void Vec2Fixed::set_y(int32_t value) {
+  _internal_set_y(value);
+  // @@protoc_insertion_point(field_set:Protocol.Vec2Fixed.y)
 }
 
 // -------------------------------------------------------------------
@@ -523,45 +523,45 @@ inline void ObjectInfo::set_creature_type(::Protocol::CreatureType value) {
   // @@protoc_insertion_point(field_set:Protocol.ObjectInfo.creature_type)
 }
 
-// .Protocol.AxialCoord axial = 4;
-inline bool ObjectInfo::_internal_has_axial() const {
-  return this != internal_default_instance() && _impl_.axial_ != nullptr;
+// .Protocol.Vec2Fixed position = 4;
+inline bool ObjectInfo::_internal_has_position() const {
+  return this != internal_default_instance() && _impl_.position_ != nullptr;
 }
-inline bool ObjectInfo::has_axial() const {
-  return _internal_has_axial();
+inline bool ObjectInfo::has_position() const {
+  return _internal_has_position();
 }
-inline void ObjectInfo::clear_axial() {
-  if (GetArenaForAllocation() == nullptr && _impl_.axial_ != nullptr) {
-    delete _impl_.axial_;
+inline void ObjectInfo::clear_position() {
+  if (GetArenaForAllocation() == nullptr && _impl_.position_ != nullptr) {
+    delete _impl_.position_;
   }
-  _impl_.axial_ = nullptr;
+  _impl_.position_ = nullptr;
 }
-inline const ::Protocol::AxialCoord& ObjectInfo::_internal_axial() const {
-  const ::Protocol::AxialCoord* p = _impl_.axial_;
-  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::AxialCoord&>(
-      ::Protocol::_AxialCoord_default_instance_);
+inline const ::Protocol::Vec2Fixed& ObjectInfo::_internal_position() const {
+  const ::Protocol::Vec2Fixed* p = _impl_.position_;
+  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::Vec2Fixed&>(
+      ::Protocol::_Vec2Fixed_default_instance_);
 }
-inline const ::Protocol::AxialCoord& ObjectInfo::axial() const {
-  // @@protoc_insertion_point(field_get:Protocol.ObjectInfo.axial)
-  return _internal_axial();
+inline const ::Protocol::Vec2Fixed& ObjectInfo::position() const {
+  // @@protoc_insertion_point(field_get:Protocol.ObjectInfo.position)
+  return _internal_position();
 }
-inline void ObjectInfo::unsafe_arena_set_allocated_axial(
-    ::Protocol::AxialCoord* axial) {
+inline void ObjectInfo::unsafe_arena_set_allocated_position(
+    ::Protocol::Vec2Fixed* position) {
   if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.axial_);
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.position_);
   }
-  _impl_.axial_ = axial;
-  if (axial) {
+  _impl_.position_ = position;
+  if (position) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.ObjectInfo.axial)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.ObjectInfo.position)
 }
-inline ::Protocol::AxialCoord* ObjectInfo::release_axial() {
+inline ::Protocol::Vec2Fixed* ObjectInfo::release_position() {
   
-  ::Protocol::AxialCoord* temp = _impl_.axial_;
-  _impl_.axial_ = nullptr;
+  ::Protocol::Vec2Fixed* temp = _impl_.position_;
+  _impl_.position_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
   temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
@@ -573,44 +573,44 @@ inline ::Protocol::AxialCoord* ObjectInfo::release_axial() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::Protocol::AxialCoord* ObjectInfo::unsafe_arena_release_axial() {
-  // @@protoc_insertion_point(field_release:Protocol.ObjectInfo.axial)
+inline ::Protocol::Vec2Fixed* ObjectInfo::unsafe_arena_release_position() {
+  // @@protoc_insertion_point(field_release:Protocol.ObjectInfo.position)
   
-  ::Protocol::AxialCoord* temp = _impl_.axial_;
-  _impl_.axial_ = nullptr;
+  ::Protocol::Vec2Fixed* temp = _impl_.position_;
+  _impl_.position_ = nullptr;
   return temp;
 }
-inline ::Protocol::AxialCoord* ObjectInfo::_internal_mutable_axial() {
+inline ::Protocol::Vec2Fixed* ObjectInfo::_internal_mutable_position() {
   
-  if (_impl_.axial_ == nullptr) {
-    auto* p = CreateMaybeMessage<::Protocol::AxialCoord>(GetArenaForAllocation());
-    _impl_.axial_ = p;
+  if (_impl_.position_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Protocol::Vec2Fixed>(GetArenaForAllocation());
+    _impl_.position_ = p;
   }
-  return _impl_.axial_;
+  return _impl_.position_;
 }
-inline ::Protocol::AxialCoord* ObjectInfo::mutable_axial() {
-  ::Protocol::AxialCoord* _msg = _internal_mutable_axial();
-  // @@protoc_insertion_point(field_mutable:Protocol.ObjectInfo.axial)
+inline ::Protocol::Vec2Fixed* ObjectInfo::mutable_position() {
+  ::Protocol::Vec2Fixed* _msg = _internal_mutable_position();
+  // @@protoc_insertion_point(field_mutable:Protocol.ObjectInfo.position)
   return _msg;
 }
-inline void ObjectInfo::set_allocated_axial(::Protocol::AxialCoord* axial) {
+inline void ObjectInfo::set_allocated_position(::Protocol::Vec2Fixed* position) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
-    delete _impl_.axial_;
+    delete _impl_.position_;
   }
-  if (axial) {
+  if (position) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(axial);
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(position);
     if (message_arena != submessage_arena) {
-      axial = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, axial, submessage_arena);
+      position = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, position, submessage_arena);
     }
     
   } else {
     
   }
-  _impl_.axial_ = axial;
-  // @@protoc_insertion_point(field_set_allocated:Protocol.ObjectInfo.axial)
+  _impl_.position_ = position;
+  // @@protoc_insertion_point(field_set_allocated:Protocol.ObjectInfo.position)
 }
 
 #ifdef __GNUC__

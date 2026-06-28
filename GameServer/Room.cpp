@@ -31,8 +31,8 @@ bool Room::EnterRoom(ObjectRef object, bool randPos /*= true*/)
 	// 랜덤 위치
 	if (randPos)
 	{
-		object->axial->set_q(Utils::GetRandom<int32>(0, 20));
-		object->axial->set_r(Utils::GetRandom<int32>(0, 20));
+		object->position->set_x(Utils::GetRandom<int32>(0, 20));
+		object->position->set_y(Utils::GetRandom<int32>(0, 20));
 	}
 
 	// 입장 사실을 신입 플레이어에게 알린다
@@ -156,15 +156,20 @@ void Room::HandleMove(GameSessionRef session, Protocol::C_MOVE pkt)
 
 	const uint64 objectId = player->objectInfo->object_id();
 	cout << "C_MOVE object_id=" << objectId
-		<< " q=" << pkt.target().q()
-		<< " r=" << pkt.target().r() << endl;
-	player->axial->CopyFrom(pkt.target());
+		<< " x=" << pkt.target().x()
+		<< " y=" << pkt.target().y() << endl;
 
 	// 이동 사실을 알린다 (본인 포함? 빼고?)
 	{
 		Protocol::S_MOVE movePkt;
 		movePkt.set_object_id(objectId);
-		movePkt.mutable_axial()->CopyFrom(*player->axial);
+		movePkt.mutable_start()->set_x(player->position->x());
+		movePkt.mutable_start()->set_y(player->position->y());
+		movePkt.mutable_target()->CopyFrom(pkt.target());
+		movePkt.set_duration_ms(300);
+
+		player->position->set_x(pkt.target().x());
+		player->position->set_y(pkt.target().y());
 
 		SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(movePkt);
 		Broadcast(sendBuffer);

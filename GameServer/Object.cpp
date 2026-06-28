@@ -4,7 +4,7 @@
 Object::Object()
 {
 	objectInfo = make_unique<Protocol::ObjectInfo>();
-	axial = objectInfo->mutable_axial();
+	position = objectInfo->mutable_position();
 }
 
 Object::~Object()

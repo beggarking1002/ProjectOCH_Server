@@ -3,10 +3,10 @@ package Protocol;
 
 import "Enum.proto";
 
-message AxialCoord
+message Vec2Fixed
 {
-	int32 q = 1;
-	int32 r = 2;
+	sint32 x = 1;
+	sint32 y = 2;
 }
 
 message ObjectInfo
@@ -14,5 +14,5 @@ message ObjectInfo
 	uint64 object_id = 1;
 	ObjectType object_type = 2;
 	CreatureType creature_type = 3;
-	AxialCoord axial = 4;
+	Vec2Fixed position = 4;
 }

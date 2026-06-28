@@ -21,23 +21,23 @@ namespace _pb = ::PROTOBUF_NAMESPACE_ID;
 namespace _pbi = _pb::internal;
 
 namespace Protocol {
-PROTOBUF_CONSTEXPR AxialCoord::AxialCoord(
+PROTOBUF_CONSTEXPR Vec2Fixed::Vec2Fixed(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.q_)*/0
-  , /*decltype(_impl_.r_)*/0
+    /*decltype(_impl_.x_)*/0
+  , /*decltype(_impl_.y_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct AxialCoordDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR AxialCoordDefaultTypeInternal()
+struct Vec2FixedDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR Vec2FixedDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~AxialCoordDefaultTypeInternal() {}
+  ~Vec2FixedDefaultTypeInternal() {}
   union {
-    AxialCoord _instance;
+    Vec2Fixed _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AxialCoordDefaultTypeInternal _AxialCoord_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 Vec2FixedDefaultTypeInternal _Vec2Fixed_default_instance_;
 PROTOBUF_CONSTEXPR ObjectInfo::ObjectInfo(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.axial_)*/nullptr
+    /*decltype(_impl_.position_)*/nullptr
   , /*decltype(_impl_.object_id_)*/uint64_t{0u}
   , /*decltype(_impl_.object_type_)*/0
   , /*decltype(_impl_.creature_type_)*/0
@@ -58,13 +58,13 @@ static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors
 
 const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::Protocol::AxialCoord, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::Vec2Fixed, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::Protocol::AxialCoord, _impl_.q_),
-  PROTOBUF_FIELD_OFFSET(::Protocol::AxialCoord, _impl_.r_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::Vec2Fixed, _impl_.x_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::Vec2Fixed, _impl_.y_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -74,33 +74,33 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, _impl_.object_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, _impl_.object_type_),
   PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, _impl_.creature_type_),
-  PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, _impl_.axial_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::ObjectInfo, _impl_.position_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::Protocol::AxialCoord)},
+  { 0, -1, -1, sizeof(::Protocol::Vec2Fixed)},
   { 8, -1, -1, sizeof(::Protocol::ObjectInfo)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
-  &::Protocol::_AxialCoord_default_instance_._instance,
+  &::Protocol::_Vec2Fixed_default_instance_._instance,
   &::Protocol::_ObjectInfo_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\014Struct.proto\022\010Protocol\032\nEnum.proto\"\"\n\n"
-  "AxialCoord\022\t\n\001q\030\001 \001(\005\022\t\n\001r\030\002 \001(\005\"\236\001\n\nObj"
-  "ectInfo\022\021\n\tobject_id\030\001 \001(\004\022)\n\013object_typ"
-  "e\030\002 \001(\0162\024.Protocol.ObjectType\022-\n\rcreatur"
-  "e_type\030\003 \001(\0162\026.Protocol.CreatureType\022#\n\005"
-  "axial\030\004 \001(\0132\024.Protocol.AxialCoordb\006proto"
-  "3"
+  "\n\014Struct.proto\022\010Protocol\032\nEnum.proto\"!\n\t"
+  "Vec2Fixed\022\t\n\001x\030\001 \001(\021\022\t\n\001y\030\002 \001(\021\"\240\001\n\nObje"
+  "ctInfo\022\021\n\tobject_id\030\001 \001(\004\022)\n\013object_type"
+  "\030\002 \001(\0162\024.Protocol.ObjectType\022-\n\rcreature"
+  "_type\030\003 \001(\0162\026.Protocol.CreatureType\022%\n\010p"
+  "osition\030\004 \001(\0132\023.Protocol.Vec2Fixedb\006prot"
+  "o3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_Struct_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Struct_2eproto = {
-    false, false, 241, descriptor_table_protodef_Struct_2eproto,
+    false, false, 242, descriptor_table_protodef_Struct_2eproto,
     "Struct.proto",
     &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 2,
     schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
@@ -117,44 +117,44 @@ namespace Protocol {
 
 // ===================================================================
 
-class AxialCoord::_Internal {
+class Vec2Fixed::_Internal {
  public:
 };
 
-AxialCoord::AxialCoord(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+Vec2Fixed::Vec2Fixed(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:Protocol.AxialCoord)
+  // @@protoc_insertion_point(arena_constructor:Protocol.Vec2Fixed)
 }
-AxialCoord::AxialCoord(const AxialCoord& from)
+Vec2Fixed::Vec2Fixed(const Vec2Fixed& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  AxialCoord* const _this = this; (void)_this;
+  Vec2Fixed* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.q_){}
-    , decltype(_impl_.r_){}
+      decltype(_impl_.x_){}
+    , decltype(_impl_.y_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&_impl_.q_, &from._impl_.q_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.r_) -
-    reinterpret_cast<char*>(&_impl_.q_)) + sizeof(_impl_.r_));
-  // @@protoc_insertion_point(copy_constructor:Protocol.AxialCoord)
+  ::memcpy(&_impl_.x_, &from._impl_.x_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.y_) -
+    reinterpret_cast<char*>(&_impl_.x_)) + sizeof(_impl_.y_));
+  // @@protoc_insertion_point(copy_constructor:Protocol.Vec2Fixed)
 }
 
-inline void AxialCoord::SharedCtor(
+inline void Vec2Fixed::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.q_){0}
-    , decltype(_impl_.r_){0}
+      decltype(_impl_.x_){0}
+    , decltype(_impl_.y_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
 
-AxialCoord::~AxialCoord() {
-  // @@protoc_insertion_point(destructor:Protocol.AxialCoord)
+Vec2Fixed::~Vec2Fixed() {
+  // @@protoc_insertion_point(destructor:Protocol.Vec2Fixed)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -162,44 +162,44 @@ AxialCoord::~AxialCoord() {
   SharedDtor();
 }
 
-inline void AxialCoord::SharedDtor() {
+inline void Vec2Fixed::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void AxialCoord::SetCachedSize(int size) const {
+void Vec2Fixed::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void AxialCoord::Clear() {
-// @@protoc_insertion_point(message_clear_start:Protocol.AxialCoord)
+void Vec2Fixed::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.Vec2Fixed)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&_impl_.q_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.r_) -
-      reinterpret_cast<char*>(&_impl_.q_)) + sizeof(_impl_.r_));
+  ::memset(&_impl_.x_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.y_) -
+      reinterpret_cast<char*>(&_impl_.x_)) + sizeof(_impl_.y_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* AxialCoord::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* Vec2Fixed::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // int32 q = 1;
+      // sint32 x = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.q_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.x_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarintZigZag32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 r = 2;
+      // sint32 y = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
-          _impl_.r_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.y_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarintZigZag32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -227,100 +227,100 @@ failure:
 #undef CHK_
 }
 
-uint8_t* AxialCoord::_InternalSerialize(
+uint8_t* Vec2Fixed::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:Protocol.AxialCoord)
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.Vec2Fixed)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int32 q = 1;
-  if (this->_internal_q() != 0) {
+  // sint32 x = 1;
+  if (this->_internal_x() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_q(), target);
+    target = ::_pbi::WireFormatLite::WriteSInt32ToArray(1, this->_internal_x(), target);
   }
 
-  // int32 r = 2;
-  if (this->_internal_r() != 0) {
+  // sint32 y = 2;
+  if (this->_internal_y() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(2, this->_internal_r(), target);
+    target = ::_pbi::WireFormatLite::WriteSInt32ToArray(2, this->_internal_y(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:Protocol.AxialCoord)
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.Vec2Fixed)
   return target;
 }
 
-size_t AxialCoord::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:Protocol.AxialCoord)
+size_t Vec2Fixed::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.Vec2Fixed)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // int32 q = 1;
-  if (this->_internal_q() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_q());
+  // sint32 x = 1;
+  if (this->_internal_x() != 0) {
+    total_size += ::_pbi::WireFormatLite::SInt32SizePlusOne(this->_internal_x());
   }
 
-  // int32 r = 2;
-  if (this->_internal_r() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_r());
+  // sint32 y = 2;
+  if (this->_internal_y() != 0) {
+    total_size += ::_pbi::WireFormatLite::SInt32SizePlusOne(this->_internal_y());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData AxialCoord::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData Vec2Fixed::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    AxialCoord::MergeImpl
+    Vec2Fixed::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*AxialCoord::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*Vec2Fixed::GetClassData() const { return &_class_data_; }
 
 
-void AxialCoord::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<AxialCoord*>(&to_msg);
-  auto& from = static_cast<const AxialCoord&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.AxialCoord)
+void Vec2Fixed::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<Vec2Fixed*>(&to_msg);
+  auto& from = static_cast<const Vec2Fixed&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.Vec2Fixed)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_q() != 0) {
-    _this->_internal_set_q(from._internal_q());
+  if (from._internal_x() != 0) {
+    _this->_internal_set_x(from._internal_x());
   }
-  if (from._internal_r() != 0) {
-    _this->_internal_set_r(from._internal_r());
+  if (from._internal_y() != 0) {
+    _this->_internal_set_y(from._internal_y());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void AxialCoord::CopyFrom(const AxialCoord& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.AxialCoord)
+void Vec2Fixed::CopyFrom(const Vec2Fixed& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.Vec2Fixed)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool AxialCoord::IsInitialized() const {
+bool Vec2Fixed::IsInitialized() const {
   return true;
 }
 
-void AxialCoord::InternalSwap(AxialCoord* other) {
+void Vec2Fixed::InternalSwap(Vec2Fixed* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(AxialCoord, _impl_.r_)
-      + sizeof(AxialCoord::_impl_.r_)
-      - PROTOBUF_FIELD_OFFSET(AxialCoord, _impl_.q_)>(
-          reinterpret_cast<char*>(&_impl_.q_),
-          reinterpret_cast<char*>(&other->_impl_.q_));
+      PROTOBUF_FIELD_OFFSET(Vec2Fixed, _impl_.y_)
+      + sizeof(Vec2Fixed::_impl_.y_)
+      - PROTOBUF_FIELD_OFFSET(Vec2Fixed, _impl_.x_)>(
+          reinterpret_cast<char*>(&_impl_.x_),
+          reinterpret_cast<char*>(&other->_impl_.x_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata AxialCoord::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata Vec2Fixed::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Struct_2eproto_getter, &descriptor_table_Struct_2eproto_once,
       file_level_metadata_Struct_2eproto[0]);
@@ -330,12 +330,12 @@ void AxialCoord::InternalSwap(AxialCoord* other) {
 
 class ObjectInfo::_Internal {
  public:
-  static const ::Protocol::AxialCoord& axial(const ObjectInfo* msg);
+  static const ::Protocol::Vec2Fixed& position(const ObjectInfo* msg);
 };
 
-const ::Protocol::AxialCoord&
-ObjectInfo::_Internal::axial(const ObjectInfo* msg) {
-  return *msg->_impl_.axial_;
+const ::Protocol::Vec2Fixed&
+ObjectInfo::_Internal::position(const ObjectInfo* msg) {
+  return *msg->_impl_.position_;
 }
 ObjectInfo::ObjectInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
@@ -347,15 +347,15 @@ ObjectInfo::ObjectInfo(const ObjectInfo& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ObjectInfo* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.axial_){nullptr}
+      decltype(_impl_.position_){nullptr}
     , decltype(_impl_.object_id_){}
     , decltype(_impl_.object_type_){}
     , decltype(_impl_.creature_type_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_axial()) {
-    _this->_impl_.axial_ = new ::Protocol::AxialCoord(*from._impl_.axial_);
+  if (from._internal_has_position()) {
+    _this->_impl_.position_ = new ::Protocol::Vec2Fixed(*from._impl_.position_);
   }
   ::memcpy(&_impl_.object_id_, &from._impl_.object_id_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.creature_type_) -
@@ -368,7 +368,7 @@ inline void ObjectInfo::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.axial_){nullptr}
+      decltype(_impl_.position_){nullptr}
     , decltype(_impl_.object_id_){uint64_t{0u}}
     , decltype(_impl_.object_type_){0}
     , decltype(_impl_.creature_type_){0}
@@ -387,7 +387,7 @@ ObjectInfo::~ObjectInfo() {
 
 inline void ObjectInfo::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete _impl_.axial_;
+  if (this != internal_default_instance()) delete _impl_.position_;
 }
 
 void ObjectInfo::SetCachedSize(int size) const {
@@ -400,10 +400,10 @@ void ObjectInfo::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  if (GetArenaForAllocation() == nullptr && _impl_.axial_ != nullptr) {
-    delete _impl_.axial_;
+  if (GetArenaForAllocation() == nullptr && _impl_.position_ != nullptr) {
+    delete _impl_.position_;
   }
-  _impl_.axial_ = nullptr;
+  _impl_.position_ = nullptr;
   ::memset(&_impl_.object_id_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&_impl_.creature_type_) -
       reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.creature_type_));
@@ -442,10 +442,10 @@ const char* ObjectInfo::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
         } else
           goto handle_unusual;
         continue;
-      // .Protocol.AxialCoord axial = 4;
+      // .Protocol.Vec2Fixed position = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
-          ptr = ctx->ParseMessage(_internal_mutable_axial(), ptr);
+          ptr = ctx->ParseMessage(_internal_mutable_position(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -499,11 +499,11 @@ uint8_t* ObjectInfo::_InternalSerialize(
       3, this->_internal_creature_type(), target);
   }
 
-  // .Protocol.AxialCoord axial = 4;
-  if (this->_internal_has_axial()) {
+  // .Protocol.Vec2Fixed position = 4;
+  if (this->_internal_has_position()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(4, _Internal::axial(this),
-        _Internal::axial(this).GetCachedSize(), target, stream);
+      InternalWriteMessage(4, _Internal::position(this),
+        _Internal::position(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -522,11 +522,11 @@ size_t ObjectInfo::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .Protocol.AxialCoord axial = 4;
-  if (this->_internal_has_axial()) {
+  // .Protocol.Vec2Fixed position = 4;
+  if (this->_internal_has_position()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.axial_);
+        *_impl_.position_);
   }
 
   // uint64 object_id = 1;
@@ -564,9 +564,9 @@ void ObjectInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PRO
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_axial()) {
-    _this->_internal_mutable_axial()->::Protocol::AxialCoord::MergeFrom(
-        from._internal_axial());
+  if (from._internal_has_position()) {
+    _this->_internal_mutable_position()->::Protocol::Vec2Fixed::MergeFrom(
+        from._internal_position());
   }
   if (from._internal_object_id() != 0) {
     _this->_internal_set_object_id(from._internal_object_id());
@@ -597,9 +597,9 @@ void ObjectInfo::InternalSwap(ObjectInfo* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(ObjectInfo, _impl_.creature_type_)
       + sizeof(ObjectInfo::_impl_.creature_type_)
-      - PROTOBUF_FIELD_OFFSET(ObjectInfo, _impl_.axial_)>(
-          reinterpret_cast<char*>(&_impl_.axial_),
-          reinterpret_cast<char*>(&other->_impl_.axial_));
+      - PROTOBUF_FIELD_OFFSET(ObjectInfo, _impl_.position_)>(
+          reinterpret_cast<char*>(&_impl_.position_),
+          reinterpret_cast<char*>(&other->_impl_.position_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ObjectInfo::GetMetadata() const {
@@ -611,9 +611,9 @@ void ObjectInfo::InternalSwap(ObjectInfo* other) {
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::Protocol::AxialCoord*
-Arena::CreateMaybeMessage< ::Protocol::AxialCoord >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::Protocol::AxialCoord >(arena);
+template<> PROTOBUF_NOINLINE ::Protocol::Vec2Fixed*
+Arena::CreateMaybeMessage< ::Protocol::Vec2Fixed >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::Vec2Fixed >(arena);
 }
 template<> PROTOBUF_NOINLINE ::Protocol::ObjectInfo*
 Arena::CreateMaybeMessage< ::Protocol::ObjectInfo >(Arena* arena) {

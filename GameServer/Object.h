@@ -11,7 +11,7 @@ public:
 
 public:
 	unique_ptr<Protocol::ObjectInfo> objectInfo;
-	Protocol::AxialCoord* axial = nullptr;
+	Protocol::Vec2Fixed* position = nullptr;
 
 public:
 	atomic<weak_ptr<Room>> room;
