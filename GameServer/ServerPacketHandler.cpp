@@ -22,19 +22,6 @@ bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 	// TODO : DB에서 Account 정보 긁어온다
 	// TODO : DB에서 유저 정보 긁어온다
 	Protocol::S_LOGIN loginPkt;
-
-	for (int32 i = 0; i < 3; i++)
-	{
-		Protocol::ObjectInfo* player = loginPkt.add_players();
-		player->set_object_id(i + 1);
-		player->set_object_type(Protocol::ObjectType::OBJECT_TYPE_CREATURE);
-		player->set_creature_type(Protocol::CreatureType::CREATURE_TYPE_PLAYER);
-
-		Protocol::AxialCoord* axial = player->mutable_axial();
-		axial->set_q(Utils::GetRandom<int32>(0, 20));
-		axial->set_r(Utils::GetRandom<int32>(0, 20));
-	}
-
 	loginPkt.set_success(true);
 
 	SEND_PACKET(loginPkt);

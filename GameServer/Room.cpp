@@ -20,6 +20,20 @@ Room::~Room()
 bool Room::EnterRoom(ObjectRef object, bool randPos /*= true*/)
 {
 	bool success = AddObject(object);
+	if (success == false)
+	{
+		if (auto player = dynamic_pointer_cast<Player>(object))
+		{
+			Protocol::S_ENTER_GAME enterGamePkt;
+			enterGamePkt.set_success(false);
+
+			SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(enterGamePkt);
+			if (auto session = player->session.lock())
+				session->Send(sendBuffer);
+		}
+
+		return false;
+	}
 
 	// ·£´ý À§Ä¡
 	if (randPos)
@@ -57,18 +71,24 @@ bool Room::EnterRoom(ObjectRef object, bool randPos /*= true*/)
 	{
 		Protocol::S_SPAWN spawnPkt;
 
+		const uint64 objectId = object->objectInfo->object_id();
 		for (auto& item : _objects)
 		{
 			if (item.second->IsPlayer() == false)
+				continue;
+			if (item.second->objectInfo->object_id() == objectId)
 				continue;
 
 			Protocol::ObjectInfo* playerInfo = spawnPkt.add_players();
 			playerInfo->CopyFrom(*item.second->objectInfo);
 		}
 
-		SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(spawnPkt);
-		if (auto session = player->session.lock())
-			session->Send(sendBuffer);
+		if (spawnPkt.players_size() > 0)
+		{
+			SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(spawnPkt);
+			if (auto session = player->session.lock())
+				session->Send(sendBuffer);
+		}
 	}
 
 	return success;

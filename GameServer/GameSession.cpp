@@ -4,15 +4,11 @@
 #include "ServerPacketHandler.h"
 #include "Room.h"
 #include "Player.h"
-#include "ObjectUtils.h"
 
 void GameSession::OnConnected()
 {
 	GameSessionRef session = static_pointer_cast<GameSession>(shared_from_this());
 	GSessionManager.Add(session);
-
-	PlayerRef player = ObjectUtils::CreatePlayer(session);
-	GRoom->DoAsync(&Room::HandleEnterPlayer, player);
 }
 
 void GameSession::OnDisconnected()

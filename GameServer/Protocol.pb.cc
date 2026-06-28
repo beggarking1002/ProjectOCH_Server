@@ -34,8 +34,7 @@ struct C_LOGINDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C_LOGINDefaultTypeInternal _C_LOGIN_default_instance_;
 PROTOBUF_CONSTEXPR S_LOGIN::S_LOGIN(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.players_)*/{}
-  , /*decltype(_impl_.success_)*/false
+    /*decltype(_impl_.success_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct S_LOGINDefaultTypeInternal {
   PROTOBUF_CONSTEXPR S_LOGINDefaultTypeInternal()
@@ -195,7 +194,6 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_LOGIN, _impl_.success_),
-  PROTOBUF_FIELD_OFFSET(::Protocol::S_LOGIN, _impl_.players_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::C_ENTER_GAME, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -271,16 +269,16 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::C_LOGIN)},
   { 6, -1, -1, sizeof(::Protocol::S_LOGIN)},
-  { 14, -1, -1, sizeof(::Protocol::C_ENTER_GAME)},
-  { 21, -1, -1, sizeof(::Protocol::S_ENTER_GAME)},
-  { 29, -1, -1, sizeof(::Protocol::C_LEAVE_GAME)},
-  { 35, -1, -1, sizeof(::Protocol::S_LEAVE_GAME)},
-  { 41, -1, -1, sizeof(::Protocol::S_SPAWN)},
-  { 48, -1, -1, sizeof(::Protocol::S_DESPAWN)},
-  { 55, -1, -1, sizeof(::Protocol::C_MOVE)},
-  { 62, -1, -1, sizeof(::Protocol::S_MOVE)},
-  { 70, -1, -1, sizeof(::Protocol::C_CHAT)},
-  { 77, -1, -1, sizeof(::Protocol::S_CHAT)},
+  { 13, -1, -1, sizeof(::Protocol::C_ENTER_GAME)},
+  { 20, -1, -1, sizeof(::Protocol::S_ENTER_GAME)},
+  { 28, -1, -1, sizeof(::Protocol::C_LEAVE_GAME)},
+  { 34, -1, -1, sizeof(::Protocol::S_LEAVE_GAME)},
+  { 40, -1, -1, sizeof(::Protocol::S_SPAWN)},
+  { 47, -1, -1, sizeof(::Protocol::S_DESPAWN)},
+  { 54, -1, -1, sizeof(::Protocol::C_MOVE)},
+  { 61, -1, -1, sizeof(::Protocol::S_MOVE)},
+  { 69, -1, -1, sizeof(::Protocol::C_CHAT)},
+  { 76, -1, -1, sizeof(::Protocol::S_CHAT)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -300,26 +298,25 @@ static const ::_pb::Message* const file_default_instances[] = {
 
 const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\016Protocol.proto\022\010Protocol\032\014Struct.proto"
-  "\"\t\n\007C_LOGIN\"A\n\007S_LOGIN\022\017\n\007success\030\001 \001(\010\022"
-  "%\n\007players\030\002 \003(\0132\024.Protocol.ObjectInfo\"#"
-  "\n\014C_ENTER_GAME\022\023\n\013playerIndex\030\001 \001(\004\"E\n\014S"
-  "_ENTER_GAME\022\017\n\007success\030\001 \001(\010\022$\n\006player\030\002"
-  " \001(\0132\024.Protocol.ObjectInfo\"\016\n\014C_LEAVE_GA"
-  "ME\"\016\n\014S_LEAVE_GAME\"0\n\007S_SPAWN\022%\n\007players"
-  "\030\001 \003(\0132\024.Protocol.ObjectInfo\"\037\n\tS_DESPAW"
-  "N\022\022\n\nobject_ids\030\001 \003(\004\".\n\006C_MOVE\022$\n\006targe"
-  "t\030\001 \001(\0132\024.Protocol.AxialCoord\"@\n\006S_MOVE\022"
-  "\021\n\tobject_id\030\001 \001(\004\022#\n\005axial\030\002 \001(\0132\024.Prot"
-  "ocol.AxialCoord\"\025\n\006C_CHAT\022\013\n\003msg\030\001 \001(\t\"\'"
-  "\n\006S_CHAT\022\020\n\010playerId\030\001 \001(\004\022\013\n\003msg\030\002 \001(\tb"
-  "\006proto3"
+  "\"\t\n\007C_LOGIN\"\032\n\007S_LOGIN\022\017\n\007success\030\001 \001(\010\""
+  "#\n\014C_ENTER_GAME\022\023\n\013playerIndex\030\001 \001(\004\"E\n\014"
+  "S_ENTER_GAME\022\017\n\007success\030\001 \001(\010\022$\n\006player\030"
+  "\002 \001(\0132\024.Protocol.ObjectInfo\"\016\n\014C_LEAVE_G"
+  "AME\"\016\n\014S_LEAVE_GAME\"0\n\007S_SPAWN\022%\n\007player"
+  "s\030\001 \003(\0132\024.Protocol.ObjectInfo\"\037\n\tS_DESPA"
+  "WN\022\022\n\nobject_ids\030\001 \003(\004\".\n\006C_MOVE\022$\n\006targ"
+  "et\030\001 \001(\0132\024.Protocol.AxialCoord\"@\n\006S_MOVE"
+  "\022\021\n\tobject_id\030\001 \001(\004\022#\n\005axial\030\002 \001(\0132\024.Pro"
+  "tocol.AxialCoord\"\025\n\006C_CHAT\022\013\n\003msg\030\001 \001(\t\""
+  "\'\n\006S_CHAT\022\020\n\010playerId\030\001 \001(\004\022\013\n\003msg\030\002 \001(\t"
+  "b\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[1] = {
   &::descriptor_table_Struct_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_Protocol_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Protocol_2eproto = {
-    false, false, 527, descriptor_table_protodef_Protocol_2eproto,
+    false, false, 488, descriptor_table_protodef_Protocol_2eproto,
     "Protocol.proto",
     &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 1, 12,
     schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
@@ -380,9 +377,6 @@ class S_LOGIN::_Internal {
  public:
 };
 
-void S_LOGIN::clear_players() {
-  _impl_.players_.Clear();
-}
 S_LOGIN::S_LOGIN(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -393,8 +387,7 @@ S_LOGIN::S_LOGIN(const S_LOGIN& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   S_LOGIN* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.players_){from._impl_.players_}
-    , decltype(_impl_.success_){}
+      decltype(_impl_.success_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -407,8 +400,7 @@ inline void S_LOGIN::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.players_){arena}
-    , decltype(_impl_.success_){false}
+      decltype(_impl_.success_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -424,7 +416,6 @@ S_LOGIN::~S_LOGIN() {
 
 inline void S_LOGIN::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.players_.~RepeatedPtrField();
 }
 
 void S_LOGIN::SetCachedSize(int size) const {
@@ -437,7 +428,6 @@ void S_LOGIN::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.players_.Clear();
   _impl_.success_ = false;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -453,19 +443,6 @@ const char* S_LOGIN::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
           _impl_.success_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // repeated .Protocol.ObjectInfo players = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
-          ptr -= 1;
-          do {
-            ptr += 1;
-            ptr = ctx->ParseMessage(_internal_add_players(), ptr);
-            CHK_(ptr);
-            if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
         } else
           goto handle_unusual;
         continue;
@@ -504,14 +481,6 @@ uint8_t* S_LOGIN::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteBoolToArray(1, this->_internal_success(), target);
   }
 
-  // repeated .Protocol.ObjectInfo players = 2;
-  for (unsigned i = 0,
-      n = static_cast<unsigned>(this->_internal_players_size()); i < n; i++) {
-    const auto& repfield = this->_internal_players(i);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
-  }
-
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -527,13 +496,6 @@ size_t S_LOGIN::ByteSizeLong() const {
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
-
-  // repeated .Protocol.ObjectInfo players = 2;
-  total_size += 1UL * this->_internal_players_size();
-  for (const auto& msg : this->_impl_.players_) {
-    total_size +=
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
-  }
 
   // bool success = 1;
   if (this->_internal_success() != 0) {
@@ -558,7 +520,6 @@ void S_LOGIN::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOB
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  _this->_impl_.players_.MergeFrom(from._impl_.players_);
   if (from._internal_success() != 0) {
     _this->_internal_set_success(from._internal_success());
   }
@@ -579,7 +540,6 @@ bool S_LOGIN::IsInitialized() const {
 void S_LOGIN::InternalSwap(S_LOGIN* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  _impl_.players_.InternalSwap(&other->_impl_.players_);
   swap(_impl_.success_, other->_impl_.success_);
 }
 

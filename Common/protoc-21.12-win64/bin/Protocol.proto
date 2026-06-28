@@ -11,7 +11,6 @@ message C_LOGIN
 message S_LOGIN
 {
 	bool success = 1;
-	repeated ObjectInfo players = 2;
 }
 
 message C_ENTER_GAME
