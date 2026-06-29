@@ -25,6 +25,8 @@ private:
 	bool RemoveObject(uint64 objectId);
 	PlayerRef GetPlayerInRoom(GameSessionRef session);
 	void SendEnterGame(PlayerRef player, bool success);
+	void SendSpawn(ObjectRef object, uint64 exceptId = 0);
+	void SendExistingPlayers(PlayerRef player);
 
 private:
 	void Broadcast(SendBufferRef sendBuffer, uint64 exceptId = 0);

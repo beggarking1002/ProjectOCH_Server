@@ -6,6 +6,18 @@
 #include "ObjectUtils.h"
 
 RoomRef GRoom = make_shared<Room>();
+namespace
+{
+	constexpr int32 kFieldFixedPointScale = 100;
+	constexpr int32 kSpawnMinWorld = 0;
+	constexpr int32 kSpawnMaxWorld = 20;
+	constexpr uint32 kMoveDurationMs = 300;
+
+	int32 ToFixed(int32 worldValue)
+	{
+		return worldValue * kFieldFixedPointScale;
+	}
+}
 
 Room::Room()
 {
@@ -28,54 +40,21 @@ bool Room::EnterRoom(ObjectRef object, bool randPos /*= true*/)
 		return false;
 	}
 
-	// 랜덤 위치
 	if (randPos)
 	{
-		object->position->set_x(Utils::GetRandom<int32>(0, 20));
-		object->position->set_y(Utils::GetRandom<int32>(0, 20));
+		object->position->set_x(ToFixed(Utils::GetRandom<int32>(kSpawnMinWorld, kSpawnMaxWorld)));
+		object->position->set_y(ToFixed(Utils::GetRandom<int32>(kSpawnMinWorld, kSpawnMaxWorld)));
 	}
 
-	// 입장 사실을 신입 플레이어에게 알린다
 	if (auto player = dynamic_pointer_cast<Player>(object))
+	{
 		SendEnterGame(player, true);
-
-	// 입장 사실을 다른 플레이어에게 알린다
-	{
-		Protocol::S_SPAWN spawnPkt;
-
-		Protocol::ObjectInfo* objectInfo = spawnPkt.add_players();
-		objectInfo->CopyFrom(*object->objectInfo);
-
-		SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(spawnPkt);
-		Broadcast(sendBuffer, object->objectInfo->object_id());
+		SendExistingPlayers(player);
 	}
 
-	// 기존 입장한 플레이어 목록을 신입 플레이어한테 전송해준다
-	if (auto player = dynamic_pointer_cast<Player>(object))
-	{
-		Protocol::S_SPAWN spawnPkt;
+	SendSpawn(object, object->objectInfo->object_id());
 
-		const uint64 objectId = object->objectInfo->object_id();
-		for (auto& item : _objects)
-		{
-			if (item.second->IsPlayer() == false)
-				continue;
-			if (item.second->objectInfo->object_id() == objectId)
-				continue;
-
-			Protocol::ObjectInfo* playerInfo = spawnPkt.add_players();
-			playerInfo->CopyFrom(*item.second->objectInfo);
-		}
-
-		if (spawnPkt.players_size() > 0)
-		{
-			SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(spawnPkt);
-			if (auto session = player->session.lock())
-				session->Send(sendBuffer);
-		}
-	}
-
-	return success;
+	return true;
 }
 
 bool Room::LeaveRoom(ObjectRef object)
@@ -130,6 +109,7 @@ bool Room::HandleEnterPlayer(PlayerRef player)
 	if (player->room.load().lock())
 	{
 		SendEnterGame(player, true);
+		SendExistingPlayers(player);
 		return true;
 	}
 
@@ -156,24 +136,24 @@ void Room::HandleMove(GameSessionRef session, Protocol::C_MOVE pkt)
 
 	const uint64 objectId = player->objectInfo->object_id();
 	cout << "C_MOVE object_id=" << objectId
-		<< " x=" << pkt.target().x()
-		<< " y=" << pkt.target().y() << endl;
+		<< " fixed_x=" << pkt.target().x()
+		<< " fixed_y=" << pkt.target().y()
+		<< " world_x=" << static_cast<float>(pkt.target().x()) / kFieldFixedPointScale
+		<< " world_y=" << static_cast<float>(pkt.target().y()) / kFieldFixedPointScale << endl;
 
-	// 이동 사실을 알린다 (본인 포함? 빼고?)
-	{
-		Protocol::S_MOVE movePkt;
-		movePkt.set_object_id(objectId);
-		movePkt.mutable_start()->set_x(player->position->x());
-		movePkt.mutable_start()->set_y(player->position->y());
-		movePkt.mutable_target()->CopyFrom(pkt.target());
-		movePkt.set_duration_ms(300);
+	Protocol::Vec2Fixed start;
+	start.CopyFrom(*player->position);
 
-		player->position->set_x(pkt.target().x());
-		player->position->set_y(pkt.target().y());
+	player->position->CopyFrom(pkt.target());
 
-		SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(movePkt);
-		Broadcast(sendBuffer);
-	}
+	Protocol::S_MOVE movePkt;
+	movePkt.set_object_id(objectId);
+	movePkt.mutable_start()->CopyFrom(start);
+	movePkt.mutable_target()->CopyFrom(*player->position);
+	movePkt.set_duration_ms(kMoveDurationMs);
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(movePkt);
+	Broadcast(sendBuffer);
 }
 
 void Room::UpdateTick()
@@ -256,6 +236,46 @@ void Room::SendEnterGame(PlayerRef player, bool success)
 		enterGamePkt.mutable_player()->CopyFrom(*player->objectInfo);
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(enterGamePkt);
+	if (auto session = player->session.lock())
+		session->Send(sendBuffer);
+}
+
+void Room::SendSpawn(ObjectRef object, uint64 exceptId)
+{
+	if (object == nullptr)
+		return;
+
+	Protocol::S_SPAWN spawnPkt;
+	Protocol::ObjectInfo* objectInfo = spawnPkt.add_players();
+	objectInfo->CopyFrom(*object->objectInfo);
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(spawnPkt);
+	Broadcast(sendBuffer, exceptId);
+}
+
+void Room::SendExistingPlayers(PlayerRef player)
+{
+	if (player == nullptr)
+		return;
+
+	Protocol::S_SPAWN spawnPkt;
+
+	const uint64 objectId = player->objectInfo->object_id();
+	for (auto& item : _objects)
+	{
+		if (item.second->IsPlayer() == false)
+			continue;
+		if (item.second->objectInfo->object_id() == objectId)
+			continue;
+
+		Protocol::ObjectInfo* playerInfo = spawnPkt.add_players();
+		playerInfo->CopyFrom(*item.second->objectInfo);
+	}
+
+	if (spawnPkt.players_size() == 0)
+		return;
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(spawnPkt);
 	if (auto session = player->session.lock())
 		session->Send(sendBuffer);
 }
