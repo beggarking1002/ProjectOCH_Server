@@ -64,6 +64,9 @@
     <ClCompile Include="Creature.cpp">
       <Filter>Game\Object</Filter>
     </ClCompile>
+    <ClCompile Include="FieldWalkMapData.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -105,6 +108,9 @@
     </ClInclude>
     <ClInclude Include="Creature.h">
       <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldWalkMapData.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

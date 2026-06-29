@@ -4,19 +4,12 @@
 #include "GameSession.h"
 #include "Monster.h"
 #include "ObjectUtils.h"
+#include "FieldWalkMapData.h"
 
 RoomRef GRoom = make_shared<Room>();
 namespace
 {
-	constexpr int32 kFieldFixedPointScale = 100;
-	constexpr int32 kSpawnMinWorld = 0;
-	constexpr int32 kSpawnMaxWorld = 10;
 	constexpr uint32 kMoveDurationMs = 300;
-
-	int32 ToFixed(int32 worldValue)
-	{
-		return worldValue * kFieldFixedPointScale;
-	}
 }
 
 Room::Room()
@@ -42,8 +35,9 @@ bool Room::EnterRoom(ObjectRef object, bool randPos /*= true*/)
 
 	if (randPos)
 	{
-		object->position->set_x(ToFixed(Utils::GetRandom<int32>(kSpawnMinWorld, kSpawnMaxWorld)));
-		object->position->set_y(ToFixed(Utils::GetRandom<int32>(kSpawnMinWorld, kSpawnMaxWorld)));
+		Protocol::Vec2Fixed spawnPosition;
+		if (GFieldWalkMapData.TryGetRandomWalkablePosition(spawnPosition))
+			object->position->CopyFrom(spawnPosition);
 	}
 
 	if (auto player = dynamic_pointer_cast<Player>(object))
@@ -135,14 +129,34 @@ void Room::HandleMove(GameSessionRef session, Protocol::C_MOVE pkt)
 		return;
 
 	const uint64 objectId = player->objectInfo->object_id();
+	int32 cellX = 0;
+	int32 cellY = 0;
+	const bool walkable = GFieldWalkMapData.IsWalkableFixed(pkt.target(), cellX, cellY);
+
 	cout << "C_MOVE object_id=" << objectId
 		<< " fixed_x=" << pkt.target().x()
 		<< " fixed_y=" << pkt.target().y()
-		<< " world_x=" << static_cast<float>(pkt.target().x()) / kFieldFixedPointScale
-		<< " world_y=" << static_cast<float>(pkt.target().y()) / kFieldFixedPointScale << endl;
+		<< " cell_x=" << cellX
+		<< " cell_y=" << cellY
+		<< " walkable=" << walkable << endl;
 
 	Protocol::Vec2Fixed start;
 	start.CopyFrom(*player->position);
+
+	if (walkable == false)
+	{
+		Protocol::S_MOVE rejectPkt;
+		rejectPkt.set_object_id(objectId);
+		rejectPkt.mutable_start()->CopyFrom(start);
+		rejectPkt.mutable_target()->CopyFrom(start);
+		rejectPkt.set_duration_ms(0);
+
+		SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(rejectPkt);
+		if (auto playerSession = player->session.lock())
+			playerSession->Send(sendBuffer);
+
+		return;
+	}
 
 	player->position->CopyFrom(pkt.target());
 

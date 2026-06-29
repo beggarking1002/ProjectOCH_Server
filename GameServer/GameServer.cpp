@@ -10,6 +10,7 @@
 #include "Job.h"
 #include "Protocol.pb.h"
 #include "Room.h"
+#include "FieldWalkMapData.h"
 
 enum
 {
@@ -35,6 +36,8 @@ void DoWorkerJob(ServerServiceRef& service)
 
 int main()
 {
+	ASSERT_CRASH(GFieldWalkMapData.LoadFromFile("C:\\ProjectOCH\\Server\\Data\\Maps\\Field_001.walkmap.json"));
+
 	ServerPacketHandler::Init();
 
 	ServerServiceRef service = make_shared<ServerService>(
