@@ -10,7 +10,7 @@ namespace
 {
 	constexpr int32 kFieldFixedPointScale = 100;
 	constexpr int32 kSpawnMinWorld = 0;
-	constexpr int32 kSpawnMaxWorld = 20;
+	constexpr int32 kSpawnMaxWorld = 10;
 	constexpr uint32 kMoveDurationMs = 300;
 
 	int32 ToFixed(int32 worldValue)
