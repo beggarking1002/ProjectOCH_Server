@@ -1,19 +1,20 @@
-﻿# GameServer Flow
+# GameServer Flow
 
 ## 시작점
 
 `GameServer\GameServer.cpp`의 `main()`:
 
-1. `ServerPacketHandler::Init()`
-2. `ServerService` 생성
+1. `GFieldWalkMapData.LoadFromFile("C:\\ProjectOCH\\Server\\Data\\Maps\\Field_001.walkmap.json")`
+2. `ServerPacketHandler::Init()`
+3. `ServerService` 생성
    - address: `127.0.0.1:7777`
    - core: `make_shared<IocpCore>()`
    - session factory: `make_shared<GameSession>()`
    - max session: `100`
-3. `service->Start()`
-4. worker thread 5개 실행
-5. `GRoom->DoAsync(&Room::UpdateTick)`
-6. main thread는 sleep loop
+4. `service->Start()`
+5. worker thread 5개 실행
+6. `GRoom->DoAsync(&Room::UpdateTick)`
+7. main thread는 sleep loop
 
 worker loop인 `DoWorkerJob()`는 반복적으로 다음 일을 한다.
 
@@ -26,19 +27,18 @@ worker loop인 `DoWorkerJob()`는 반복적으로 다음 일을 한다.
 `GameSession`은 `PacketSession`을 상속한다.
 
 - `OnConnected()`
-  - `GSessionManager.Add(...)`
+  - `GSessionManager.Add(session)`
+  - 이 시점에는 player를 만들거나 room에 넣지 않는다.
 - `OnDisconnected()`
-  - `GSessionManager.Remove(...)`
+  - session에 player가 있으면 player의 room에 `Room::HandleLeavePlayer`를 `DoAsync`로 요청한다.
+  - room이 없으면 `session->player`만 비운다.
+  - `GSessionManager.Remove(session)`
 - `OnRecvPacket()`
   - `ServerPacketHandler::HandlePacket(session, buffer, len)`
 
-`GameSessionManager`는 접속 중인 `GameSession`들을 set으로 관리하고 broadcast를 제공한다.
+## 현재 패킷
 
-## 패킷 핸들러
-
-`ServerPacketHandler::Init()`는 `GPacketHandler[UINT16_MAX]`를 모두 `Handle_INVALID`로 초기화한 뒤, C_ 패킷 id에 handler lambda를 넣는다.
-
-현재 server가 받는 패킷:
+server가 받는 패킷:
 
 - `C_LOGIN`
 - `C_ENTER_GAME`
@@ -46,7 +46,7 @@ worker loop인 `DoWorkerJob()`는 반복적으로 다음 일을 한다.
 - `C_MOVE`
 - `C_CHAT`
 
-현재 server가 보내는 패킷:
+server가 보내는 패킷:
 
 - `S_LOGIN`
 - `S_ENTER_GAME`
@@ -60,25 +60,33 @@ worker loop인 `DoWorkerJob()`는 반복적으로 다음 일을 한다.
 
 `Handle_C_LOGIN()`:
 
-1. TODO 주석상 DB에서 account/user 정보를 읽을 예정.
-2. 현재는 임시로 player 3개를 만들고 random position을 넣는다.
-3. `S_LOGIN.success = true`.
-4. `SEND_PACKET(loginPkt)`.
+1. 현재는 DB 조회 없이 `S_LOGIN.success = true`.
+2. `SEND_PACKET(loginPkt)`.
+
+로그인은 접속 검증 역할만 한다. player 생성과 room 입장은 `C_ENTER_GAME`에서 한다.
 
 ## 게임 입장
 
 `Handle_C_ENTER_GAME()`:
 
-1. `ObjectUtils::CreatePlayer(gameSession)`로 `Player` 생성.
-2. `GRoom->DoAsync(&Room::HandleEnterPlayer, player)`로 룸 job queue에 입장 처리 요청.
+1. session에 player가 없으면 `ObjectUtils::CreatePlayer(gameSession)`로 생성한다.
+2. `GRoom->DoAsync(&Room::HandleEnterPlayer, player)`.
+
+`Room::HandleEnterPlayer()`:
+
+1. player/session 관계가 유효한지 확인한다.
+2. 이미 room에 있으면 `S_ENTER_GAME`과 기존 플레이어 `S_SPAWN`을 다시 보낸다.
+3. room에 없으면 `EnterRoom(player, true)`.
 
 `Room::EnterRoom()`:
 
 1. `_objects`에 object 등록.
-2. random position 부여.
-3. 신입 player에게 `S_ENTER_GAME` 전송.
-4. 다른 player들에게 `S_SPAWN` 전송.
-5. 기존 player 목록을 신입 player에게 `S_SPAWN`으로 전송.
+2. `FieldWalkMapData::TryGetRandomWalkablePosition()`으로 walkable spawn position 부여.
+3. 신입 player에게 `S_ENTER_GAME(success=true, player=ObjectInfo)` 전송.
+4. 신입 player에게 기존 player 목록을 `S_SPAWN`으로 전송.
+5. 다른 player들에게 신입 object를 `S_SPAWN`으로 전송.
+
+Unity client 쪽 `FieldObjectManager`는 `S_ENTER_GAME.Player`를 내 pawn 생성 기준으로 사용하고, `S_SPAWN`을 다른 player pawn 생성/갱신 기준으로 사용한다.
 
 ## 게임 퇴장
 
@@ -86,29 +94,63 @@ worker loop인 `DoWorkerJob()`는 반복적으로 다음 일을 한다.
 
 1. session에서 player를 얻는다.
 2. player가 속한 room을 얻는다.
-3. 현재 코드는 `room->HandleLeavePlayer(player)`를 직접 호출한다.
+3. `room->DoAsync(&Room::HandleLeavePlayer, gameSession)`.
 
-주의: `C_ENTER_GAME`, `C_MOVE`는 `DoAsync()`를 쓰지만 leave는 직접 호출한다. Room state 일관성을 위해 나중에 `DoAsync()` 대상인지 검토할 필요가 있다.
+`GameSession::OnDisconnected()`도 같은 방향으로 room leave를 `DoAsync`로 보낸다.
 
 `Room::LeaveRoom()`:
 
-1. `_objects`에서 제거.
+1. `_objects`에서 object 제거.
 2. 퇴장 player에게 `S_LEAVE_GAME` 전송.
-3. 주변 player와 본인에게 `S_DESPAWN` 전송.
+3. 주변 player와 본인에게 `S_DESPAWN(object_id)` 전송.
+4. session의 player 참조를 정리한다.
 
 ## 이동
+
+`C_MOVE.target`은 `Vec2Fixed` fixed-point world 좌표다.
 
 `Handle_C_MOVE()`:
 
 1. session에서 player를 얻는다.
 2. player room을 얻는다.
-3. `room->DoAsync(&Room::HandleMove, pkt)`로 이동 처리 요청.
+3. `room->DoAsync(&Room::HandleMove, gameSession, pkt)`.
 
 `Room::HandleMove()`:
 
-1. `pkt.info().object_id()`로 object를 찾는다.
-2. player의 `posInfo`를 packet info로 갱신한다.
-3. `S_MOVE`를 만들어 room 전체에 broadcast한다.
+1. `GetPlayerInRoom(session)`으로 session과 room에 묶인 player인지 재검증한다.
+2. `pkt.target` 존재 여부를 확인한다.
+3. `FieldWalkMapData::IsWalkableFixed(pkt.target, cellX, cellY)`로 target을 검증한다.
+4. walkable이면:
+   - 현재 서버 위치를 `start`로 저장.
+   - `player->position`을 target으로 갱신.
+   - `S_MOVE(object_id, start, target, duration_ms=300)`을 room 전체에 broadcast.
+5. walkable이 아니면:
+   - 서버 위치는 갱신하지 않는다.
+   - 요청 client에게만 `S_MOVE(object_id, start=current, target=current, duration_ms=0)`을 보내 보정한다.
+
+## FieldWalkMapData
+
+`FieldWalkMapData`는 Unity exporter가 만든 JSON을 읽는다.
+
+```text
+C:\ProjectOCH\Server\Data\Maps\Field_001.walkmap.json
+```
+
+주요 데이터:
+
+- `fixed_point_scale`: fixed world 좌표 스케일. 현재 100.
+- `cell_size`: Unity Grid cell size. 현재 Field_001은 x 0.95, y 1.0.
+- `origin_world`: tilemap origin.
+- `walkable_ranges`: row별 inclusive `x_min..x_max`.
+
+현재 `Field_001`은 Unity Hexagon Grid다.
+
+- row stride는 `cellSize.y * 0.75`.
+- odd row에는 x offset `0.5 * cellSize.x`가 적용된다.
+- 서버 `FixedToCell`은 주변 후보 cell center 중 가장 가까운 cell을 고른다.
+- 서버 `CellToFixed`는 Unity `GetCellCenterWorld`와 맞는 cell center를 만든다.
+
+`walkable_ranges`가 비어 있으면 서버 시작 시 `Empty walkable_ranges` 오류가 난다. 이 경우 Unity exporter에서 `Ground_Tilemap`이 잘 잡혔는지 확인해야 한다.
 
 ## 오브젝트 모델
 
@@ -121,7 +163,7 @@ Object
    └─ Monster
 ```
 
-`Object`는 protobuf `ObjectInfo`와 `PosInfo`를 들고 있고, room weak reference를 가진다.
+`Object`는 `unique_ptr<Protocol::ObjectInfo>`를 소유하고, `Protocol::Vec2Fixed* position`은 `ObjectInfo.position`을 가리킨다.
 
 `Player`는 `GameSession` weak reference를 가진다. session 쪽에는 `atomic<shared_ptr<Player>> player`가 있다.
 
@@ -129,7 +171,6 @@ Object
 
 - 로그인 DB 조회.
 - 채팅 처리.
-- disconnect 시 room에서 player 제거 여부 확인 필요.
-- `Service::CloseService()` 구현.
-- IOCP error logging.
-
+- 여러 room/map 확장.
+- 이동 속도, 최대 이동 거리, path 검증.
+- IOCP error logging 보강.

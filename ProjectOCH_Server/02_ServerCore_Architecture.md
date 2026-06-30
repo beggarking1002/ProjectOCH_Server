@@ -84,6 +84,15 @@ struct PacketHeader
 - 작업이 몰리면 worker tick 시간 제한 후 `GlobalQueue`로 넘겨 다른 워커가 이어서 처리한다.
 - timer job은 `JobTimer`가 tick 기준으로 예약하고, worker loop에서 `DistributeReservedJobs()`가 배포한다.
 
+현재 `GameServer`의 room state 변경은 이 방향으로 맞춰져 있다.
+
+- `C_ENTER_GAME` -> `Room::HandleEnterPlayer`
+- `C_LEAVE_GAME` -> `Room::HandleLeavePlayer`
+- disconnect -> `Room::HandleLeavePlayer`
+- `C_MOVE` -> `Room::HandleMove`
+
+이 흐름 덕분에 `_objects`, player room reference, 위치 갱신, spawn/despawn/move broadcast가 같은 room job queue 안에서 처리된다.
+
 관련 TLS:
 
 - `LThreadId`: worker thread id.
@@ -102,6 +111,7 @@ struct PacketHeader
 
 ## 수정 시 조심할 점
 
+- `Room` 내부 state를 직접 만지는 새 코드는 가능하면 `DoAsync` 경유로 넣는다.
 - `IocpEvent.owner`는 overlapped 작업 중 객체 lifetime을 붙잡는 참조 역할을 한다. 완료/실패 시 적절히 `nullptr`로 풀어준다.
 - `Session::RegisterSend()` 내부 lock 처리 주석이 남아 있다. 송신 큐 관련 변경은 race condition을 특히 조심해야 한다.
 - `IocpCore::Dispatch()`의 실패 branch에서 `iocpEvent`가 null일 가능성을 고려해야 한다. 현재 코드는 timeout 외 default에서 곧바로 `iocpEvent->owner`를 사용한다.

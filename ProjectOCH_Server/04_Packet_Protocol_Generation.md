@@ -1,8 +1,8 @@
-﻿# Packet Protocol Generation
+# Packet Protocol Generation
 
 ## 현재 기준 proto 위치
 
-가장 신뢰할 원본은 다음 경로로 보인다.
+가장 신뢰할 원본은 다음 경로다.
 
 ```text
 C:\ProjectOCH\Server\Common\protoc-21.12-win64\bin
@@ -11,13 +11,67 @@ C:\ProjectOCH\Server\Common\protoc-21.12-win64\bin
 └─ Protocol.proto
 ```
 
-이유:
+`GenPackets.bat`가 이 위치에서 `protoc.exe`와 `GenPackets.exe`를 실행한다. 생성 결과는 `GameServer`, `DummyClient`, Unity client로 복사된다.
 
-- `GenPackets.bat`가 이 위치에서 `protoc.exe`를 실행한다.
-- 이 위치의 `Protocol.proto`에는 `S_SPAWN`, `C_MOVE`, `S_MOVE` 등이 들어 있다.
-- `GameServer\Protocol.pb.h`의 내용도 이 proto와 맞는다.
+## 현재 proto 요약
 
-반대로 `GameServer\Protocol.proto`, `GameServer\Struct.proto`는 현재 생성물과 맞지 않는 오래된 복사본으로 보인다.
+`Enum.proto`:
+
+- `ObjectType`
+  - `OBJECT_TYPE_NONE`
+  - `OBJECT_TYPE_CREATURE`
+  - `OBJECT_TYPE_PROJECTILE`
+  - `OBJECT_TYPE_ENV`
+- `CreatureType`
+  - `CREATURE_TYPE_NONE`
+  - `CREATURE_TYPE_PLAYER`
+  - `CREATURE_TYPE_MONSTER`
+  - `CREATURE_TYPE_NPC`
+
+`Struct.proto`:
+
+```proto
+message Vec2Fixed
+{
+    sint32 x = 1;
+    sint32 y = 2;
+}
+
+message ObjectInfo
+{
+    uint64 object_id = 1;
+    ObjectType object_type = 2;
+    CreatureType creature_type = 3;
+    Vec2Fixed position = 4;
+}
+```
+
+`Protocol.proto`:
+
+- `C_LOGIN` / `S_LOGIN`
+- `C_ENTER_GAME` / `S_ENTER_GAME`
+- `C_LEAVE_GAME` / `S_LEAVE_GAME`
+- `S_SPAWN`
+- `S_DESPAWN`
+- `C_MOVE` / `S_MOVE`
+- `C_CHAT` / `S_CHAT`
+
+이동 패킷:
+
+```proto
+message C_MOVE
+{
+    Vec2Fixed target = 1;
+}
+
+message S_MOVE
+{
+    uint64 object_id = 1;
+    Vec2Fixed start = 2;
+    Vec2Fixed target = 3;
+    uint32 duration_ms = 4;
+}
+```
 
 ## wire format
 
@@ -40,27 +94,46 @@ protobuf payload
 - send prefix: 실행 인자에 따라 `S_` 또는 `C_`
 - `message` 선언 순서대로 ID 증가
 
-따라서 proto 메시지 순서를 바꾸면 기존 ID가 바뀐다. 라이브 프로토콜을 유지해야 한다면 메시지는 뒤에 추가하는 방식이 안전하다.
+따라서 proto 메시지 순서를 바꾸면 기존 ID가 바뀐다. 라이브 프로토콜을 유지해야 한다면 기존 메시지는 건드리지 말고 뒤에 추가하는 방식이 안전하다.
+
+현재 순서 기준 주요 ID:
+
+- `C_LOGIN = 1000`
+- `S_LOGIN = 1001`
+- `C_ENTER_GAME = 1002`
+- `S_ENTER_GAME = 1003`
+- `C_LEAVE_GAME = 1004`
+- `S_LEAVE_GAME = 1005`
+- `S_SPAWN = 1006`
+- `S_DESPAWN = 1007`
+- `C_MOVE = 1008`
+- `S_MOVE = 1009`
+- `C_CHAT = 1010`
+- `S_CHAT = 1011`
 
 ## 생성 스크립트
 
 `Common\protoc-21.12-win64\bin\GenPackets.bat`가 하는 일:
 
 1. C++ protobuf 생성
-   - `protoc.exe -I=./ --cpp_out=./ ./Enum.proto`
-   - `protoc.exe -I=./ --cpp_out=./ ./Struct.proto`
-   - `protoc.exe -I=./ --cpp_out=./ ./Protocol.proto`
+   - `Enum.pb.h/.cc`
+   - `Struct.pb.h/.cc`
+   - `Protocol.pb.h/.cc`
 2. C# protobuf 생성
-   - `--csharp_out=.`
-3. packet handler 생성
-   - `ClientPacketHandler`: client가 받는 `S_`, 보내는 `C_`
-   - `ServerPacketHandler`: server가 받는 `C_`, 보내는 `S_`
-   - `PacketManager.cs`: C# client용으로 보임
+   - `Enum.cs`
+   - `Struct.cs`
+   - `Protocol.cs`
+3. packet helper 생성
+   - `ClientPacketHandler.h`: client가 받는 `S_`, 보내는 `C_`
+   - `ServerPacketHandler.h`: server가 받는 `C_`, 보내는 `S_`
+   - `PacketManager.cs`: Unity client용 packet routing
 4. 생성물을 복사
    - `GameServer`
    - `DummyClient`
-   - `..\..\..\..\Client\Assets\Scripts\Packet\Generated`
-5. bin 폴더 안의 임시 생성물 삭제
+   - `C:\ProjectOCH\Client\Assets\Scripts\Packet\Generated`
+5. 임시 생성물을 삭제
+
+현재 `GenPackets.bat`는 각 단계마다 `ERRORLEVEL`을 검사하고, `ClientPacketHandler.h`, `ServerPacketHandler.h`, `PacketManager.cs` 생성 누락을 감지한다.
 
 ## PacketGenerator
 
@@ -80,21 +153,25 @@ C:\ProjectOCH\Server\Tools\PacketGenerator
   - nested message나 특수 formatting에는 취약할 수 있다.
 - `Templates\PacketHandler.h`
   - C++ handler header template.
+  - 현재 Unreal 관련 include/분기는 제거되어 일반 C++ `make_shared` 기반이다.
 - `Templates\PacketManager.cs`
-  - C# packet manager template.
+  - Unity C# packet manager template.
+- `MakeExe.bat`
+  - `py -3 -m PyInstaller` 또는 `python -m PyInstaller`로 `GenPackets.exe`를 재생성한다.
+  - 생성된 exe를 `Common\protoc-21.12-win64\bin`으로 복사한다.
 
 ## 새 패킷 추가 절차
 
 1. `Common\protoc-21.12-win64\bin\Protocol.proto`에 message를 추가한다.
 2. 가능하면 기존 메시지 순서는 유지하고 맨 뒤에 추가한다.
-3. `GenPackets.bat`를 실행한다.
+3. `GenPackets.bat`를 실행하거나 `GameServer` 빌드의 pre-build로 생성한다.
 4. `GameServer`에 새 `Handle_C_*` 함수 구현을 추가한다.
-5. `DummyClient` 또는 Unity client 쪽 수신 handler를 갱신한다.
-6. Visual Studio에서 `Server.sln`을 빌드한다.
+5. Unity client 쪽 `PacketHandler`, `NetworkService`, gameplay 반영 코드를 갱신한다.
+6. 필요하면 `DummyClient\ClientPacketHandler.cpp`도 갱신한다.
+7. `Server.sln /t:GameServer` 빌드로 생성/컴파일을 검증한다.
 
-## 현재 불일치 메모
+## 주의사항
 
-- `GameServer\Protocol.proto`에는 `S_SPAWN`, `S_DESPAWN`, `C_MOVE`, `S_MOVE`가 없지만 `GameServer\Protocol.pb.h`에는 존재한다.
-- `GameServer\Struct.proto`에는 `Player`만 있으나, 생성된 코드와 `Common` 원본은 `ObjectInfo`, `PosInfo`를 사용한다.
-- 작업자가 proto를 수정할 때는 `GameServer` 폴더의 proto를 기준으로 삼지 말고 `Common` 쪽 원본을 먼저 확인해야 한다.
-
+- `GameServer` 폴더의 proto 파일은 빌드 결과로 복사되는 파일이다. 원본 수정은 `Common` 쪽에서 한다.
+- Unity client generated C#은 서버 루트 밖(`C:\ProjectOCH\Client`)으로 복사된다. 자동 빌드/검증 환경에서는 권한 이슈가 날 수 있다.
+- `GenPackets.bat`에는 `PAUSE`가 남아 있다. Visual Studio pre-build에서는 로그에 보이지만 현재 빌드는 통과한다.

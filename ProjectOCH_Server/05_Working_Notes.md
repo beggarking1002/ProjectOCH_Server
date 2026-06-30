@@ -1,13 +1,21 @@
-﻿# Working Notes
+# Working Notes
 
 ## 빌드 관련
 
 - 솔루션: `C:\ProjectOCH\Server\Server.sln`
-- IDE: Visual Studio 2022 계열로 보임.
+- IDE: Visual Studio 2022 계열.
 - 주요 configuration: Debug/Release, x64/Win32.
 - `ServerCore`는 static library로 빌드된다.
 - `GameServer`, `DummyClient`는 `Binaries\$(Configuration)\`로 출력된다.
 - `ServerCore` 산출물은 `Libraries\Libs\ServerCore\$(Configuration)\`로 출력된다.
+
+자주 쓰는 검증:
+
+```powershell
+& 'C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe' Server.sln /t:GameServer /p:Configuration=Debug /p:Platform=x64 /m:1
+```
+
+`GameServer` pre-build는 generated C#을 `C:\ProjectOCH\Client\Assets\Scripts\Packet\Generated`에 복사한다.
 
 ## 링크/Include
 
@@ -19,15 +27,22 @@
 - Library
   - `$(SolutionDir)Libraries\Libs\`
 
-`Libraries\Libs` 아래에는 protobuf 및 ServerCore lib가 있는 것으로 보인다.
+`Libraries\Libs` 아래에는 protobuf 및 ServerCore lib가 있다.
 
-## 코딩 스타일
+## 현재 구현 요약
 
-- C++17 전후 Visual Studio 스타일.
-- `shared_ptr` 기반 lifetime 관리.
-- 전역 ref type alias는 `Types.h` 쪽을 확인.
-- `USE_LOCK`, `READ_LOCK`, `WRITE_LOCK`, `ASSERT_CRASH`, `OUT` 같은 매크로는 `CoreMacro.h` 계열을 확인.
-- 컨텐츠 로직은 room job queue로 직렬화하는 방향이다.
+- 연결만으로 player를 만들지 않는다.
+- `C_LOGIN`은 현재 `S_LOGIN.success=true` 검증 응답만 보낸다.
+- `C_ENTER_GAME`에서 player를 생성하고 room 입장을 요청한다.
+- `Room` 상태 변경은 `DoAsync` 기반으로 직렬화한다.
+  - enter
+  - leave
+  - disconnect leave
+  - move
+- `ObjectInfo`는 `unique_ptr`로 소유한다.
+- 위치는 `Vec2Fixed position`만 사용한다.
+- 필드 이동 검증은 `Field_001.walkmap.json` 기반이다.
+- `Field_001`은 Unity Hexagon Grid이므로 서버 변환도 Hex row stride와 row parity offset을 반영한다.
 
 ## 자주 보는 흐름
 
@@ -35,6 +50,8 @@
 
 ```text
 GameServer.cpp
+-> GFieldWalkMapData.LoadFromFile(...)
+-> ServerPacketHandler::Init
 -> ServerService::Start
 -> Listener::StartAccept
 -> worker thread DoWorkerJob
@@ -54,20 +71,58 @@ Session::ProcessRecv
 ### 룸 작업
 
 ```text
-Handle_C_ENTER_GAME / Handle_C_MOVE
--> GRoom->DoAsync(...)
+Handle_C_ENTER_GAME / Handle_C_LEAVE_GAME / Handle_C_MOVE
+-> room->DoAsync(...)
 -> JobQueue::Push
 -> JobQueue::Execute
 -> Room::Handle*
 ```
 
+## FieldWalkMapData 체크리스트
+
+서버 시작 시 다음 파일을 읽는다.
+
+```text
+C:\ProjectOCH\Server\Data\Maps\Field_001.walkmap.json
+```
+
+정상 로그 예:
+
+```text
+[FieldWalkMapData] Loaded Field_001 rows=41 fixed_point_scale=100 cell_size=(0.95, 1)
+```
+
+`Empty walkable_ranges`가 나오면 서버 파서 문제가 아니라 JSON 안의 `walkable_ranges`가 실제로 비어 있을 가능성이 높다.
+
+확인할 것:
+
+- Unity exporter에서 `Field_001` prefab이 선택되었는가.
+- `Ground_Tilemap`이 실제 타일이 있는 tilemap인가.
+- `Copy To Server`로 `C:\ProjectOCH\Server\Data\Maps`에 제대로 덮어썼는가.
+- JSON 안에 `{ "y": ..., "x_min": ..., "x_max": ... }` 항목이 있는가.
+
+## 현재 프로토콜 체크리스트
+
+- `Struct.proto`
+  - `Vec2Fixed`
+  - `ObjectInfo.position`
+- `Protocol.proto`
+  - `S_ENTER_GAME.player`
+  - `S_SPAWN.players`
+  - `S_DESPAWN.object_ids`
+  - `C_MOVE.target`
+  - `S_MOVE.object_id/start/target/duration_ms`
+
+`S_LOGIN.players` 같은 로그인 단계 플레이어 목록은 현재 사용하지 않는다. 필드 입장 후 오브젝트 동기화는 `S_ENTER_GAME`과 `S_SPAWN`이 담당한다.
+
 ## 잠재 리스크/확인 포인트
 
-- `Handle_C_LEAVE_GAME()`는 `Room` job queue를 통하지 않고 `room->HandleLeavePlayer(player)`를 직접 호출한다.
-- disconnect 시 `GameSessionManager`에서는 제거되지만 room에서 player 제거가 자동으로 되는지 확인해야 한다.
+- `FieldWalkMapData` JSON 파서는 현재 프로젝트 스키마 전용의 작은 regex 기반 파서다. JSON 구조가 크게 바뀌면 수정이 필요하다.
+- Hex `FixedToCell`은 주변 후보 cell center 중 가장 가까운 cell을 고르는 방식이다. Unity `Grid.WorldToCell`과 경계 케이스가 완전히 같은지 실제 클릭 로그로 검증하면 좋다.
+- 현재 이동 검증은 target cell walkable 여부만 본다. 경로 중간 장애물, 최대 이동 거리, 속도 검증은 아직 없다.
+- 여러 map/room을 지원하려면 `GFieldWalkMapData`, `GRoom` 전역 구조를 map id/room id 기반으로 확장해야 한다.
 - `IocpCore::Dispatch()`의 error branch에서 `iocpEvent` null 가능성.
 - `Session::RegisterSend()`에서 `_sendQueue`를 비우는 부분은 lock 주석이 남아 있어 동시성 검토가 필요하다.
-- `Protocol.proto` 원본 위치가 중복되어 있다. `Common` 쪽을 우선한다.
 - `PacketGenerator`의 proto parser는 단순 문자열 기반이라 proto formatting 변화에 약하다.
 
 ## Git 상태
@@ -98,4 +153,3 @@ ProjectOCH 서버 구조를 파악한 뒤 작업해줘.
 - 패킷 처리나 룸 로직 변경은 `03_GameServer_Flow.md`를 갱신한다.
 - proto/패킷 생성 방식 변경은 `04_Packet_Protocol_Generation.md`를 갱신한다.
 - 작업 중 발견한 위험이나 TODO는 이 파일에 남긴다.
-
