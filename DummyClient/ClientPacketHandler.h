@@ -22,6 +22,8 @@ enum : uint16
 	PKT_S_ENTER_BATTLE = 1013,
 	PKT_C_BATTLE_MOVE = 1014,
 	PKT_S_BATTLE_MOVE = 1015,
+	PKT_C_BATTLE_SKILL = 1016,
+	PKT_S_BATTLE_SKILL = 1017,
 };
 
 // Custom Handlers
@@ -35,6 +37,7 @@ bool Handle_S_MOVE(PacketSessionRef& session, Protocol::S_MOVE& pkt);
 bool Handle_S_CHAT(PacketSessionRef& session, Protocol::S_CHAT& pkt);
 bool Handle_S_ENTER_BATTLE(PacketSessionRef& session, Protocol::S_ENTER_BATTLE& pkt);
 bool Handle_S_BATTLE_MOVE(PacketSessionRef& session, Protocol::S_BATTLE_MOVE& pkt);
+bool Handle_S_BATTLE_SKILL(PacketSessionRef& session, Protocol::S_BATTLE_SKILL& pkt);
 
 class ClientPacketHandler
 {
@@ -52,6 +55,7 @@ public:
 		GPacketHandler[PKT_S_CHAT] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_CHAT>(Handle_S_CHAT, session, buffer, len); };
 		GPacketHandler[PKT_S_ENTER_BATTLE] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_ENTER_BATTLE>(Handle_S_ENTER_BATTLE, session, buffer, len); };
 		GPacketHandler[PKT_S_BATTLE_MOVE] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_BATTLE_MOVE>(Handle_S_BATTLE_MOVE, session, buffer, len); };
+		GPacketHandler[PKT_S_BATTLE_SKILL] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_BATTLE_SKILL>(Handle_S_BATTLE_SKILL, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len)
@@ -66,6 +70,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::C_CHAT& pkt) { return MakeSendBuffer(pkt, PKT_C_CHAT); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_ENTER_BATTLE& pkt) { return MakeSendBuffer(pkt, PKT_C_ENTER_BATTLE); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_BATTLE_MOVE& pkt) { return MakeSendBuffer(pkt, PKT_C_BATTLE_MOVE); }
+	static SendBufferRef MakeSendBuffer(Protocol::C_BATTLE_SKILL& pkt) { return MakeSendBuffer(pkt, PKT_C_BATTLE_SKILL); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

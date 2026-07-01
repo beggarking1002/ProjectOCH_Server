@@ -47,6 +47,7 @@ server가 받는 패킷:
 - `C_CHAT`
 - `C_ENTER_BATTLE`
 - `C_BATTLE_MOVE`
+- `C_BATTLE_SKILL`
 
 server가 보내는 패킷:
 
@@ -59,6 +60,7 @@ server가 보내는 패킷:
 - `S_CHAT`
 - `S_ENTER_BATTLE`
 - `S_BATTLE_MOVE`
+- `S_BATTLE_SKILL`
 
 ## 로그인
 
@@ -157,6 +159,19 @@ Unity client 쪽 `FieldObjectManager`는 `S_ENTER_GAME.Player`를 내 pawn 생�
 2. 소유자, 현재 턴, hex radius 6 walkable 범위, axial 이동 거리, 점유 여부를 검사한다.
 3. 실패하면 `S_BATTLE_MOVE(success=false, result=...)`로 구체적인 실패 enum을 보낸다.
 4. 성공하면 pawn axial을 갱신하고 allied pawn 기준으로 다음 턴을 넘긴 뒤 `S_BATTLE_MOVE(success=true, result=OK)`를 보낸다.
+
+`Handle_C_BATTLE_SKILL()`:
+
+1. `GBattleRoom->DoAsync(&BattleRoom::HandleBattleSkill, gameSession, pkt)`로 위임한다.
+
+`BattleRoom::HandleBattleSkill()`:
+
+1. player/session, battle id, caster pawn id, target pawn id를 검증한다.
+2. caster 소유자와 현재 턴을 검증한다.
+3. `skill_slot`별 damage/range를 얻는다. 현재 slot 0은 damage 25/range 1, slot 1은 damage 35/range 3이다.
+4. target pawn 위치와 `target_axial`이 맞는지 확인하고, 사거리 안이면 target hp를 차감한다.
+5. 성공하면 allied pawn 기준으로 다음 턴을 넘기고 `S_BATTLE_SKILL(success=true, damage, target_hp, next_turn_pawn_id)`를 보낸다.
+6. 실패하면 `S_BATTLE_SKILL(success=false, reason=...)`을 보낸다.
 
 아직 실제 전투 룸, 적 AI, 턴 큐, 전투 종료, persistent battle state는 없다. 클라이언트 전투 UI/연동을 시작하기 위한 서버 응답 골격이다.
 

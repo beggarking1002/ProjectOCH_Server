@@ -161,6 +161,109 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 		Protocol::BATTLE_MOVE_RESULT_OK, "");
 }
 
+void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SKILL pkt)
+{
+	PlayerRef player = session ? session->player.load() : nullptr;
+
+	cout << "C_BATTLE_SKILL"
+		<< " battle_id=" << pkt.battle_id()
+		<< " caster_pawn_id=" << pkt.caster_pawn_id()
+		<< " skill_slot=" << pkt.skill_slot()
+		<< " target_pawn_id=" << pkt.target_pawn_id();
+	if (pkt.has_target_axial())
+		cout << " target_axial=(" << pkt.target_axial().q() << ", " << pkt.target_axial().r() << ")";
+	else
+		cout << " target_axial=<missing>";
+	cout << endl;
+
+	if (player == nullptr)
+	{
+		SendBattleSkillResult(session, false, pkt.battle_id(), pkt.caster_pawn_id(), pkt.skill_slot(), pkt.target_pawn_id(),
+			Protocol::AxialCoord::default_instance(), 0, 0, 0, "player is not in game");
+		return;
+	}
+
+	auto battleIt = _battles.find(pkt.battle_id());
+	if (battleIt == _battles.end())
+	{
+		SendBattleSkillResult(session, false, pkt.battle_id(), pkt.caster_pawn_id(), pkt.skill_slot(), pkt.target_pawn_id(),
+			pkt.has_target_axial() ? pkt.target_axial() : Protocol::AxialCoord::default_instance(), 0, 0, 0, "invalid battle");
+		return;
+	}
+
+	BattleState& battle = battleIt->second;
+	BattlePawnState* caster = FindPawn(battle, pkt.caster_pawn_id());
+	if (caster == nullptr)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, pkt.caster_pawn_id(), pkt.skill_slot(), pkt.target_pawn_id(),
+			pkt.has_target_axial() ? pkt.target_axial() : Protocol::AxialCoord::default_instance(), 0, 0,
+			battle.currentTurnPawnId, "invalid caster pawn");
+		return;
+	}
+
+	const uint64 ownerId = player->objectInfo->object_id();
+	if (caster->ownerId != ownerId)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
+			caster->axial, 0, 0, battle.currentTurnPawnId, "not owner");
+		return;
+	}
+
+	if (battle.currentTurnPawnId != caster->pawnId)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
+			caster->axial, 0, 0, battle.currentTurnPawnId, "not your turn");
+		return;
+	}
+
+	int32 damage = 0;
+	int32 range = 0;
+	string skillError;
+	if (TryGetSkillSpec(pkt.skill_slot(), damage, range, skillError) == false)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
+			caster->axial, 0, 0, battle.currentTurnPawnId, skillError);
+		return;
+	}
+
+	BattlePawnState* target = FindPawn(battle, pkt.target_pawn_id());
+	if (target == nullptr)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
+			pkt.has_target_axial() ? pkt.target_axial() : Protocol::AxialCoord::default_instance(), 0, 0,
+			battle.currentTurnPawnId, "invalid target pawn");
+		return;
+	}
+
+	const Protocol::AxialCoord targetAxial = pkt.has_target_axial() ? pkt.target_axial() : target->axial;
+	if (targetAxial.q() != target->axial.q() || targetAxial.r() != target->axial.r())
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
+			targetAxial, 0, target->hp, battle.currentTurnPawnId, "target axial mismatch");
+		return;
+	}
+
+	if (target->hp <= 0)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
+			target->axial, 0, target->hp, battle.currentTurnPawnId, "target is dead");
+		return;
+	}
+
+	if (AxialDistance(caster->axial, target->axial) > range)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
+			target->axial, 0, target->hp, battle.currentTurnPawnId, "target out of range");
+		return;
+	}
+
+	target->hp = max(0, target->hp - damage);
+	battle.currentTurnPawnId = GetNextAlliedTurnPawnId(battle, caster->pawnId);
+
+	SendBattleSkillResult(session, true, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
+		target->axial, damage, target->hp, battle.currentTurnPawnId, "");
+}
+
 BattleRoom::BattleState& BattleRoom::GetOrCreateBattle(uint64 ownerId)
 {
 	auto battleIdIt = _battleByOwnerId.find(ownerId);
@@ -305,6 +408,26 @@ uint64 BattleRoom::GetNextAlliedTurnPawnId(const BattleState& battle, uint64 cur
 	return battle.alliedPawns.front().pawnId;
 }
 
+bool BattleRoom::TryGetSkillSpec(int32 skillSlot, int32& damage, int32& range, string& reason)
+{
+	switch (skillSlot)
+	{
+	case 0:
+		damage = 25;
+		range = 1;
+		return true;
+	case 1:
+		damage = 35;
+		range = 3;
+		return true;
+	default:
+		damage = 0;
+		range = 0;
+		reason = "invalid skill slot";
+		return false;
+	}
+}
+
 void BattleRoom::SendEnterBattle(GameSessionRef session, Protocol::S_ENTER_BATTLE& pkt)
 {
 	if (session == nullptr)
@@ -343,5 +466,41 @@ void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint
 	movePkt.set_reason(reason);
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(movePkt);
+	session->Send(sendBuffer);
+}
+
+void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uint64 battleId, uint64 casterPawnId,
+	int32 skillSlot, uint64 targetPawnId, const Protocol::AxialCoord& targetAxial,
+	int32 damage, int32 targetHp, uint64 nextTurnPawnId, const string& reason)
+{
+	cout << "S_BATTLE_SKILL"
+		<< " success=" << success
+		<< " battle_id=" << battleId
+		<< " caster_pawn_id=" << casterPawnId
+		<< " skill_slot=" << skillSlot
+		<< " target_pawn_id=" << targetPawnId
+		<< " target_axial=(" << targetAxial.q() << ", " << targetAxial.r() << ")"
+		<< " damage=" << damage
+		<< " target_hp=" << targetHp
+		<< " next_turn_pawn_id=" << nextTurnPawnId
+		<< " reason=\"" << reason << "\""
+		<< endl;
+
+	if (session == nullptr)
+		return;
+
+	Protocol::S_BATTLE_SKILL skillPkt;
+	skillPkt.set_success(success);
+	skillPkt.set_battle_id(battleId);
+	skillPkt.set_caster_pawn_id(casterPawnId);
+	skillPkt.set_skill_slot(skillSlot);
+	skillPkt.set_target_pawn_id(targetPawnId);
+	skillPkt.mutable_target_axial()->CopyFrom(targetAxial);
+	skillPkt.set_damage(damage);
+	skillPkt.set_target_hp(targetHp);
+	skillPkt.set_next_turn_pawn_id(nextTurnPawnId);
+	skillPkt.set_reason(reason);
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(skillPkt);
 	session->Send(sendBuffer);
 }

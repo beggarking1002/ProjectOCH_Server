@@ -107,3 +107,24 @@ message S_BATTLE_MOVE
 	BattleMoveResult result = 7;
 	string reason = 8;
 }
+
+message C_BATTLE_SKILL {
+	uint64 battle_id = 1;
+	uint64 caster_pawn_id = 2;
+	int32 skill_slot = 3;
+	uint64 target_pawn_id = 4;
+	AxialCoord target_axial = 5;
+}
+
+message S_BATTLE_SKILL {
+	bool success = 1;
+	uint64 battle_id = 2;
+	uint64 caster_pawn_id = 3;
+	int32 skill_slot = 4;
+	uint64 target_pawn_id = 5;
+	AxialCoord target_axial = 6;
+	int32 damage = 7;
+	int32 target_hp = 8;
+	uint64 next_turn_pawn_id = 9;
+	string reason = 10;
+}

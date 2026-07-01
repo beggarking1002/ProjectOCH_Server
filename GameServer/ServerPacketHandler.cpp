@@ -98,3 +98,11 @@ bool Handle_C_BATTLE_MOVE(PacketSessionRef& session, Protocol::C_BATTLE_MOVE& pk
 
 	return true;
 }
+
+bool Handle_C_BATTLE_SKILL(PacketSessionRef& session, Protocol::C_BATTLE_SKILL& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+	GBattleRoom->DoAsync(&BattleRoom::HandleBattleSkill, gameSession, pkt);
+
+	return true;
+}

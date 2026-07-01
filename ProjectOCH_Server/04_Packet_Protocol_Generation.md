@@ -94,6 +94,7 @@ message BattlePawnInfo
 - `C_CHAT` / `S_CHAT`
 - `C_ENTER_BATTLE` / `S_ENTER_BATTLE`
 - `C_BATTLE_MOVE` / `S_BATTLE_MOVE`
+- `C_BATTLE_SKILL` / `S_BATTLE_SKILL`
 
 이동 패킷:
 
@@ -153,6 +154,8 @@ protobuf payload
 - `S_ENTER_BATTLE = 1013`
 - `C_BATTLE_MOVE = 1014`
 - `S_BATTLE_MOVE = 1015`
+- `C_BATTLE_SKILL = 1016`
+- `S_BATTLE_SKILL = 1017`
 
 ## 생성 스크립트
 
