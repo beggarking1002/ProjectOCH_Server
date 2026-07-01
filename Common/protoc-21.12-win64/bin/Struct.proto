@@ -9,10 +9,27 @@ message Vec2Fixed
 	sint32 y = 2;
 }
 
+message AxialCoord
+{
+	sint32 q = 1;
+	sint32 r = 2;
+}
+
 message ObjectInfo
 {
 	uint64 object_id = 1;
 	ObjectType object_type = 2;
 	CreatureType creature_type = 3;
 	Vec2Fixed position = 4;
+}
+
+message BattlePawnInfo
+{
+	uint64 pawn_id = 1;
+	uint64 owner_id = 2;
+	PawnClass pawn_class = 3;
+	AxialCoord axial = 4;
+	int32 hp = 5;
+	int32 max_hp = 6;
+	int32 move_range = 7;
 }

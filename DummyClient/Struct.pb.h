@@ -46,6 +46,12 @@ struct TableStruct_Struct_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Struct_2eproto;
 namespace Protocol {
+class AxialCoord;
+struct AxialCoordDefaultTypeInternal;
+extern AxialCoordDefaultTypeInternal _AxialCoord_default_instance_;
+class BattlePawnInfo;
+struct BattlePawnInfoDefaultTypeInternal;
+extern BattlePawnInfoDefaultTypeInternal _BattlePawnInfo_default_instance_;
 class ObjectInfo;
 struct ObjectInfoDefaultTypeInternal;
 extern ObjectInfoDefaultTypeInternal _ObjectInfo_default_instance_;
@@ -54,6 +60,8 @@ struct Vec2FixedDefaultTypeInternal;
 extern Vec2FixedDefaultTypeInternal _Vec2Fixed_default_instance_;
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
+template<> ::Protocol::AxialCoord* Arena::CreateMaybeMessage<::Protocol::AxialCoord>(Arena*);
+template<> ::Protocol::BattlePawnInfo* Arena::CreateMaybeMessage<::Protocol::BattlePawnInfo>(Arena*);
 template<> ::Protocol::ObjectInfo* Arena::CreateMaybeMessage<::Protocol::ObjectInfo>(Arena*);
 template<> ::Protocol::Vec2Fixed* Arena::CreateMaybeMessage<::Protocol::Vec2Fixed>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
@@ -220,6 +228,165 @@ class Vec2Fixed final :
 };
 // -------------------------------------------------------------------
 
+class AxialCoord final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.AxialCoord) */ {
+ public:
+  inline AxialCoord() : AxialCoord(nullptr) {}
+  ~AxialCoord() override;
+  explicit PROTOBUF_CONSTEXPR AxialCoord(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  AxialCoord(const AxialCoord& from);
+  AxialCoord(AxialCoord&& from) noexcept
+    : AxialCoord() {
+    *this = ::std::move(from);
+  }
+
+  inline AxialCoord& operator=(const AxialCoord& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline AxialCoord& operator=(AxialCoord&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const AxialCoord& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const AxialCoord* internal_default_instance() {
+    return reinterpret_cast<const AxialCoord*>(
+               &_AxialCoord_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    1;
+
+  friend void swap(AxialCoord& a, AxialCoord& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(AxialCoord* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(AxialCoord* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  AxialCoord* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<AxialCoord>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const AxialCoord& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const AxialCoord& from) {
+    AxialCoord::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(AxialCoord* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.AxialCoord";
+  }
+  protected:
+  explicit AxialCoord(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kQFieldNumber = 1,
+    kRFieldNumber = 2,
+  };
+  // sint32 q = 1;
+  void clear_q();
+  int32_t q() const;
+  void set_q(int32_t value);
+  private:
+  int32_t _internal_q() const;
+  void _internal_set_q(int32_t value);
+  public:
+
+  // sint32 r = 2;
+  void clear_r();
+  int32_t r() const;
+  void set_r(int32_t value);
+  private:
+  int32_t _internal_r() const;
+  void _internal_set_r(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.AxialCoord)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int32_t q_;
+    int32_t r_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Struct_2eproto;
+};
+// -------------------------------------------------------------------
+
 class ObjectInfo final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.ObjectInfo) */ {
  public:
@@ -268,7 +435,7 @@ class ObjectInfo final :
                &_ObjectInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    2;
 
   friend void swap(ObjectInfo& a, ObjectInfo& b) {
     a.Swap(&b);
@@ -408,6 +575,229 @@ class ObjectInfo final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_Struct_2eproto;
 };
+// -------------------------------------------------------------------
+
+class BattlePawnInfo final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.BattlePawnInfo) */ {
+ public:
+  inline BattlePawnInfo() : BattlePawnInfo(nullptr) {}
+  ~BattlePawnInfo() override;
+  explicit PROTOBUF_CONSTEXPR BattlePawnInfo(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  BattlePawnInfo(const BattlePawnInfo& from);
+  BattlePawnInfo(BattlePawnInfo&& from) noexcept
+    : BattlePawnInfo() {
+    *this = ::std::move(from);
+  }
+
+  inline BattlePawnInfo& operator=(const BattlePawnInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline BattlePawnInfo& operator=(BattlePawnInfo&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const BattlePawnInfo& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const BattlePawnInfo* internal_default_instance() {
+    return reinterpret_cast<const BattlePawnInfo*>(
+               &_BattlePawnInfo_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(BattlePawnInfo& a, BattlePawnInfo& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(BattlePawnInfo* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(BattlePawnInfo* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  BattlePawnInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<BattlePawnInfo>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const BattlePawnInfo& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const BattlePawnInfo& from) {
+    BattlePawnInfo::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BattlePawnInfo* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.BattlePawnInfo";
+  }
+  protected:
+  explicit BattlePawnInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kAxialFieldNumber = 4,
+    kPawnIdFieldNumber = 1,
+    kOwnerIdFieldNumber = 2,
+    kPawnClassFieldNumber = 3,
+    kHpFieldNumber = 5,
+    kMaxHpFieldNumber = 6,
+    kMoveRangeFieldNumber = 7,
+  };
+  // .Protocol.AxialCoord axial = 4;
+  bool has_axial() const;
+  private:
+  bool _internal_has_axial() const;
+  public:
+  void clear_axial();
+  const ::Protocol::AxialCoord& axial() const;
+  PROTOBUF_NODISCARD ::Protocol::AxialCoord* release_axial();
+  ::Protocol::AxialCoord* mutable_axial();
+  void set_allocated_axial(::Protocol::AxialCoord* axial);
+  private:
+  const ::Protocol::AxialCoord& _internal_axial() const;
+  ::Protocol::AxialCoord* _internal_mutable_axial();
+  public:
+  void unsafe_arena_set_allocated_axial(
+      ::Protocol::AxialCoord* axial);
+  ::Protocol::AxialCoord* unsafe_arena_release_axial();
+
+  // uint64 pawn_id = 1;
+  void clear_pawn_id();
+  uint64_t pawn_id() const;
+  void set_pawn_id(uint64_t value);
+  private:
+  uint64_t _internal_pawn_id() const;
+  void _internal_set_pawn_id(uint64_t value);
+  public:
+
+  // uint64 owner_id = 2;
+  void clear_owner_id();
+  uint64_t owner_id() const;
+  void set_owner_id(uint64_t value);
+  private:
+  uint64_t _internal_owner_id() const;
+  void _internal_set_owner_id(uint64_t value);
+  public:
+
+  // .Protocol.PawnClass pawn_class = 3;
+  void clear_pawn_class();
+  ::Protocol::PawnClass pawn_class() const;
+  void set_pawn_class(::Protocol::PawnClass value);
+  private:
+  ::Protocol::PawnClass _internal_pawn_class() const;
+  void _internal_set_pawn_class(::Protocol::PawnClass value);
+  public:
+
+  // int32 hp = 5;
+  void clear_hp();
+  int32_t hp() const;
+  void set_hp(int32_t value);
+  private:
+  int32_t _internal_hp() const;
+  void _internal_set_hp(int32_t value);
+  public:
+
+  // int32 max_hp = 6;
+  void clear_max_hp();
+  int32_t max_hp() const;
+  void set_max_hp(int32_t value);
+  private:
+  int32_t _internal_max_hp() const;
+  void _internal_set_max_hp(int32_t value);
+  public:
+
+  // int32 move_range = 7;
+  void clear_move_range();
+  int32_t move_range() const;
+  void set_move_range(int32_t value);
+  private:
+  int32_t _internal_move_range() const;
+  void _internal_set_move_range(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.BattlePawnInfo)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::Protocol::AxialCoord* axial_;
+    uint64_t pawn_id_;
+    uint64_t owner_id_;
+    int pawn_class_;
+    int32_t hp_;
+    int32_t max_hp_;
+    int32_t move_range_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Struct_2eproto;
+};
 // ===================================================================
 
 
@@ -457,6 +847,50 @@ inline void Vec2Fixed::_internal_set_y(int32_t value) {
 inline void Vec2Fixed::set_y(int32_t value) {
   _internal_set_y(value);
   // @@protoc_insertion_point(field_set:Protocol.Vec2Fixed.y)
+}
+
+// -------------------------------------------------------------------
+
+// AxialCoord
+
+// sint32 q = 1;
+inline void AxialCoord::clear_q() {
+  _impl_.q_ = 0;
+}
+inline int32_t AxialCoord::_internal_q() const {
+  return _impl_.q_;
+}
+inline int32_t AxialCoord::q() const {
+  // @@protoc_insertion_point(field_get:Protocol.AxialCoord.q)
+  return _internal_q();
+}
+inline void AxialCoord::_internal_set_q(int32_t value) {
+  
+  _impl_.q_ = value;
+}
+inline void AxialCoord::set_q(int32_t value) {
+  _internal_set_q(value);
+  // @@protoc_insertion_point(field_set:Protocol.AxialCoord.q)
+}
+
+// sint32 r = 2;
+inline void AxialCoord::clear_r() {
+  _impl_.r_ = 0;
+}
+inline int32_t AxialCoord::_internal_r() const {
+  return _impl_.r_;
+}
+inline int32_t AxialCoord::r() const {
+  // @@protoc_insertion_point(field_get:Protocol.AxialCoord.r)
+  return _internal_r();
+}
+inline void AxialCoord::_internal_set_r(int32_t value) {
+  
+  _impl_.r_ = value;
+}
+inline void AxialCoord::set_r(int32_t value) {
+  _internal_set_r(value);
+  // @@protoc_insertion_point(field_set:Protocol.AxialCoord.r)
 }
 
 // -------------------------------------------------------------------
@@ -613,9 +1047,227 @@ inline void ObjectInfo::set_allocated_position(::Protocol::Vec2Fixed* position) 
   // @@protoc_insertion_point(field_set_allocated:Protocol.ObjectInfo.position)
 }
 
+// -------------------------------------------------------------------
+
+// BattlePawnInfo
+
+// uint64 pawn_id = 1;
+inline void BattlePawnInfo::clear_pawn_id() {
+  _impl_.pawn_id_ = uint64_t{0u};
+}
+inline uint64_t BattlePawnInfo::_internal_pawn_id() const {
+  return _impl_.pawn_id_;
+}
+inline uint64_t BattlePawnInfo::pawn_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.pawn_id)
+  return _internal_pawn_id();
+}
+inline void BattlePawnInfo::_internal_set_pawn_id(uint64_t value) {
+  
+  _impl_.pawn_id_ = value;
+}
+inline void BattlePawnInfo::set_pawn_id(uint64_t value) {
+  _internal_set_pawn_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.pawn_id)
+}
+
+// uint64 owner_id = 2;
+inline void BattlePawnInfo::clear_owner_id() {
+  _impl_.owner_id_ = uint64_t{0u};
+}
+inline uint64_t BattlePawnInfo::_internal_owner_id() const {
+  return _impl_.owner_id_;
+}
+inline uint64_t BattlePawnInfo::owner_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.owner_id)
+  return _internal_owner_id();
+}
+inline void BattlePawnInfo::_internal_set_owner_id(uint64_t value) {
+  
+  _impl_.owner_id_ = value;
+}
+inline void BattlePawnInfo::set_owner_id(uint64_t value) {
+  _internal_set_owner_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.owner_id)
+}
+
+// .Protocol.PawnClass pawn_class = 3;
+inline void BattlePawnInfo::clear_pawn_class() {
+  _impl_.pawn_class_ = 0;
+}
+inline ::Protocol::PawnClass BattlePawnInfo::_internal_pawn_class() const {
+  return static_cast< ::Protocol::PawnClass >(_impl_.pawn_class_);
+}
+inline ::Protocol::PawnClass BattlePawnInfo::pawn_class() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.pawn_class)
+  return _internal_pawn_class();
+}
+inline void BattlePawnInfo::_internal_set_pawn_class(::Protocol::PawnClass value) {
+  
+  _impl_.pawn_class_ = value;
+}
+inline void BattlePawnInfo::set_pawn_class(::Protocol::PawnClass value) {
+  _internal_set_pawn_class(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.pawn_class)
+}
+
+// .Protocol.AxialCoord axial = 4;
+inline bool BattlePawnInfo::_internal_has_axial() const {
+  return this != internal_default_instance() && _impl_.axial_ != nullptr;
+}
+inline bool BattlePawnInfo::has_axial() const {
+  return _internal_has_axial();
+}
+inline void BattlePawnInfo::clear_axial() {
+  if (GetArenaForAllocation() == nullptr && _impl_.axial_ != nullptr) {
+    delete _impl_.axial_;
+  }
+  _impl_.axial_ = nullptr;
+}
+inline const ::Protocol::AxialCoord& BattlePawnInfo::_internal_axial() const {
+  const ::Protocol::AxialCoord* p = _impl_.axial_;
+  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::AxialCoord&>(
+      ::Protocol::_AxialCoord_default_instance_);
+}
+inline const ::Protocol::AxialCoord& BattlePawnInfo::axial() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.axial)
+  return _internal_axial();
+}
+inline void BattlePawnInfo::unsafe_arena_set_allocated_axial(
+    ::Protocol::AxialCoord* axial) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.axial_);
+  }
+  _impl_.axial_ = axial;
+  if (axial) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.BattlePawnInfo.axial)
+}
+inline ::Protocol::AxialCoord* BattlePawnInfo::release_axial() {
+  
+  ::Protocol::AxialCoord* temp = _impl_.axial_;
+  _impl_.axial_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::Protocol::AxialCoord* BattlePawnInfo::unsafe_arena_release_axial() {
+  // @@protoc_insertion_point(field_release:Protocol.BattlePawnInfo.axial)
+  
+  ::Protocol::AxialCoord* temp = _impl_.axial_;
+  _impl_.axial_ = nullptr;
+  return temp;
+}
+inline ::Protocol::AxialCoord* BattlePawnInfo::_internal_mutable_axial() {
+  
+  if (_impl_.axial_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Protocol::AxialCoord>(GetArenaForAllocation());
+    _impl_.axial_ = p;
+  }
+  return _impl_.axial_;
+}
+inline ::Protocol::AxialCoord* BattlePawnInfo::mutable_axial() {
+  ::Protocol::AxialCoord* _msg = _internal_mutable_axial();
+  // @@protoc_insertion_point(field_mutable:Protocol.BattlePawnInfo.axial)
+  return _msg;
+}
+inline void BattlePawnInfo::set_allocated_axial(::Protocol::AxialCoord* axial) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.axial_;
+  }
+  if (axial) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(axial);
+    if (message_arena != submessage_arena) {
+      axial = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, axial, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.axial_ = axial;
+  // @@protoc_insertion_point(field_set_allocated:Protocol.BattlePawnInfo.axial)
+}
+
+// int32 hp = 5;
+inline void BattlePawnInfo::clear_hp() {
+  _impl_.hp_ = 0;
+}
+inline int32_t BattlePawnInfo::_internal_hp() const {
+  return _impl_.hp_;
+}
+inline int32_t BattlePawnInfo::hp() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.hp)
+  return _internal_hp();
+}
+inline void BattlePawnInfo::_internal_set_hp(int32_t value) {
+  
+  _impl_.hp_ = value;
+}
+inline void BattlePawnInfo::set_hp(int32_t value) {
+  _internal_set_hp(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.hp)
+}
+
+// int32 max_hp = 6;
+inline void BattlePawnInfo::clear_max_hp() {
+  _impl_.max_hp_ = 0;
+}
+inline int32_t BattlePawnInfo::_internal_max_hp() const {
+  return _impl_.max_hp_;
+}
+inline int32_t BattlePawnInfo::max_hp() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.max_hp)
+  return _internal_max_hp();
+}
+inline void BattlePawnInfo::_internal_set_max_hp(int32_t value) {
+  
+  _impl_.max_hp_ = value;
+}
+inline void BattlePawnInfo::set_max_hp(int32_t value) {
+  _internal_set_max_hp(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.max_hp)
+}
+
+// int32 move_range = 7;
+inline void BattlePawnInfo::clear_move_range() {
+  _impl_.move_range_ = 0;
+}
+inline int32_t BattlePawnInfo::_internal_move_range() const {
+  return _impl_.move_range_;
+}
+inline int32_t BattlePawnInfo::move_range() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.move_range)
+  return _internal_move_range();
+}
+inline void BattlePawnInfo::_internal_set_move_range(int32_t value) {
+  
+  _impl_.move_range_ = value;
+}
+inline void BattlePawnInfo::set_move_range(int32_t value) {
+  _internal_set_move_range(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.move_range)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 

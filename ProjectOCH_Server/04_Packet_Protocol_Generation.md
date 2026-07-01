@@ -27,6 +27,26 @@ C:\ProjectOCH\Server\Common\protoc-21.12-win64\bin
   - `CREATURE_TYPE_PLAYER`
   - `CREATURE_TYPE_MONSTER`
   - `CREATURE_TYPE_NPC`
+- `PawnClass`
+  - `PAWN_CLASS_SUEN_AXE_SWORD`
+  - `PAWN_CLASS_SUEN_PARVIS`
+  - `PAWN_CLASS_BEIGE_FIRE`
+  - `PAWN_CLASS_BEIGE_ICE`
+  - `PAWN_CLASS_ZILLIAN_LONGBOW`
+  - `PAWN_CLASS_ZILLIAN_MACE`
+  - `PAWN_CLASS_ALEN_SPEAR`
+  - `PAWN_CLASS_ALEN_SWORD_SHIELD`
+  - `PAWN_CLASS_SERA_NECROMANCER`
+  - `PAWN_CLASS_SERA_WARLOCK`
+- `BattleMoveResult`
+  - `BATTLE_MOVE_RESULT_OK`
+  - `BATTLE_MOVE_RESULT_NOT_YOUR_TURN`
+  - `BATTLE_MOVE_RESULT_NOT_OWNER`
+  - `BATTLE_MOVE_RESULT_NOT_WALKABLE`
+  - `BATTLE_MOVE_RESULT_OUT_OF_RANGE`
+  - `BATTLE_MOVE_RESULT_OCCUPIED`
+  - `BATTLE_MOVE_RESULT_INVALID_BATTLE`
+  - `BATTLE_MOVE_RESULT_INVALID_PAWN`
 
 `Struct.proto`:
 
@@ -44,6 +64,23 @@ message ObjectInfo
     CreatureType creature_type = 3;
     Vec2Fixed position = 4;
 }
+
+message AxialCoord
+{
+    sint32 q = 1;
+    sint32 r = 2;
+}
+
+message BattlePawnInfo
+{
+    uint64 pawn_id = 1;
+    uint64 owner_id = 2;
+    PawnClass pawn_class = 3;
+    AxialCoord axial = 4;
+    int32 hp = 5;
+    int32 max_hp = 6;
+    int32 move_range = 7;
+}
 ```
 
 `Protocol.proto`:
@@ -55,6 +92,8 @@ message ObjectInfo
 - `S_DESPAWN`
 - `C_MOVE` / `S_MOVE`
 - `C_CHAT` / `S_CHAT`
+- `C_ENTER_BATTLE` / `S_ENTER_BATTLE`
+- `C_BATTLE_MOVE` / `S_BATTLE_MOVE`
 
 이동 패킷:
 
@@ -110,6 +149,10 @@ protobuf payload
 - `S_MOVE = 1009`
 - `C_CHAT = 1010`
 - `S_CHAT = 1011`
+- `C_ENTER_BATTLE = 1012`
+- `S_ENTER_BATTLE = 1013`
+- `C_BATTLE_MOVE = 1014`
+- `S_BATTLE_MOVE = 1015`
 
 ## 생성 스크립트
 

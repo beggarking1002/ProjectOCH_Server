@@ -22,7 +22,7 @@ namespace _pbi = _pb::internal;
 
 namespace Protocol {
 }  // namespace Protocol
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_Enum_2eproto[2];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_Enum_2eproto[4];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Enum_2eproto = nullptr;
 const uint32_t TableStruct_Enum_2eproto::offsets[1] = {};
 static constexpr ::_pbi::MigrationSchema* schemas = nullptr;
@@ -35,11 +35,27 @@ const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "CT_TYPE_ENV\020\003*r\n\014CreatureType\022\026\n\022CREATUR"
   "E_TYPE_NONE\020\000\022\030\n\024CREATURE_TYPE_PLAYER\020\001\022"
   "\031\n\025CREATURE_TYPE_MONSTER\020\002\022\025\n\021CREATURE_T"
-  "YPE_NPC\020\003b\006proto3"
+  "YPE_NPC\020\003*\310\002\n\tPawnClass\022\023\n\017PAWN_CLASS_NO"
+  "NE\020\000\022\035\n\031PAWN_CLASS_SUEN_AXE_SWORD\020\001\022\032\n\026P"
+  "AWN_CLASS_SUEN_PARVIS\020\002\022\031\n\025PAWN_CLASS_BE"
+  "IGE_FIRE\020\003\022\030\n\024PAWN_CLASS_BEIGE_ICE\020\004\022\036\n\032"
+  "PAWN_CLASS_ZILLIAN_LONGBOW\020\005\022\033\n\027PAWN_CLA"
+  "SS_ZILLIAN_MACE\020\006\022\031\n\025PAWN_CLASS_ALEN_SPE"
+  "AR\020\007\022 \n\034PAWN_CLASS_ALEN_SWORD_SHIELD\020\010\022\037"
+  "\n\033PAWN_CLASS_SERA_NECROMANCER\020\t\022\033\n\027PAWN_"
+  "CLASS_SERA_WARLOCK\020\n*\311\002\n\020BattleMoveResul"
+  "t\022\033\n\027BATTLE_MOVE_RESULT_NONE\020\000\022\031\n\025BATTLE"
+  "_MOVE_RESULT_OK\020\001\022$\n BATTLE_MOVE_RESULT_"
+  "NOT_YOUR_TURN\020\002\022 \n\034BATTLE_MOVE_RESULT_NO"
+  "T_OWNER\020\003\022#\n\037BATTLE_MOVE_RESULT_NOT_WALK"
+  "ABLE\020\004\022#\n\037BATTLE_MOVE_RESULT_OUT_OF_RANG"
+  "E\020\005\022\037\n\033BATTLE_MOVE_RESULT_OCCUPIED\020\006\022%\n!"
+  "BATTLE_MOVE_RESULT_INVALID_BATTLE\020\007\022#\n\037B"
+  "ATTLE_MOVE_RESULT_INVALID_PAWN\020\010b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_Enum_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Enum_2eproto = {
-    false, false, 257, descriptor_table_protodef_Enum_2eproto,
+    false, false, 920, descriptor_table_protodef_Enum_2eproto,
     "Enum.proto",
     &descriptor_table_Enum_2eproto_once, nullptr, 0, 0,
     schemas, file_default_instances, TableStruct_Enum_2eproto::offsets,
@@ -79,6 +95,50 @@ bool CreatureType_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* PawnClass_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
+  return file_level_enum_descriptors_Enum_2eproto[2];
+}
+bool PawnClass_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattleMoveResult_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
+  return file_level_enum_descriptors_Enum_2eproto[3];
+}
+bool BattleMoveResult_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
       return true;
     default:
       return false;

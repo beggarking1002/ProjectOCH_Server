@@ -45,6 +45,8 @@ server가 받는 패킷:
 - `C_LEAVE_GAME`
 - `C_MOVE`
 - `C_CHAT`
+- `C_ENTER_BATTLE`
+- `C_BATTLE_MOVE`
 
 server가 보내는 패킷:
 
@@ -55,6 +57,8 @@ server가 보내는 패킷:
 - `S_DESPAWN`
 - `S_MOVE`
 - `S_CHAT`
+- `S_ENTER_BATTLE`
+- `S_BATTLE_MOVE`
 
 ## 로그인
 
@@ -127,6 +131,26 @@ Unity client 쪽 `FieldObjectManager`는 `S_ENTER_GAME.Player`를 내 pawn 생�
 5. walkable이 아니면:
    - 서버 위치는 갱신하지 않는다.
    - 요청 client에게만 `S_MOVE(object_id, start=current, target=current, duration_ms=0)`을 보내 보정한다.
+
+## 전투 입장과 전투 이동
+
+현재 전투 처리는 `ServerPacketHandler.cpp` 안의 임시 in-memory battle state로 구현되어 있다.
+
+`Handle_C_ENTER_BATTLE()`:
+
+1. session에 player가 없으면 `S_ENTER_BATTLE(success=false, reason="player is not in game")`을 보낸다.
+2. player가 있으면 player object id를 owner id로 사용한다.
+3. owner별 battle이 없으면 `Battle_Test_001` 전투를 새로 만든다.
+4. allied pawn 2개, enemy pawn 2개, `current_turn_pawn_id`를 채운 `S_ENTER_BATTLE(success=true)`를 보낸다.
+
+`Handle_C_BATTLE_MOVE()`:
+
+1. player/session, battle id, pawn id, target 존재 여부를 검증한다.
+2. 소유자, 현재 턴, hex radius 6 walkable 범위, axial 이동 거리, 점유 여부를 검사한다.
+3. 실패하면 `S_BATTLE_MOVE(success=false, result=...)`로 구체적인 실패 enum을 보낸다.
+4. 성공하면 pawn axial을 갱신하고 allied pawn 기준으로 다음 턴을 넘긴 뒤 `S_BATTLE_MOVE(success=true, result=OK)`를 보낸다.
+
+아직 실제 전투 룸, 적 AI, 턴 큐, 전투 종료, persistent battle state는 없다. 클라이언트 전투 UI/연동을 시작하기 위한 서버 응답 골격이다.
 
 ## FieldWalkMapData
 

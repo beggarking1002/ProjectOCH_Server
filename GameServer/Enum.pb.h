@@ -101,6 +101,72 @@ inline bool CreatureType_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<CreatureType>(
     CreatureType_descriptor(), name, value);
 }
+enum PawnClass : int {
+  PAWN_CLASS_NONE = 0,
+  PAWN_CLASS_SUEN_AXE_SWORD = 1,
+  PAWN_CLASS_SUEN_PARVIS = 2,
+  PAWN_CLASS_BEIGE_FIRE = 3,
+  PAWN_CLASS_BEIGE_ICE = 4,
+  PAWN_CLASS_ZILLIAN_LONGBOW = 5,
+  PAWN_CLASS_ZILLIAN_MACE = 6,
+  PAWN_CLASS_ALEN_SPEAR = 7,
+  PAWN_CLASS_ALEN_SWORD_SHIELD = 8,
+  PAWN_CLASS_SERA_NECROMANCER = 9,
+  PAWN_CLASS_SERA_WARLOCK = 10,
+  PawnClass_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  PawnClass_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool PawnClass_IsValid(int value);
+constexpr PawnClass PawnClass_MIN = PAWN_CLASS_NONE;
+constexpr PawnClass PawnClass_MAX = PAWN_CLASS_SERA_WARLOCK;
+constexpr int PawnClass_ARRAYSIZE = PawnClass_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* PawnClass_descriptor();
+template<typename T>
+inline const std::string& PawnClass_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, PawnClass>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function PawnClass_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    PawnClass_descriptor(), enum_t_value);
+}
+inline bool PawnClass_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, PawnClass* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<PawnClass>(
+    PawnClass_descriptor(), name, value);
+}
+enum BattleMoveResult : int {
+  BATTLE_MOVE_RESULT_NONE = 0,
+  BATTLE_MOVE_RESULT_OK = 1,
+  BATTLE_MOVE_RESULT_NOT_YOUR_TURN = 2,
+  BATTLE_MOVE_RESULT_NOT_OWNER = 3,
+  BATTLE_MOVE_RESULT_NOT_WALKABLE = 4,
+  BATTLE_MOVE_RESULT_OUT_OF_RANGE = 5,
+  BATTLE_MOVE_RESULT_OCCUPIED = 6,
+  BATTLE_MOVE_RESULT_INVALID_BATTLE = 7,
+  BATTLE_MOVE_RESULT_INVALID_PAWN = 8,
+  BattleMoveResult_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  BattleMoveResult_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool BattleMoveResult_IsValid(int value);
+constexpr BattleMoveResult BattleMoveResult_MIN = BATTLE_MOVE_RESULT_NONE;
+constexpr BattleMoveResult BattleMoveResult_MAX = BATTLE_MOVE_RESULT_INVALID_PAWN;
+constexpr int BattleMoveResult_ARRAYSIZE = BattleMoveResult_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattleMoveResult_descriptor();
+template<typename T>
+inline const std::string& BattleMoveResult_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, BattleMoveResult>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function BattleMoveResult_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    BattleMoveResult_descriptor(), enum_t_value);
+}
+inline bool BattleMoveResult_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, BattleMoveResult* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<BattleMoveResult>(
+    BattleMoveResult_descriptor(), name, value);
+}
 // ===================================================================
 
 
@@ -132,6 +198,16 @@ template <> struct is_proto_enum< ::Protocol::CreatureType> : ::std::true_type {
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::CreatureType>() {
   return ::Protocol::CreatureType_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::PawnClass> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::PawnClass>() {
+  return ::Protocol::PawnClass_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::BattleMoveResult> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::BattleMoveResult>() {
+  return ::Protocol::BattleMoveResult_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE
