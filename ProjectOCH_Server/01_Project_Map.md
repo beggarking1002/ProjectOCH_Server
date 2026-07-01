@@ -54,6 +54,7 @@ Visual Studio 2022 계열 솔루션이다.
 - `GameSessionManager.h/.cpp`: 접속 중인 `GameSession` 관리와 broadcast.
 - `ServerPacketHandler.h/.cpp`: 패킷 ID routing, protobuf parse, C_ 패킷 처리.
 - `Room.h/.cpp`: 룸 상태, 플레이어 입장/퇴장/이동 검증, `S_ENTER_GAME`, `S_SPAWN`, `S_DESPAWN`, `S_MOVE` 송신.
+- `BattleRoom.h/.cpp`: 전투 입장/전투 이동 처리, 테스트 battle state, pawn turn/range/occupied 검증, `S_ENTER_BATTLE`, `S_BATTLE_MOVE` 송신.
 - `FieldWalkMapData.h/.cpp`: `Field_001.walkmap.json` 로드, Hexagon Grid 좌표 변환, walkable 검사.
 - `Object.h/.cpp`, `Creature.h/.cpp`, `Player.h/.cpp`, `Monster.h/.cpp`: 게임 오브젝트 계층.
 - `ObjectUtils.h/.cpp`: 플레이어 생성과 object id 부여.

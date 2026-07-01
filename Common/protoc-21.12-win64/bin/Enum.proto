@@ -35,6 +35,8 @@ enum PawnClass
 
 	PAWN_CLASS_SERA_NECROMANCER = 9;
 	PAWN_CLASS_SERA_WARLOCK = 10;
+
+	PAWN_CLASS_DARKHAND_SWORD = 101;
 }
 
 enum BattleMoveResult 

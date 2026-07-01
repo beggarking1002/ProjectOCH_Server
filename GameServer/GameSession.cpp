@@ -3,6 +3,7 @@
 #include "GameSessionManager.h"
 #include "ServerPacketHandler.h"
 #include "Room.h"
+#include "BattleRoom.h"
 #include "Player.h"
 
 void GameSession::OnConnected()
@@ -17,6 +18,8 @@ void GameSession::OnDisconnected()
 	PlayerRef player = session->player.load();
 	if (player)
 	{
+		GBattleRoom->DoAsync(&BattleRoom::HandleLeaveBattle, player->objectInfo->object_id(), string("disconnect"));
+
 		RoomRef room = player->room.load().lock();
 		if (room)
 			room->DoAsync(&Room::HandleLeavePlayer, session);
@@ -32,7 +35,7 @@ void GameSession::OnRecvPacket(BYTE* buffer, int32 len)
 	PacketSessionRef session = GetPacketSessionRef();
 	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
 
-	// TODO : packetId 대역 체크
+	// TODO: Validate packet id range.
 	ServerPacketHandler::HandlePacket(session, buffer, len);
 }
 

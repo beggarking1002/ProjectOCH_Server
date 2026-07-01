@@ -134,9 +134,13 @@ Unity client 쪽 `FieldObjectManager`는 `S_ENTER_GAME.Player`를 내 pawn 생�
 
 ## 전투 입장과 전투 이동
 
-현재 전투 처리는 `ServerPacketHandler.cpp` 안의 임시 in-memory battle state로 구현되어 있다.
+현재 전투 처리는 `BattleRoom`이 담당한다. `ServerPacketHandler.cpp`는 `C_ENTER_BATTLE`, `C_BATTLE_MOVE`를 받은 뒤 `GBattleRoom->DoAsync(...)`로 작업을 넘긴다. 전투 상태 변경은 `BattleRoom` job queue 안에서 직렬 실행된다.
 
 `Handle_C_ENTER_BATTLE()`:
+
+1. `GBattleRoom->DoAsync(&BattleRoom::HandleEnterBattle, gameSession)`로 위임한다.
+
+`BattleRoom::HandleEnterBattle()`:
 
 1. session에 player가 없으면 `S_ENTER_BATTLE(success=false, reason="player is not in game")`을 보낸다.
 2. player가 있으면 player object id를 owner id로 사용한다.
@@ -144,6 +148,10 @@ Unity client 쪽 `FieldObjectManager`는 `S_ENTER_GAME.Player`를 내 pawn 생�
 4. allied pawn 2개, enemy pawn 2개, `current_turn_pawn_id`를 채운 `S_ENTER_BATTLE(success=true)`를 보낸다.
 
 `Handle_C_BATTLE_MOVE()`:
+
+1. `GBattleRoom->DoAsync(&BattleRoom::HandleBattleMove, gameSession, pkt)`로 위임한다.
+
+`BattleRoom::HandleBattleMove()`:
 
 1. player/session, battle id, pawn id, target 존재 여부를 검증한다.
 2. 소유자, 현재 턴, hex radius 6 walkable 범위, axial 이동 거리, 점유 여부를 검사한다.

@@ -43,9 +43,10 @@
 - 위치는 `Vec2Fixed position`만 사용한다.
 - 필드 이동 검증은 `Field_001.walkmap.json` 기반이다.
 - `Field_001`은 Unity Hexagon Grid이므로 서버 변환도 Hex row stride와 row parity offset을 반영한다.
-- `C_ENTER_BATTLE` / `C_BATTLE_MOVE`는 현재 `ServerPacketHandler.cpp`의 임시 in-memory battle state로 처리한다.
+- `C_ENTER_BATTLE` / `C_BATTLE_MOVE`는 `BattleRoom`의 in-memory battle state로 처리한다.
   - `C_ENTER_BATTLE`은 테스트 전투 `Battle_Test_001`과 allied/enemy pawn 목록을 내려준다.
   - `C_BATTLE_MOVE`는 owner, turn, hex radius 6, move_range, occupied 검사를 하고 `BattleMoveResult`로 응답한다.
+  - `ServerPacketHandler.cpp`는 패킷을 받은 뒤 `GBattleRoom->DoAsync(...)`로 위임한다.
 
 ## 자주 보는 흐름
 
@@ -85,10 +86,14 @@ Handle_C_ENTER_GAME / Handle_C_LEAVE_GAME / Handle_C_MOVE
 
 ```text
 Handle_C_ENTER_BATTLE
+-> GBattleRoom->DoAsync
+-> BattleRoom::HandleEnterBattle
 -> create/reuse in-memory BattleState
 -> S_ENTER_BATTLE
 
 Handle_C_BATTLE_MOVE
+-> GBattleRoom->DoAsync
+-> BattleRoom::HandleBattleMove
 -> validate battle/pawn/owner/turn/range/occupied
 -> update pawn axial
 -> S_BATTLE_MOVE
@@ -141,7 +146,7 @@ C:\ProjectOCH\Server\Data\Maps\Field_001.walkmap.json
 - Hex `FixedToCell`은 주변 후보 cell center 중 가장 가까운 cell을 고르는 방식이다. Unity `Grid.WorldToCell`과 경계 케이스가 완전히 같은지 실제 클릭 로그로 검증하면 좋다.
 - 현재 이동 검증은 target cell walkable 여부만 본다. 경로 중간 장애물, 최대 이동 거리, 속도 검증은 아직 없다.
 - 여러 map/room을 지원하려면 `GFieldWalkMapData`, `GRoom` 전역 구조를 map id/room id 기반으로 확장해야 한다.
-- 현재 전투 state는 서버 프로세스 메모리에만 있고 `ServerPacketHandler.cpp`에 붙어 있다. 실제 기능으로 키우려면 `BattleRoom`/`BattleManager` 같은 별도 도메인으로 분리하고 disconnect/종료/AI/관전/재입장 정책을 정해야 한다.
+- 현재 전투 state는 서버 프로세스 메모리에만 있고 `BattleRoom` 하나가 owner별 battle을 관리한다. 실제 기능으로 키우려면 여러 battle room 관리, disconnect/종료/AI/관전/재입장 정책을 정해야 한다.
 - `IocpCore::Dispatch()`의 error branch에서 `iocpEvent` null 가능성.
 - `Session::RegisterSend()`에서 `_sendQueue`를 비우는 부분은 lock 주석이 남아 있어 동시성 검토가 필요하다.
 - `PacketGenerator`의 proto parser는 단순 문자열 기반이라 proto formatting 변화에 약하다.

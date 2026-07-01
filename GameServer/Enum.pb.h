@@ -113,12 +113,13 @@ enum PawnClass : int {
   PAWN_CLASS_ALEN_SWORD_SHIELD = 8,
   PAWN_CLASS_SERA_NECROMANCER = 9,
   PAWN_CLASS_SERA_WARLOCK = 10,
+  PAWN_CLASS_DARKHAND_SWORD = 101,
   PawnClass_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   PawnClass_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool PawnClass_IsValid(int value);
 constexpr PawnClass PawnClass_MIN = PAWN_CLASS_NONE;
-constexpr PawnClass PawnClass_MAX = PAWN_CLASS_SERA_WARLOCK;
+constexpr PawnClass PawnClass_MAX = PAWN_CLASS_DARKHAND_SWORD;
 constexpr int PawnClass_ARRAYSIZE = PawnClass_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* PawnClass_descriptor();
