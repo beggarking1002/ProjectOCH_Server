@@ -46,7 +46,8 @@
 - `C_ENTER_BATTLE` / `C_BATTLE_MOVE`는 `BattleRoom`의 in-memory battle state로 처리한다.
   - `C_ENTER_BATTLE`은 테스트 전투 `Battle_Test_001`과 allied/enemy pawn 목록을 내려준다.
   - `C_BATTLE_MOVE`는 owner, turn, hex radius 6, move_range, occupied 검사를 하고 `BattleMoveResult`로 응답한다.
-  - `C_BATTLE_SKILL`은 caster owner/turn, target pawn, skill_slot, range를 검사하고 damage/target_hp를 응답한다.
+  - `C_BATTLE_SKILL`은 caster owner/turn, target pawn, skill_slot 1~5, range를 검사하고 damage/target_hp를 응답한다.
+  - `C_BATTLE_END_TURN`은 owner/turn 검증 후 `S_BATTLE_END_TURN.next_turn_pawn_id`로 다음 턴을 내려준다.
   - `ServerPacketHandler.cpp`는 패킷을 받은 뒤 `GBattleRoom->DoAsync(...)`로 위임한다.
 
 ## 자주 보는 흐름
@@ -105,6 +106,13 @@ Handle_C_BATTLE_SKILL
 -> validate battle/caster/owner/turn/target/skill/range
 -> apply damage
 -> S_BATTLE_SKILL
+
+Handle_C_BATTLE_END_TURN
+-> GBattleRoom->DoAsync
+-> BattleRoom::HandleBattleEndTurn
+-> validate battle/pawn/owner/turn
+-> advance turn
+-> S_BATTLE_END_TURN
 ```
 
 ## FieldWalkMapData 체크리스트
@@ -147,6 +155,8 @@ C:\ProjectOCH\Server\Data\Maps\Field_001.walkmap.json
   - `S_BATTLE_MOVE.success/battle_id/pawn_id/start/target/next_turn_pawn_id/result/reason`
   - `C_BATTLE_SKILL.battle_id/caster_pawn_id/skill_slot/target_pawn_id/target_axial`
   - `S_BATTLE_SKILL.success/battle_id/caster_pawn_id/skill_slot/target_pawn_id/target_axial/damage/target_hp/next_turn_pawn_id/reason`
+  - `C_BATTLE_END_TURN.battle_id/pawn_id`
+  - `S_BATTLE_END_TURN.success/battle_id/pawn_id/next_turn_pawn_id/reason`
 
 `S_LOGIN.players` 같은 로그인 단계 플레이어 목록은 현재 사용하지 않는다. 필드 입장 후 오브젝트 동기화는 `S_ENTER_GAME`과 `S_SPAWN`이 담당한다.
 
@@ -157,7 +167,7 @@ C:\ProjectOCH\Server\Data\Maps\Field_001.walkmap.json
 - 현재 이동 검증은 target cell walkable 여부만 본다. 경로 중간 장애물, 최대 이동 거리, 속도 검증은 아직 없다.
 - 여러 map/room을 지원하려면 `GFieldWalkMapData`, `GRoom` 전역 구조를 map id/room id 기반으로 확장해야 한다.
 - 현재 전투 state는 서버 프로세스 메모리에만 있고 `BattleRoom` 하나가 owner별 battle을 관리한다. 실제 기능으로 키우려면 여러 battle room 관리, disconnect/종료/AI/관전/재입장 정책을 정해야 한다.
-- 현재 battle skill은 임시 룰이다. `skill_slot 0 = damage 25/range 1`, `skill_slot 1 = damage 35/range 3`이며 직선/시야/광역/쿨다운/자원 검증은 아직 없다.
+- 현재 battle skill은 임시 룰이다. slot 1~5를 모두 유효하게 처리하지만 직선/시야/광역/쿨다운/자원 검증은 아직 없다.
 - `IocpCore::Dispatch()`의 error branch에서 `iocpEvent` null 가능성.
 - `Session::RegisterSend()`에서 `_sendQueue`를 비우는 부분은 lock 주석이 남아 있어 동시성 검토가 필요하다.
 - `PacketGenerator`의 proto parser는 단순 문자열 기반이라 proto formatting 변화에 약하다.

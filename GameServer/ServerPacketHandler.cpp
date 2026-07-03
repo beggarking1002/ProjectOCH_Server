@@ -106,3 +106,11 @@ bool Handle_C_BATTLE_SKILL(PacketSessionRef& session, Protocol::C_BATTLE_SKILL& 
 
 	return true;
 }
+
+bool Handle_C_BATTLE_END_TURN(PacketSessionRef& session, Protocol::C_BATTLE_END_TURN& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+	GBattleRoom->DoAsync(&BattleRoom::HandleBattleEndTurn, gameSession, pkt);
+
+	return true;
+}

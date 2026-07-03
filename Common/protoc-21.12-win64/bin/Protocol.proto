@@ -128,3 +128,16 @@ message S_BATTLE_SKILL {
 	uint64 next_turn_pawn_id = 9;
 	string reason = 10;
 }
+
+message C_BATTLE_END_TURN {
+	uint64 battle_id = 1;
+	uint64 pawn_id = 2;
+}
+
+message S_BATTLE_END_TURN {
+	bool success = 1;
+	uint64 battle_id = 2;
+	uint64 pawn_id = 3;
+	uint64 next_turn_pawn_id = 4;
+	string reason = 5;
+}

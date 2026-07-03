@@ -36,6 +36,7 @@ public:
 	void HandleLeaveBattle(uint64 ownerId, string reason);
 	void HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOVE pkt);
 	void HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SKILL pkt);
+	void HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_END_TURN pkt);
 
 private:
 	BattleState& GetOrCreateBattle(uint64 ownerId);
@@ -60,6 +61,8 @@ private:
 	void SendBattleSkillResult(GameSessionRef session, bool success, uint64 battleId, uint64 casterPawnId,
 		int32 skillSlot, uint64 targetPawnId, const Protocol::AxialCoord& targetAxial,
 		int32 damage, int32 targetHp, uint64 nextTurnPawnId, const string& reason);
+	void SendBattleEndTurnResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
+		uint64 nextTurnPawnId, const string& reason);
 
 private:
 	uint64 _battleIdGenerator = 1;

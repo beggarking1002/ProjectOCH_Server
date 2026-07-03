@@ -48,6 +48,7 @@ server가 받는 패킷:
 - `C_ENTER_BATTLE`
 - `C_BATTLE_MOVE`
 - `C_BATTLE_SKILL`
+- `C_BATTLE_END_TURN`
 
 server가 보내는 패킷:
 
@@ -61,6 +62,7 @@ server가 보내는 패킷:
 - `S_ENTER_BATTLE`
 - `S_BATTLE_MOVE`
 - `S_BATTLE_SKILL`
+- `S_BATTLE_END_TURN`
 
 ## 로그인
 
@@ -168,10 +170,30 @@ Unity client 쪽 `FieldObjectManager`는 `S_ENTER_GAME.Player`를 내 pawn 생�
 
 1. player/session, battle id, caster pawn id, target pawn id를 검증한다.
 2. caster 소유자와 현재 턴을 검증한다.
-3. `skill_slot`별 damage/range를 얻는다. 현재 slot 0은 damage 25/range 1, slot 1은 damage 35/range 3이다.
+3. `skill_slot`별 damage/range를 얻는다. 현재 slot 1~5를 유효하게 처리한다.
 4. target pawn 위치와 `target_axial`이 맞는지 확인하고, 사거리 안이면 target hp를 차감한다.
 5. 성공하면 allied pawn 기준으로 다음 턴을 넘기고 `S_BATTLE_SKILL(success=true, damage, target_hp, next_turn_pawn_id)`를 보낸다.
 6. 실패하면 `S_BATTLE_SKILL(success=false, reason=...)`을 보낸다.
+
+현재 임시 skill spec:
+
+- slot 1: damage 25, range 1
+- slot 2: damage 35, range 3
+- slot 3: damage 45, range 2
+- slot 4: damage 30, range 4
+- slot 5: damage 80, range 3. Ultimate 취급.
+
+`Handle_C_BATTLE_END_TURN()`:
+
+1. `GBattleRoom->DoAsync(&BattleRoom::HandleBattleEndTurn, gameSession, pkt)`로 위임한다.
+
+`BattleRoom::HandleBattleEndTurn()`:
+
+1. player/session, battle id, pawn id를 검증한다.
+2. 요청 pawn이 현재 턴 pawn인지 확인한다.
+3. 요청자가 해당 pawn의 owner인지 확인한다.
+4. 성공하면 allied pawn 기준으로 다음 턴을 계산하고 `S_BATTLE_END_TURN(success=true, next_turn_pawn_id)`를 보낸다.
+5. 실패하면 `S_BATTLE_END_TURN(success=false, reason=...)`을 보낸다.
 
 아직 실제 전투 룸, 적 AI, 턴 큐, 전투 종료, persistent battle state는 없다. 클라이언트 전투 UI/연동을 시작하기 위한 서버 응답 골격이다.
 

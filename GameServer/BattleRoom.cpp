@@ -164,6 +164,9 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SKILL pkt)
 {
 	PlayerRef player = session ? session->player.load() : nullptr;
+	const Protocol::AxialCoord requestedTargetAxial = pkt.has_target_axial()
+		? pkt.target_axial()
+		: Protocol::AxialCoord::default_instance();
 
 	cout << "C_BATTLE_SKILL"
 		<< " battle_id=" << pkt.battle_id()
@@ -179,7 +182,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (player == nullptr)
 	{
 		SendBattleSkillResult(session, false, pkt.battle_id(), pkt.caster_pawn_id(), pkt.skill_slot(), pkt.target_pawn_id(),
-			Protocol::AxialCoord::default_instance(), 0, 0, 0, "player is not in game");
+			requestedTargetAxial, 0, 0, 0, "player is not in game");
 		return;
 	}
 
@@ -187,7 +190,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (battleIt == _battles.end())
 	{
 		SendBattleSkillResult(session, false, pkt.battle_id(), pkt.caster_pawn_id(), pkt.skill_slot(), pkt.target_pawn_id(),
-			pkt.has_target_axial() ? pkt.target_axial() : Protocol::AxialCoord::default_instance(), 0, 0, 0, "invalid battle");
+			requestedTargetAxial, 0, 0, 0, "invalid battle");
 		return;
 	}
 
@@ -196,8 +199,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (caster == nullptr)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, pkt.caster_pawn_id(), pkt.skill_slot(), pkt.target_pawn_id(),
-			pkt.has_target_axial() ? pkt.target_axial() : Protocol::AxialCoord::default_instance(), 0, 0,
-			battle.currentTurnPawnId, "invalid caster pawn");
+			requestedTargetAxial, 0, 0, battle.currentTurnPawnId, "invalid caster pawn");
 		return;
 	}
 
@@ -205,14 +207,14 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (caster->ownerId != ownerId)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
-			caster->axial, 0, 0, battle.currentTurnPawnId, "not owner");
+			requestedTargetAxial, 0, 0, battle.currentTurnPawnId, "not owner");
 		return;
 	}
 
 	if (battle.currentTurnPawnId != caster->pawnId)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
-			caster->axial, 0, 0, battle.currentTurnPawnId, "not your turn");
+			requestedTargetAxial, 0, 0, battle.currentTurnPawnId, "not your turn");
 		return;
 	}
 
@@ -222,7 +224,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (TryGetSkillSpec(pkt.skill_slot(), damage, range, skillError) == false)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
-			caster->axial, 0, 0, battle.currentTurnPawnId, skillError);
+			requestedTargetAxial, 0, 0, battle.currentTurnPawnId, skillError);
 		return;
 	}
 
@@ -230,8 +232,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (target == nullptr)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
-			pkt.has_target_axial() ? pkt.target_axial() : Protocol::AxialCoord::default_instance(), 0, 0,
-			battle.currentTurnPawnId, "invalid target pawn");
+			requestedTargetAxial, 0, 0, battle.currentTurnPawnId, "invalid target pawn");
 		return;
 	}
 
@@ -262,6 +263,53 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 
 	SendBattleSkillResult(session, true, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
 		target->axial, damage, target->hp, battle.currentTurnPawnId, "");
+}
+
+void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_END_TURN pkt)
+{
+	PlayerRef player = session ? session->player.load() : nullptr;
+
+	cout << "C_BATTLE_END_TURN"
+		<< " battle_id=" << pkt.battle_id()
+		<< " pawn_id=" << pkt.pawn_id()
+		<< endl;
+
+	if (player == nullptr)
+	{
+		SendBattleEndTurnResult(session, false, pkt.battle_id(), pkt.pawn_id(), 0, "player is not in game");
+		return;
+	}
+
+	auto battleIt = _battles.find(pkt.battle_id());
+	if (battleIt == _battles.end())
+	{
+		SendBattleEndTurnResult(session, false, pkt.battle_id(), pkt.pawn_id(), 0, "invalid battle");
+		return;
+	}
+
+	BattleState& battle = battleIt->second;
+	BattlePawnState* pawn = FindPawn(battle, pkt.pawn_id());
+	if (pawn == nullptr)
+	{
+		SendBattleEndTurnResult(session, false, battle.battleId, pkt.pawn_id(), battle.currentTurnPawnId, "invalid pawn");
+		return;
+	}
+
+	const uint64 ownerId = player->objectInfo->object_id();
+	if (pawn->ownerId != ownerId)
+	{
+		SendBattleEndTurnResult(session, false, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "not owner");
+		return;
+	}
+
+	if (battle.currentTurnPawnId != pawn->pawnId)
+	{
+		SendBattleEndTurnResult(session, false, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "not your turn");
+		return;
+	}
+
+	battle.currentTurnPawnId = GetNextAlliedTurnPawnId(battle, pawn->pawnId);
+	SendBattleEndTurnResult(session, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "");
 }
 
 BattleRoom::BattleState& BattleRoom::GetOrCreateBattle(uint64 ownerId)
@@ -412,12 +460,24 @@ bool BattleRoom::TryGetSkillSpec(int32 skillSlot, int32& damage, int32& range, s
 {
 	switch (skillSlot)
 	{
-	case 0:
+	case 1:
 		damage = 25;
 		range = 1;
 		return true;
-	case 1:
+	case 2:
 		damage = 35;
+		range = 3;
+		return true;
+	case 3:
+		damage = 45;
+		range = 2;
+		return true;
+	case 4:
+		damage = 30;
+		range = 4;
+		return true;
+	case 5:
+		damage = 80;
 		range = 3;
 		return true;
 	default:
@@ -502,5 +562,30 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 	skillPkt.set_reason(reason);
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(skillPkt);
+	session->Send(sendBuffer);
+}
+
+void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
+	uint64 nextTurnPawnId, const string& reason)
+{
+	cout << "S_BATTLE_END_TURN"
+		<< " success=" << success
+		<< " battle_id=" << battleId
+		<< " pawn_id=" << pawnId
+		<< " next_turn_pawn_id=" << nextTurnPawnId
+		<< " reason=\"" << reason << "\""
+		<< endl;
+
+	if (session == nullptr)
+		return;
+
+	Protocol::S_BATTLE_END_TURN endTurnPkt;
+	endTurnPkt.set_success(success);
+	endTurnPkt.set_battle_id(battleId);
+	endTurnPkt.set_pawn_id(pawnId);
+	endTurnPkt.set_next_turn_pawn_id(nextTurnPawnId);
+	endTurnPkt.set_reason(reason);
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(endTurnPkt);
 	session->Send(sendBuffer);
 }
