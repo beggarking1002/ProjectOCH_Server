@@ -2605,15 +2605,55 @@ class S_BATTLE_MOVE final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kPawnDeltasFieldNumber = 11,
+    kLogsFieldNumber = 12,
     kReasonFieldNumber = 8,
     kStartFieldNumber = 4,
     kTargetFieldNumber = 5,
     kBattleIdFieldNumber = 2,
     kPawnIdFieldNumber = 3,
-    kSuccessFieldNumber = 1,
-    kResultFieldNumber = 7,
     kNextTurnPawnIdFieldNumber = 6,
+    kSuccessFieldNumber = 1,
+    kCanMoveFieldNumber = 10,
+    kResultFieldNumber = 7,
+    kRemainingApFieldNumber = 9,
   };
+  // repeated .Protocol.BattlePawnDelta pawn_deltas = 11;
+  int pawn_deltas_size() const;
+  private:
+  int _internal_pawn_deltas_size() const;
+  public:
+  void clear_pawn_deltas();
+  ::Protocol::BattlePawnDelta* mutable_pawn_deltas(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta >*
+      mutable_pawn_deltas();
+  private:
+  const ::Protocol::BattlePawnDelta& _internal_pawn_deltas(int index) const;
+  ::Protocol::BattlePawnDelta* _internal_add_pawn_deltas();
+  public:
+  const ::Protocol::BattlePawnDelta& pawn_deltas(int index) const;
+  ::Protocol::BattlePawnDelta* add_pawn_deltas();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta >&
+      pawn_deltas() const;
+
+  // repeated .Protocol.BattleActionLog logs = 12;
+  int logs_size() const;
+  private:
+  int _internal_logs_size() const;
+  public:
+  void clear_logs();
+  ::Protocol::BattleActionLog* mutable_logs(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >*
+      mutable_logs();
+  private:
+  const ::Protocol::BattleActionLog& _internal_logs(int index) const;
+  ::Protocol::BattleActionLog* _internal_add_logs();
+  public:
+  const ::Protocol::BattleActionLog& logs(int index) const;
+  ::Protocol::BattleActionLog* add_logs();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >&
+      logs() const;
+
   // string reason = 8;
   void clear_reason();
   const std::string& reason() const;
@@ -2682,6 +2722,15 @@ class S_BATTLE_MOVE final :
   void _internal_set_pawn_id(uint64_t value);
   public:
 
+  // uint64 next_turn_pawn_id = 6;
+  void clear_next_turn_pawn_id();
+  uint64_t next_turn_pawn_id() const;
+  void set_next_turn_pawn_id(uint64_t value);
+  private:
+  uint64_t _internal_next_turn_pawn_id() const;
+  void _internal_set_next_turn_pawn_id(uint64_t value);
+  public:
+
   // bool success = 1;
   void clear_success();
   bool success() const;
@@ -2689,6 +2738,15 @@ class S_BATTLE_MOVE final :
   private:
   bool _internal_success() const;
   void _internal_set_success(bool value);
+  public:
+
+  // bool can_move = 10;
+  void clear_can_move();
+  bool can_move() const;
+  void set_can_move(bool value);
+  private:
+  bool _internal_can_move() const;
+  void _internal_set_can_move(bool value);
   public:
 
   // .Protocol.BattleMoveResult result = 7;
@@ -2700,13 +2758,13 @@ class S_BATTLE_MOVE final :
   void _internal_set_result(::Protocol::BattleMoveResult value);
   public:
 
-  // uint64 next_turn_pawn_id = 6;
-  void clear_next_turn_pawn_id();
-  uint64_t next_turn_pawn_id() const;
-  void set_next_turn_pawn_id(uint64_t value);
+  // int32 remaining_ap = 9;
+  void clear_remaining_ap();
+  int32_t remaining_ap() const;
+  void set_remaining_ap(int32_t value);
   private:
-  uint64_t _internal_next_turn_pawn_id() const;
-  void _internal_set_next_turn_pawn_id(uint64_t value);
+  int32_t _internal_remaining_ap() const;
+  void _internal_set_remaining_ap(int32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.S_BATTLE_MOVE)
@@ -2717,14 +2775,18 @@ class S_BATTLE_MOVE final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta > pawn_deltas_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog > logs_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
     ::Protocol::AxialCoord* start_;
     ::Protocol::AxialCoord* target_;
     uint64_t battle_id_;
     uint64_t pawn_id_;
-    bool success_;
-    int result_;
     uint64_t next_turn_pawn_id_;
+    bool success_;
+    bool can_move_;
+    int result_;
+    int32_t remaining_ap_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3054,17 +3116,60 @@ class S_BATTLE_SKILL final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kPawnDeltasFieldNumber = 16,
+    kLogsFieldNumber = 17,
     kReasonFieldNumber = 10,
     kTargetAxialFieldNumber = 6,
     kBattleIdFieldNumber = 2,
-    kSuccessFieldNumber = 1,
-    kSkillSlotFieldNumber = 4,
     kCasterPawnIdFieldNumber = 3,
     kTargetPawnIdFieldNumber = 5,
+    kSkillSlotFieldNumber = 4,
     kDamageFieldNumber = 7,
-    kTargetHpFieldNumber = 8,
     kNextTurnPawnIdFieldNumber = 9,
+    kTargetHpFieldNumber = 8,
+    kSuccessFieldNumber = 1,
+    kCanMoveFieldNumber = 12,
+    kUsedSubActionThisTurnFieldNumber = 13,
+    kUsedUltimateFieldNumber = 14,
+    kRemainingApFieldNumber = 11,
+    kTargetArmorFieldNumber = 15,
   };
+  // repeated .Protocol.BattlePawnDelta pawn_deltas = 16;
+  int pawn_deltas_size() const;
+  private:
+  int _internal_pawn_deltas_size() const;
+  public:
+  void clear_pawn_deltas();
+  ::Protocol::BattlePawnDelta* mutable_pawn_deltas(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta >*
+      mutable_pawn_deltas();
+  private:
+  const ::Protocol::BattlePawnDelta& _internal_pawn_deltas(int index) const;
+  ::Protocol::BattlePawnDelta* _internal_add_pawn_deltas();
+  public:
+  const ::Protocol::BattlePawnDelta& pawn_deltas(int index) const;
+  ::Protocol::BattlePawnDelta* add_pawn_deltas();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta >&
+      pawn_deltas() const;
+
+  // repeated .Protocol.BattleActionLog logs = 17;
+  int logs_size() const;
+  private:
+  int _internal_logs_size() const;
+  public:
+  void clear_logs();
+  ::Protocol::BattleActionLog* mutable_logs(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >*
+      mutable_logs();
+  private:
+  const ::Protocol::BattleActionLog& _internal_logs(int index) const;
+  ::Protocol::BattleActionLog* _internal_add_logs();
+  public:
+  const ::Protocol::BattleActionLog& logs(int index) const;
+  ::Protocol::BattleActionLog* add_logs();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >&
+      logs() const;
+
   // string reason = 10;
   void clear_reason();
   const std::string& reason() const;
@@ -3106,24 +3211,6 @@ class S_BATTLE_SKILL final :
   void _internal_set_battle_id(uint64_t value);
   public:
 
-  // bool success = 1;
-  void clear_success();
-  bool success() const;
-  void set_success(bool value);
-  private:
-  bool _internal_success() const;
-  void _internal_set_success(bool value);
-  public:
-
-  // int32 skill_slot = 4;
-  void clear_skill_slot();
-  int32_t skill_slot() const;
-  void set_skill_slot(int32_t value);
-  private:
-  int32_t _internal_skill_slot() const;
-  void _internal_set_skill_slot(int32_t value);
-  public:
-
   // uint64 caster_pawn_id = 3;
   void clear_caster_pawn_id();
   uint64_t caster_pawn_id() const;
@@ -3142,6 +3229,15 @@ class S_BATTLE_SKILL final :
   void _internal_set_target_pawn_id(uint64_t value);
   public:
 
+  // int32 skill_slot = 4;
+  void clear_skill_slot();
+  int32_t skill_slot() const;
+  void set_skill_slot(int32_t value);
+  private:
+  int32_t _internal_skill_slot() const;
+  void _internal_set_skill_slot(int32_t value);
+  public:
+
   // int32 damage = 7;
   void clear_damage();
   int32_t damage() const;
@@ -3149,15 +3245,6 @@ class S_BATTLE_SKILL final :
   private:
   int32_t _internal_damage() const;
   void _internal_set_damage(int32_t value);
-  public:
-
-  // int32 target_hp = 8;
-  void clear_target_hp();
-  int32_t target_hp() const;
-  void set_target_hp(int32_t value);
-  private:
-  int32_t _internal_target_hp() const;
-  void _internal_set_target_hp(int32_t value);
   public:
 
   // uint64 next_turn_pawn_id = 9;
@@ -3169,6 +3256,69 @@ class S_BATTLE_SKILL final :
   void _internal_set_next_turn_pawn_id(uint64_t value);
   public:
 
+  // int32 target_hp = 8;
+  void clear_target_hp();
+  int32_t target_hp() const;
+  void set_target_hp(int32_t value);
+  private:
+  int32_t _internal_target_hp() const;
+  void _internal_set_target_hp(int32_t value);
+  public:
+
+  // bool success = 1;
+  void clear_success();
+  bool success() const;
+  void set_success(bool value);
+  private:
+  bool _internal_success() const;
+  void _internal_set_success(bool value);
+  public:
+
+  // bool can_move = 12;
+  void clear_can_move();
+  bool can_move() const;
+  void set_can_move(bool value);
+  private:
+  bool _internal_can_move() const;
+  void _internal_set_can_move(bool value);
+  public:
+
+  // bool used_sub_action_this_turn = 13;
+  void clear_used_sub_action_this_turn();
+  bool used_sub_action_this_turn() const;
+  void set_used_sub_action_this_turn(bool value);
+  private:
+  bool _internal_used_sub_action_this_turn() const;
+  void _internal_set_used_sub_action_this_turn(bool value);
+  public:
+
+  // bool used_ultimate = 14;
+  void clear_used_ultimate();
+  bool used_ultimate() const;
+  void set_used_ultimate(bool value);
+  private:
+  bool _internal_used_ultimate() const;
+  void _internal_set_used_ultimate(bool value);
+  public:
+
+  // int32 remaining_ap = 11;
+  void clear_remaining_ap();
+  int32_t remaining_ap() const;
+  void set_remaining_ap(int32_t value);
+  private:
+  int32_t _internal_remaining_ap() const;
+  void _internal_set_remaining_ap(int32_t value);
+  public:
+
+  // int32 target_armor = 15;
+  void clear_target_armor();
+  int32_t target_armor() const;
+  void set_target_armor(int32_t value);
+  private:
+  int32_t _internal_target_armor() const;
+  void _internal_set_target_armor(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_BATTLE_SKILL)
  private:
   class _Internal;
@@ -3177,16 +3327,23 @@ class S_BATTLE_SKILL final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta > pawn_deltas_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog > logs_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
     ::Protocol::AxialCoord* target_axial_;
     uint64_t battle_id_;
-    bool success_;
-    int32_t skill_slot_;
     uint64_t caster_pawn_id_;
     uint64_t target_pawn_id_;
+    int32_t skill_slot_;
     int32_t damage_;
-    int32_t target_hp_;
     uint64_t next_turn_pawn_id_;
+    int32_t target_hp_;
+    bool success_;
+    bool can_move_;
+    bool used_sub_action_this_turn_;
+    bool used_ultimate_;
+    int32_t remaining_ap_;
+    int32_t target_armor_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3474,12 +3631,54 @@ class S_BATTLE_END_TURN final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kPawnDeltasFieldNumber = 10,
+    kLogsFieldNumber = 11,
     kReasonFieldNumber = 5,
     kBattleIdFieldNumber = 2,
     kPawnIdFieldNumber = 3,
     kNextTurnPawnIdFieldNumber = 4,
+    kRemainingApFieldNumber = 6,
     kSuccessFieldNumber = 1,
+    kCanMoveFieldNumber = 7,
+    kUsedSubActionThisTurnFieldNumber = 8,
+    kUsedUltimateFieldNumber = 9,
   };
+  // repeated .Protocol.BattlePawnDelta pawn_deltas = 10;
+  int pawn_deltas_size() const;
+  private:
+  int _internal_pawn_deltas_size() const;
+  public:
+  void clear_pawn_deltas();
+  ::Protocol::BattlePawnDelta* mutable_pawn_deltas(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta >*
+      mutable_pawn_deltas();
+  private:
+  const ::Protocol::BattlePawnDelta& _internal_pawn_deltas(int index) const;
+  ::Protocol::BattlePawnDelta* _internal_add_pawn_deltas();
+  public:
+  const ::Protocol::BattlePawnDelta& pawn_deltas(int index) const;
+  ::Protocol::BattlePawnDelta* add_pawn_deltas();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta >&
+      pawn_deltas() const;
+
+  // repeated .Protocol.BattleActionLog logs = 11;
+  int logs_size() const;
+  private:
+  int _internal_logs_size() const;
+  public:
+  void clear_logs();
+  ::Protocol::BattleActionLog* mutable_logs(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >*
+      mutable_logs();
+  private:
+  const ::Protocol::BattleActionLog& _internal_logs(int index) const;
+  ::Protocol::BattleActionLog* _internal_add_logs();
+  public:
+  const ::Protocol::BattleActionLog& logs(int index) const;
+  ::Protocol::BattleActionLog* add_logs();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >&
+      logs() const;
+
   // string reason = 5;
   void clear_reason();
   const std::string& reason() const;
@@ -3521,6 +3720,15 @@ class S_BATTLE_END_TURN final :
   void _internal_set_next_turn_pawn_id(uint64_t value);
   public:
 
+  // int32 remaining_ap = 6;
+  void clear_remaining_ap();
+  int32_t remaining_ap() const;
+  void set_remaining_ap(int32_t value);
+  private:
+  int32_t _internal_remaining_ap() const;
+  void _internal_set_remaining_ap(int32_t value);
+  public:
+
   // bool success = 1;
   void clear_success();
   bool success() const;
@@ -3528,6 +3736,33 @@ class S_BATTLE_END_TURN final :
   private:
   bool _internal_success() const;
   void _internal_set_success(bool value);
+  public:
+
+  // bool can_move = 7;
+  void clear_can_move();
+  bool can_move() const;
+  void set_can_move(bool value);
+  private:
+  bool _internal_can_move() const;
+  void _internal_set_can_move(bool value);
+  public:
+
+  // bool used_sub_action_this_turn = 8;
+  void clear_used_sub_action_this_turn();
+  bool used_sub_action_this_turn() const;
+  void set_used_sub_action_this_turn(bool value);
+  private:
+  bool _internal_used_sub_action_this_turn() const;
+  void _internal_set_used_sub_action_this_turn(bool value);
+  public:
+
+  // bool used_ultimate = 9;
+  void clear_used_ultimate();
+  bool used_ultimate() const;
+  void set_used_ultimate(bool value);
+  private:
+  bool _internal_used_ultimate() const;
+  void _internal_set_used_ultimate(bool value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.S_BATTLE_END_TURN)
@@ -3538,11 +3773,17 @@ class S_BATTLE_END_TURN final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta > pawn_deltas_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog > logs_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
     uint64_t battle_id_;
     uint64_t pawn_id_;
     uint64_t next_turn_pawn_id_;
+    int32_t remaining_ap_;
     bool success_;
+    bool can_move_;
+    bool used_sub_action_this_turn_;
+    bool used_ultimate_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -4942,6 +5183,120 @@ inline void S_BATTLE_MOVE::set_allocated_reason(std::string* reason) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_BATTLE_MOVE.reason)
 }
 
+// int32 remaining_ap = 9;
+inline void S_BATTLE_MOVE::clear_remaining_ap() {
+  _impl_.remaining_ap_ = 0;
+}
+inline int32_t S_BATTLE_MOVE::_internal_remaining_ap() const {
+  return _impl_.remaining_ap_;
+}
+inline int32_t S_BATTLE_MOVE::remaining_ap() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_MOVE.remaining_ap)
+  return _internal_remaining_ap();
+}
+inline void S_BATTLE_MOVE::_internal_set_remaining_ap(int32_t value) {
+  
+  _impl_.remaining_ap_ = value;
+}
+inline void S_BATTLE_MOVE::set_remaining_ap(int32_t value) {
+  _internal_set_remaining_ap(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_MOVE.remaining_ap)
+}
+
+// bool can_move = 10;
+inline void S_BATTLE_MOVE::clear_can_move() {
+  _impl_.can_move_ = false;
+}
+inline bool S_BATTLE_MOVE::_internal_can_move() const {
+  return _impl_.can_move_;
+}
+inline bool S_BATTLE_MOVE::can_move() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_MOVE.can_move)
+  return _internal_can_move();
+}
+inline void S_BATTLE_MOVE::_internal_set_can_move(bool value) {
+  
+  _impl_.can_move_ = value;
+}
+inline void S_BATTLE_MOVE::set_can_move(bool value) {
+  _internal_set_can_move(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_MOVE.can_move)
+}
+
+// repeated .Protocol.BattlePawnDelta pawn_deltas = 11;
+inline int S_BATTLE_MOVE::_internal_pawn_deltas_size() const {
+  return _impl_.pawn_deltas_.size();
+}
+inline int S_BATTLE_MOVE::pawn_deltas_size() const {
+  return _internal_pawn_deltas_size();
+}
+inline ::Protocol::BattlePawnDelta* S_BATTLE_MOVE::mutable_pawn_deltas(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_BATTLE_MOVE.pawn_deltas)
+  return _impl_.pawn_deltas_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta >*
+S_BATTLE_MOVE::mutable_pawn_deltas() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_MOVE.pawn_deltas)
+  return &_impl_.pawn_deltas_;
+}
+inline const ::Protocol::BattlePawnDelta& S_BATTLE_MOVE::_internal_pawn_deltas(int index) const {
+  return _impl_.pawn_deltas_.Get(index);
+}
+inline const ::Protocol::BattlePawnDelta& S_BATTLE_MOVE::pawn_deltas(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_MOVE.pawn_deltas)
+  return _internal_pawn_deltas(index);
+}
+inline ::Protocol::BattlePawnDelta* S_BATTLE_MOVE::_internal_add_pawn_deltas() {
+  return _impl_.pawn_deltas_.Add();
+}
+inline ::Protocol::BattlePawnDelta* S_BATTLE_MOVE::add_pawn_deltas() {
+  ::Protocol::BattlePawnDelta* _add = _internal_add_pawn_deltas();
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_MOVE.pawn_deltas)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta >&
+S_BATTLE_MOVE::pawn_deltas() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_MOVE.pawn_deltas)
+  return _impl_.pawn_deltas_;
+}
+
+// repeated .Protocol.BattleActionLog logs = 12;
+inline int S_BATTLE_MOVE::_internal_logs_size() const {
+  return _impl_.logs_.size();
+}
+inline int S_BATTLE_MOVE::logs_size() const {
+  return _internal_logs_size();
+}
+inline ::Protocol::BattleActionLog* S_BATTLE_MOVE::mutable_logs(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_BATTLE_MOVE.logs)
+  return _impl_.logs_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >*
+S_BATTLE_MOVE::mutable_logs() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_MOVE.logs)
+  return &_impl_.logs_;
+}
+inline const ::Protocol::BattleActionLog& S_BATTLE_MOVE::_internal_logs(int index) const {
+  return _impl_.logs_.Get(index);
+}
+inline const ::Protocol::BattleActionLog& S_BATTLE_MOVE::logs(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_MOVE.logs)
+  return _internal_logs(index);
+}
+inline ::Protocol::BattleActionLog* S_BATTLE_MOVE::_internal_add_logs() {
+  return _impl_.logs_.Add();
+}
+inline ::Protocol::BattleActionLog* S_BATTLE_MOVE::add_logs() {
+  ::Protocol::BattleActionLog* _add = _internal_add_logs();
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_MOVE.logs)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >&
+S_BATTLE_MOVE::logs() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_MOVE.logs)
+  return _impl_.logs_;
+}
+
 // -------------------------------------------------------------------
 
 // C_BATTLE_SKILL
@@ -5410,6 +5765,180 @@ inline void S_BATTLE_SKILL::set_allocated_reason(std::string* reason) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_BATTLE_SKILL.reason)
 }
 
+// int32 remaining_ap = 11;
+inline void S_BATTLE_SKILL::clear_remaining_ap() {
+  _impl_.remaining_ap_ = 0;
+}
+inline int32_t S_BATTLE_SKILL::_internal_remaining_ap() const {
+  return _impl_.remaining_ap_;
+}
+inline int32_t S_BATTLE_SKILL::remaining_ap() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_SKILL.remaining_ap)
+  return _internal_remaining_ap();
+}
+inline void S_BATTLE_SKILL::_internal_set_remaining_ap(int32_t value) {
+  
+  _impl_.remaining_ap_ = value;
+}
+inline void S_BATTLE_SKILL::set_remaining_ap(int32_t value) {
+  _internal_set_remaining_ap(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_SKILL.remaining_ap)
+}
+
+// bool can_move = 12;
+inline void S_BATTLE_SKILL::clear_can_move() {
+  _impl_.can_move_ = false;
+}
+inline bool S_BATTLE_SKILL::_internal_can_move() const {
+  return _impl_.can_move_;
+}
+inline bool S_BATTLE_SKILL::can_move() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_SKILL.can_move)
+  return _internal_can_move();
+}
+inline void S_BATTLE_SKILL::_internal_set_can_move(bool value) {
+  
+  _impl_.can_move_ = value;
+}
+inline void S_BATTLE_SKILL::set_can_move(bool value) {
+  _internal_set_can_move(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_SKILL.can_move)
+}
+
+// bool used_sub_action_this_turn = 13;
+inline void S_BATTLE_SKILL::clear_used_sub_action_this_turn() {
+  _impl_.used_sub_action_this_turn_ = false;
+}
+inline bool S_BATTLE_SKILL::_internal_used_sub_action_this_turn() const {
+  return _impl_.used_sub_action_this_turn_;
+}
+inline bool S_BATTLE_SKILL::used_sub_action_this_turn() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_SKILL.used_sub_action_this_turn)
+  return _internal_used_sub_action_this_turn();
+}
+inline void S_BATTLE_SKILL::_internal_set_used_sub_action_this_turn(bool value) {
+  
+  _impl_.used_sub_action_this_turn_ = value;
+}
+inline void S_BATTLE_SKILL::set_used_sub_action_this_turn(bool value) {
+  _internal_set_used_sub_action_this_turn(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_SKILL.used_sub_action_this_turn)
+}
+
+// bool used_ultimate = 14;
+inline void S_BATTLE_SKILL::clear_used_ultimate() {
+  _impl_.used_ultimate_ = false;
+}
+inline bool S_BATTLE_SKILL::_internal_used_ultimate() const {
+  return _impl_.used_ultimate_;
+}
+inline bool S_BATTLE_SKILL::used_ultimate() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_SKILL.used_ultimate)
+  return _internal_used_ultimate();
+}
+inline void S_BATTLE_SKILL::_internal_set_used_ultimate(bool value) {
+  
+  _impl_.used_ultimate_ = value;
+}
+inline void S_BATTLE_SKILL::set_used_ultimate(bool value) {
+  _internal_set_used_ultimate(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_SKILL.used_ultimate)
+}
+
+// int32 target_armor = 15;
+inline void S_BATTLE_SKILL::clear_target_armor() {
+  _impl_.target_armor_ = 0;
+}
+inline int32_t S_BATTLE_SKILL::_internal_target_armor() const {
+  return _impl_.target_armor_;
+}
+inline int32_t S_BATTLE_SKILL::target_armor() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_SKILL.target_armor)
+  return _internal_target_armor();
+}
+inline void S_BATTLE_SKILL::_internal_set_target_armor(int32_t value) {
+  
+  _impl_.target_armor_ = value;
+}
+inline void S_BATTLE_SKILL::set_target_armor(int32_t value) {
+  _internal_set_target_armor(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_SKILL.target_armor)
+}
+
+// repeated .Protocol.BattlePawnDelta pawn_deltas = 16;
+inline int S_BATTLE_SKILL::_internal_pawn_deltas_size() const {
+  return _impl_.pawn_deltas_.size();
+}
+inline int S_BATTLE_SKILL::pawn_deltas_size() const {
+  return _internal_pawn_deltas_size();
+}
+inline ::Protocol::BattlePawnDelta* S_BATTLE_SKILL::mutable_pawn_deltas(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_BATTLE_SKILL.pawn_deltas)
+  return _impl_.pawn_deltas_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta >*
+S_BATTLE_SKILL::mutable_pawn_deltas() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_SKILL.pawn_deltas)
+  return &_impl_.pawn_deltas_;
+}
+inline const ::Protocol::BattlePawnDelta& S_BATTLE_SKILL::_internal_pawn_deltas(int index) const {
+  return _impl_.pawn_deltas_.Get(index);
+}
+inline const ::Protocol::BattlePawnDelta& S_BATTLE_SKILL::pawn_deltas(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_SKILL.pawn_deltas)
+  return _internal_pawn_deltas(index);
+}
+inline ::Protocol::BattlePawnDelta* S_BATTLE_SKILL::_internal_add_pawn_deltas() {
+  return _impl_.pawn_deltas_.Add();
+}
+inline ::Protocol::BattlePawnDelta* S_BATTLE_SKILL::add_pawn_deltas() {
+  ::Protocol::BattlePawnDelta* _add = _internal_add_pawn_deltas();
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_SKILL.pawn_deltas)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta >&
+S_BATTLE_SKILL::pawn_deltas() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_SKILL.pawn_deltas)
+  return _impl_.pawn_deltas_;
+}
+
+// repeated .Protocol.BattleActionLog logs = 17;
+inline int S_BATTLE_SKILL::_internal_logs_size() const {
+  return _impl_.logs_.size();
+}
+inline int S_BATTLE_SKILL::logs_size() const {
+  return _internal_logs_size();
+}
+inline ::Protocol::BattleActionLog* S_BATTLE_SKILL::mutable_logs(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_BATTLE_SKILL.logs)
+  return _impl_.logs_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >*
+S_BATTLE_SKILL::mutable_logs() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_SKILL.logs)
+  return &_impl_.logs_;
+}
+inline const ::Protocol::BattleActionLog& S_BATTLE_SKILL::_internal_logs(int index) const {
+  return _impl_.logs_.Get(index);
+}
+inline const ::Protocol::BattleActionLog& S_BATTLE_SKILL::logs(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_SKILL.logs)
+  return _internal_logs(index);
+}
+inline ::Protocol::BattleActionLog* S_BATTLE_SKILL::_internal_add_logs() {
+  return _impl_.logs_.Add();
+}
+inline ::Protocol::BattleActionLog* S_BATTLE_SKILL::add_logs() {
+  ::Protocol::BattleActionLog* _add = _internal_add_logs();
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_SKILL.logs)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >&
+S_BATTLE_SKILL::logs() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_SKILL.logs)
+  return _impl_.logs_;
+}
+
 // -------------------------------------------------------------------
 
 // C_BATTLE_END_TURN
@@ -5586,6 +6115,160 @@ inline void S_BATTLE_END_TURN::set_allocated_reason(std::string* reason) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_BATTLE_END_TURN.reason)
+}
+
+// int32 remaining_ap = 6;
+inline void S_BATTLE_END_TURN::clear_remaining_ap() {
+  _impl_.remaining_ap_ = 0;
+}
+inline int32_t S_BATTLE_END_TURN::_internal_remaining_ap() const {
+  return _impl_.remaining_ap_;
+}
+inline int32_t S_BATTLE_END_TURN::remaining_ap() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_END_TURN.remaining_ap)
+  return _internal_remaining_ap();
+}
+inline void S_BATTLE_END_TURN::_internal_set_remaining_ap(int32_t value) {
+  
+  _impl_.remaining_ap_ = value;
+}
+inline void S_BATTLE_END_TURN::set_remaining_ap(int32_t value) {
+  _internal_set_remaining_ap(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_END_TURN.remaining_ap)
+}
+
+// bool can_move = 7;
+inline void S_BATTLE_END_TURN::clear_can_move() {
+  _impl_.can_move_ = false;
+}
+inline bool S_BATTLE_END_TURN::_internal_can_move() const {
+  return _impl_.can_move_;
+}
+inline bool S_BATTLE_END_TURN::can_move() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_END_TURN.can_move)
+  return _internal_can_move();
+}
+inline void S_BATTLE_END_TURN::_internal_set_can_move(bool value) {
+  
+  _impl_.can_move_ = value;
+}
+inline void S_BATTLE_END_TURN::set_can_move(bool value) {
+  _internal_set_can_move(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_END_TURN.can_move)
+}
+
+// bool used_sub_action_this_turn = 8;
+inline void S_BATTLE_END_TURN::clear_used_sub_action_this_turn() {
+  _impl_.used_sub_action_this_turn_ = false;
+}
+inline bool S_BATTLE_END_TURN::_internal_used_sub_action_this_turn() const {
+  return _impl_.used_sub_action_this_turn_;
+}
+inline bool S_BATTLE_END_TURN::used_sub_action_this_turn() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_END_TURN.used_sub_action_this_turn)
+  return _internal_used_sub_action_this_turn();
+}
+inline void S_BATTLE_END_TURN::_internal_set_used_sub_action_this_turn(bool value) {
+  
+  _impl_.used_sub_action_this_turn_ = value;
+}
+inline void S_BATTLE_END_TURN::set_used_sub_action_this_turn(bool value) {
+  _internal_set_used_sub_action_this_turn(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_END_TURN.used_sub_action_this_turn)
+}
+
+// bool used_ultimate = 9;
+inline void S_BATTLE_END_TURN::clear_used_ultimate() {
+  _impl_.used_ultimate_ = false;
+}
+inline bool S_BATTLE_END_TURN::_internal_used_ultimate() const {
+  return _impl_.used_ultimate_;
+}
+inline bool S_BATTLE_END_TURN::used_ultimate() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_END_TURN.used_ultimate)
+  return _internal_used_ultimate();
+}
+inline void S_BATTLE_END_TURN::_internal_set_used_ultimate(bool value) {
+  
+  _impl_.used_ultimate_ = value;
+}
+inline void S_BATTLE_END_TURN::set_used_ultimate(bool value) {
+  _internal_set_used_ultimate(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_END_TURN.used_ultimate)
+}
+
+// repeated .Protocol.BattlePawnDelta pawn_deltas = 10;
+inline int S_BATTLE_END_TURN::_internal_pawn_deltas_size() const {
+  return _impl_.pawn_deltas_.size();
+}
+inline int S_BATTLE_END_TURN::pawn_deltas_size() const {
+  return _internal_pawn_deltas_size();
+}
+inline ::Protocol::BattlePawnDelta* S_BATTLE_END_TURN::mutable_pawn_deltas(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_BATTLE_END_TURN.pawn_deltas)
+  return _impl_.pawn_deltas_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta >*
+S_BATTLE_END_TURN::mutable_pawn_deltas() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_END_TURN.pawn_deltas)
+  return &_impl_.pawn_deltas_;
+}
+inline const ::Protocol::BattlePawnDelta& S_BATTLE_END_TURN::_internal_pawn_deltas(int index) const {
+  return _impl_.pawn_deltas_.Get(index);
+}
+inline const ::Protocol::BattlePawnDelta& S_BATTLE_END_TURN::pawn_deltas(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_END_TURN.pawn_deltas)
+  return _internal_pawn_deltas(index);
+}
+inline ::Protocol::BattlePawnDelta* S_BATTLE_END_TURN::_internal_add_pawn_deltas() {
+  return _impl_.pawn_deltas_.Add();
+}
+inline ::Protocol::BattlePawnDelta* S_BATTLE_END_TURN::add_pawn_deltas() {
+  ::Protocol::BattlePawnDelta* _add = _internal_add_pawn_deltas();
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_END_TURN.pawn_deltas)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta >&
+S_BATTLE_END_TURN::pawn_deltas() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_END_TURN.pawn_deltas)
+  return _impl_.pawn_deltas_;
+}
+
+// repeated .Protocol.BattleActionLog logs = 11;
+inline int S_BATTLE_END_TURN::_internal_logs_size() const {
+  return _impl_.logs_.size();
+}
+inline int S_BATTLE_END_TURN::logs_size() const {
+  return _internal_logs_size();
+}
+inline ::Protocol::BattleActionLog* S_BATTLE_END_TURN::mutable_logs(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_BATTLE_END_TURN.logs)
+  return _impl_.logs_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >*
+S_BATTLE_END_TURN::mutable_logs() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_END_TURN.logs)
+  return &_impl_.logs_;
+}
+inline const ::Protocol::BattleActionLog& S_BATTLE_END_TURN::_internal_logs(int index) const {
+  return _impl_.logs_.Get(index);
+}
+inline const ::Protocol::BattleActionLog& S_BATTLE_END_TURN::logs(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_END_TURN.logs)
+  return _internal_logs(index);
+}
+inline ::Protocol::BattleActionLog* S_BATTLE_END_TURN::_internal_add_logs() {
+  return _impl_.logs_.Add();
+}
+inline ::Protocol::BattleActionLog* S_BATTLE_END_TURN::add_logs() {
+  ::Protocol::BattleActionLog* _add = _internal_add_logs();
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_END_TURN.logs)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >&
+S_BATTLE_END_TURN::logs() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_END_TURN.logs)
+  return _impl_.logs_;
 }
 
 #ifdef __GNUC__

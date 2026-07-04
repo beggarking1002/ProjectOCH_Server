@@ -122,43 +122,50 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 	if (pawn->ownerId != ownerId)
 	{
 		SendBattleMoveResult(session, false, battle.battleId, pawn->pawnId, start, start, battle.currentTurnPawnId,
-			Protocol::BATTLE_MOVE_RESULT_NOT_OWNER, "not owner");
+			Protocol::BATTLE_MOVE_RESULT_NOT_OWNER, "not owner", pawn);
 		return;
 	}
 
 	if (battle.currentTurnPawnId != pawn->pawnId)
 	{
 		SendBattleMoveResult(session, false, battle.battleId, pawn->pawnId, start, start, battle.currentTurnPawnId,
-			Protocol::BATTLE_MOVE_RESULT_NOT_YOUR_TURN, "not your turn");
+			Protocol::BATTLE_MOVE_RESULT_NOT_YOUR_TURN, "not your turn", pawn);
+		return;
+	}
+
+	if (CanMove(*pawn) == false)
+	{
+		SendBattleMoveResult(session, false, battle.battleId, pawn->pawnId, start, start, battle.currentTurnPawnId,
+			Protocol::BATTLE_MOVE_RESULT_CANNOT_MOVE, "cannot move after spending AP 2", pawn);
 		return;
 	}
 
 	if (IsBattleWalkable(pkt.target()) == false)
 	{
 		SendBattleMoveResult(session, false, battle.battleId, pawn->pawnId, start, start, battle.currentTurnPawnId,
-			Protocol::BATTLE_MOVE_RESULT_NOT_WALKABLE, "not walkable");
+			Protocol::BATTLE_MOVE_RESULT_NOT_WALKABLE, "not walkable", pawn);
 		return;
 	}
 
 	if (AxialDistance(start, pkt.target()) > pawn->moveRange)
 	{
 		SendBattleMoveResult(session, false, battle.battleId, pawn->pawnId, start, start, battle.currentTurnPawnId,
-			Protocol::BATTLE_MOVE_RESULT_OUT_OF_RANGE, "out of range");
+			Protocol::BATTLE_MOVE_RESULT_OUT_OF_RANGE, "out of range", pawn);
 		return;
 	}
 
 	if (IsOccupied(battle, pkt.target(), pawn->pawnId))
 	{
 		SendBattleMoveResult(session, false, battle.battleId, pawn->pawnId, start, start, battle.currentTurnPawnId,
-			Protocol::BATTLE_MOVE_RESULT_OCCUPIED, "occupied");
+			Protocol::BATTLE_MOVE_RESULT_OCCUPIED, "occupied", pawn);
 		return;
 	}
 
 	pawn->axial.CopyFrom(pkt.target());
-	battle.currentTurnPawnId = GetNextAlliedTurnPawnId(battle, pawn->pawnId);
+	pawn->hasMovedThisTurn = true;
 
 	SendBattleMoveResult(session, true, battle.battleId, pawn->pawnId, start, pawn->axial, battle.currentTurnPawnId,
-		Protocol::BATTLE_MOVE_RESULT_OK, "");
+		Protocol::BATTLE_MOVE_RESULT_OK, "", pawn);
 }
 
 void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SKILL pkt)
@@ -182,7 +189,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (player == nullptr)
 	{
 		SendBattleSkillResult(session, false, pkt.battle_id(), pkt.caster_pawn_id(), pkt.skill_slot(), pkt.target_pawn_id(),
-			requestedTargetAxial, 0, 0, 0, "player is not in game");
+			requestedTargetAxial, 0, 0, 0, 0, "player is not in game");
 		return;
 	}
 
@@ -190,7 +197,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (battleIt == _battles.end())
 	{
 		SendBattleSkillResult(session, false, pkt.battle_id(), pkt.caster_pawn_id(), pkt.skill_slot(), pkt.target_pawn_id(),
-			requestedTargetAxial, 0, 0, 0, "invalid battle");
+			requestedTargetAxial, 0, 0, 0, 0, "invalid battle");
 		return;
 	}
 
@@ -199,7 +206,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (caster == nullptr)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, pkt.caster_pawn_id(), pkt.skill_slot(), pkt.target_pawn_id(),
-			requestedTargetAxial, 0, 0, battle.currentTurnPawnId, "invalid caster pawn");
+			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, "invalid caster pawn");
 		return;
 	}
 
@@ -207,24 +214,37 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (caster->ownerId != ownerId)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
-			requestedTargetAxial, 0, 0, battle.currentTurnPawnId, "not owner");
+			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, "not owner", caster);
 		return;
 	}
 
 	if (battle.currentTurnPawnId != caster->pawnId)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
-			requestedTargetAxial, 0, 0, battle.currentTurnPawnId, "not your turn");
+			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, "not your turn", caster);
 		return;
 	}
 
-	int32 damage = 0;
-	int32 range = 0;
+	SkillSpec skillSpec;
 	string skillError;
-	if (TryGetSkillSpec(pkt.skill_slot(), damage, range, skillError) == false)
+	if (TryGetSkillSpec(pkt.skill_slot(), skillSpec, skillError) == false)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
-			requestedTargetAxial, 0, 0, battle.currentTurnPawnId, skillError);
+			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, skillError, caster);
+		return;
+	}
+
+	if (skillSpec.isUltimate && caster->usedUltimate)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
+			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, "ultimate already used", caster);
+		return;
+	}
+
+	if (caster->currentAp < skillSpec.apCost)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
+			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, "not enough ap", caster);
 		return;
 	}
 
@@ -232,7 +252,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (target == nullptr)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
-			requestedTargetAxial, 0, 0, battle.currentTurnPawnId, "invalid target pawn");
+			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, "invalid target pawn", caster);
 		return;
 	}
 
@@ -240,29 +260,52 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (targetAxial.q() != target->axial.q() || targetAxial.r() != target->axial.r())
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-			targetAxial, 0, target->hp, battle.currentTurnPawnId, "target axial mismatch");
+			targetAxial, 0, target->hp, target->armor, battle.currentTurnPawnId, "target axial mismatch", caster, target);
 		return;
 	}
 
 	if (target->hp <= 0)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-			target->axial, 0, target->hp, battle.currentTurnPawnId, "target is dead");
+			target->axial, 0, target->hp, target->armor, battle.currentTurnPawnId, "target is dead", caster, target);
 		return;
 	}
 
-	if (AxialDistance(caster->axial, target->axial) > range)
+	if (AxialDistance(caster->axial, target->axial) > skillSpec.range)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-			target->axial, 0, target->hp, battle.currentTurnPawnId, "target out of range");
+			target->axial, 0, target->hp, target->armor, battle.currentTurnPawnId, "target out of range", caster, target);
 		return;
 	}
 
-	target->hp = max(0, target->hp - damage);
-	battle.currentTurnPawnId = GetNextAlliedTurnPawnId(battle, caster->pawnId);
+	if (skillSpec.isUltimate)
+		caster->usedUltimate = true;
+	else
+		caster->currentAp = max(0, caster->currentAp - skillSpec.apCost);
+
+	if (skillSpec.apCost >= 2)
+		caster->hasMovedThisTurn = true;
+
+	ApplyDamage(*target, skillSpec.damage);
+
+	vector<Protocol::BattleActionLog> logs;
+	Protocol::BattleActionLog actionLog;
+	actionLog.set_attacker_pawn_id(caster->pawnId);
+	actionLog.set_defender_pawn_id(target->pawnId);
+	actionLog.set_skill_slot(pkt.skill_slot());
+	actionLog.set_action_type(skillSpec.isUltimate ? "ultimate" : "skill");
+	actionLog.set_damage(skillSpec.damage);
+	actionLog.set_is_critical(false);
+	actionLog.set_is_evaded(false);
+	actionLog.set_is_guarded(false);
+	actionLog.set_is_perfect_guarded(false);
+	actionLog.set_is_counter(false);
+	actionLog.set_hp_after(target->hp);
+	actionLog.set_armor_after(target->armor);
+	logs.push_back(actionLog);
 
 	SendBattleSkillResult(session, true, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-		target->axial, damage, target->hp, battle.currentTurnPawnId, "");
+		target->axial, skillSpec.damage, target->hp, target->armor, battle.currentTurnPawnId, "", caster, target, logs);
 }
 
 void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_END_TURN pkt)
@@ -298,18 +341,22 @@ void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_
 	const uint64 ownerId = player->objectInfo->object_id();
 	if (pawn->ownerId != ownerId)
 	{
-		SendBattleEndTurnResult(session, false, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "not owner");
+		SendBattleEndTurnResult(session, false, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "not owner", pawn);
 		return;
 	}
 
 	if (battle.currentTurnPawnId != pawn->pawnId)
 	{
-		SendBattleEndTurnResult(session, false, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "not your turn");
+		SendBattleEndTurnResult(session, false, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "not your turn", pawn);
 		return;
 	}
 
 	battle.currentTurnPawnId = GetNextAlliedTurnPawnId(battle, pawn->pawnId);
-	SendBattleEndTurnResult(session, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "");
+	BattlePawnState* nextPawn = FindPawn(battle, battle.currentTurnPawnId);
+	if (nextPawn != nullptr)
+		StartTurn(*nextPawn);
+
+	SendBattleEndTurnResult(session, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn);
 }
 
 BattleRoom::BattleState& BattleRoom::GetOrCreateBattle(uint64 ownerId)
@@ -332,16 +379,18 @@ BattleRoom::BattleState BattleRoom::CreateBattle(uint64 ownerId)
 	battle.ownerId = ownerId;
 	battle.mapId = "Battle_Test_001";
 
-	battle.alliedPawns.push_back(MakeBattlePawn(ownerId, Protocol::PAWN_CLASS_SUEN_AXE_SWORD, -2, 0, 100, 3));
-	battle.alliedPawns.push_back(MakeBattlePawn(ownerId, Protocol::PAWN_CLASS_BEIGE_FIRE, -2, 1, 80, 3));
-	battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_ZILLIAN_LONGBOW, 2, -1, 70, 3));
-	battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_ALEN_SPEAR, 2, 0, 90, 3));
+	battle.alliedPawns.push_back(MakeBattlePawn(ownerId, Protocol::PAWN_CLASS_SUEN_AXE_SWORD, -2, 0, 100, 3, 10, true, true));
+	battle.alliedPawns.push_back(MakeBattlePawn(ownerId, Protocol::PAWN_CLASS_BEIGE_FIRE, -2, 1, 80, 3, 4, false, false));
+	battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_ZILLIAN_LONGBOW, 2, -1, 70, 3, 2, false, false));
+	battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_ALEN_SPEAR, 2, 0, 90, 3, 8, true, true));
 
 	battle.currentTurnPawnId = battle.alliedPawns.front().pawnId;
+	StartTurn(battle.alliedPawns.front());
 	return battle;
 }
 
-BattleRoom::BattlePawnState BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol::PawnClass pawnClass, int32 q, int32 r, int32 hp, int32 moveRange)
+BattleRoom::BattlePawnState BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol::PawnClass pawnClass, int32 q, int32 r, int32 hp, int32 moveRange,
+	int32 maxArmor, bool isShieldUnit, bool isMelee)
 {
 	BattlePawnState pawn;
 	pawn.pawnId = _battlePawnIdGenerator++;
@@ -351,6 +400,14 @@ BattleRoom::BattlePawnState BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol:
 	pawn.hp = hp;
 	pawn.maxHp = hp;
 	pawn.moveRange = moveRange;
+	pawn.armor = maxArmor;
+	pawn.maxArmor = maxArmor;
+	pawn.currentAp = 0;
+	pawn.hasMovedThisTurn = false;
+	pawn.usedSubActionThisTurn = false;
+	pawn.usedUltimate = false;
+	pawn.isShieldUnit = isShieldUnit;
+	pawn.isMelee = isMelee;
 	return pawn;
 }
 
@@ -384,6 +441,25 @@ void BattleRoom::CopyBattlePawn(const BattlePawnState& src, Protocol::BattlePawn
 	dst->set_hp(src.hp);
 	dst->set_max_hp(src.maxHp);
 	dst->set_move_range(src.moveRange);
+	dst->set_armor(src.armor);
+	dst->set_max_armor(src.maxArmor);
+	dst->set_current_ap(src.currentAp);
+	dst->set_can_move(CanMove(src));
+	dst->set_used_sub_action_this_turn(src.usedSubActionThisTurn);
+	dst->set_used_ultimate(src.usedUltimate);
+	dst->set_is_shield_unit(src.isShieldUnit);
+	dst->set_is_melee(src.isMelee);
+}
+
+void BattleRoom::CopyBattlePawnDelta(const BattlePawnState& src, Protocol::BattlePawnDelta* dst)
+{
+	dst->set_pawn_id(src.pawnId);
+	dst->set_hp(src.hp);
+	dst->set_armor(src.armor);
+	dst->set_current_ap(src.currentAp);
+	dst->set_can_move(CanMove(src));
+	dst->set_used_sub_action_this_turn(src.usedSubActionThisTurn);
+	dst->set_used_ultimate(src.usedUltimate);
 }
 
 BattleRoom::BattlePawnState* BattleRoom::FindPawn(BattleState& battle, uint64 pawnId)
@@ -456,36 +532,89 @@ uint64 BattleRoom::GetNextAlliedTurnPawnId(const BattleState& battle, uint64 cur
 	return battle.alliedPawns.front().pawnId;
 }
 
-bool BattleRoom::TryGetSkillSpec(int32 skillSlot, int32& damage, int32& range, string& reason)
+bool BattleRoom::TryGetSkillSpec(int32 skillSlot, SkillSpec& spec, string& reason)
 {
 	switch (skillSlot)
 	{
 	case 1:
-		damage = 25;
-		range = 1;
+		spec.apCost = 1;
+		spec.damage = 25;
+		spec.range = 1;
 		return true;
 	case 2:
-		damage = 35;
-		range = 3;
+		spec.apCost = 2;
+		spec.damage = 35;
+		spec.range = 3;
 		return true;
 	case 3:
-		damage = 45;
-		range = 2;
+		spec.apCost = 2;
+		spec.damage = 45;
+		spec.range = 2;
 		return true;
 	case 4:
-		damage = 30;
-		range = 4;
+		spec.apCost = 2;
+		spec.damage = 30;
+		spec.range = 4;
 		return true;
 	case 5:
-		damage = 80;
-		range = 3;
+		spec.apCost = 0;
+		spec.damage = 80;
+		spec.range = 3;
+		spec.isUltimate = true;
 		return true;
 	default:
-		damage = 0;
-		range = 0;
+		spec = SkillSpec();
 		reason = "invalid skill slot";
 		return false;
 	}
+}
+
+bool BattleRoom::CanMove(const BattlePawnState& pawn)
+{
+	return pawn.hasMovedThisTurn == false && pawn.currentAp > 0;
+}
+
+void BattleRoom::StartTurn(BattlePawnState& pawn)
+{
+	pawn.currentAp = 2;
+	pawn.hasMovedThisTurn = false;
+	pawn.usedSubActionThisTurn = false;
+
+	if (pawn.isShieldUnit && pawn.armor < pawn.maxArmor)
+	{
+		const int32 lostArmor = pawn.maxArmor - pawn.armor;
+		const int32 recoverArmor = lostArmor / 2;
+		pawn.armor = min(pawn.maxArmor, pawn.armor + recoverArmor);
+	}
+}
+
+void BattleRoom::ApplyDamage(BattlePawnState& target, int32 damage)
+{
+	const int32 armorDamage = min(target.armor, damage);
+	target.armor -= armorDamage;
+
+	const int32 hpDamage = damage - armorDamage;
+	if (hpDamage > 0)
+		target.hp = max(0, target.hp - hpDamage);
+}
+
+void BattleRoom::AddActionLog(google::protobuf::RepeatedPtrField<Protocol::BattleActionLog>* logs,
+	uint64 attackerPawnId, uint64 defenderPawnId, int32 skillSlot, const string& actionType,
+	int32 damage, const BattlePawnState& defender, bool isCounter)
+{
+	Protocol::BattleActionLog* log = logs->Add();
+	log->set_attacker_pawn_id(attackerPawnId);
+	log->set_defender_pawn_id(defenderPawnId);
+	log->set_skill_slot(skillSlot);
+	log->set_action_type(actionType);
+	log->set_damage(damage);
+	log->set_is_critical(false);
+	log->set_is_evaded(false);
+	log->set_is_guarded(false);
+	log->set_is_perfect_guarded(false);
+	log->set_is_counter(isCounter);
+	log->set_hp_after(defender.hp);
+	log->set_armor_after(defender.armor);
 }
 
 void BattleRoom::SendEnterBattle(GameSessionRef session, Protocol::S_ENTER_BATTLE& pkt)
@@ -499,7 +628,7 @@ void BattleRoom::SendEnterBattle(GameSessionRef session, Protocol::S_ENTER_BATTL
 
 void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
 	const Protocol::AxialCoord& start, const Protocol::AxialCoord& target, uint64 nextTurnPawnId,
-	Protocol::BattleMoveResult result, const string& reason)
+	Protocol::BattleMoveResult result, const string& reason, const BattlePawnState* pawn)
 {
 	cout << "S_BATTLE_MOVE"
 		<< " success=" << success
@@ -509,6 +638,8 @@ void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint
 		<< " target=(" << target.q() << ", " << target.r() << ")"
 		<< " next_turn_pawn_id=" << nextTurnPawnId
 		<< " result=" << Protocol::BattleMoveResult_Name(result)
+		<< " remaining_ap=" << (pawn != nullptr ? pawn->currentAp : 0)
+		<< " can_move=" << (pawn != nullptr ? CanMove(*pawn) : false)
 		<< " reason=\"" << reason << "\""
 		<< endl;
 
@@ -524,6 +655,10 @@ void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint
 	movePkt.set_next_turn_pawn_id(nextTurnPawnId);
 	movePkt.set_result(result);
 	movePkt.set_reason(reason);
+	movePkt.set_remaining_ap(pawn != nullptr ? pawn->currentAp : 0);
+	movePkt.set_can_move(pawn != nullptr ? CanMove(*pawn) : false);
+	if (pawn != nullptr)
+		CopyBattlePawnDelta(*pawn, movePkt.add_pawn_deltas());
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(movePkt);
 	session->Send(sendBuffer);
@@ -531,7 +666,8 @@ void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint
 
 void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uint64 battleId, uint64 casterPawnId,
 	int32 skillSlot, uint64 targetPawnId, const Protocol::AxialCoord& targetAxial,
-	int32 damage, int32 targetHp, uint64 nextTurnPawnId, const string& reason)
+	int32 damage, int32 targetHp, int32 targetArmor, uint64 nextTurnPawnId, const string& reason,
+	const BattlePawnState* caster, const BattlePawnState* target, const vector<Protocol::BattleActionLog>& logs)
 {
 	cout << "S_BATTLE_SKILL"
 		<< " success=" << success
@@ -542,7 +678,10 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 		<< " target_axial=(" << targetAxial.q() << ", " << targetAxial.r() << ")"
 		<< " damage=" << damage
 		<< " target_hp=" << targetHp
+		<< " target_armor=" << targetArmor
 		<< " next_turn_pawn_id=" << nextTurnPawnId
+		<< " remaining_ap=" << (caster != nullptr ? caster->currentAp : 0)
+		<< " can_move=" << (caster != nullptr ? CanMove(*caster) : false)
 		<< " reason=\"" << reason << "\""
 		<< endl;
 
@@ -560,19 +699,34 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 	skillPkt.set_target_hp(targetHp);
 	skillPkt.set_next_turn_pawn_id(nextTurnPawnId);
 	skillPkt.set_reason(reason);
+	skillPkt.set_remaining_ap(caster != nullptr ? caster->currentAp : 0);
+	skillPkt.set_can_move(caster != nullptr ? CanMove(*caster) : false);
+	skillPkt.set_used_sub_action_this_turn(caster != nullptr ? caster->usedSubActionThisTurn : false);
+	skillPkt.set_used_ultimate(caster != nullptr ? caster->usedUltimate : false);
+	skillPkt.set_target_armor(targetArmor);
+	if (caster != nullptr)
+		CopyBattlePawnDelta(*caster, skillPkt.add_pawn_deltas());
+	if (target != nullptr && target != caster)
+		CopyBattlePawnDelta(*target, skillPkt.add_pawn_deltas());
+	for (const Protocol::BattleActionLog& log : logs)
+		skillPkt.add_logs()->CopyFrom(log);
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(skillPkt);
 	session->Send(sendBuffer);
 }
 
 void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
-	uint64 nextTurnPawnId, const string& reason)
+	uint64 nextTurnPawnId, const string& reason, const BattlePawnState* pawn, const BattlePawnState* nextPawn)
 {
+	const BattlePawnState* responsePawn = nextPawn != nullptr ? nextPawn : pawn;
+
 	cout << "S_BATTLE_END_TURN"
 		<< " success=" << success
 		<< " battle_id=" << battleId
 		<< " pawn_id=" << pawnId
 		<< " next_turn_pawn_id=" << nextTurnPawnId
+		<< " remaining_ap=" << (responsePawn != nullptr ? responsePawn->currentAp : 0)
+		<< " can_move=" << (responsePawn != nullptr ? CanMove(*responsePawn) : false)
 		<< " reason=\"" << reason << "\""
 		<< endl;
 
@@ -585,6 +739,14 @@ void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, u
 	endTurnPkt.set_pawn_id(pawnId);
 	endTurnPkt.set_next_turn_pawn_id(nextTurnPawnId);
 	endTurnPkt.set_reason(reason);
+	endTurnPkt.set_remaining_ap(responsePawn != nullptr ? responsePawn->currentAp : 0);
+	endTurnPkt.set_can_move(responsePawn != nullptr ? CanMove(*responsePawn) : false);
+	endTurnPkt.set_used_sub_action_this_turn(responsePawn != nullptr ? responsePawn->usedSubActionThisTurn : false);
+	endTurnPkt.set_used_ultimate(responsePawn != nullptr ? responsePawn->usedUltimate : false);
+	if (pawn != nullptr)
+		CopyBattlePawnDelta(*pawn, endTurnPkt.add_pawn_deltas());
+	if (nextPawn != nullptr && nextPawn != pawn)
+		CopyBattlePawnDelta(*nextPawn, endTurnPkt.add_pawn_deltas());
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(endTurnPkt);
 	session->Send(sendBuffer);

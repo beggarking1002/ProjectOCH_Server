@@ -146,12 +146,13 @@ enum BattleMoveResult : int {
   BATTLE_MOVE_RESULT_OCCUPIED = 6,
   BATTLE_MOVE_RESULT_INVALID_BATTLE = 7,
   BATTLE_MOVE_RESULT_INVALID_PAWN = 8,
+  BATTLE_MOVE_RESULT_CANNOT_MOVE = 9,
   BattleMoveResult_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   BattleMoveResult_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool BattleMoveResult_IsValid(int value);
 constexpr BattleMoveResult BattleMoveResult_MIN = BATTLE_MOVE_RESULT_NONE;
-constexpr BattleMoveResult BattleMoveResult_MAX = BATTLE_MOVE_RESULT_INVALID_PAWN;
+constexpr BattleMoveResult BattleMoveResult_MAX = BATTLE_MOVE_RESULT_CANNOT_MOVE;
 constexpr int BattleMoveResult_ARRAYSIZE = BattleMoveResult_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattleMoveResult_descriptor();

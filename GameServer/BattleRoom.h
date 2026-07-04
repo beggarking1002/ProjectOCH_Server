@@ -15,6 +15,22 @@ private:
 		int32 hp = 0;
 		int32 maxHp = 0;
 		int32 moveRange = 0;
+		int32 armor = 0;
+		int32 maxArmor = 0;
+		int32 currentAp = 0;
+		bool hasMovedThisTurn = false;
+		bool usedSubActionThisTurn = false;
+		bool usedUltimate = false;
+		bool isShieldUnit = false;
+		bool isMelee = true;
+	};
+
+	struct SkillSpec
+	{
+		int32 apCost = 0;
+		int32 damage = 0;
+		int32 range = 0;
+		bool isUltimate = false;
 	};
 
 	struct BattleState
@@ -41,28 +57,38 @@ public:
 private:
 	BattleState& GetOrCreateBattle(uint64 ownerId);
 	BattleState CreateBattle(uint64 ownerId);
-	BattlePawnState MakeBattlePawn(uint64 ownerId, Protocol::PawnClass pawnClass, int32 q, int32 r, int32 hp, int32 moveRange);
+	BattlePawnState MakeBattlePawn(uint64 ownerId, Protocol::PawnClass pawnClass, int32 q, int32 r, int32 hp, int32 moveRange,
+		int32 maxArmor, bool isShieldUnit, bool isMelee);
 	Protocol::AxialCoord MakeAxial(int32 q, int32 r);
 
 	void FillEnterBattlePacket(const BattleState& battle, Protocol::S_ENTER_BATTLE& pkt);
 	void CopyBattlePawn(const BattlePawnState& src, Protocol::BattlePawnInfo* dst);
+	void CopyBattlePawnDelta(const BattlePawnState& src, Protocol::BattlePawnDelta* dst);
 
 	BattlePawnState* FindPawn(BattleState& battle, uint64 pawnId);
 	bool IsOccupied(const BattleState& battle, const Protocol::AxialCoord& coord, uint64 exceptPawnId);
 	bool IsBattleWalkable(const Protocol::AxialCoord& coord);
 	int32 AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs);
 	uint64 GetNextAlliedTurnPawnId(const BattleState& battle, uint64 currentPawnId);
-	bool TryGetSkillSpec(int32 skillSlot, int32& damage, int32& range, string& reason);
+	bool TryGetSkillSpec(int32 skillSlot, SkillSpec& spec, string& reason);
+	bool CanMove(const BattlePawnState& pawn);
+	void StartTurn(BattlePawnState& pawn);
+	void ApplyDamage(BattlePawnState& target, int32 damage);
+	void AddActionLog(google::protobuf::RepeatedPtrField<Protocol::BattleActionLog>* logs,
+		uint64 attackerPawnId, uint64 defenderPawnId, int32 skillSlot, const string& actionType,
+		int32 damage, const BattlePawnState& defender, bool isCounter = false);
 
 	void SendEnterBattle(GameSessionRef session, Protocol::S_ENTER_BATTLE& pkt);
 	void SendBattleMoveResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
 		const Protocol::AxialCoord& start, const Protocol::AxialCoord& target, uint64 nextTurnPawnId,
-		Protocol::BattleMoveResult result, const string& reason);
+		Protocol::BattleMoveResult result, const string& reason, const BattlePawnState* pawn = nullptr);
 	void SendBattleSkillResult(GameSessionRef session, bool success, uint64 battleId, uint64 casterPawnId,
 		int32 skillSlot, uint64 targetPawnId, const Protocol::AxialCoord& targetAxial,
-		int32 damage, int32 targetHp, uint64 nextTurnPawnId, const string& reason);
+		int32 damage, int32 targetHp, int32 targetArmor, uint64 nextTurnPawnId, const string& reason,
+		const BattlePawnState* caster = nullptr, const BattlePawnState* target = nullptr,
+		const vector<Protocol::BattleActionLog>& logs = {});
 	void SendBattleEndTurnResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
-		uint64 nextTurnPawnId, const string& reason);
+		uint64 nextTurnPawnId, const string& reason, const BattlePawnState* pawn = nullptr, const BattlePawnState* nextPawn = nullptr);
 
 private:
 	uint64 _battleIdGenerator = 1;

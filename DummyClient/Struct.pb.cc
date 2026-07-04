@@ -74,6 +74,14 @@ PROTOBUF_CONSTEXPR BattlePawnInfo::BattlePawnInfo(
   , /*decltype(_impl_.hp_)*/0
   , /*decltype(_impl_.max_hp_)*/0
   , /*decltype(_impl_.move_range_)*/0
+  , /*decltype(_impl_.armor_)*/0
+  , /*decltype(_impl_.max_armor_)*/0
+  , /*decltype(_impl_.current_ap_)*/0
+  , /*decltype(_impl_.can_move_)*/false
+  , /*decltype(_impl_.used_sub_action_this_turn_)*/false
+  , /*decltype(_impl_.used_ultimate_)*/false
+  , /*decltype(_impl_.is_shield_unit_)*/false
+  , /*decltype(_impl_.is_melee_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct BattlePawnInfoDefaultTypeInternal {
   PROTOBUF_CONSTEXPR BattlePawnInfoDefaultTypeInternal()
@@ -84,8 +92,51 @@ struct BattlePawnInfoDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BattlePawnInfoDefaultTypeInternal _BattlePawnInfo_default_instance_;
+PROTOBUF_CONSTEXPR BattlePawnDelta::BattlePawnDelta(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.pawn_id_)*/uint64_t{0u}
+  , /*decltype(_impl_.hp_)*/0
+  , /*decltype(_impl_.armor_)*/0
+  , /*decltype(_impl_.current_ap_)*/0
+  , /*decltype(_impl_.can_move_)*/false
+  , /*decltype(_impl_.used_sub_action_this_turn_)*/false
+  , /*decltype(_impl_.used_ultimate_)*/false
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct BattlePawnDeltaDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR BattlePawnDeltaDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~BattlePawnDeltaDefaultTypeInternal() {}
+  union {
+    BattlePawnDelta _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BattlePawnDeltaDefaultTypeInternal _BattlePawnDelta_default_instance_;
+PROTOBUF_CONSTEXPR BattleActionLog::BattleActionLog(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.action_type_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.attacker_pawn_id_)*/uint64_t{0u}
+  , /*decltype(_impl_.defender_pawn_id_)*/uint64_t{0u}
+  , /*decltype(_impl_.skill_slot_)*/0
+  , /*decltype(_impl_.damage_)*/0
+  , /*decltype(_impl_.is_critical_)*/false
+  , /*decltype(_impl_.is_evaded_)*/false
+  , /*decltype(_impl_.is_guarded_)*/false
+  , /*decltype(_impl_.is_perfect_guarded_)*/false
+  , /*decltype(_impl_.is_counter_)*/false
+  , /*decltype(_impl_.hp_after_)*/0
+  , /*decltype(_impl_.armor_after_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct BattleActionLogDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR BattleActionLogDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~BattleActionLogDefaultTypeInternal() {}
+  union {
+    BattleActionLog _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BattleActionLogDefaultTypeInternal _BattleActionLog_default_instance_;
 }  // namespace Protocol
-static ::_pb::Metadata file_level_metadata_Struct_2eproto[4];
+static ::_pb::Metadata file_level_metadata_Struct_2eproto[6];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_Struct_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Struct_2eproto = nullptr;
 
@@ -129,12 +180,53 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.hp_),
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.max_hp_),
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.move_range_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.armor_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.max_armor_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.current_ap_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.can_move_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.used_sub_action_this_turn_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.used_ultimate_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.is_shield_unit_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.is_melee_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.pawn_id_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.hp_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.armor_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.current_ap_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.can_move_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.used_sub_action_this_turn_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.used_ultimate_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _impl_.attacker_pawn_id_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _impl_.defender_pawn_id_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _impl_.skill_slot_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _impl_.action_type_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _impl_.damage_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _impl_.is_critical_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _impl_.is_evaded_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _impl_.is_guarded_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _impl_.is_perfect_guarded_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _impl_.is_counter_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _impl_.hp_after_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _impl_.armor_after_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::Vec2Fixed)},
   { 8, -1, -1, sizeof(::Protocol::AxialCoord)},
   { 16, -1, -1, sizeof(::Protocol::ObjectInfo)},
   { 26, -1, -1, sizeof(::Protocol::BattlePawnInfo)},
+  { 47, -1, -1, sizeof(::Protocol::BattlePawnDelta)},
+  { 60, -1, -1, sizeof(::Protocol::BattleActionLog)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -142,6 +234,8 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::Protocol::_AxialCoord_default_instance_._instance,
   &::Protocol::_ObjectInfo_default_instance_._instance,
   &::Protocol::_BattlePawnInfo_default_instance_._instance,
+  &::Protocol::_BattlePawnDelta_default_instance_._instance,
+  &::Protocol::_BattleActionLog_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -151,21 +245,36 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "fo\022\021\n\tobject_id\030\001 \001(\004\022)\n\013object_type\030\002 \001"
   "(\0162\024.Protocol.ObjectType\022-\n\rcreature_typ"
   "e\030\003 \001(\0162\026.Protocol.CreatureType\022%\n\010posit"
-  "ion\030\004 \001(\0132\023.Protocol.Vec2Fixed\"\261\001\n\016Battl"
+  "ion\030\004 \001(\0132\023.Protocol.Vec2Fixed\"\335\002\n\016Battl"
   "ePawnInfo\022\017\n\007pawn_id\030\001 \001(\004\022\020\n\010owner_id\030\002"
   " \001(\004\022\'\n\npawn_class\030\003 \001(\0162\023.Protocol.Pawn"
   "Class\022#\n\005axial\030\004 \001(\0132\024.Protocol.AxialCoo"
   "rd\022\n\n\002hp\030\005 \001(\005\022\016\n\006max_hp\030\006 \001(\005\022\022\n\nmove_r"
-  "ange\030\007 \001(\005b\006proto3"
+  "ange\030\007 \001(\005\022\r\n\005armor\030\010 \001(\005\022\021\n\tmax_armor\030\t"
+  " \001(\005\022\022\n\ncurrent_ap\030\n \001(\005\022\020\n\010can_move\030\013 \001"
+  "(\010\022!\n\031used_sub_action_this_turn\030\014 \001(\010\022\025\n"
+  "\rused_ultimate\030\r \001(\010\022\026\n\016is_shield_unit\030\016"
+  " \001(\010\022\020\n\010is_melee\030\017 \001(\010\"\235\001\n\017BattlePawnDel"
+  "ta\022\017\n\007pawn_id\030\001 \001(\004\022\n\n\002hp\030\002 \001(\005\022\r\n\005armor"
+  "\030\003 \001(\005\022\022\n\ncurrent_ap\030\004 \001(\005\022\020\n\010can_move\030\005"
+  " \001(\010\022!\n\031used_sub_action_this_turn\030\006 \001(\010\022"
+  "\025\n\rused_ultimate\030\007 \001(\010\"\221\002\n\017BattleActionL"
+  "og\022\030\n\020attacker_pawn_id\030\001 \001(\004\022\030\n\020defender"
+  "_pawn_id\030\002 \001(\004\022\022\n\nskill_slot\030\003 \001(\005\022\023\n\013ac"
+  "tion_type\030\004 \001(\t\022\016\n\006damage\030\005 \001(\005\022\023\n\013is_cr"
+  "itical\030\006 \001(\010\022\021\n\tis_evaded\030\007 \001(\010\022\022\n\nis_gu"
+  "arded\030\010 \001(\010\022\032\n\022is_perfect_guarded\030\t \001(\010\022"
+  "\022\n\nis_counter\030\n \001(\010\022\020\n\010hp_after\030\013 \001(\005\022\023\n"
+  "\013armor_after\030\014 \001(\005b\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_Struct_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Struct_2eproto = {
-    false, false, 458, descriptor_table_protodef_Struct_2eproto,
+    false, false, 1066, descriptor_table_protodef_Struct_2eproto,
     "Struct.proto",
-    &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 4,
+    &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 6,
     schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
     file_level_metadata_Struct_2eproto, file_level_enum_descriptors_Struct_2eproto,
     file_level_service_descriptors_Struct_2eproto,
@@ -910,6 +1019,14 @@ BattlePawnInfo::BattlePawnInfo(const BattlePawnInfo& from)
     , decltype(_impl_.hp_){}
     , decltype(_impl_.max_hp_){}
     , decltype(_impl_.move_range_){}
+    , decltype(_impl_.armor_){}
+    , decltype(_impl_.max_armor_){}
+    , decltype(_impl_.current_ap_){}
+    , decltype(_impl_.can_move_){}
+    , decltype(_impl_.used_sub_action_this_turn_){}
+    , decltype(_impl_.used_ultimate_){}
+    , decltype(_impl_.is_shield_unit_){}
+    , decltype(_impl_.is_melee_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -917,8 +1034,8 @@ BattlePawnInfo::BattlePawnInfo(const BattlePawnInfo& from)
     _this->_impl_.axial_ = new ::Protocol::AxialCoord(*from._impl_.axial_);
   }
   ::memcpy(&_impl_.pawn_id_, &from._impl_.pawn_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.move_range_) -
-    reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.move_range_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.is_melee_) -
+    reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.is_melee_));
   // @@protoc_insertion_point(copy_constructor:Protocol.BattlePawnInfo)
 }
 
@@ -934,6 +1051,14 @@ inline void BattlePawnInfo::SharedCtor(
     , decltype(_impl_.hp_){0}
     , decltype(_impl_.max_hp_){0}
     , decltype(_impl_.move_range_){0}
+    , decltype(_impl_.armor_){0}
+    , decltype(_impl_.max_armor_){0}
+    , decltype(_impl_.current_ap_){0}
+    , decltype(_impl_.can_move_){false}
+    , decltype(_impl_.used_sub_action_this_turn_){false}
+    , decltype(_impl_.used_ultimate_){false}
+    , decltype(_impl_.is_shield_unit_){false}
+    , decltype(_impl_.is_melee_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -967,8 +1092,8 @@ void BattlePawnInfo::Clear() {
   }
   _impl_.axial_ = nullptr;
   ::memset(&_impl_.pawn_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.move_range_) -
-      reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.move_range_));
+      reinterpret_cast<char*>(&_impl_.is_melee_) -
+      reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.is_melee_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1031,6 +1156,70 @@ const char* BattlePawnInfo::_InternalParse(const char* ptr, ::_pbi::ParseContext
       case 7:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
           _impl_.move_range_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 armor = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 64)) {
+          _impl_.armor_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 max_armor = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 72)) {
+          _impl_.max_armor_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 current_ap = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 80)) {
+          _impl_.current_ap_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool can_move = 11;
+      case 11:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 88)) {
+          _impl_.can_move_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool used_sub_action_this_turn = 12;
+      case 12:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 96)) {
+          _impl_.used_sub_action_this_turn_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool used_ultimate = 13;
+      case 13:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 104)) {
+          _impl_.used_ultimate_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool is_shield_unit = 14;
+      case 14:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 112)) {
+          _impl_.is_shield_unit_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool is_melee = 15;
+      case 15:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 120)) {
+          _impl_.is_melee_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1108,6 +1297,54 @@ uint8_t* BattlePawnInfo::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(7, this->_internal_move_range(), target);
   }
 
+  // int32 armor = 8;
+  if (this->_internal_armor() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(8, this->_internal_armor(), target);
+  }
+
+  // int32 max_armor = 9;
+  if (this->_internal_max_armor() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(9, this->_internal_max_armor(), target);
+  }
+
+  // int32 current_ap = 10;
+  if (this->_internal_current_ap() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(10, this->_internal_current_ap(), target);
+  }
+
+  // bool can_move = 11;
+  if (this->_internal_can_move() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(11, this->_internal_can_move(), target);
+  }
+
+  // bool used_sub_action_this_turn = 12;
+  if (this->_internal_used_sub_action_this_turn() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(12, this->_internal_used_sub_action_this_turn(), target);
+  }
+
+  // bool used_ultimate = 13;
+  if (this->_internal_used_ultimate() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(13, this->_internal_used_ultimate(), target);
+  }
+
+  // bool is_shield_unit = 14;
+  if (this->_internal_is_shield_unit() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(14, this->_internal_is_shield_unit(), target);
+  }
+
+  // bool is_melee = 15;
+  if (this->_internal_is_melee() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(15, this->_internal_is_melee(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1162,6 +1399,46 @@ size_t BattlePawnInfo::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_move_range());
   }
 
+  // int32 armor = 8;
+  if (this->_internal_armor() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_armor());
+  }
+
+  // int32 max_armor = 9;
+  if (this->_internal_max_armor() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_max_armor());
+  }
+
+  // int32 current_ap = 10;
+  if (this->_internal_current_ap() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_current_ap());
+  }
+
+  // bool can_move = 11;
+  if (this->_internal_can_move() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool used_sub_action_this_turn = 12;
+  if (this->_internal_used_sub_action_this_turn() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool used_ultimate = 13;
+  if (this->_internal_used_ultimate() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool is_shield_unit = 14;
+  if (this->_internal_is_shield_unit() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool is_melee = 15;
+  if (this->_internal_is_melee() != 0) {
+    total_size += 1 + 1;
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -1202,6 +1479,30 @@ void BattlePawnInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const :
   if (from._internal_move_range() != 0) {
     _this->_internal_set_move_range(from._internal_move_range());
   }
+  if (from._internal_armor() != 0) {
+    _this->_internal_set_armor(from._internal_armor());
+  }
+  if (from._internal_max_armor() != 0) {
+    _this->_internal_set_max_armor(from._internal_max_armor());
+  }
+  if (from._internal_current_ap() != 0) {
+    _this->_internal_set_current_ap(from._internal_current_ap());
+  }
+  if (from._internal_can_move() != 0) {
+    _this->_internal_set_can_move(from._internal_can_move());
+  }
+  if (from._internal_used_sub_action_this_turn() != 0) {
+    _this->_internal_set_used_sub_action_this_turn(from._internal_used_sub_action_this_turn());
+  }
+  if (from._internal_used_ultimate() != 0) {
+    _this->_internal_set_used_ultimate(from._internal_used_ultimate());
+  }
+  if (from._internal_is_shield_unit() != 0) {
+    _this->_internal_set_is_shield_unit(from._internal_is_shield_unit());
+  }
+  if (from._internal_is_melee() != 0) {
+    _this->_internal_set_is_melee(from._internal_is_melee());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1220,8 +1521,8 @@ void BattlePawnInfo::InternalSwap(BattlePawnInfo* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(BattlePawnInfo, _impl_.move_range_)
-      + sizeof(BattlePawnInfo::_impl_.move_range_)
+      PROTOBUF_FIELD_OFFSET(BattlePawnInfo, _impl_.is_melee_)
+      + sizeof(BattlePawnInfo::_impl_.is_melee_)
       - PROTOBUF_FIELD_OFFSET(BattlePawnInfo, _impl_.axial_)>(
           reinterpret_cast<char*>(&_impl_.axial_),
           reinterpret_cast<char*>(&other->_impl_.axial_));
@@ -1231,6 +1532,816 @@ void BattlePawnInfo::InternalSwap(BattlePawnInfo* other) {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Struct_2eproto_getter, &descriptor_table_Struct_2eproto_once,
       file_level_metadata_Struct_2eproto[3]);
+}
+
+// ===================================================================
+
+class BattlePawnDelta::_Internal {
+ public:
+};
+
+BattlePawnDelta::BattlePawnDelta(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:Protocol.BattlePawnDelta)
+}
+BattlePawnDelta::BattlePawnDelta(const BattlePawnDelta& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  BattlePawnDelta* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.pawn_id_){}
+    , decltype(_impl_.hp_){}
+    , decltype(_impl_.armor_){}
+    , decltype(_impl_.current_ap_){}
+    , decltype(_impl_.can_move_){}
+    , decltype(_impl_.used_sub_action_this_turn_){}
+    , decltype(_impl_.used_ultimate_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&_impl_.pawn_id_, &from._impl_.pawn_id_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.used_ultimate_) -
+    reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.used_ultimate_));
+  // @@protoc_insertion_point(copy_constructor:Protocol.BattlePawnDelta)
+}
+
+inline void BattlePawnDelta::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.pawn_id_){uint64_t{0u}}
+    , decltype(_impl_.hp_){0}
+    , decltype(_impl_.armor_){0}
+    , decltype(_impl_.current_ap_){0}
+    , decltype(_impl_.can_move_){false}
+    , decltype(_impl_.used_sub_action_this_turn_){false}
+    , decltype(_impl_.used_ultimate_){false}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+BattlePawnDelta::~BattlePawnDelta() {
+  // @@protoc_insertion_point(destructor:Protocol.BattlePawnDelta)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void BattlePawnDelta::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void BattlePawnDelta::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void BattlePawnDelta::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.BattlePawnDelta)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ::memset(&_impl_.pawn_id_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.used_ultimate_) -
+      reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.used_ultimate_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* BattlePawnDelta::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // uint64 pawn_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.pawn_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 hp = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.hp_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 armor = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _impl_.armor_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 current_ap = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+          _impl_.current_ap_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool can_move = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          _impl_.can_move_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool used_sub_action_this_turn = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+          _impl_.used_sub_action_this_turn_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool used_ultimate = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+          _impl_.used_ultimate_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* BattlePawnDelta::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.BattlePawnDelta)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint64 pawn_id = 1;
+  if (this->_internal_pawn_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_pawn_id(), target);
+  }
+
+  // int32 hp = 2;
+  if (this->_internal_hp() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(2, this->_internal_hp(), target);
+  }
+
+  // int32 armor = 3;
+  if (this->_internal_armor() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(3, this->_internal_armor(), target);
+  }
+
+  // int32 current_ap = 4;
+  if (this->_internal_current_ap() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(4, this->_internal_current_ap(), target);
+  }
+
+  // bool can_move = 5;
+  if (this->_internal_can_move() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(5, this->_internal_can_move(), target);
+  }
+
+  // bool used_sub_action_this_turn = 6;
+  if (this->_internal_used_sub_action_this_turn() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(6, this->_internal_used_sub_action_this_turn(), target);
+  }
+
+  // bool used_ultimate = 7;
+  if (this->_internal_used_ultimate() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(7, this->_internal_used_ultimate(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.BattlePawnDelta)
+  return target;
+}
+
+size_t BattlePawnDelta::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.BattlePawnDelta)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // uint64 pawn_id = 1;
+  if (this->_internal_pawn_id() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_pawn_id());
+  }
+
+  // int32 hp = 2;
+  if (this->_internal_hp() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_hp());
+  }
+
+  // int32 armor = 3;
+  if (this->_internal_armor() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_armor());
+  }
+
+  // int32 current_ap = 4;
+  if (this->_internal_current_ap() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_current_ap());
+  }
+
+  // bool can_move = 5;
+  if (this->_internal_can_move() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool used_sub_action_this_turn = 6;
+  if (this->_internal_used_sub_action_this_turn() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool used_ultimate = 7;
+  if (this->_internal_used_ultimate() != 0) {
+    total_size += 1 + 1;
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData BattlePawnDelta::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    BattlePawnDelta::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*BattlePawnDelta::GetClassData() const { return &_class_data_; }
+
+
+void BattlePawnDelta::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<BattlePawnDelta*>(&to_msg);
+  auto& from = static_cast<const BattlePawnDelta&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.BattlePawnDelta)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_pawn_id() != 0) {
+    _this->_internal_set_pawn_id(from._internal_pawn_id());
+  }
+  if (from._internal_hp() != 0) {
+    _this->_internal_set_hp(from._internal_hp());
+  }
+  if (from._internal_armor() != 0) {
+    _this->_internal_set_armor(from._internal_armor());
+  }
+  if (from._internal_current_ap() != 0) {
+    _this->_internal_set_current_ap(from._internal_current_ap());
+  }
+  if (from._internal_can_move() != 0) {
+    _this->_internal_set_can_move(from._internal_can_move());
+  }
+  if (from._internal_used_sub_action_this_turn() != 0) {
+    _this->_internal_set_used_sub_action_this_turn(from._internal_used_sub_action_this_turn());
+  }
+  if (from._internal_used_ultimate() != 0) {
+    _this->_internal_set_used_ultimate(from._internal_used_ultimate());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void BattlePawnDelta::CopyFrom(const BattlePawnDelta& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.BattlePawnDelta)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool BattlePawnDelta::IsInitialized() const {
+  return true;
+}
+
+void BattlePawnDelta::InternalSwap(BattlePawnDelta* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(BattlePawnDelta, _impl_.used_ultimate_)
+      + sizeof(BattlePawnDelta::_impl_.used_ultimate_)
+      - PROTOBUF_FIELD_OFFSET(BattlePawnDelta, _impl_.pawn_id_)>(
+          reinterpret_cast<char*>(&_impl_.pawn_id_),
+          reinterpret_cast<char*>(&other->_impl_.pawn_id_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata BattlePawnDelta::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Struct_2eproto_getter, &descriptor_table_Struct_2eproto_once,
+      file_level_metadata_Struct_2eproto[4]);
+}
+
+// ===================================================================
+
+class BattleActionLog::_Internal {
+ public:
+};
+
+BattleActionLog::BattleActionLog(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:Protocol.BattleActionLog)
+}
+BattleActionLog::BattleActionLog(const BattleActionLog& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  BattleActionLog* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.action_type_){}
+    , decltype(_impl_.attacker_pawn_id_){}
+    , decltype(_impl_.defender_pawn_id_){}
+    , decltype(_impl_.skill_slot_){}
+    , decltype(_impl_.damage_){}
+    , decltype(_impl_.is_critical_){}
+    , decltype(_impl_.is_evaded_){}
+    , decltype(_impl_.is_guarded_){}
+    , decltype(_impl_.is_perfect_guarded_){}
+    , decltype(_impl_.is_counter_){}
+    , decltype(_impl_.hp_after_){}
+    , decltype(_impl_.armor_after_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.action_type_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.action_type_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_action_type().empty()) {
+    _this->_impl_.action_type_.Set(from._internal_action_type(), 
+      _this->GetArenaForAllocation());
+  }
+  ::memcpy(&_impl_.attacker_pawn_id_, &from._impl_.attacker_pawn_id_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.armor_after_) -
+    reinterpret_cast<char*>(&_impl_.attacker_pawn_id_)) + sizeof(_impl_.armor_after_));
+  // @@protoc_insertion_point(copy_constructor:Protocol.BattleActionLog)
+}
+
+inline void BattleActionLog::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.action_type_){}
+    , decltype(_impl_.attacker_pawn_id_){uint64_t{0u}}
+    , decltype(_impl_.defender_pawn_id_){uint64_t{0u}}
+    , decltype(_impl_.skill_slot_){0}
+    , decltype(_impl_.damage_){0}
+    , decltype(_impl_.is_critical_){false}
+    , decltype(_impl_.is_evaded_){false}
+    , decltype(_impl_.is_guarded_){false}
+    , decltype(_impl_.is_perfect_guarded_){false}
+    , decltype(_impl_.is_counter_){false}
+    , decltype(_impl_.hp_after_){0}
+    , decltype(_impl_.armor_after_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.action_type_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.action_type_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+BattleActionLog::~BattleActionLog() {
+  // @@protoc_insertion_point(destructor:Protocol.BattleActionLog)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void BattleActionLog::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.action_type_.Destroy();
+}
+
+void BattleActionLog::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void BattleActionLog::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.BattleActionLog)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.action_type_.ClearToEmpty();
+  ::memset(&_impl_.attacker_pawn_id_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.armor_after_) -
+      reinterpret_cast<char*>(&_impl_.attacker_pawn_id_)) + sizeof(_impl_.armor_after_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* BattleActionLog::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // uint64 attacker_pawn_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.attacker_pawn_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint64 defender_pawn_id = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.defender_pawn_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 skill_slot = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _impl_.skill_slot_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string action_type = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          auto str = _internal_mutable_action_type();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.BattleActionLog.action_type"));
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 damage = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          _impl_.damage_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool is_critical = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+          _impl_.is_critical_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool is_evaded = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+          _impl_.is_evaded_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool is_guarded = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 64)) {
+          _impl_.is_guarded_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool is_perfect_guarded = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 72)) {
+          _impl_.is_perfect_guarded_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool is_counter = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 80)) {
+          _impl_.is_counter_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 hp_after = 11;
+      case 11:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 88)) {
+          _impl_.hp_after_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 armor_after = 12;
+      case 12:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 96)) {
+          _impl_.armor_after_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* BattleActionLog::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.BattleActionLog)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint64 attacker_pawn_id = 1;
+  if (this->_internal_attacker_pawn_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_attacker_pawn_id(), target);
+  }
+
+  // uint64 defender_pawn_id = 2;
+  if (this->_internal_defender_pawn_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_defender_pawn_id(), target);
+  }
+
+  // int32 skill_slot = 3;
+  if (this->_internal_skill_slot() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(3, this->_internal_skill_slot(), target);
+  }
+
+  // string action_type = 4;
+  if (!this->_internal_action_type().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_action_type().data(), static_cast<int>(this->_internal_action_type().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.BattleActionLog.action_type");
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_action_type(), target);
+  }
+
+  // int32 damage = 5;
+  if (this->_internal_damage() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(5, this->_internal_damage(), target);
+  }
+
+  // bool is_critical = 6;
+  if (this->_internal_is_critical() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(6, this->_internal_is_critical(), target);
+  }
+
+  // bool is_evaded = 7;
+  if (this->_internal_is_evaded() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(7, this->_internal_is_evaded(), target);
+  }
+
+  // bool is_guarded = 8;
+  if (this->_internal_is_guarded() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(8, this->_internal_is_guarded(), target);
+  }
+
+  // bool is_perfect_guarded = 9;
+  if (this->_internal_is_perfect_guarded() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(9, this->_internal_is_perfect_guarded(), target);
+  }
+
+  // bool is_counter = 10;
+  if (this->_internal_is_counter() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(10, this->_internal_is_counter(), target);
+  }
+
+  // int32 hp_after = 11;
+  if (this->_internal_hp_after() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(11, this->_internal_hp_after(), target);
+  }
+
+  // int32 armor_after = 12;
+  if (this->_internal_armor_after() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(12, this->_internal_armor_after(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.BattleActionLog)
+  return target;
+}
+
+size_t BattleActionLog::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.BattleActionLog)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string action_type = 4;
+  if (!this->_internal_action_type().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_action_type());
+  }
+
+  // uint64 attacker_pawn_id = 1;
+  if (this->_internal_attacker_pawn_id() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_attacker_pawn_id());
+  }
+
+  // uint64 defender_pawn_id = 2;
+  if (this->_internal_defender_pawn_id() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_defender_pawn_id());
+  }
+
+  // int32 skill_slot = 3;
+  if (this->_internal_skill_slot() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_skill_slot());
+  }
+
+  // int32 damage = 5;
+  if (this->_internal_damage() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_damage());
+  }
+
+  // bool is_critical = 6;
+  if (this->_internal_is_critical() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool is_evaded = 7;
+  if (this->_internal_is_evaded() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool is_guarded = 8;
+  if (this->_internal_is_guarded() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool is_perfect_guarded = 9;
+  if (this->_internal_is_perfect_guarded() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool is_counter = 10;
+  if (this->_internal_is_counter() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // int32 hp_after = 11;
+  if (this->_internal_hp_after() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_hp_after());
+  }
+
+  // int32 armor_after = 12;
+  if (this->_internal_armor_after() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_armor_after());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData BattleActionLog::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    BattleActionLog::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*BattleActionLog::GetClassData() const { return &_class_data_; }
+
+
+void BattleActionLog::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<BattleActionLog*>(&to_msg);
+  auto& from = static_cast<const BattleActionLog&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.BattleActionLog)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_action_type().empty()) {
+    _this->_internal_set_action_type(from._internal_action_type());
+  }
+  if (from._internal_attacker_pawn_id() != 0) {
+    _this->_internal_set_attacker_pawn_id(from._internal_attacker_pawn_id());
+  }
+  if (from._internal_defender_pawn_id() != 0) {
+    _this->_internal_set_defender_pawn_id(from._internal_defender_pawn_id());
+  }
+  if (from._internal_skill_slot() != 0) {
+    _this->_internal_set_skill_slot(from._internal_skill_slot());
+  }
+  if (from._internal_damage() != 0) {
+    _this->_internal_set_damage(from._internal_damage());
+  }
+  if (from._internal_is_critical() != 0) {
+    _this->_internal_set_is_critical(from._internal_is_critical());
+  }
+  if (from._internal_is_evaded() != 0) {
+    _this->_internal_set_is_evaded(from._internal_is_evaded());
+  }
+  if (from._internal_is_guarded() != 0) {
+    _this->_internal_set_is_guarded(from._internal_is_guarded());
+  }
+  if (from._internal_is_perfect_guarded() != 0) {
+    _this->_internal_set_is_perfect_guarded(from._internal_is_perfect_guarded());
+  }
+  if (from._internal_is_counter() != 0) {
+    _this->_internal_set_is_counter(from._internal_is_counter());
+  }
+  if (from._internal_hp_after() != 0) {
+    _this->_internal_set_hp_after(from._internal_hp_after());
+  }
+  if (from._internal_armor_after() != 0) {
+    _this->_internal_set_armor_after(from._internal_armor_after());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void BattleActionLog::CopyFrom(const BattleActionLog& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.BattleActionLog)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool BattleActionLog::IsInitialized() const {
+  return true;
+}
+
+void BattleActionLog::InternalSwap(BattleActionLog* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.action_type_, lhs_arena,
+      &other->_impl_.action_type_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(BattleActionLog, _impl_.armor_after_)
+      + sizeof(BattleActionLog::_impl_.armor_after_)
+      - PROTOBUF_FIELD_OFFSET(BattleActionLog, _impl_.attacker_pawn_id_)>(
+          reinterpret_cast<char*>(&_impl_.attacker_pawn_id_),
+          reinterpret_cast<char*>(&other->_impl_.attacker_pawn_id_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata BattleActionLog::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Struct_2eproto_getter, &descriptor_table_Struct_2eproto_once,
+      file_level_metadata_Struct_2eproto[5]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -1251,6 +2362,14 @@ Arena::CreateMaybeMessage< ::Protocol::ObjectInfo >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::Protocol::BattlePawnInfo*
 Arena::CreateMaybeMessage< ::Protocol::BattlePawnInfo >(Arena* arena) {
   return Arena::CreateMessageInternal< ::Protocol::BattlePawnInfo >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::BattlePawnDelta*
+Arena::CreateMaybeMessage< ::Protocol::BattlePawnDelta >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::BattlePawnDelta >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::BattleActionLog*
+Arena::CreateMaybeMessage< ::Protocol::BattleActionLog >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::BattleActionLog >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

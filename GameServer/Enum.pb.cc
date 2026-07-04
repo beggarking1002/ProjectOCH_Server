@@ -44,7 +44,7 @@ const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "AR\020\007\022 \n\034PAWN_CLASS_ALEN_SWORD_SHIELD\020\010\022\037"
   "\n\033PAWN_CLASS_SERA_NECROMANCER\020\t\022\033\n\027PAWN_"
   "CLASS_SERA_WARLOCK\020\n\022\035\n\031PAWN_CLASS_DARKH"
-  "AND_SWORD\020e*\311\002\n\020BattleMoveResult\022\033\n\027BATT"
+  "AND_SWORD\020e*\355\002\n\020BattleMoveResult\022\033\n\027BATT"
   "LE_MOVE_RESULT_NONE\020\000\022\031\n\025BATTLE_MOVE_RES"
   "ULT_OK\020\001\022$\n BATTLE_MOVE_RESULT_NOT_YOUR_"
   "TURN\020\002\022 \n\034BATTLE_MOVE_RESULT_NOT_OWNER\020\003"
@@ -52,11 +52,12 @@ const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "\037BATTLE_MOVE_RESULT_OUT_OF_RANGE\020\005\022\037\n\033BA"
   "TTLE_MOVE_RESULT_OCCUPIED\020\006\022%\n!BATTLE_MO"
   "VE_RESULT_INVALID_BATTLE\020\007\022#\n\037BATTLE_MOV"
-  "E_RESULT_INVALID_PAWN\020\010b\006proto3"
+  "E_RESULT_INVALID_PAWN\020\010\022\"\n\036BATTLE_MOVE_R"
+  "ESULT_CANNOT_MOVE\020\tb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_Enum_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Enum_2eproto = {
-    false, false, 951, descriptor_table_protodef_Enum_2eproto,
+    false, false, 987, descriptor_table_protodef_Enum_2eproto,
     "Enum.proto",
     &descriptor_table_Enum_2eproto_once, nullptr, 0, 0,
     schemas, file_default_instances, TableStruct_Enum_2eproto::offsets,
@@ -141,6 +142,7 @@ bool BattleMoveResult_IsValid(int value) {
     case 6:
     case 7:
     case 8:
+    case 9:
       return true;
     default:
       return false;
