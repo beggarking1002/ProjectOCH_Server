@@ -96,6 +96,9 @@ extern S_BATTLE_INVITE_RESULTDefaultTypeInternal _S_BATTLE_INVITE_RESULT_default
 class S_BATTLE_MOVE;
 struct S_BATTLE_MOVEDefaultTypeInternal;
 extern S_BATTLE_MOVEDefaultTypeInternal _S_BATTLE_MOVE_default_instance_;
+class S_BATTLE_PAWN_DEAD;
+struct S_BATTLE_PAWN_DEADDefaultTypeInternal;
+extern S_BATTLE_PAWN_DEADDefaultTypeInternal _S_BATTLE_PAWN_DEAD_default_instance_;
 class S_BATTLE_SKILL;
 struct S_BATTLE_SKILLDefaultTypeInternal;
 extern S_BATTLE_SKILLDefaultTypeInternal _S_BATTLE_SKILL_default_instance_;
@@ -141,6 +144,7 @@ template<> ::Protocol::S_BATTLE_INVITE_RECEIVED* Arena::CreateMaybeMessage<::Pro
 template<> ::Protocol::S_BATTLE_INVITE_REQUEST* Arena::CreateMaybeMessage<::Protocol::S_BATTLE_INVITE_REQUEST>(Arena*);
 template<> ::Protocol::S_BATTLE_INVITE_RESULT* Arena::CreateMaybeMessage<::Protocol::S_BATTLE_INVITE_RESULT>(Arena*);
 template<> ::Protocol::S_BATTLE_MOVE* Arena::CreateMaybeMessage<::Protocol::S_BATTLE_MOVE>(Arena*);
+template<> ::Protocol::S_BATTLE_PAWN_DEAD* Arena::CreateMaybeMessage<::Protocol::S_BATTLE_PAWN_DEAD>(Arena*);
 template<> ::Protocol::S_BATTLE_SKILL* Arena::CreateMaybeMessage<::Protocol::S_BATTLE_SKILL>(Arena*);
 template<> ::Protocol::S_CHAT* Arena::CreateMaybeMessage<::Protocol::S_CHAT>(Arena*);
 template<> ::Protocol::S_DESPAWN* Arena::CreateMaybeMessage<::Protocol::S_DESPAWN>(Arena*);
@@ -4636,6 +4640,176 @@ class S_BATTLE_INVITE_RESULT final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_Protocol_2eproto;
 };
+// -------------------------------------------------------------------
+
+class S_BATTLE_PAWN_DEAD final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_BATTLE_PAWN_DEAD) */ {
+ public:
+  inline S_BATTLE_PAWN_DEAD() : S_BATTLE_PAWN_DEAD(nullptr) {}
+  ~S_BATTLE_PAWN_DEAD() override;
+  explicit PROTOBUF_CONSTEXPR S_BATTLE_PAWN_DEAD(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_BATTLE_PAWN_DEAD(const S_BATTLE_PAWN_DEAD& from);
+  S_BATTLE_PAWN_DEAD(S_BATTLE_PAWN_DEAD&& from) noexcept
+    : S_BATTLE_PAWN_DEAD() {
+    *this = ::std::move(from);
+  }
+
+  inline S_BATTLE_PAWN_DEAD& operator=(const S_BATTLE_PAWN_DEAD& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_BATTLE_PAWN_DEAD& operator=(S_BATTLE_PAWN_DEAD&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_BATTLE_PAWN_DEAD& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_BATTLE_PAWN_DEAD* internal_default_instance() {
+    return reinterpret_cast<const S_BATTLE_PAWN_DEAD*>(
+               &_S_BATTLE_PAWN_DEAD_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    25;
+
+  friend void swap(S_BATTLE_PAWN_DEAD& a, S_BATTLE_PAWN_DEAD& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_BATTLE_PAWN_DEAD* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_BATTLE_PAWN_DEAD* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_BATTLE_PAWN_DEAD* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_BATTLE_PAWN_DEAD>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_BATTLE_PAWN_DEAD& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const S_BATTLE_PAWN_DEAD& from) {
+    S_BATTLE_PAWN_DEAD::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_BATTLE_PAWN_DEAD* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_BATTLE_PAWN_DEAD";
+  }
+  protected:
+  explicit S_BATTLE_PAWN_DEAD(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kBattleIdFieldNumber = 1,
+    kPawnIdFieldNumber = 2,
+    kKillerPawnIdFieldNumber = 3,
+  };
+  // uint64 battle_id = 1;
+  void clear_battle_id();
+  uint64_t battle_id() const;
+  void set_battle_id(uint64_t value);
+  private:
+  uint64_t _internal_battle_id() const;
+  void _internal_set_battle_id(uint64_t value);
+  public:
+
+  // uint64 pawn_id = 2;
+  void clear_pawn_id();
+  uint64_t pawn_id() const;
+  void set_pawn_id(uint64_t value);
+  private:
+  uint64_t _internal_pawn_id() const;
+  void _internal_set_pawn_id(uint64_t value);
+  public:
+
+  // uint64 killer_pawn_id = 3;
+  void clear_killer_pawn_id();
+  uint64_t killer_pawn_id() const;
+  void set_killer_pawn_id(uint64_t value);
+  private:
+  uint64_t _internal_killer_pawn_id() const;
+  void _internal_set_killer_pawn_id(uint64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_BATTLE_PAWN_DEAD)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    uint64_t battle_id_;
+    uint64_t pawn_id_;
+    uint64_t killer_pawn_id_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
 // ===================================================================
 
 
@@ -7438,9 +7612,75 @@ inline void S_BATTLE_INVITE_RESULT::set_allocated_reason(std::string* reason) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_BATTLE_INVITE_RESULT.reason)
 }
 
+// -------------------------------------------------------------------
+
+// S_BATTLE_PAWN_DEAD
+
+// uint64 battle_id = 1;
+inline void S_BATTLE_PAWN_DEAD::clear_battle_id() {
+  _impl_.battle_id_ = uint64_t{0u};
+}
+inline uint64_t S_BATTLE_PAWN_DEAD::_internal_battle_id() const {
+  return _impl_.battle_id_;
+}
+inline uint64_t S_BATTLE_PAWN_DEAD::battle_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_PAWN_DEAD.battle_id)
+  return _internal_battle_id();
+}
+inline void S_BATTLE_PAWN_DEAD::_internal_set_battle_id(uint64_t value) {
+  
+  _impl_.battle_id_ = value;
+}
+inline void S_BATTLE_PAWN_DEAD::set_battle_id(uint64_t value) {
+  _internal_set_battle_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_PAWN_DEAD.battle_id)
+}
+
+// uint64 pawn_id = 2;
+inline void S_BATTLE_PAWN_DEAD::clear_pawn_id() {
+  _impl_.pawn_id_ = uint64_t{0u};
+}
+inline uint64_t S_BATTLE_PAWN_DEAD::_internal_pawn_id() const {
+  return _impl_.pawn_id_;
+}
+inline uint64_t S_BATTLE_PAWN_DEAD::pawn_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_PAWN_DEAD.pawn_id)
+  return _internal_pawn_id();
+}
+inline void S_BATTLE_PAWN_DEAD::_internal_set_pawn_id(uint64_t value) {
+  
+  _impl_.pawn_id_ = value;
+}
+inline void S_BATTLE_PAWN_DEAD::set_pawn_id(uint64_t value) {
+  _internal_set_pawn_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_PAWN_DEAD.pawn_id)
+}
+
+// uint64 killer_pawn_id = 3;
+inline void S_BATTLE_PAWN_DEAD::clear_killer_pawn_id() {
+  _impl_.killer_pawn_id_ = uint64_t{0u};
+}
+inline uint64_t S_BATTLE_PAWN_DEAD::_internal_killer_pawn_id() const {
+  return _impl_.killer_pawn_id_;
+}
+inline uint64_t S_BATTLE_PAWN_DEAD::killer_pawn_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_PAWN_DEAD.killer_pawn_id)
+  return _internal_killer_pawn_id();
+}
+inline void S_BATTLE_PAWN_DEAD::_internal_set_killer_pawn_id(uint64_t value) {
+  
+  _impl_.killer_pawn_id_ = value;
+}
+inline void S_BATTLE_PAWN_DEAD::set_killer_pawn_id(uint64_t value) {
+  _internal_set_killer_pawn_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_PAWN_DEAD.killer_pawn_id)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

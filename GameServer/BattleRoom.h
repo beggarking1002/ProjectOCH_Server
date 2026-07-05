@@ -23,6 +23,7 @@ private:
 		bool usedUltimate = false;
 		bool isShieldUnit = false;
 		bool isMelee = true;
+		bool isDead = false;
 	};
 
 	struct SkillSpec
@@ -82,6 +83,7 @@ private:
 	uint64 AdvanceTurn(BattleState& battle);
 	bool TryGetSkillSpec(int32 skillSlot, SkillSpec& spec, string& reason);
 	bool CanMove(const BattlePawnState& pawn);
+	bool IsAlive(const BattlePawnState& pawn);
 	void StartTurn(BattlePawnState& pawn);
 	void ApplyDamage(BattlePawnState& target, int32 damage);
 	void AddActionLog(google::protobuf::RepeatedPtrField<Protocol::BattleActionLog>* logs,
@@ -99,6 +101,7 @@ private:
 		const vector<Protocol::BattleActionLog>& logs = {});
 	void SendBattleEndTurnResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
 		uint64 nextTurnPawnId, const string& reason, const BattlePawnState* pawn = nullptr, const BattlePawnState* nextPawn = nullptr);
+	void SendBattlePawnDead(GameSessionRef session, uint64 battleId, uint64 pawnId, uint64 killerPawnId);
 
 private:
 	uint64 _battleIdGenerator = 1;

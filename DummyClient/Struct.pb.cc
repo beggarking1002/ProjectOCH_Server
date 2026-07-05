@@ -82,6 +82,7 @@ PROTOBUF_CONSTEXPR BattlePawnInfo::BattlePawnInfo(
   , /*decltype(_impl_.used_ultimate_)*/false
   , /*decltype(_impl_.is_shield_unit_)*/false
   , /*decltype(_impl_.is_melee_)*/false
+  , /*decltype(_impl_.is_dead_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct BattlePawnInfoDefaultTypeInternal {
   PROTOBUF_CONSTEXPR BattlePawnInfoDefaultTypeInternal()
@@ -101,6 +102,7 @@ PROTOBUF_CONSTEXPR BattlePawnDelta::BattlePawnDelta(
   , /*decltype(_impl_.can_move_)*/false
   , /*decltype(_impl_.used_sub_action_this_turn_)*/false
   , /*decltype(_impl_.used_ultimate_)*/false
+  , /*decltype(_impl_.is_dead_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct BattlePawnDeltaDefaultTypeInternal {
   PROTOBUF_CONSTEXPR BattlePawnDeltaDefaultTypeInternal()
@@ -188,6 +190,7 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.used_ultimate_),
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.is_shield_unit_),
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.is_melee_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.is_dead_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -201,6 +204,7 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.can_move_),
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.used_sub_action_this_turn_),
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.used_ultimate_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.is_dead_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -225,8 +229,8 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 8, -1, -1, sizeof(::Protocol::AxialCoord)},
   { 16, -1, -1, sizeof(::Protocol::ObjectInfo)},
   { 26, -1, -1, sizeof(::Protocol::BattlePawnInfo)},
-  { 47, -1, -1, sizeof(::Protocol::BattlePawnDelta)},
-  { 60, -1, -1, sizeof(::Protocol::BattleActionLog)},
+  { 48, -1, -1, sizeof(::Protocol::BattlePawnDelta)},
+  { 62, -1, -1, sizeof(::Protocol::BattleActionLog)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -245,7 +249,7 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "fo\022\021\n\tobject_id\030\001 \001(\004\022)\n\013object_type\030\002 \001"
   "(\0162\024.Protocol.ObjectType\022-\n\rcreature_typ"
   "e\030\003 \001(\0162\026.Protocol.CreatureType\022%\n\010posit"
-  "ion\030\004 \001(\0132\023.Protocol.Vec2Fixed\"\335\002\n\016Battl"
+  "ion\030\004 \001(\0132\023.Protocol.Vec2Fixed\"\356\002\n\016Battl"
   "ePawnInfo\022\017\n\007pawn_id\030\001 \001(\004\022\020\n\010owner_id\030\002"
   " \001(\004\022\'\n\npawn_class\030\003 \001(\0162\023.Protocol.Pawn"
   "Class\022#\n\005axial\030\004 \001(\0132\024.Protocol.AxialCoo"
@@ -254,25 +258,26 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   " \001(\005\022\022\n\ncurrent_ap\030\n \001(\005\022\020\n\010can_move\030\013 \001"
   "(\010\022!\n\031used_sub_action_this_turn\030\014 \001(\010\022\025\n"
   "\rused_ultimate\030\r \001(\010\022\026\n\016is_shield_unit\030\016"
-  " \001(\010\022\020\n\010is_melee\030\017 \001(\010\"\235\001\n\017BattlePawnDel"
-  "ta\022\017\n\007pawn_id\030\001 \001(\004\022\n\n\002hp\030\002 \001(\005\022\r\n\005armor"
-  "\030\003 \001(\005\022\022\n\ncurrent_ap\030\004 \001(\005\022\020\n\010can_move\030\005"
-  " \001(\010\022!\n\031used_sub_action_this_turn\030\006 \001(\010\022"
-  "\025\n\rused_ultimate\030\007 \001(\010\"\221\002\n\017BattleActionL"
-  "og\022\030\n\020attacker_pawn_id\030\001 \001(\004\022\030\n\020defender"
-  "_pawn_id\030\002 \001(\004\022\022\n\nskill_slot\030\003 \001(\005\022\023\n\013ac"
-  "tion_type\030\004 \001(\t\022\016\n\006damage\030\005 \001(\005\022\023\n\013is_cr"
-  "itical\030\006 \001(\010\022\021\n\tis_evaded\030\007 \001(\010\022\022\n\nis_gu"
-  "arded\030\010 \001(\010\022\032\n\022is_perfect_guarded\030\t \001(\010\022"
-  "\022\n\nis_counter\030\n \001(\010\022\020\n\010hp_after\030\013 \001(\005\022\023\n"
-  "\013armor_after\030\014 \001(\005b\006proto3"
+  " \001(\010\022\020\n\010is_melee\030\017 \001(\010\022\017\n\007is_dead\030\020 \001(\010\""
+  "\256\001\n\017BattlePawnDelta\022\017\n\007pawn_id\030\001 \001(\004\022\n\n\002"
+  "hp\030\002 \001(\005\022\r\n\005armor\030\003 \001(\005\022\022\n\ncurrent_ap\030\004 "
+  "\001(\005\022\020\n\010can_move\030\005 \001(\010\022!\n\031used_sub_action"
+  "_this_turn\030\006 \001(\010\022\025\n\rused_ultimate\030\007 \001(\010\022"
+  "\017\n\007is_dead\030\010 \001(\010\"\221\002\n\017BattleActionLog\022\030\n\020"
+  "attacker_pawn_id\030\001 \001(\004\022\030\n\020defender_pawn_"
+  "id\030\002 \001(\004\022\022\n\nskill_slot\030\003 \001(\005\022\023\n\013action_t"
+  "ype\030\004 \001(\t\022\016\n\006damage\030\005 \001(\005\022\023\n\013is_critical"
+  "\030\006 \001(\010\022\021\n\tis_evaded\030\007 \001(\010\022\022\n\nis_guarded\030"
+  "\010 \001(\010\022\032\n\022is_perfect_guarded\030\t \001(\010\022\022\n\nis_"
+  "counter\030\n \001(\010\022\020\n\010hp_after\030\013 \001(\005\022\023\n\013armor"
+  "_after\030\014 \001(\005b\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_Struct_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Struct_2eproto = {
-    false, false, 1066, descriptor_table_protodef_Struct_2eproto,
+    false, false, 1100, descriptor_table_protodef_Struct_2eproto,
     "Struct.proto",
     &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 6,
     schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
@@ -1027,6 +1032,7 @@ BattlePawnInfo::BattlePawnInfo(const BattlePawnInfo& from)
     , decltype(_impl_.used_ultimate_){}
     , decltype(_impl_.is_shield_unit_){}
     , decltype(_impl_.is_melee_){}
+    , decltype(_impl_.is_dead_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -1034,8 +1040,8 @@ BattlePawnInfo::BattlePawnInfo(const BattlePawnInfo& from)
     _this->_impl_.axial_ = new ::Protocol::AxialCoord(*from._impl_.axial_);
   }
   ::memcpy(&_impl_.pawn_id_, &from._impl_.pawn_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.is_melee_) -
-    reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.is_melee_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.is_dead_) -
+    reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.is_dead_));
   // @@protoc_insertion_point(copy_constructor:Protocol.BattlePawnInfo)
 }
 
@@ -1059,6 +1065,7 @@ inline void BattlePawnInfo::SharedCtor(
     , decltype(_impl_.used_ultimate_){false}
     , decltype(_impl_.is_shield_unit_){false}
     , decltype(_impl_.is_melee_){false}
+    , decltype(_impl_.is_dead_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -1092,8 +1099,8 @@ void BattlePawnInfo::Clear() {
   }
   _impl_.axial_ = nullptr;
   ::memset(&_impl_.pawn_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.is_melee_) -
-      reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.is_melee_));
+      reinterpret_cast<char*>(&_impl_.is_dead_) -
+      reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.is_dead_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1224,6 +1231,14 @@ const char* BattlePawnInfo::_InternalParse(const char* ptr, ::_pbi::ParseContext
         } else
           goto handle_unusual;
         continue;
+      // bool is_dead = 16;
+      case 16:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 128)) {
+          _impl_.is_dead_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -1345,6 +1360,12 @@ uint8_t* BattlePawnInfo::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteBoolToArray(15, this->_internal_is_melee(), target);
   }
 
+  // bool is_dead = 16;
+  if (this->_internal_is_dead() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(16, this->_internal_is_dead(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1439,6 +1460,11 @@ size_t BattlePawnInfo::ByteSizeLong() const {
     total_size += 1 + 1;
   }
 
+  // bool is_dead = 16;
+  if (this->_internal_is_dead() != 0) {
+    total_size += 2 + 1;
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -1503,6 +1529,9 @@ void BattlePawnInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const :
   if (from._internal_is_melee() != 0) {
     _this->_internal_set_is_melee(from._internal_is_melee());
   }
+  if (from._internal_is_dead() != 0) {
+    _this->_internal_set_is_dead(from._internal_is_dead());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1521,8 +1550,8 @@ void BattlePawnInfo::InternalSwap(BattlePawnInfo* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(BattlePawnInfo, _impl_.is_melee_)
-      + sizeof(BattlePawnInfo::_impl_.is_melee_)
+      PROTOBUF_FIELD_OFFSET(BattlePawnInfo, _impl_.is_dead_)
+      + sizeof(BattlePawnInfo::_impl_.is_dead_)
       - PROTOBUF_FIELD_OFFSET(BattlePawnInfo, _impl_.axial_)>(
           reinterpret_cast<char*>(&_impl_.axial_),
           reinterpret_cast<char*>(&other->_impl_.axial_));
@@ -1557,12 +1586,13 @@ BattlePawnDelta::BattlePawnDelta(const BattlePawnDelta& from)
     , decltype(_impl_.can_move_){}
     , decltype(_impl_.used_sub_action_this_turn_){}
     , decltype(_impl_.used_ultimate_){}
+    , decltype(_impl_.is_dead_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&_impl_.pawn_id_, &from._impl_.pawn_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.used_ultimate_) -
-    reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.used_ultimate_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.is_dead_) -
+    reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.is_dead_));
   // @@protoc_insertion_point(copy_constructor:Protocol.BattlePawnDelta)
 }
 
@@ -1578,6 +1608,7 @@ inline void BattlePawnDelta::SharedCtor(
     , decltype(_impl_.can_move_){false}
     , decltype(_impl_.used_sub_action_this_turn_){false}
     , decltype(_impl_.used_ultimate_){false}
+    , decltype(_impl_.is_dead_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -1606,8 +1637,8 @@ void BattlePawnDelta::Clear() {
   (void) cached_has_bits;
 
   ::memset(&_impl_.pawn_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.used_ultimate_) -
-      reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.used_ultimate_));
+      reinterpret_cast<char*>(&_impl_.is_dead_) -
+      reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.is_dead_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1669,6 +1700,14 @@ const char* BattlePawnDelta::_InternalParse(const char* ptr, ::_pbi::ParseContex
       case 7:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
           _impl_.used_ultimate_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool is_dead = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 64)) {
+          _impl_.is_dead_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1744,6 +1783,12 @@ uint8_t* BattlePawnDelta::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteBoolToArray(7, this->_internal_used_ultimate(), target);
   }
 
+  // bool is_dead = 8;
+  if (this->_internal_is_dead() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(8, this->_internal_is_dead(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1795,6 +1840,11 @@ size_t BattlePawnDelta::ByteSizeLong() const {
     total_size += 1 + 1;
   }
 
+  // bool is_dead = 8;
+  if (this->_internal_is_dead() != 0) {
+    total_size += 1 + 1;
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -1834,6 +1884,9 @@ void BattlePawnDelta::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const 
   if (from._internal_used_ultimate() != 0) {
     _this->_internal_set_used_ultimate(from._internal_used_ultimate());
   }
+  if (from._internal_is_dead() != 0) {
+    _this->_internal_set_is_dead(from._internal_is_dead());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1852,8 +1905,8 @@ void BattlePawnDelta::InternalSwap(BattlePawnDelta* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(BattlePawnDelta, _impl_.used_ultimate_)
-      + sizeof(BattlePawnDelta::_impl_.used_ultimate_)
+      PROTOBUF_FIELD_OFFSET(BattlePawnDelta, _impl_.is_dead_)
+      + sizeof(BattlePawnDelta::_impl_.is_dead_)
       - PROTOBUF_FIELD_OFFSET(BattlePawnDelta, _impl_.pawn_id_)>(
           reinterpret_cast<char*>(&_impl_.pawn_id_),
           reinterpret_cast<char*>(&other->_impl_.pawn_id_));

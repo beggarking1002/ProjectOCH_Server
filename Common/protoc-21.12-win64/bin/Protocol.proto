@@ -185,3 +185,9 @@ message S_BATTLE_INVITE_RESULT {
 	uint64 target_player_id = 3;
 	string reason = 4;
 }
+
+message S_BATTLE_PAWN_DEAD {
+	uint64 battle_id = 1;
+	uint64 pawn_id = 2;
+	uint64 killer_pawn_id = 3;
+}

@@ -721,6 +721,7 @@ class BattlePawnInfo final :
     kUsedUltimateFieldNumber = 13,
     kIsShieldUnitFieldNumber = 14,
     kIsMeleeFieldNumber = 15,
+    kIsDeadFieldNumber = 16,
   };
   // .Protocol.AxialCoord axial = 4;
   bool has_axial() const;
@@ -866,6 +867,15 @@ class BattlePawnInfo final :
   void _internal_set_is_melee(bool value);
   public:
 
+  // bool is_dead = 16;
+  void clear_is_dead();
+  bool is_dead() const;
+  void set_is_dead(bool value);
+  private:
+  bool _internal_is_dead() const;
+  void _internal_set_is_dead(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.BattlePawnInfo)
  private:
   class _Internal;
@@ -889,6 +899,7 @@ class BattlePawnInfo final :
     bool used_ultimate_;
     bool is_shield_unit_;
     bool is_melee_;
+    bool is_dead_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1024,6 +1035,7 @@ class BattlePawnDelta final :
     kCanMoveFieldNumber = 5,
     kUsedSubActionThisTurnFieldNumber = 6,
     kUsedUltimateFieldNumber = 7,
+    kIsDeadFieldNumber = 8,
   };
   // uint64 pawn_id = 1;
   void clear_pawn_id();
@@ -1088,6 +1100,15 @@ class BattlePawnDelta final :
   void _internal_set_used_ultimate(bool value);
   public:
 
+  // bool is_dead = 8;
+  void clear_is_dead();
+  bool is_dead() const;
+  void set_is_dead(bool value);
+  private:
+  bool _internal_is_dead() const;
+  void _internal_set_is_dead(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.BattlePawnDelta)
  private:
   class _Internal;
@@ -1103,6 +1124,7 @@ class BattlePawnDelta final :
     bool can_move_;
     bool used_sub_action_this_turn_;
     bool used_ultimate_;
+    bool is_dead_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2005,6 +2027,26 @@ inline void BattlePawnInfo::set_is_melee(bool value) {
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.is_melee)
 }
 
+// bool is_dead = 16;
+inline void BattlePawnInfo::clear_is_dead() {
+  _impl_.is_dead_ = false;
+}
+inline bool BattlePawnInfo::_internal_is_dead() const {
+  return _impl_.is_dead_;
+}
+inline bool BattlePawnInfo::is_dead() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.is_dead)
+  return _internal_is_dead();
+}
+inline void BattlePawnInfo::_internal_set_is_dead(bool value) {
+  
+  _impl_.is_dead_ = value;
+}
+inline void BattlePawnInfo::set_is_dead(bool value) {
+  _internal_set_is_dead(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.is_dead)
+}
+
 // -------------------------------------------------------------------
 
 // BattlePawnDelta
@@ -2147,6 +2189,26 @@ inline void BattlePawnDelta::_internal_set_used_ultimate(bool value) {
 inline void BattlePawnDelta::set_used_ultimate(bool value) {
   _internal_set_used_ultimate(value);
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.used_ultimate)
+}
+
+// bool is_dead = 8;
+inline void BattlePawnDelta::clear_is_dead() {
+  _impl_.is_dead_ = false;
+}
+inline bool BattlePawnDelta::_internal_is_dead() const {
+  return _impl_.is_dead_;
+}
+inline bool BattlePawnDelta::is_dead() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnDelta.is_dead)
+  return _internal_is_dead();
+}
+inline void BattlePawnDelta::_internal_set_is_dead(bool value) {
+  
+  _impl_.is_dead_ = value;
+}
+inline void BattlePawnDelta::set_is_dead(bool value) {
+  _internal_set_is_dead(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.is_dead)
 }
 
 // -------------------------------------------------------------------

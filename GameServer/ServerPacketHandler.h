@@ -31,6 +31,7 @@ enum : uint16
 	PKT_S_BATTLE_INVITE_RECEIVED = 1022,
 	PKT_C_BATTLE_INVITE_RESPONSE = 1023,
 	PKT_S_BATTLE_INVITE_RESULT = 1024,
+	PKT_S_BATTLE_PAWN_DEAD = 1025,
 };
 
 // Custom Handlers
@@ -86,6 +87,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::S_BATTLE_INVITE_REQUEST& pkt) { return MakeSendBuffer(pkt, PKT_S_BATTLE_INVITE_REQUEST); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_BATTLE_INVITE_RECEIVED& pkt) { return MakeSendBuffer(pkt, PKT_S_BATTLE_INVITE_RECEIVED); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_BATTLE_INVITE_RESULT& pkt) { return MakeSendBuffer(pkt, PKT_S_BATTLE_INVITE_RESULT); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_BATTLE_PAWN_DEAD& pkt) { return MakeSendBuffer(pkt, PKT_S_BATTLE_PAWN_DEAD); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

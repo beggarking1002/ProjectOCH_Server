@@ -90,6 +90,22 @@ Damage is applied to armor first, then HP.
 - max counter-chain depth
 - real skill-data table instead of temporary hardcoded specs
 
+## Death Handling
+
+Updated on 2026-07-05.
+
+When a skill reduces a pawn to HP 0:
+
+- the server sets the pawn inactive with `isDead = true`
+- `current_ap` becomes 0
+- movement is blocked
+- skill usage is blocked
+- the pawn is ignored by occupancy checks
+- the pawn is removed/skipped from the turn queue
+- battle clients receive `S_BATTLE_PAWN_DEAD`
+
+The pawn remains in server battle state instead of being removed. This keeps logs, replay, target references, and client animation timing stable. The client should usually disable or death-state the pawn object after the death packet rather than immediately destroying it.
+
 ## Verification
 
 Build command:

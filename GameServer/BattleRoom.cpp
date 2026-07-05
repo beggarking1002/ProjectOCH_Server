@@ -201,6 +201,13 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 		return;
 	}
 
+	if (IsAlive(*pawn) == false)
+	{
+		SendBattleMoveResult(session, false, battle.battleId, pawn->pawnId, start, start, battle.currentTurnPawnId,
+			Protocol::BATTLE_MOVE_RESULT_CANNOT_MOVE, "pawn is dead", pawn);
+		return;
+	}
+
 	if (CanMove(*pawn) == false)
 	{
 		SendBattleMoveResult(session, false, battle.battleId, pawn->pawnId, start, start, battle.currentTurnPawnId,
@@ -309,6 +316,13 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		return;
 	}
 
+	if (IsAlive(*caster) == false)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
+			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, "caster is dead", caster);
+		return;
+	}
+
 	SkillSpec skillSpec;
 	string skillError;
 	if (TryGetSkillSpec(pkt.skill_slot(), skillSpec, skillError) == false)
@@ -348,7 +362,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		return;
 	}
 
-	if (target->hp <= 0)
+	if (IsAlive(*target) == false)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
 			target->axial, 0, target->hp, target->armor, battle.currentTurnPawnId, "target is dead", caster, target);
@@ -370,7 +384,18 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (skillSpec.apCost >= 2)
 		caster->hasMovedThisTurn = true;
 
+	const bool targetWasAlive = IsAlive(*target);
 	ApplyDamage(*target, skillSpec.damage);
+	if (targetWasAlive && target->hp <= 0)
+	{
+		target->hp = 0;
+		target->currentAp = 0;
+		target->hasMovedThisTurn = true;
+		target->isDead = true;
+		battle.turnQueue.erase(remove(battle.turnQueue.begin(), battle.turnQueue.end(), target->pawnId), battle.turnQueue.end());
+		if (battle.turnQueueIndex > battle.turnQueue.size())
+			battle.turnQueueIndex = battle.turnQueue.size();
+	}
 
 	vector<Protocol::BattleActionLog> logs;
 	Protocol::BattleActionLog actionLog;
@@ -390,6 +415,37 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 
 	SendBattleSkillResult(session, true, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
 		target->axial, skillSpec.damage, target->hp, target->armor, battle.currentTurnPawnId, "", caster, target, logs);
+	if (battle.isPvp)
+	{
+		GameSessionRef ownerSession = battle.ownerSession.lock();
+		if (ownerSession != nullptr && ownerSession != session)
+		{
+			SendBattleSkillResult(ownerSession, true, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
+				target->axial, skillSpec.damage, target->hp, target->armor, battle.currentTurnPawnId, "", caster, target, logs);
+		}
+
+		GameSessionRef opponentSession = battle.opponentSession.lock();
+		if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
+		{
+			SendBattleSkillResult(opponentSession, true, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
+				target->axial, skillSpec.damage, target->hp, target->armor, battle.currentTurnPawnId, "", caster, target, logs);
+		}
+	}
+
+	if (target->isDead)
+	{
+		SendBattlePawnDead(session, battle.battleId, target->pawnId, caster->pawnId);
+		if (battle.isPvp)
+		{
+			GameSessionRef ownerSession = battle.ownerSession.lock();
+			if (ownerSession != nullptr && ownerSession != session)
+				SendBattlePawnDead(ownerSession, battle.battleId, target->pawnId, caster->pawnId);
+
+			GameSessionRef opponentSession = battle.opponentSession.lock();
+			if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
+				SendBattlePawnDead(opponentSession, battle.battleId, target->pawnId, caster->pawnId);
+		}
+	}
 }
 
 void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_END_TURN pkt)
@@ -523,6 +579,7 @@ BattleRoom::BattlePawnState BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol:
 	pawn.usedUltimate = false;
 	pawn.isShieldUnit = isShieldUnit;
 	pawn.isMelee = isMelee;
+	pawn.isDead = false;
 	return pawn;
 }
 
@@ -572,6 +629,7 @@ void BattleRoom::CopyBattlePawn(const BattlePawnState& src, Protocol::BattlePawn
 	dst->set_used_ultimate(src.usedUltimate);
 	dst->set_is_shield_unit(src.isShieldUnit);
 	dst->set_is_melee(src.isMelee);
+	dst->set_is_dead(src.isDead);
 }
 
 void BattleRoom::CopyBattlePawnDelta(const BattlePawnState& src, Protocol::BattlePawnDelta* dst)
@@ -583,6 +641,7 @@ void BattleRoom::CopyBattlePawnDelta(const BattlePawnState& src, Protocol::Battl
 	dst->set_can_move(CanMove(src));
 	dst->set_used_sub_action_this_turn(src.usedSubActionThisTurn);
 	dst->set_used_ultimate(src.usedUltimate);
+	dst->set_is_dead(src.isDead);
 }
 
 BattleRoom::BattlePawnState* BattleRoom::FindPawn(BattleState& battle, uint64 pawnId)
@@ -604,9 +663,9 @@ BattleRoom::BattlePawnState* BattleRoom::FindPawn(BattleState& battle, uint64 pa
 
 bool BattleRoom::IsOccupied(const BattleState& battle, const Protocol::AxialCoord& coord, uint64 exceptPawnId)
 {
-	auto isSameCell = [&coord, exceptPawnId](const BattlePawnState& pawn)
+	auto isSameCell = [this, &coord, exceptPawnId](const BattlePawnState& pawn)
 		{
-			return pawn.pawnId != exceptPawnId && pawn.axial.q() == coord.q() && pawn.axial.r() == coord.r();
+			return IsAlive(pawn) && pawn.pawnId != exceptPawnId && pawn.axial.q() == coord.q() && pawn.axial.r() == coord.r();
 		};
 
 	for (const BattlePawnState& pawn : battle.alliedPawns)
@@ -662,7 +721,7 @@ void BattleRoom::BuildTurnQueue(BattleState& battle)
 
 	for (const BattlePawnState& pawn : battle.alliedPawns)
 	{
-		if (pawn.hp > 0)
+		if (IsAlive(pawn))
 			battle.turnQueue.push_back(pawn.pawnId);
 	}
 
@@ -670,7 +729,7 @@ void BattleRoom::BuildTurnQueue(BattleState& battle)
 	{
 		for (const BattlePawnState& pawn : battle.enemyPawns)
 		{
-			if (pawn.hp > 0)
+			if (IsAlive(pawn))
 				battle.turnQueue.push_back(pawn.pawnId);
 		}
 	}
@@ -707,6 +766,18 @@ uint64 BattleRoom::AdvanceTurn(BattleState& battle)
 			BuildTurnQueue(battle);
 		else
 			battle.currentTurnPawnId = battle.turnQueue[battle.turnQueueIndex];
+	}
+
+	BattlePawnState* queuedPawn = FindPawn(battle, battle.currentTurnPawnId);
+	while (queuedPawn != nullptr && IsAlive(*queuedPawn) == false)
+	{
+		battle.turnQueueIndex++;
+		if (battle.turnQueueIndex >= battle.turnQueue.size())
+			BuildTurnQueue(battle);
+		else
+			battle.currentTurnPawnId = battle.turnQueue[battle.turnQueueIndex];
+
+		queuedPawn = FindPawn(battle, battle.currentTurnPawnId);
 	}
 
 	if (BattlePawnState* nextPawn = FindPawn(battle, battle.currentTurnPawnId))
@@ -754,7 +825,12 @@ bool BattleRoom::TryGetSkillSpec(int32 skillSlot, SkillSpec& spec, string& reaso
 
 bool BattleRoom::CanMove(const BattlePawnState& pawn)
 {
-	return pawn.hasMovedThisTurn == false && pawn.currentAp > 0;
+	return IsAlive(pawn) && pawn.hasMovedThisTurn == false && pawn.currentAp > 0;
+}
+
+bool BattleRoom::IsAlive(const BattlePawnState& pawn)
+{
+	return pawn.isDead == false && pawn.hp > 0;
 }
 
 void BattleRoom::StartTurn(BattlePawnState& pawn)
@@ -932,5 +1008,25 @@ void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, u
 		CopyBattlePawnDelta(*nextPawn, endTurnPkt.add_pawn_deltas());
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(endTurnPkt);
+	session->Send(sendBuffer);
+}
+
+void BattleRoom::SendBattlePawnDead(GameSessionRef session, uint64 battleId, uint64 pawnId, uint64 killerPawnId)
+{
+	cout << "S_BATTLE_PAWN_DEAD"
+		<< " battle_id=" << battleId
+		<< " pawn_id=" << pawnId
+		<< " killer_pawn_id=" << killerPawnId
+		<< endl;
+
+	if (session == nullptr)
+		return;
+
+	Protocol::S_BATTLE_PAWN_DEAD deadPkt;
+	deadPkt.set_battle_id(battleId);
+	deadPkt.set_pawn_id(pawnId);
+	deadPkt.set_killer_pawn_id(killerPawnId);
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(deadPkt);
 	session->Send(sendBuffer);
 }
