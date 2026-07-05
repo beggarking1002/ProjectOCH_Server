@@ -110,6 +110,48 @@ bool Room::HandleEnterPlayer(PlayerRef player)
 
 	return EnterRoom(player, true);
 }
+bool Room::HandleEnterPlayerFromBattle(PlayerRef player, uint64 battleId)
+{
+	GameSessionRef session = player ? player->session.lock() : nullptr;
+	if (player == nullptr || session == nullptr || session->player.load() != player)
+	{
+		SendBattleResultAck(session, false, battleId, "player session is invalid");
+		return false;
+	}
+
+	bool alreadyInRoom = player->room.load().lock() != nullptr;
+	bool success = alreadyInRoom;
+	if (success == false)
+	{
+		success = AddObject(player);
+		if (success)
+		{
+			Protocol::Vec2Fixed spawnPosition;
+			if (GFieldWalkMapData.TryGetRandomWalkablePosition(spawnPosition))
+				player->position->CopyFrom(spawnPosition);
+		}
+	}
+
+	if (success == false)
+	{
+		SendBattleResultAck(session, false, battleId, "failed to enter field");
+		return false;
+	}
+
+	cout << "BATTLE_RESULT_ACK_FIELD_ENTER"
+		<< " battle_id=" << battleId
+		<< " player_id=" << player->objectInfo->object_id()
+		<< " already_in_room=" << alreadyInRoom
+		<< endl;
+
+	SendBattleResultAck(session, true, battleId, "");
+	SendEnterGame(player, true);
+	SendExistingPlayers(player);
+	if (alreadyInRoom == false)
+		SendSpawn(player, player->objectInfo->object_id());
+
+	return true;
+}
 
 bool Room::HandleLeavePlayer(GameSessionRef session)
 {
@@ -509,6 +551,25 @@ void Room::SendBattleInviteResult(GameSessionRef session, bool accepted, uint64 
 	session->Send(sendBuffer);
 }
 
+void Room::SendBattleResultAck(GameSessionRef session, bool success, uint64 battleId, const string& reason)
+{
+	cout << "S_BATTLE_RESULT_ACK"
+		<< " success=" << success
+		<< " battle_id=" << battleId
+		<< " reason=\"" << reason << "\""
+		<< endl;
+
+	if (session == nullptr)
+		return;
+
+	Protocol::S_BATTLE_RESULT_ACK ackPkt;
+	ackPkt.set_success(success);
+	ackPkt.set_battle_id(battleId);
+	ackPkt.set_reason(reason);
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(ackPkt);
+	session->Send(sendBuffer);
+}
 void Room::RemovePlayersFromFieldForBattle(const vector<PlayerRef>& players)
 {
 	Protocol::S_DESPAWN despawnPkt;

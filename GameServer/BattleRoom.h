@@ -48,6 +48,11 @@ private:
 		vector<uint64> turnQueue;
 		size_t turnQueueIndex = 0;
 		uint64 currentTurnPawnId = 0;
+		bool isFinished = false;
+		uint64 winnerOwnerId = 0;
+		uint64 loserOwnerId = 0;
+		bool ownerResultAcked = false;
+		bool opponentResultAcked = false;
 	};
 
 public:
@@ -61,6 +66,7 @@ public:
 	void HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SKILL pkt);
 	void HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_END_TURN pkt);
 	void HandleEnterPvpBattle(GameSessionRef requesterSession, GameSessionRef targetSession);
+	void HandleBattleResultAck(GameSessionRef session, Protocol::C_BATTLE_RESULT_ACK pkt);
 
 private:
 	BattleState& GetOrCreateBattle(uint64 ownerId);
@@ -84,6 +90,8 @@ private:
 	bool TryGetSkillSpec(int32 skillSlot, SkillSpec& spec, string& reason);
 	bool CanMove(const BattlePawnState& pawn);
 	bool IsAlive(const BattlePawnState& pawn);
+	bool HasAlivePawn(const vector<BattlePawnState>& pawns);
+	bool TryFinishBattle(BattleState& battle, uint64 fallbackWinnerOwnerId);
 	void StartTurn(BattlePawnState& pawn);
 	void ApplyDamage(BattlePawnState& target, int32 damage);
 	void AddActionLog(google::protobuf::RepeatedPtrField<Protocol::BattleActionLog>* logs,
@@ -102,6 +110,8 @@ private:
 	void SendBattleEndTurnResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
 		uint64 nextTurnPawnId, const string& reason, const BattlePawnState* pawn = nullptr, const BattlePawnState* nextPawn = nullptr);
 	void SendBattlePawnDead(GameSessionRef session, uint64 battleId, uint64 pawnId, uint64 killerPawnId);
+	void SendBattleResult(GameSessionRef session, const BattleState& battle, uint64 viewerOwnerId);
+	void SendBattleResultAck(GameSessionRef session, bool success, uint64 battleId, const string& reason);
 
 private:
 	uint64 _battleIdGenerator = 1;

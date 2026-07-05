@@ -191,3 +191,18 @@ message S_BATTLE_PAWN_DEAD {
 	uint64 pawn_id = 2;
 	uint64 killer_pawn_id = 3;
 }
+
+message S_BATTLE_RESULT {
+	uint64 battle_id = 1;
+	bool victory = 2;
+}
+
+message C_BATTLE_RESULT_ACK {
+	uint64 battle_id = 1;
+}
+
+message S_BATTLE_RESULT_ACK {
+	bool success = 1;
+	uint64 battle_id = 2;
+	string reason = 3;
+}

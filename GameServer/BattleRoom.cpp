@@ -2,6 +2,7 @@
 #include "BattleRoom.h"
 #include "GameSession.h"
 #include "Player.h"
+#include "Room.h"
 #include <random>
 
 BattleRoomRef GBattleRoom = make_shared<BattleRoom>();
@@ -176,6 +177,13 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 	}
 
 	BattleState& battle = battleIt->second;
+	if (battle.isFinished)
+	{
+		SendBattleMoveResult(session, false, battle.battleId, pkt.pawn_id(), Protocol::AxialCoord::default_instance(),
+			pkt.target(), battle.currentTurnPawnId, Protocol::BATTLE_MOVE_RESULT_NOT_YOUR_TURN, "battle already finished");
+		return;
+	}
+
 	BattlePawnState* pawn = FindPawn(battle, pkt.pawn_id());
 	if (pawn == nullptr)
 	{
@@ -293,6 +301,13 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	}
 
 	BattleState& battle = battleIt->second;
+	if (battle.isFinished)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, pkt.caster_pawn_id(), pkt.skill_slot(), pkt.target_pawn_id(),
+			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, "battle already finished");
+		return;
+	}
+
 	BattlePawnState* caster = FindPawn(battle, pkt.caster_pawn_id());
 	if (caster == nullptr)
 	{
@@ -453,6 +468,8 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 				SendBattlePawnDead(opponentSession, battle.battleId, target->pawnId, caster->pawnId);
 		}
 	}
+
+	TryFinishBattle(battle, caster->ownerId);
 }
 
 void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_END_TURN pkt)
@@ -478,6 +495,12 @@ void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_
 	}
 
 	BattleState& battle = battleIt->second;
+	if (battle.isFinished)
+	{
+		SendBattleEndTurnResult(session, false, battle.battleId, pkt.pawn_id(), battle.currentTurnPawnId, "battle already finished");
+		return;
+	}
+
 	BattlePawnState* pawn = FindPawn(battle, pkt.pawn_id());
 	if (pawn == nullptr)
 	{
@@ -511,6 +534,83 @@ void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_
 		GameSessionRef opponentSession = battle.opponentSession.lock();
 		if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
 			SendBattleEndTurnResult(opponentSession, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn);
+	}
+}
+
+void BattleRoom::HandleBattleResultAck(GameSessionRef session, Protocol::C_BATTLE_RESULT_ACK pkt)
+{
+	PlayerRef player = session ? session->player.load() : nullptr;
+
+	cout << "C_BATTLE_RESULT_ACK"
+		<< " battle_id=" << pkt.battle_id();
+	if (player != nullptr)
+		cout << " player_id=" << player->objectInfo->object_id();
+	else
+		cout << " player_id=0";
+	cout << endl;
+
+	if (player == nullptr)
+	{
+		SendBattleResultAck(session, false, pkt.battle_id(), "player is not in game");
+		return;
+	}
+
+	auto battleIt = _battles.find(pkt.battle_id());
+	if (battleIt == _battles.end())
+	{
+		SendBattleResultAck(session, false, pkt.battle_id(), "invalid battle");
+		return;
+	}
+
+	BattleState& battle = battleIt->second;
+	const uint64 playerId = player->objectInfo->object_id();
+	if (battle.isFinished == false)
+	{
+		SendBattleResultAck(session, false, battle.battleId, "battle is not finished");
+		return;
+	}
+
+	if (playerId == battle.ownerId)
+	{
+		if (battle.ownerResultAcked)
+		{
+			SendBattleResultAck(session, true, battle.battleId, "already acked");
+			return;
+		}
+		battle.ownerResultAcked = true;
+		_battleByOwnerId.erase(playerId);
+	}
+	else if (playerId == battle.opponentOwnerId)
+	{
+		if (battle.opponentResultAcked)
+		{
+			SendBattleResultAck(session, true, battle.battleId, "already acked");
+			return;
+		}
+		battle.opponentResultAcked = true;
+		_battleByOwnerId.erase(playerId);
+	}
+	else
+	{
+		SendBattleResultAck(session, false, battle.battleId, "not battle participant");
+		return;
+	}
+
+	cout << "BATTLE_RESULT_ACK_RETURN_FIELD"
+		<< " battle_id=" << battle.battleId
+		<< " player_id=" << playerId
+		<< endl;
+
+	GRoom->DoAsync(&Room::HandleEnterPlayerFromBattle, player, battle.battleId);
+
+	if ((battle.isPvp == false && battle.ownerResultAcked) ||
+		(battle.isPvp && battle.ownerResultAcked && battle.opponentResultAcked))
+	{
+		const uint64 battleId = battle.battleId;
+		_battles.erase(battleIt);
+		cout << "BATTLE_RESULT_CLEANUP"
+			<< " battle_id=" << battleId
+			<< endl;
 	}
 }
 
@@ -840,6 +940,55 @@ bool BattleRoom::IsAlive(const BattlePawnState& pawn)
 	return pawn.isDead == false && pawn.hp > 0;
 }
 
+bool BattleRoom::HasAlivePawn(const vector<BattlePawnState>& pawns)
+{
+	for (const BattlePawnState& pawn : pawns)
+	{
+		if (IsAlive(pawn))
+			return true;
+	}
+
+	return false;
+}
+
+bool BattleRoom::TryFinishBattle(BattleState& battle, uint64 fallbackWinnerOwnerId)
+{
+	if (battle.isFinished || battle.isPvp == false)
+		return false;
+
+	const bool ownerAlive = HasAlivePawn(battle.alliedPawns);
+	const bool opponentAlive = HasAlivePawn(battle.enemyPawns);
+	if (ownerAlive && opponentAlive)
+		return false;
+
+	battle.isFinished = true;
+	battle.currentTurnPawnId = 0;
+	battle.turnQueue.clear();
+	battle.turnQueueIndex = 0;
+
+	if (ownerAlive == false && opponentAlive == false)
+		battle.winnerOwnerId = fallbackWinnerOwnerId;
+	else if (ownerAlive)
+		battle.winnerOwnerId = battle.ownerId;
+	else
+		battle.winnerOwnerId = battle.opponentOwnerId;
+
+	battle.loserOwnerId = (battle.winnerOwnerId == battle.ownerId) ? battle.opponentOwnerId : battle.ownerId;
+
+	cout << "BATTLE_RESULT"
+		<< " battle_id=" << battle.battleId
+		<< " winner_player_id=" << battle.winnerOwnerId
+		<< " loser_player_id=" << battle.loserOwnerId
+		<< endl;
+
+	if (GameSessionRef ownerSession = battle.ownerSession.lock())
+		SendBattleResult(ownerSession, battle, battle.ownerId);
+	if (GameSessionRef opponentSession = battle.opponentSession.lock())
+		SendBattleResult(opponentSession, battle, battle.opponentOwnerId);
+
+	return true;
+}
+
 void BattleRoom::StartTurn(BattlePawnState& pawn)
 {
 	pawn.currentAp = 2;
@@ -1035,5 +1184,48 @@ void BattleRoom::SendBattlePawnDead(GameSessionRef session, uint64 battleId, uin
 	deadPkt.set_killer_pawn_id(killerPawnId);
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(deadPkt);
+	session->Send(sendBuffer);
+}
+
+void BattleRoom::SendBattleResult(GameSessionRef session, const BattleState& battle, uint64 viewerOwnerId)
+{
+	const bool victory = viewerOwnerId == battle.winnerOwnerId;
+
+	cout << "S_BATTLE_RESULT"
+		<< " battle_id=" << battle.battleId
+		<< " viewer_player_id=" << viewerOwnerId
+		<< " victory=" << victory
+		<< " winner_player_id=" << battle.winnerOwnerId
+		<< " loser_player_id=" << battle.loserOwnerId
+		<< endl;
+
+	if (session == nullptr)
+		return;
+
+	Protocol::S_BATTLE_RESULT resultPkt;
+	resultPkt.set_battle_id(battle.battleId);
+	resultPkt.set_victory(victory);
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(resultPkt);
+	session->Send(sendBuffer);
+}
+
+void BattleRoom::SendBattleResultAck(GameSessionRef session, bool success, uint64 battleId, const string& reason)
+{
+	cout << "S_BATTLE_RESULT_ACK"
+		<< " success=" << success
+		<< " battle_id=" << battleId
+		<< " reason=\"" << reason << "\""
+		<< endl;
+
+	if (session == nullptr)
+		return;
+
+	Protocol::S_BATTLE_RESULT_ACK ackPkt;
+	ackPkt.set_success(success);
+	ackPkt.set_battle_id(battleId);
+	ackPkt.set_reason(reason);
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(ackPkt);
 	session->Send(sendBuffer);
 }

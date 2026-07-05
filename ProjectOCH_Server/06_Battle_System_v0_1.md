@@ -106,6 +106,30 @@ When a skill reduces a pawn to HP 0:
 
 The pawn remains in server battle state instead of being removed. This keeps logs, replay, target references, and client animation timing stable. The client should usually disable or death-state the pawn object after the death packet rather than immediately destroying it.
 
+## Battle Result And Field Return
+
+Updated on 2026-07-06.
+
+When all pawns owned by one PvP player are dead:
+
+- the server marks the battle finished
+- the turn queue is cleared
+- both clients receive `S_BATTLE_RESULT`
+- `S_BATTLE_RESULT.victory` is set from the receiver's perspective
+- `S_BATTLE_RESULT` only sends `battle_id` and `victory`
+- winner/loser ids are kept in server state and logs
+
+Client result UI should send `C_BATTLE_RESULT_ACK` after the player presses OK.
+
+When the server receives `C_BATTLE_RESULT_ACK`:
+
+- that player is removed from the battle owner lookup
+- that player is inserted back into the field `Room`
+- after field room state is updated, the server replies with `S_BATTLE_RESULT_ACK`
+- `success=true` means the client can close battle UI and start field return flow
+- normal field packets (`S_ENTER_GAME` / `S_SPAWN`) follow from the field `Room`
+- when both PvP players ack, the battle state is removed
+
 ## Verification
 
 Build command:

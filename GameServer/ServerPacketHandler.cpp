@@ -146,3 +146,11 @@ bool Handle_C_BATTLE_INVITE_RESPONSE(PacketSessionRef& session, Protocol::C_BATT
 
 	return true;
 }
+
+bool Handle_C_BATTLE_RESULT_ACK(PacketSessionRef& session, Protocol::C_BATTLE_RESULT_ACK& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+	GBattleRoom->DoAsync(&BattleRoom::HandleBattleResultAck, gameSession, pkt);
+
+	return true;
+}

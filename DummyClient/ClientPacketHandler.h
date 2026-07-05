@@ -32,6 +32,9 @@ enum : uint16
 	PKT_C_BATTLE_INVITE_RESPONSE = 1023,
 	PKT_S_BATTLE_INVITE_RESULT = 1024,
 	PKT_S_BATTLE_PAWN_DEAD = 1025,
+	PKT_S_BATTLE_RESULT = 1026,
+	PKT_C_BATTLE_RESULT_ACK = 1027,
+	PKT_S_BATTLE_RESULT_ACK = 1028,
 };
 
 // Custom Handlers
@@ -51,6 +54,8 @@ bool Handle_S_BATTLE_INVITE_REQUEST(PacketSessionRef& session, Protocol::S_BATTL
 bool Handle_S_BATTLE_INVITE_RECEIVED(PacketSessionRef& session, Protocol::S_BATTLE_INVITE_RECEIVED& pkt);
 bool Handle_S_BATTLE_INVITE_RESULT(PacketSessionRef& session, Protocol::S_BATTLE_INVITE_RESULT& pkt);
 bool Handle_S_BATTLE_PAWN_DEAD(PacketSessionRef& session, Protocol::S_BATTLE_PAWN_DEAD& pkt);
+bool Handle_S_BATTLE_RESULT(PacketSessionRef& session, Protocol::S_BATTLE_RESULT& pkt);
+bool Handle_S_BATTLE_RESULT_ACK(PacketSessionRef& session, Protocol::S_BATTLE_RESULT_ACK& pkt);
 
 class ClientPacketHandler
 {
@@ -74,6 +79,8 @@ public:
 		GPacketHandler[PKT_S_BATTLE_INVITE_RECEIVED] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_BATTLE_INVITE_RECEIVED>(Handle_S_BATTLE_INVITE_RECEIVED, session, buffer, len); };
 		GPacketHandler[PKT_S_BATTLE_INVITE_RESULT] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_BATTLE_INVITE_RESULT>(Handle_S_BATTLE_INVITE_RESULT, session, buffer, len); };
 		GPacketHandler[PKT_S_BATTLE_PAWN_DEAD] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_BATTLE_PAWN_DEAD>(Handle_S_BATTLE_PAWN_DEAD, session, buffer, len); };
+		GPacketHandler[PKT_S_BATTLE_RESULT] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_BATTLE_RESULT>(Handle_S_BATTLE_RESULT, session, buffer, len); };
+		GPacketHandler[PKT_S_BATTLE_RESULT_ACK] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_BATTLE_RESULT_ACK>(Handle_S_BATTLE_RESULT_ACK, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len)
@@ -92,6 +99,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::C_BATTLE_END_TURN& pkt) { return MakeSendBuffer(pkt, PKT_C_BATTLE_END_TURN); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_BATTLE_INVITE& pkt) { return MakeSendBuffer(pkt, PKT_C_BATTLE_INVITE); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_BATTLE_INVITE_RESPONSE& pkt) { return MakeSendBuffer(pkt, PKT_C_BATTLE_INVITE_RESPONSE); }
+	static SendBufferRef MakeSendBuffer(Protocol::C_BATTLE_RESULT_ACK& pkt) { return MakeSendBuffer(pkt, PKT_C_BATTLE_RESULT_ACK); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

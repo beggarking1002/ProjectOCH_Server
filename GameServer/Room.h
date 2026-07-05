@@ -12,6 +12,7 @@ public:
 	bool LeaveRoom(ObjectRef object);
 
 	bool HandleEnterPlayer(PlayerRef player);
+	bool HandleEnterPlayerFromBattle(PlayerRef player, uint64 battleId);
 	bool HandleLeavePlayer(GameSessionRef session);
 	void HandleMove(GameSessionRef session, Protocol::C_MOVE pkt);
 	void HandleBattleInvite(GameSessionRef session, Protocol::C_BATTLE_INVITE pkt);
@@ -32,6 +33,7 @@ private:
 	void SendBattleInviteRequest(GameSessionRef session, bool success, uint64 requesterId, uint64 targetId, const string& reason);
 	void SendBattleInviteReceived(GameSessionRef session, uint64 requesterId);
 	void SendBattleInviteResult(GameSessionRef session, bool accepted, uint64 requesterId, uint64 targetId, const string& reason);
+	void SendBattleResultAck(GameSessionRef session, bool success, uint64 battleId, const string& reason);
 	void RemovePlayersFromFieldForBattle(const vector<PlayerRef>& players);
 	void CancelBattleInvitesForPlayer(uint64 playerId, const string& reason);
 
