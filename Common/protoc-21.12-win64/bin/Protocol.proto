@@ -158,3 +158,30 @@ message S_BATTLE_END_TURN {
 	repeated BattlePawnDelta pawn_deltas = 10;
 	repeated BattleActionLog logs = 11;
 }
+
+message C_BATTLE_INVITE {
+	uint64 target_player_id = 1;
+}
+
+message S_BATTLE_INVITE_REQUEST {
+	bool success = 1;
+	uint64 requester_player_id = 2;
+	uint64 target_player_id = 3;
+	string reason = 4;
+}
+
+message S_BATTLE_INVITE_RECEIVED {
+	uint64 requester_player_id = 1;
+}
+
+message C_BATTLE_INVITE_RESPONSE {
+	uint64 requester_player_id = 1;
+	bool accept = 2;
+}
+
+message S_BATTLE_INVITE_RESULT {
+	bool accepted = 1;
+	uint64 requester_player_id = 2;
+	uint64 target_player_id = 3;
+	string reason = 4;
+}

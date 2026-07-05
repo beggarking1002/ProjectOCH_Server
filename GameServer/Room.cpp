@@ -5,6 +5,7 @@
 #include "Monster.h"
 #include "ObjectUtils.h"
 #include "FieldWalkMapData.h"
+#include "BattleRoom.h"
 
 RoomRef GRoom = make_shared<Room>();
 namespace
@@ -116,6 +117,7 @@ bool Room::HandleLeavePlayer(GameSessionRef session)
 	if (player == nullptr)
 		return false;
 
+	CancelBattleInvitesForPlayer(player->objectInfo->object_id(), "player left field");
 	return LeaveRoom(player);
 }
 
@@ -168,6 +170,159 @@ void Room::HandleMove(GameSessionRef session, Protocol::C_MOVE pkt)
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(movePkt);
 	Broadcast(sendBuffer);
+}
+
+void Room::HandleBattleInvite(GameSessionRef session, Protocol::C_BATTLE_INVITE pkt)
+{
+	PlayerRef requester = GetPlayerInRoom(session);
+	if (requester == nullptr)
+	{
+		SendBattleInviteRequest(session, false, 0, pkt.target_player_id(), "requester is not in field");
+		return;
+	}
+
+	const uint64 requesterId = requester->objectInfo->object_id();
+	const uint64 targetId = pkt.target_player_id();
+
+	cout << "C_BATTLE_INVITE"
+		<< " requester_id=" << requesterId
+		<< " target_id=" << targetId
+		<< endl;
+
+	if (targetId == 0 || targetId == requesterId)
+	{
+		SendBattleInviteRequest(session, false, requesterId, targetId, "invalid target");
+		return;
+	}
+
+	if (_battleInviteTargetByRequesterId.find(requesterId) != _battleInviteTargetByRequesterId.end())
+	{
+		SendBattleInviteRequest(session, false, requesterId, targetId, "already waiting battle invite");
+		return;
+	}
+
+	if (_battleInvitesByTargetId.find(requesterId) != _battleInvitesByTargetId.end())
+	{
+		SendBattleInviteRequest(session, false, requesterId, targetId, "you have pending battle invite");
+		return;
+	}
+
+	auto targetIt = _objects.find(targetId);
+	if (targetIt == _objects.end())
+	{
+		SendBattleInviteRequest(session, false, requesterId, targetId, "target is not in field");
+		return;
+	}
+
+	PlayerRef target = dynamic_pointer_cast<Player>(targetIt->second);
+	if (target == nullptr)
+	{
+		SendBattleInviteRequest(session, false, requesterId, targetId, "target is not player");
+		return;
+	}
+
+	GameSessionRef targetSession = target->session.lock();
+	if (targetSession == nullptr)
+	{
+		SendBattleInviteRequest(session, false, requesterId, targetId, "target session is missing");
+		return;
+	}
+
+	if (_battleInvitesByTargetId.find(targetId) != _battleInvitesByTargetId.end())
+	{
+		SendBattleInviteRequest(session, false, requesterId, targetId, "target has pending battle invite");
+		return;
+	}
+
+	PendingBattleInvite invite;
+	invite.requesterId = requesterId;
+	invite.targetId = targetId;
+	invite.requesterSession = session;
+	invite.targetSession = targetSession;
+
+	_battleInvitesByTargetId[targetId] = invite;
+	_battleInviteTargetByRequesterId[requesterId] = targetId;
+
+	SendBattleInviteRequest(session, true, requesterId, targetId, "");
+	SendBattleInviteReceived(targetSession, requesterId);
+
+	cout << "BATTLE_INVITE_PENDING"
+		<< " requester_id=" << requesterId
+		<< " target_id=" << targetId
+		<< endl;
+}
+
+void Room::HandleBattleInviteResponse(GameSessionRef session, Protocol::C_BATTLE_INVITE_RESPONSE pkt)
+{
+	PlayerRef target = GetPlayerInRoom(session);
+	if (target == nullptr)
+	{
+		SendBattleInviteResult(session, false, pkt.requester_player_id(), 0, "target is not in field");
+		return;
+	}
+
+	const uint64 targetId = target->objectInfo->object_id();
+	const uint64 requesterId = pkt.requester_player_id();
+
+	cout << "C_BATTLE_INVITE_RESPONSE"
+		<< " requester_id=" << requesterId
+		<< " target_id=" << targetId
+		<< " accept=" << pkt.accept()
+		<< endl;
+
+	auto inviteIt = _battleInvitesByTargetId.find(targetId);
+	if (inviteIt == _battleInvitesByTargetId.end() || inviteIt->second.requesterId != requesterId)
+	{
+		SendBattleInviteResult(session, false, requesterId, targetId, "battle invite not found");
+		return;
+	}
+
+	PendingBattleInvite invite = inviteIt->second;
+	_battleInvitesByTargetId.erase(inviteIt);
+	_battleInviteTargetByRequesterId.erase(requesterId);
+
+	GameSessionRef requesterSession = invite.requesterSession.lock();
+	if (requesterSession == nullptr)
+	{
+		SendBattleInviteResult(session, false, requesterId, targetId, "requester session is missing");
+		return;
+	}
+
+	auto requesterIt = _objects.find(requesterId);
+	if (requesterIt == _objects.end())
+	{
+		SendBattleInviteResult(session, false, requesterId, targetId, "requester is not in field");
+		return;
+	}
+
+	PlayerRef requester = dynamic_pointer_cast<Player>(requesterIt->second);
+	if (requester == nullptr)
+	{
+		SendBattleInviteResult(session, false, requesterId, targetId, "requester is not player");
+		return;
+	}
+
+	if (pkt.accept() == false)
+	{
+		SendBattleInviteResult(requesterSession, false, requesterId, targetId, "declined");
+		SendBattleInviteResult(session, false, requesterId, targetId, "declined");
+
+		cout << "BATTLE_INVITE_DECLINED"
+			<< " requester_id=" << requesterId
+			<< " target_id=" << targetId
+			<< endl;
+		return;
+	}
+
+	SendBattleInviteResult(requesterSession, true, requesterId, targetId, "accepted");
+	SendBattleInviteResult(session, true, requesterId, targetId, "accepted");
+	RemovePlayersFromFieldForBattle({ requester, target });
+	GBattleRoom->DoAsync(&BattleRoom::HandleEnterPvpBattle, requesterSession, session);
+
+	cout << "BATTLE_INVITE_ACCEPTED"
+		<< " requester_id=" << requesterId
+		<< " target_id=" << targetId
+		<< endl;
 }
 
 void Room::UpdateTick()
@@ -292,6 +447,127 @@ void Room::SendExistingPlayers(PlayerRef player)
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(spawnPkt);
 	if (auto session = player->session.lock())
 		session->Send(sendBuffer);
+}
+
+void Room::SendBattleInviteRequest(GameSessionRef session, bool success, uint64 requesterId, uint64 targetId, const string& reason)
+{
+	cout << "S_BATTLE_INVITE_REQUEST"
+		<< " success=" << success
+		<< " requester_id=" << requesterId
+		<< " target_id=" << targetId
+		<< " reason=\"" << reason << "\""
+		<< endl;
+
+	if (session == nullptr)
+		return;
+
+	Protocol::S_BATTLE_INVITE_REQUEST pkt;
+	pkt.set_success(success);
+	pkt.set_requester_player_id(requesterId);
+	pkt.set_target_player_id(targetId);
+	pkt.set_reason(reason);
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(pkt);
+	session->Send(sendBuffer);
+}
+
+void Room::SendBattleInviteReceived(GameSessionRef session, uint64 requesterId)
+{
+	cout << "S_BATTLE_INVITE_RECEIVED"
+		<< " requester_id=" << requesterId
+		<< endl;
+
+	if (session == nullptr)
+		return;
+
+	Protocol::S_BATTLE_INVITE_RECEIVED pkt;
+	pkt.set_requester_player_id(requesterId);
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(pkt);
+	session->Send(sendBuffer);
+}
+
+void Room::SendBattleInviteResult(GameSessionRef session, bool accepted, uint64 requesterId, uint64 targetId, const string& reason)
+{
+	cout << "S_BATTLE_INVITE_RESULT"
+		<< " accepted=" << accepted
+		<< " requester_id=" << requesterId
+		<< " target_id=" << targetId
+		<< " reason=\"" << reason << "\""
+		<< endl;
+
+	if (session == nullptr)
+		return;
+
+	Protocol::S_BATTLE_INVITE_RESULT pkt;
+	pkt.set_accepted(accepted);
+	pkt.set_requester_player_id(requesterId);
+	pkt.set_target_player_id(targetId);
+	pkt.set_reason(reason);
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(pkt);
+	session->Send(sendBuffer);
+}
+
+void Room::RemovePlayersFromFieldForBattle(const vector<PlayerRef>& players)
+{
+	Protocol::S_DESPAWN despawnPkt;
+	vector<GameSessionRef> sessions;
+
+	for (const PlayerRef& player : players)
+	{
+		if (player == nullptr)
+			continue;
+
+		const uint64 objectId = player->objectInfo->object_id();
+		if (_objects.find(objectId) == _objects.end())
+			continue;
+
+		RemoveObject(objectId);
+		despawnPkt.add_object_ids(objectId);
+
+		if (GameSessionRef session = player->session.lock())
+			sessions.push_back(session);
+	}
+
+	if (despawnPkt.object_ids_size() == 0)
+		return;
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(despawnPkt);
+	Broadcast(sendBuffer);
+
+	for (GameSessionRef session : sessions)
+	{
+		if (session != nullptr)
+			session->Send(sendBuffer);
+	}
+}
+
+void Room::CancelBattleInvitesForPlayer(uint64 playerId, const string& reason)
+{
+	auto outgoingIt = _battleInviteTargetByRequesterId.find(playerId);
+	if (outgoingIt != _battleInviteTargetByRequesterId.end())
+	{
+		const uint64 targetId = outgoingIt->second;
+		auto inviteIt = _battleInvitesByTargetId.find(targetId);
+		if (inviteIt != _battleInvitesByTargetId.end())
+		{
+			if (GameSessionRef targetSession = inviteIt->second.targetSession.lock())
+				SendBattleInviteResult(targetSession, false, playerId, targetId, reason);
+			_battleInvitesByTargetId.erase(inviteIt);
+		}
+		_battleInviteTargetByRequesterId.erase(outgoingIt);
+	}
+
+	auto incomingIt = _battleInvitesByTargetId.find(playerId);
+	if (incomingIt != _battleInvitesByTargetId.end())
+	{
+		const uint64 requesterId = incomingIt->second.requesterId;
+		if (GameSessionRef requesterSession = incomingIt->second.requesterSession.lock())
+			SendBattleInviteResult(requesterSession, false, requesterId, playerId, reason);
+		_battleInviteTargetByRequesterId.erase(requesterId);
+		_battleInvitesByTargetId.erase(incomingIt);
+	}
 }
 
 void Room::Broadcast(SendBufferRef sendBuffer, uint64 exceptId)

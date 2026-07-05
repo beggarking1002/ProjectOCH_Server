@@ -37,9 +37,13 @@ private:
 	{
 		uint64 battleId = 0;
 		uint64 ownerId = 0;
+		uint64 opponentOwnerId = 0;
+		bool isPvp = false;
 		string mapId;
 		vector<BattlePawnState> alliedPawns;
 		vector<BattlePawnState> enemyPawns;
+		vector<uint64> turnQueue;
+		size_t turnQueueIndex = 0;
 		uint64 currentTurnPawnId = 0;
 	};
 
@@ -53,15 +57,17 @@ public:
 	void HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOVE pkt);
 	void HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SKILL pkt);
 	void HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_END_TURN pkt);
+	void HandleEnterPvpBattle(GameSessionRef requesterSession, GameSessionRef targetSession);
 
 private:
 	BattleState& GetOrCreateBattle(uint64 ownerId);
 	BattleState CreateBattle(uint64 ownerId);
+	BattleState CreatePvpBattle(uint64 ownerId, uint64 opponentOwnerId);
 	BattlePawnState MakeBattlePawn(uint64 ownerId, Protocol::PawnClass pawnClass, int32 q, int32 r, int32 hp, int32 moveRange,
 		int32 maxArmor, bool isShieldUnit, bool isMelee);
 	Protocol::AxialCoord MakeAxial(int32 q, int32 r);
 
-	void FillEnterBattlePacket(const BattleState& battle, Protocol::S_ENTER_BATTLE& pkt);
+	void FillEnterBattlePacket(const BattleState& battle, uint64 viewerOwnerId, Protocol::S_ENTER_BATTLE& pkt);
 	void CopyBattlePawn(const BattlePawnState& src, Protocol::BattlePawnInfo* dst);
 	void CopyBattlePawnDelta(const BattlePawnState& src, Protocol::BattlePawnDelta* dst);
 
@@ -70,6 +76,8 @@ private:
 	bool IsBattleWalkable(const Protocol::AxialCoord& coord);
 	int32 AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs);
 	uint64 GetNextAlliedTurnPawnId(const BattleState& battle, uint64 currentPawnId);
+	void BuildTurnQueue(BattleState& battle);
+	uint64 AdvanceTurn(BattleState& battle);
 	bool TryGetSkillSpec(int32 skillSlot, SkillSpec& spec, string& reason);
 	bool CanMove(const BattlePawnState& pawn);
 	void StartTurn(BattlePawnState& pawn);

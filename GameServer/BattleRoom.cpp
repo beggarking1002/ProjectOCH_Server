@@ -2,6 +2,7 @@
 #include "BattleRoom.h"
 #include "GameSession.h"
 #include "Player.h"
+#include <random>
 
 BattleRoomRef GBattleRoom = make_shared<BattleRoom>();
 
@@ -32,7 +33,7 @@ void BattleRoom::HandleEnterBattle(GameSessionRef session)
 	BattleState& battle = GetOrCreateBattle(ownerId);
 
 	enterBattlePkt.set_success(true);
-	FillEnterBattlePacket(battle, enterBattlePkt);
+	FillEnterBattlePacket(battle, ownerId, enterBattlePkt);
 
 	cout << "BATTLE_ROOM_ENTER"
 		<< " owner_id=" << ownerId
@@ -61,7 +62,17 @@ void BattleRoom::HandleLeaveBattle(uint64 ownerId, string reason)
 	}
 
 	const uint64 battleId = battleIdIt->second;
-	_battleByOwnerId.erase(battleIdIt);
+	auto battleIt = _battles.find(battleId);
+	if (battleIt != _battles.end())
+	{
+		_battleByOwnerId.erase(battleIt->second.ownerId);
+		if (battleIt->second.opponentOwnerId != 0)
+			_battleByOwnerId.erase(battleIt->second.opponentOwnerId);
+	}
+	else
+	{
+		_battleByOwnerId.erase(battleIdIt);
+	}
 	_battles.erase(battleId);
 
 	cout << "BATTLE_ROOM_LEAVE"
@@ -69,6 +80,61 @@ void BattleRoom::HandleLeaveBattle(uint64 ownerId, string reason)
 		<< " battle_id=" << battleId
 		<< " active=1"
 		<< " reason=\"" << reason << "\""
+		<< endl;
+}
+
+void BattleRoom::HandleEnterPvpBattle(GameSessionRef requesterSession, GameSessionRef targetSession)
+{
+	PlayerRef requester = requesterSession ? requesterSession->player.load() : nullptr;
+	PlayerRef target = targetSession ? targetSession->player.load() : nullptr;
+
+	if (requester == nullptr || target == nullptr)
+	{
+		cout << "BATTLE_ROOM_PVP_ENTER_FAIL reason=\"player is missing\"" << endl;
+		return;
+	}
+
+	const uint64 requesterId = requester->objectInfo->object_id();
+	const uint64 targetId = target->objectInfo->object_id();
+
+	if (_battleByOwnerId.find(requesterId) != _battleByOwnerId.end() || _battleByOwnerId.find(targetId) != _battleByOwnerId.end())
+	{
+		Protocol::S_ENTER_BATTLE failPkt;
+		failPkt.set_success(false);
+		failPkt.set_reason("player already has battle");
+		SendEnterBattle(requesterSession, failPkt);
+		SendEnterBattle(targetSession, failPkt);
+		cout << "BATTLE_ROOM_PVP_ENTER_FAIL"
+			<< " requester_id=" << requesterId
+			<< " target_id=" << targetId
+			<< " reason=\"player already has battle\""
+			<< endl;
+		return;
+	}
+
+	BattleState battle = CreatePvpBattle(requesterId, targetId);
+	const uint64 battleId = battle.battleId;
+	auto insertResult = _battles.emplace(battleId, move(battle));
+	BattleState& storedBattle = insertResult.first->second;
+	_battleByOwnerId[requesterId] = battleId;
+	_battleByOwnerId[targetId] = battleId;
+
+	Protocol::S_ENTER_BATTLE requesterPkt;
+	requesterPkt.set_success(true);
+	FillEnterBattlePacket(storedBattle, requesterId, requesterPkt);
+	SendEnterBattle(requesterSession, requesterPkt);
+
+	Protocol::S_ENTER_BATTLE targetPkt;
+	targetPkt.set_success(true);
+	FillEnterBattlePacket(storedBattle, targetId, targetPkt);
+	SendEnterBattle(targetSession, targetPkt);
+
+	cout << "BATTLE_ROOM_PVP_ENTER"
+		<< " battle_id=" << storedBattle.battleId
+		<< " requester_id=" << requesterId
+		<< " target_id=" << targetId
+		<< " current_turn_pawn_id=" << storedBattle.currentTurnPawnId
+		<< " turn_queue_size=" << storedBattle.turnQueue.size()
 		<< endl;
 }
 
@@ -351,10 +417,8 @@ void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_
 		return;
 	}
 
-	battle.currentTurnPawnId = GetNextAlliedTurnPawnId(battle, pawn->pawnId);
+	AdvanceTurn(battle);
 	BattlePawnState* nextPawn = FindPawn(battle, battle.currentTurnPawnId);
-	if (nextPawn != nullptr)
-		StartTurn(*nextPawn);
 
 	SendBattleEndTurnResult(session, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn);
 }
@@ -377,6 +441,7 @@ BattleRoom::BattleState BattleRoom::CreateBattle(uint64 ownerId)
 	BattleState battle;
 	battle.battleId = _battleIdGenerator++;
 	battle.ownerId = ownerId;
+	battle.isPvp = false;
 	battle.mapId = "Battle_Test_001";
 
 	battle.alliedPawns.push_back(MakeBattlePawn(ownerId, Protocol::PAWN_CLASS_SUEN_AXE_SWORD, -2, 0, 100, 3, 10, true, true));
@@ -384,8 +449,30 @@ BattleRoom::BattleState BattleRoom::CreateBattle(uint64 ownerId)
 	battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_ZILLIAN_LONGBOW, 2, -1, 70, 3, 2, false, false));
 	battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_ALEN_SPEAR, 2, 0, 90, 3, 8, true, true));
 
-	battle.currentTurnPawnId = battle.alliedPawns.front().pawnId;
-	StartTurn(battle.alliedPawns.front());
+	BuildTurnQueue(battle);
+	if (BattlePawnState* currentPawn = FindPawn(battle, battle.currentTurnPawnId))
+		StartTurn(*currentPawn);
+	return battle;
+}
+
+BattleRoom::BattleState BattleRoom::CreatePvpBattle(uint64 ownerId, uint64 opponentOwnerId)
+{
+	BattleState battle;
+	battle.battleId = _battleIdGenerator++;
+	battle.ownerId = ownerId;
+	battle.opponentOwnerId = opponentOwnerId;
+	battle.isPvp = true;
+	battle.mapId = "Battle_PVP_001";
+
+	battle.alliedPawns.push_back(MakeBattlePawn(ownerId, Protocol::PAWN_CLASS_SUEN_AXE_SWORD, -2, 0, 100, 3, 10, true, true));
+	battle.alliedPawns.push_back(MakeBattlePawn(ownerId, Protocol::PAWN_CLASS_BEIGE_FIRE, -2, 1, 80, 3, 4, false, false));
+	battle.enemyPawns.push_back(MakeBattlePawn(opponentOwnerId, Protocol::PAWN_CLASS_ZILLIAN_LONGBOW, 2, -1, 70, 3, 2, false, false));
+	battle.enemyPawns.push_back(MakeBattlePawn(opponentOwnerId, Protocol::PAWN_CLASS_ALEN_SPEAR, 2, 0, 90, 3, 8, true, true));
+
+	BuildTurnQueue(battle);
+	if (BattlePawnState* currentPawn = FindPawn(battle, battle.currentTurnPawnId))
+		StartTurn(*currentPawn);
+
 	return battle;
 }
 
@@ -419,16 +506,24 @@ Protocol::AxialCoord BattleRoom::MakeAxial(int32 q, int32 r)
 	return coord;
 }
 
-void BattleRoom::FillEnterBattlePacket(const BattleState& battle, Protocol::S_ENTER_BATTLE& pkt)
+void BattleRoom::FillEnterBattlePacket(const BattleState& battle, uint64 viewerOwnerId, Protocol::S_ENTER_BATTLE& pkt)
 {
 	pkt.set_battle_id(battle.battleId);
 	pkt.set_map_id(battle.mapId);
 	pkt.set_current_turn_pawn_id(battle.currentTurnPawnId);
 
-	for (const BattlePawnState& pawn : battle.alliedPawns)
+	const vector<BattlePawnState>* alliedPawns = &battle.alliedPawns;
+	const vector<BattlePawnState>* enemyPawns = &battle.enemyPawns;
+	if (battle.isPvp && viewerOwnerId == battle.opponentOwnerId)
+	{
+		alliedPawns = &battle.enemyPawns;
+		enemyPawns = &battle.alliedPawns;
+	}
+
+	for (const BattlePawnState& pawn : *alliedPawns)
 		CopyBattlePawn(pawn, pkt.add_allied_pawns());
 
-	for (const BattlePawnState& pawn : battle.enemyPawns)
+	for (const BattlePawnState& pawn : *enemyPawns)
 		CopyBattlePawn(pawn, pkt.add_enemy_pawns());
 }
 
@@ -530,6 +625,66 @@ uint64 BattleRoom::GetNextAlliedTurnPawnId(const BattleState& battle, uint64 cur
 	}
 
 	return battle.alliedPawns.front().pawnId;
+}
+
+void BattleRoom::BuildTurnQueue(BattleState& battle)
+{
+	battle.turnQueue.clear();
+	battle.turnQueueIndex = 0;
+
+	for (const BattlePawnState& pawn : battle.alliedPawns)
+	{
+		if (pawn.hp > 0)
+			battle.turnQueue.push_back(pawn.pawnId);
+	}
+
+	if (battle.isPvp)
+	{
+		for (const BattlePawnState& pawn : battle.enemyPawns)
+		{
+			if (pawn.hp > 0)
+				battle.turnQueue.push_back(pawn.pawnId);
+		}
+	}
+
+	if (battle.turnQueue.empty())
+	{
+		battle.currentTurnPawnId = 0;
+		return;
+	}
+
+	static random_device rd;
+	static mt19937 rng(rd());
+	shuffle(battle.turnQueue.begin(), battle.turnQueue.end(), rng);
+	battle.currentTurnPawnId = battle.turnQueue.front();
+}
+
+uint64 BattleRoom::AdvanceTurn(BattleState& battle)
+{
+	if (battle.turnQueue.empty())
+		BuildTurnQueue(battle);
+
+	if (battle.turnQueue.empty())
+		return 0;
+
+	auto currentIt = find(battle.turnQueue.begin(), battle.turnQueue.end(), battle.currentTurnPawnId);
+	if (currentIt == battle.turnQueue.end())
+	{
+		BuildTurnQueue(battle);
+	}
+	else
+	{
+		battle.turnQueueIndex = static_cast<size_t>(distance(battle.turnQueue.begin(), currentIt)) + 1;
+		if (battle.turnQueueIndex >= battle.turnQueue.size())
+			BuildTurnQueue(battle);
+		else
+			battle.currentTurnPawnId = battle.turnQueue[battle.turnQueueIndex];
+	}
+
+	if (BattlePawnState* nextPawn = FindPawn(battle, battle.currentTurnPawnId))
+		StartTurn(*nextPawn);
+
+	return battle.currentTurnPawnId;
 }
 
 bool BattleRoom::TryGetSkillSpec(int32 skillSlot, SkillSpec& spec, string& reason)
