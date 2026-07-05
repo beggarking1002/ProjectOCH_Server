@@ -354,6 +354,13 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		return;
 	}
 
+	if (target->ownerId == caster->ownerId)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
+			target->axial, 0, target->hp, target->armor, battle.currentTurnPawnId, "cannot target ally", caster, target);
+		return;
+	}
+
 	const Protocol::AxialCoord targetAxial = pkt.has_target_axial() ? pkt.target_axial() : target->axial;
 	if (targetAxial.q() != target->axial.q() || targetAxial.r() != target->axial.r())
 	{
