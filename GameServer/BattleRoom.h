@@ -39,6 +39,8 @@ private:
 		uint64 ownerId = 0;
 		uint64 opponentOwnerId = 0;
 		bool isPvp = false;
+		weak_ptr<GameSession> ownerSession;
+		weak_ptr<GameSession> opponentSession;
 		string mapId;
 		vector<BattlePawnState> alliedPawns;
 		vector<BattlePawnState> enemyPawns;

@@ -116,6 +116,8 @@ void BattleRoom::HandleEnterPvpBattle(GameSessionRef requesterSession, GameSessi
 	const uint64 battleId = battle.battleId;
 	auto insertResult = _battles.emplace(battleId, move(battle));
 	BattleState& storedBattle = insertResult.first->second;
+	storedBattle.ownerSession = requesterSession;
+	storedBattle.opponentSession = targetSession;
 	_battleByOwnerId[requesterId] = battleId;
 	_battleByOwnerId[targetId] = battleId;
 
@@ -232,6 +234,22 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 
 	SendBattleMoveResult(session, true, battle.battleId, pawn->pawnId, start, pawn->axial, battle.currentTurnPawnId,
 		Protocol::BATTLE_MOVE_RESULT_OK, "", pawn);
+	if (battle.isPvp)
+	{
+		GameSessionRef ownerSession = battle.ownerSession.lock();
+		if (ownerSession != nullptr && ownerSession != session)
+		{
+			SendBattleMoveResult(ownerSession, true, battle.battleId, pawn->pawnId, start, pawn->axial, battle.currentTurnPawnId,
+				Protocol::BATTLE_MOVE_RESULT_OK, "", pawn);
+		}
+
+		GameSessionRef opponentSession = battle.opponentSession.lock();
+		if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
+		{
+			SendBattleMoveResult(opponentSession, true, battle.battleId, pawn->pawnId, start, pawn->axial, battle.currentTurnPawnId,
+				Protocol::BATTLE_MOVE_RESULT_OK, "", pawn);
+		}
+	}
 }
 
 void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SKILL pkt)
@@ -421,6 +439,16 @@ void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_
 	BattlePawnState* nextPawn = FindPawn(battle, battle.currentTurnPawnId);
 
 	SendBattleEndTurnResult(session, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn);
+	if (battle.isPvp)
+	{
+		GameSessionRef ownerSession = battle.ownerSession.lock();
+		if (ownerSession != nullptr && ownerSession != session)
+			SendBattleEndTurnResult(ownerSession, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn);
+
+		GameSessionRef opponentSession = battle.opponentSession.lock();
+		if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
+			SendBattleEndTurnResult(opponentSession, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn);
+	}
 }
 
 BattleRoom::BattleState& BattleRoom::GetOrCreateBattle(uint64 ownerId)
