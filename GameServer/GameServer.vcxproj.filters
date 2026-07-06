@@ -67,6 +67,9 @@
     <ClCompile Include="Creature.cpp">
       <Filter>Game\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Pawn.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
     <ClCompile Include="FieldWalkMapData.cpp">
       <Filter>Game</Filter>
     </ClCompile>
@@ -113,6 +116,9 @@
       <Filter>Game\Object</Filter>
     </ClInclude>
     <ClInclude Include="Creature.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Pawn.h">
       <Filter>Game\Object</Filter>
     </ClInclude>
     <ClInclude Include="FieldWalkMapData.h">

@@ -719,10 +719,9 @@ class BattlePawnInfo final :
     kCanMoveFieldNumber = 11,
     kUsedSubActionThisTurnFieldNumber = 12,
     kUsedUltimateFieldNumber = 13,
-    kIsShieldUnitFieldNumber = 14,
-    kIsMeleeFieldNumber = 15,
     kIsDeadFieldNumber = 16,
     kFacingDirectionFieldNumber = 17,
+    kRoleFieldNumber = 18,
   };
   // .Protocol.AxialCoord axial = 4;
   bool has_axial() const;
@@ -850,24 +849,6 @@ class BattlePawnInfo final :
   void _internal_set_used_ultimate(bool value);
   public:
 
-  // bool is_shield_unit = 14;
-  void clear_is_shield_unit();
-  bool is_shield_unit() const;
-  void set_is_shield_unit(bool value);
-  private:
-  bool _internal_is_shield_unit() const;
-  void _internal_set_is_shield_unit(bool value);
-  public:
-
-  // bool is_melee = 15;
-  void clear_is_melee();
-  bool is_melee() const;
-  void set_is_melee(bool value);
-  private:
-  bool _internal_is_melee() const;
-  void _internal_set_is_melee(bool value);
-  public:
-
   // bool is_dead = 16;
   void clear_is_dead();
   bool is_dead() const;
@@ -884,6 +865,15 @@ class BattlePawnInfo final :
   private:
   ::Protocol::BattleFacingDirection _internal_facing_direction() const;
   void _internal_set_facing_direction(::Protocol::BattleFacingDirection value);
+  public:
+
+  // .Protocol.BattlePawnRole role = 18;
+  void clear_role();
+  ::Protocol::BattlePawnRole role() const;
+  void set_role(::Protocol::BattlePawnRole value);
+  private:
+  ::Protocol::BattlePawnRole _internal_role() const;
+  void _internal_set_role(::Protocol::BattlePawnRole value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.BattlePawnInfo)
@@ -907,10 +897,9 @@ class BattlePawnInfo final :
     bool can_move_;
     bool used_sub_action_this_turn_;
     bool used_ultimate_;
-    bool is_shield_unit_;
-    bool is_melee_;
     bool is_dead_;
     int facing_direction_;
+    int role_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2020,46 +2009,6 @@ inline void BattlePawnInfo::set_used_ultimate(bool value) {
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.used_ultimate)
 }
 
-// bool is_shield_unit = 14;
-inline void BattlePawnInfo::clear_is_shield_unit() {
-  _impl_.is_shield_unit_ = false;
-}
-inline bool BattlePawnInfo::_internal_is_shield_unit() const {
-  return _impl_.is_shield_unit_;
-}
-inline bool BattlePawnInfo::is_shield_unit() const {
-  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.is_shield_unit)
-  return _internal_is_shield_unit();
-}
-inline void BattlePawnInfo::_internal_set_is_shield_unit(bool value) {
-  
-  _impl_.is_shield_unit_ = value;
-}
-inline void BattlePawnInfo::set_is_shield_unit(bool value) {
-  _internal_set_is_shield_unit(value);
-  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.is_shield_unit)
-}
-
-// bool is_melee = 15;
-inline void BattlePawnInfo::clear_is_melee() {
-  _impl_.is_melee_ = false;
-}
-inline bool BattlePawnInfo::_internal_is_melee() const {
-  return _impl_.is_melee_;
-}
-inline bool BattlePawnInfo::is_melee() const {
-  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.is_melee)
-  return _internal_is_melee();
-}
-inline void BattlePawnInfo::_internal_set_is_melee(bool value) {
-  
-  _impl_.is_melee_ = value;
-}
-inline void BattlePawnInfo::set_is_melee(bool value) {
-  _internal_set_is_melee(value);
-  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.is_melee)
-}
-
 // bool is_dead = 16;
 inline void BattlePawnInfo::clear_is_dead() {
   _impl_.is_dead_ = false;
@@ -2098,6 +2047,26 @@ inline void BattlePawnInfo::_internal_set_facing_direction(::Protocol::BattleFac
 inline void BattlePawnInfo::set_facing_direction(::Protocol::BattleFacingDirection value) {
   _internal_set_facing_direction(value);
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.facing_direction)
+}
+
+// .Protocol.BattlePawnRole role = 18;
+inline void BattlePawnInfo::clear_role() {
+  _impl_.role_ = 0;
+}
+inline ::Protocol::BattlePawnRole BattlePawnInfo::_internal_role() const {
+  return static_cast< ::Protocol::BattlePawnRole >(_impl_.role_);
+}
+inline ::Protocol::BattlePawnRole BattlePawnInfo::role() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.role)
+  return _internal_role();
+}
+inline void BattlePawnInfo::_internal_set_role(::Protocol::BattlePawnRole value) {
+  
+  _impl_.role_ = value;
+}
+inline void BattlePawnInfo::set_role(::Protocol::BattlePawnRole value) {
+  _internal_set_role(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.role)
 }
 
 // -------------------------------------------------------------------

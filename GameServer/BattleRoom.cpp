@@ -31,7 +31,7 @@ void BattleRoom::HandleEnterBattle(GameSessionRef session)
 
 	const uint64 ownerId = player->objectInfo->object_id();
 	const bool created = _battleByOwnerId.find(ownerId) == _battleByOwnerId.end();
-	BattleState& battle = GetOrCreateBattle(ownerId);
+	BattleState& battle = GetOrCreateBattle(player);
 
 	enterBattlePkt.set_success(true);
 	FillEnterBattlePacket(battle, ownerId, enterBattlePkt);
@@ -113,7 +113,7 @@ void BattleRoom::HandleEnterPvpBattle(GameSessionRef requesterSession, GameSessi
 		return;
 	}
 
-	BattleState battle = CreatePvpBattle(requesterId, targetId);
+	BattleState battle = CreatePvpBattle(requester, target);
 	const uint64 battleId = battle.battleId;
 	auto insertResult = _battles.emplace(battleId, move(battle));
 	BattleState& storedBattle = insertResult.first->second;
@@ -341,7 +341,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 
 	SkillSpec skillSpec;
 	string skillError;
-	if (TryGetSkillSpec(pkt.skill_slot(), skillSpec, skillError) == false)
+	if (TryGetSkillSpec(caster->pawnClass, pkt.skill_slot(), skillSpec, skillError) == false)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
 			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, skillError, caster);
@@ -617,31 +617,32 @@ void BattleRoom::HandleBattleResultAck(GameSessionRef session, Protocol::C_BATTL
 	}
 }
 
-BattleRoom::BattleState& BattleRoom::GetOrCreateBattle(uint64 ownerId)
+BattleRoom::BattleState& BattleRoom::GetOrCreateBattle(PlayerRef ownerPlayer)
 {
+	const uint64 ownerId = ownerPlayer != nullptr && ownerPlayer->objectInfo != nullptr ? ownerPlayer->objectInfo->object_id() : 0;
 	auto battleIdIt = _battleByOwnerId.find(ownerId);
 	if (battleIdIt != _battleByOwnerId.end())
 		return _battles[battleIdIt->second];
 
-	BattleState battle = CreateBattle(ownerId);
+	BattleState battle = CreateBattle(ownerPlayer);
 	const uint64 battleId = battle.battleId;
 	_battleByOwnerId[ownerId] = battleId;
 	auto insertResult = _battles.emplace(battleId, move(battle));
 	return insertResult.first->second;
 }
 
-BattleRoom::BattleState BattleRoom::CreateBattle(uint64 ownerId)
+BattleRoom::BattleState BattleRoom::CreateBattle(PlayerRef ownerPlayer)
 {
+	const uint64 ownerId = ownerPlayer != nullptr && ownerPlayer->objectInfo != nullptr ? ownerPlayer->objectInfo->object_id() : 0;
 	BattleState battle;
 	battle.battleId = _battleIdGenerator++;
 	battle.ownerId = ownerId;
 	battle.isPvp = false;
 	battle.mapId = "Battle_Test_001";
 
-	battle.alliedPawns.push_back(MakeBattlePawn(ownerId, Protocol::PAWN_CLASS_SUEN_AXE_SWORD, -2, 0, 100, 3, 10, true, true));
-	battle.alliedPawns.push_back(MakeBattlePawn(ownerId, Protocol::PAWN_CLASS_BEIGE_FIRE, -2, 1, 80, 3, 4, false, false));
-	battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_ZILLIAN_LONGBOW, 2, -1, 70, 3, 2, false, false));
-	battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_ALEN_SPEAR, 2, 0, 90, 3, 8, true, true));
+	AddOwnedBattlePawns(battle.alliedPawns, ownerPlayer, -2, 0);
+	battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_ZILLIAN_LONGBOW, 2, -1, 70, 3, 2, Protocol::BATTLE_PAWN_ROLE_RANGED));
+	battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_ALEN_SPEAR, 2, 0, 90, 3, 8, Protocol::BATTLE_PAWN_ROLE_MELEE));
 
 	BuildTurnQueue(battle);
 	if (BattlePawnState* currentPawn = FindPawn(battle, battle.currentTurnPawnId))
@@ -649,8 +650,10 @@ BattleRoom::BattleState BattleRoom::CreateBattle(uint64 ownerId)
 	return battle;
 }
 
-BattleRoom::BattleState BattleRoom::CreatePvpBattle(uint64 ownerId, uint64 opponentOwnerId)
+BattleRoom::BattleState BattleRoom::CreatePvpBattle(PlayerRef ownerPlayer, PlayerRef opponentPlayer)
 {
+	const uint64 ownerId = ownerPlayer != nullptr && ownerPlayer->objectInfo != nullptr ? ownerPlayer->objectInfo->object_id() : 0;
+	const uint64 opponentOwnerId = opponentPlayer != nullptr && opponentPlayer->objectInfo != nullptr ? opponentPlayer->objectInfo->object_id() : 0;
 	BattleState battle;
 	battle.battleId = _battleIdGenerator++;
 	battle.ownerId = ownerId;
@@ -658,10 +661,8 @@ BattleRoom::BattleState BattleRoom::CreatePvpBattle(uint64 ownerId, uint64 oppon
 	battle.isPvp = true;
 	battle.mapId = "Battle_PVP_001";
 
-	battle.alliedPawns.push_back(MakeBattlePawn(ownerId, Protocol::PAWN_CLASS_SUEN_AXE_SWORD, -2, 0, 100, 3, 10, true, true));
-	battle.alliedPawns.push_back(MakeBattlePawn(ownerId, Protocol::PAWN_CLASS_BEIGE_FIRE, -2, 1, 80, 3, 4, false, false));
-	battle.enemyPawns.push_back(MakeBattlePawn(opponentOwnerId, Protocol::PAWN_CLASS_ZILLIAN_LONGBOW, 2, -1, 70, 3, 2, false, false));
-	battle.enemyPawns.push_back(MakeBattlePawn(opponentOwnerId, Protocol::PAWN_CLASS_ALEN_SPEAR, 2, 0, 90, 3, 8, true, true));
+	AddOwnedBattlePawns(battle.alliedPawns, ownerPlayer, -2, 0);
+	AddOwnedBattlePawns(battle.enemyPawns, opponentPlayer, 2, -1);
 
 	BuildTurnQueue(battle);
 	if (BattlePawnState* currentPawn = FindPawn(battle, battle.currentTurnPawnId))
@@ -671,7 +672,7 @@ BattleRoom::BattleState BattleRoom::CreatePvpBattle(uint64 ownerId, uint64 oppon
 }
 
 BattleRoom::BattlePawnState BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol::PawnClass pawnClass, int32 q, int32 r, int32 hp, int32 moveRange,
-	int32 maxArmor, bool isShieldUnit, bool isMelee)
+	int32 maxArmor, Protocol::BattlePawnRole role)
 {
 	BattlePawnState pawn;
 	pawn.pawnId = _battlePawnIdGenerator++;
@@ -687,11 +688,77 @@ BattleRoom::BattlePawnState BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol:
 	pawn.hasMovedThisTurn = false;
 	pawn.usedSubActionThisTurn = false;
 	pawn.usedUltimate = false;
-	pawn.isShieldUnit = isShieldUnit;
-	pawn.isMelee = isMelee;
 	pawn.isDead = false;
 	pawn.facingDirection = q <= 0 ? Protocol::BATTLE_FACING_DIRECTION_RIGHT : Protocol::BATTLE_FACING_DIRECTION_LEFT;
+	pawn.role = role;
 	return pawn;
+}
+
+BattleRoom::BattlePawnState BattleRoom::MakeBattlePawnFromOwnedPawn(PawnRef sourcePawn, int32 q, int32 r)
+{
+	if (sourcePawn == nullptr)
+		return MakeBattlePawn(0, Protocol::PAWN_CLASS_NONE, q, r, 80, 3, 0, Protocol::BATTLE_PAWN_ROLE_MELEE);
+
+	PawnTemplate pawnTemplate;
+	if (TryGetPawnTemplate(sourcePawn->pawnClass, pawnTemplate) == false)
+	{
+		pawnTemplate.hp = 80;
+		pawnTemplate.moveRange = 3;
+		pawnTemplate.maxArmor = 0;
+		pawnTemplate.role = Protocol::BATTLE_PAWN_ROLE_MELEE;
+	}
+
+	return MakeBattlePawn(sourcePawn->ownerId, sourcePawn->pawnClass, q, r, pawnTemplate.hp, pawnTemplate.moveRange,
+		pawnTemplate.maxArmor, pawnTemplate.role);
+}
+
+void BattleRoom::AddOwnedBattlePawns(vector<BattlePawnState>& dst, PlayerRef ownerPlayer, int32 q, int32 firstR)
+{
+	if (ownerPlayer == nullptr)
+		return;
+
+	for (size_t i = 0; i < ownerPlayer->battlePawns.size(); i++)
+	{
+		PawnRef sourcePawn = ownerPlayer->battlePawns[i];
+		if (sourcePawn == nullptr)
+			continue;
+
+		dst.push_back(MakeBattlePawnFromOwnedPawn(sourcePawn, q, firstR + static_cast<int32>(i)));
+	}
+}
+
+bool BattleRoom::TryGetPawnTemplate(Protocol::PawnClass pawnClass, PawnTemplate& pawnTemplate)
+{
+	switch (pawnClass)
+	{
+	case Protocol::PAWN_CLASS_SUEN_AXE_SWORD:
+		pawnTemplate.hp = 100;
+		pawnTemplate.moveRange = 3;
+		pawnTemplate.maxArmor = 10;
+		pawnTemplate.role = Protocol::BATTLE_PAWN_ROLE_TANKER;
+		return true;
+	case Protocol::PAWN_CLASS_BEIGE_FIRE:
+		pawnTemplate.hp = 80;
+		pawnTemplate.moveRange = 3;
+		pawnTemplate.maxArmor = 4;
+		pawnTemplate.role = Protocol::BATTLE_PAWN_ROLE_RANGED;
+		return true;
+	case Protocol::PAWN_CLASS_ZILLIAN_LONGBOW:
+		pawnTemplate.hp = 70;
+		pawnTemplate.moveRange = 3;
+		pawnTemplate.maxArmor = 2;
+		pawnTemplate.role = Protocol::BATTLE_PAWN_ROLE_RANGED;
+		return true;
+	case Protocol::PAWN_CLASS_ALEN_SPEAR:
+		pawnTemplate.hp = 90;
+		pawnTemplate.moveRange = 3;
+		pawnTemplate.maxArmor = 8;
+		pawnTemplate.role = Protocol::BATTLE_PAWN_ROLE_MELEE;
+		return true;
+	default:
+		pawnTemplate = PawnTemplate();
+		return false;
+	}
 }
 
 Protocol::AxialCoord BattleRoom::MakeAxial(int32 q, int32 r)
@@ -738,10 +805,9 @@ void BattleRoom::CopyBattlePawn(const BattlePawnState& src, Protocol::BattlePawn
 	dst->set_can_move(CanMove(src));
 	dst->set_used_sub_action_this_turn(src.usedSubActionThisTurn);
 	dst->set_used_ultimate(src.usedUltimate);
-	dst->set_is_shield_unit(src.isShieldUnit);
-	dst->set_is_melee(src.isMelee);
 	dst->set_is_dead(src.isDead);
 	dst->set_facing_direction(src.facingDirection);
+	dst->set_role(src.role);
 }
 
 void BattleRoom::CopyBattlePawnDelta(const BattlePawnState& src, Protocol::BattlePawnDelta* dst)
@@ -899,36 +965,80 @@ uint64 BattleRoom::AdvanceTurn(BattleState& battle)
 	return battle.currentTurnPawnId;
 }
 
-bool BattleRoom::TryGetSkillSpec(int32 skillSlot, SkillSpec& spec, string& reason)
+bool BattleRoom::TryGetSkillSpec(Protocol::PawnClass pawnClass, int32 skillSlot, SkillSpec& spec, string& reason)
 {
+	auto setSpec = [&spec](int32 apCost, int32 damage, int32 range, bool isUltimate = false)
+		{
+			spec = SkillSpec();
+			spec.apCost = apCost;
+			spec.damage = damage;
+			spec.range = range;
+			spec.isUltimate = isUltimate;
+			return true;
+		};
+
+	switch (pawnClass)
+	{
+	case Protocol::PAWN_CLASS_SUEN_AXE_SWORD:
+		switch (skillSlot)
+		{
+		case 1: return setSpec(1, 30, 1);
+		case 2: return setSpec(2, 45, 1);
+		case 3: return setSpec(2, 35, 1);
+		case 4: return setSpec(2, 55, 1);
+		case 5: return setSpec(0, 90, 1, true);
+		default: break;
+		}
+		break;
+	case Protocol::PAWN_CLASS_BEIGE_FIRE:
+		switch (skillSlot)
+		{
+		case 1: return setSpec(1, 20, 3);
+		case 2: return setSpec(2, 40, 3);
+		case 3: return setSpec(2, 30, 4);
+		case 4: return setSpec(2, 50, 3);
+		case 5: return setSpec(0, 85, 4, true);
+		default: break;
+		}
+		break;
+	case Protocol::PAWN_CLASS_ZILLIAN_LONGBOW:
+		switch (skillSlot)
+		{
+		case 1: return setSpec(1, 20, 4);
+		case 2: return setSpec(2, 35, 5);
+		case 3: return setSpec(2, 45, 4);
+		case 4: return setSpec(2, 30, 6);
+		case 5: return setSpec(0, 80, 6, true);
+		default: break;
+		}
+		break;
+	case Protocol::PAWN_CLASS_ALEN_SPEAR:
+		switch (skillSlot)
+		{
+		case 1: return setSpec(1, 25, 2);
+		case 2: return setSpec(2, 35, 2);
+		case 3: return setSpec(2, 45, 2);
+		case 4: return setSpec(2, 30, 3);
+		case 5: return setSpec(0, 80, 2, true);
+		default: break;
+		}
+		break;
+	default:
+		break;
+	}
+
 	switch (skillSlot)
 	{
 	case 1:
-		spec.apCost = 1;
-		spec.damage = 25;
-		spec.range = 1;
-		return true;
+		return setSpec(1, 25, 1);
 	case 2:
-		spec.apCost = 2;
-		spec.damage = 35;
-		spec.range = 3;
-		return true;
+		return setSpec(2, 35, 3);
 	case 3:
-		spec.apCost = 2;
-		spec.damage = 45;
-		spec.range = 2;
-		return true;
+		return setSpec(2, 45, 2);
 	case 4:
-		spec.apCost = 2;
-		spec.damage = 30;
-		spec.range = 4;
-		return true;
+		return setSpec(2, 30, 4);
 	case 5:
-		spec.apCost = 0;
-		spec.damage = 80;
-		spec.range = 3;
-		spec.isUltimate = true;
-		return true;
+		return setSpec(0, 80, 3, true);
 	default:
 		spec = SkillSpec();
 		reason = "invalid skill slot";
@@ -939,6 +1049,11 @@ bool BattleRoom::TryGetSkillSpec(int32 skillSlot, SkillSpec& spec, string& reaso
 bool BattleRoom::CanMove(const BattlePawnState& pawn)
 {
 	return IsAlive(pawn) && pawn.hasMovedThisTurn == false && pawn.currentAp > 0;
+}
+
+bool BattleRoom::CanRecoverArmor(const BattlePawnState& pawn)
+{
+	return pawn.role == Protocol::BATTLE_PAWN_ROLE_TANKER;
 }
 
 bool BattleRoom::IsAlive(const BattlePawnState& pawn)
@@ -1001,7 +1116,7 @@ void BattleRoom::StartTurn(BattlePawnState& pawn)
 	pawn.hasMovedThisTurn = false;
 	pawn.usedSubActionThisTurn = false;
 
-	if (pawn.isShieldUnit && pawn.armor < pawn.maxArmor)
+	if (CanRecoverArmor(pawn) && pawn.armor < pawn.maxArmor)
 	{
 		const int32 lostArmor = pawn.maxArmor - pawn.armor;
 		const int32 recoverArmor = lostArmor / 2;

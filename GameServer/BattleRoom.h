@@ -1,5 +1,6 @@
 #pragma once
 #include "JobQueue.h"
+#include "Pawn.h"
 
 using BattleRoomRef = shared_ptr<class BattleRoom>;
 
@@ -21,10 +22,9 @@ private:
 		bool hasMovedThisTurn = false;
 		bool usedSubActionThisTurn = false;
 		bool usedUltimate = false;
-		bool isShieldUnit = false;
-		bool isMelee = true;
 		bool isDead = false;
 		Protocol::BattleFacingDirection facingDirection = Protocol::BATTLE_FACING_DIRECTION_RIGHT;
+		Protocol::BattlePawnRole role = Protocol::BATTLE_PAWN_ROLE_NONE;
 	};
 
 	struct SkillSpec
@@ -33,6 +33,14 @@ private:
 		int32 damage = 0;
 		int32 range = 0;
 		bool isUltimate = false;
+	};
+
+	struct PawnTemplate
+	{
+		int32 hp = 0;
+		int32 moveRange = 0;
+		int32 maxArmor = 0;
+		Protocol::BattlePawnRole role = Protocol::BATTLE_PAWN_ROLE_NONE;
 	};
 
 	struct BattleState
@@ -70,11 +78,14 @@ public:
 	void HandleBattleResultAck(GameSessionRef session, Protocol::C_BATTLE_RESULT_ACK pkt);
 
 private:
-	BattleState& GetOrCreateBattle(uint64 ownerId);
-	BattleState CreateBattle(uint64 ownerId);
-	BattleState CreatePvpBattle(uint64 ownerId, uint64 opponentOwnerId);
+	BattleState& GetOrCreateBattle(PlayerRef ownerPlayer);
+	BattleState CreateBattle(PlayerRef ownerPlayer);
+	BattleState CreatePvpBattle(PlayerRef ownerPlayer, PlayerRef opponentPlayer);
 	BattlePawnState MakeBattlePawn(uint64 ownerId, Protocol::PawnClass pawnClass, int32 q, int32 r, int32 hp, int32 moveRange,
-		int32 maxArmor, bool isShieldUnit, bool isMelee);
+		int32 maxArmor, Protocol::BattlePawnRole role);
+	BattlePawnState MakeBattlePawnFromOwnedPawn(PawnRef sourcePawn, int32 q, int32 r);
+	void AddOwnedBattlePawns(vector<BattlePawnState>& dst, PlayerRef ownerPlayer, int32 q, int32 firstR);
+	bool TryGetPawnTemplate(Protocol::PawnClass pawnClass, PawnTemplate& pawnTemplate);
 	Protocol::AxialCoord MakeAxial(int32 q, int32 r);
 
 	void FillEnterBattlePacket(const BattleState& battle, uint64 viewerOwnerId, Protocol::S_ENTER_BATTLE& pkt);
@@ -88,8 +99,9 @@ private:
 	uint64 GetNextAlliedTurnPawnId(const BattleState& battle, uint64 currentPawnId);
 	void BuildTurnQueue(BattleState& battle);
 	uint64 AdvanceTurn(BattleState& battle);
-	bool TryGetSkillSpec(int32 skillSlot, SkillSpec& spec, string& reason);
+	bool TryGetSkillSpec(Protocol::PawnClass pawnClass, int32 skillSlot, SkillSpec& spec, string& reason);
 	bool CanMove(const BattlePawnState& pawn);
+	bool CanRecoverArmor(const BattlePawnState& pawn);
 	bool IsAlive(const BattlePawnState& pawn);
 	bool HasAlivePawn(const vector<BattlePawnState>& pawns);
 	bool TryFinishBattle(BattleState& battle, uint64 fallbackWinnerOwnerId);

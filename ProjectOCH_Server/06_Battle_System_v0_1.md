@@ -1,6 +1,6 @@
 # Battle System v0.1
 
-Updated on 2026-07-04.
+Updated on 2026-07-06.
 
 ## Server Authoritative Direction
 
@@ -17,11 +17,40 @@ The server owns battle judgment. The Unity client should use input, preview, ani
 - `hp`
 - `armor`
 - `maxArmor`
-- `isShieldUnit`
-- `isMelee`
 - `facingDirection`
+- `role`
 
 `BattleState` owns `currentTurnPawnId`.
+
+Battle pawn role is represented by `BattlePawnRole`:
+
+- `BATTLE_PAWN_ROLE_TANKER`
+- `BATTLE_PAWN_ROLE_MELEE`
+- `BATTLE_PAWN_ROLE_RANGED`
+
+`BattlePawnInfo.is_shield_unit` and `BattlePawnInfo.is_melee` were removed. Field numbers 14 and 15 are reserved and must not be reused.
+
+`BattlePawnDelta.role` was removed because role is treated as initial pawn identity data. Field number 10 is reserved and must not be reused.
+
+## Owned Pawn Model
+
+`Player` now owns persistent battle pawn data through `Player::battlePawns`.
+
+`Pawn` is long-lived player-owned data:
+
+- `ownerId`
+- `pawnId`
+- `pawnClass`
+- `level`
+
+`BattlePawnState` remains battle-runtime state. AP, current HP, current armor, turn movement flags, Ultimate usage, death, and facing direction are copied into and managed inside the battle room for a specific battle.
+
+Temporary player creation grants two default owned pawns:
+
+- odd player ids: `PAWN_CLASS_SUEN_AXE_SWORD`, `PAWN_CLASS_BEIGE_FIRE`
+- even player ids: `PAWN_CLASS_ZILLIAN_LONGBOW`, `PAWN_CLASS_ALEN_SPEAR`
+
+Battle creation now converts each player's owned `Pawn` list into `BattlePawnState` snapshots. Class base stats and role are still temporary server-side values in `BattleRoom::TryGetPawnTemplate()` and should move to a data table later.
 
 ## Turn Start
 
@@ -30,7 +59,7 @@ The server owns battle judgment. The Unity client should use input, preview, ani
 - AP becomes 2.
 - Movement availability is reset.
 - SubAction usage for the turn is reset.
-- Shield units recover `floor((max_armor - armor) / 2)` armor.
+- Tanker-role pawns recover `floor((max_armor - armor) / 2)` armor.
 
 `C_BATTLE_END_TURN` is the only packet that advances the turn. On success it advances to the next allied pawn and calls `StartTurn()` for that pawn.
 
@@ -59,13 +88,24 @@ On successful movement, the server updates `facingDirection` from the move start
 
 ## Skills
 
-Temporary v0.1 skill specs:
+Temporary v0.1 fallback skill specs:
 
 - slot 1: AP 1, damage 25, range 1
 - slot 2: AP 2, damage 35, range 3
 - slot 3: AP 2, damage 45, range 2
 - slot 4: AP 2, damage 30, range 4
 - slot 5: Ultimate, AP 0, damage 80, range 3, once per battle per pawn
+
+`TryGetSkillSpec()` now looks up skills by `PawnClass + skill_slot`. If a pawn class has no dedicated temporary table yet, it falls back to the generic values above.
+
+Temporary class skill specs currently implemented:
+
+| PawnClass | Slot 1 | Slot 2 | Slot 3 | Slot 4 | Ultimate |
+| --- | --- | --- | --- | --- | --- |
+| `PAWN_CLASS_SUEN_AXE_SWORD` | AP 1 / dmg 30 / range 1 | AP 2 / dmg 45 / range 1 | AP 2 / dmg 35 / range 1 | AP 2 / dmg 55 / range 1 | AP 0 / dmg 90 / range 1 |
+| `PAWN_CLASS_BEIGE_FIRE` | AP 1 / dmg 20 / range 3 | AP 2 / dmg 40 / range 3 | AP 2 / dmg 30 / range 4 | AP 2 / dmg 50 / range 3 | AP 0 / dmg 85 / range 4 |
+| `PAWN_CLASS_ZILLIAN_LONGBOW` | AP 1 / dmg 20 / range 4 | AP 2 / dmg 35 / range 5 | AP 2 / dmg 45 / range 4 | AP 2 / dmg 30 / range 6 | AP 0 / dmg 80 / range 6 |
+| `PAWN_CLASS_ALEN_SPEAR` | AP 1 / dmg 25 / range 2 | AP 2 / dmg 35 / range 2 | AP 2 / dmg 45 / range 2 | AP 2 / dmg 30 / range 3 | AP 0 / dmg 80 / range 2 |
 
 Skill validation checks current turn, ownership, valid slot, Ultimate one-time use, enough AP, valid target, target axial match, target alive, and range.
 

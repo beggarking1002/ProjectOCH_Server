@@ -25,6 +25,8 @@ message ObjectInfo
 
 message BattlePawnInfo
 {
+	reserved 14, 15;
+
 	uint64 pawn_id = 1;
 	uint64 owner_id = 2;
 	PawnClass pawn_class = 3;
@@ -38,14 +40,15 @@ message BattlePawnInfo
 	bool can_move = 11;
 	bool used_sub_action_this_turn = 12;
 	bool used_ultimate = 13;
-	bool is_shield_unit = 14;
-	bool is_melee = 15;
 	bool is_dead = 16;
 	BattleFacingDirection facing_direction = 17;
+	BattlePawnRole role = 18;
 }
 
 message BattlePawnDelta
 {
+	reserved 10;
+
 	uint64 pawn_id = 1;
 	int32 hp = 2;
 	int32 armor = 3;

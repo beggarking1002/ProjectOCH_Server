@@ -1,6 +1,6 @@
 # Battle Invite Flow
 
-Updated on 2026-07-05.
+Updated on 2026-07-06.
 
 ## Goal
 
@@ -82,14 +82,16 @@ The requester pawns are stored in `alliedPawns`; the target pawns are stored in 
 - requester sees requester pawns as `allied_pawns`
 - target sees target pawns as `allied_pawns`
 
-Current temporary PvP pawn setup:
+Current temporary PvP pawn setup is based on each player's owned `Player::battlePawns`.
 
-- requester:
+- odd player ids receive:
   - `PAWN_CLASS_SUEN_AXE_SWORD`
   - `PAWN_CLASS_BEIGE_FIRE`
-- target:
+- even player ids receive:
   - `PAWN_CLASS_ZILLIAN_LONGBOW`
   - `PAWN_CLASS_ALEN_SPEAR`
+
+When PvP starts, requester-owned pawns are converted into `alliedPawns`, and target-owned pawns are converted into `enemyPawns`. These are battle-runtime snapshots; AP, HP, armor, movement flags, Ultimate usage, death, and facing are managed in `BattlePawnState`.
 
 ## Turn Queue
 

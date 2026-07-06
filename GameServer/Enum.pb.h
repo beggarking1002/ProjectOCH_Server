@@ -195,6 +195,33 @@ inline bool BattleFacingDirection_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<BattleFacingDirection>(
     BattleFacingDirection_descriptor(), name, value);
 }
+enum BattlePawnRole : int {
+  BATTLE_PAWN_ROLE_NONE = 0,
+  BATTLE_PAWN_ROLE_TANKER = 1,
+  BATTLE_PAWN_ROLE_MELEE = 2,
+  BATTLE_PAWN_ROLE_RANGED = 3,
+  BattlePawnRole_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  BattlePawnRole_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool BattlePawnRole_IsValid(int value);
+constexpr BattlePawnRole BattlePawnRole_MIN = BATTLE_PAWN_ROLE_NONE;
+constexpr BattlePawnRole BattlePawnRole_MAX = BATTLE_PAWN_ROLE_RANGED;
+constexpr int BattlePawnRole_ARRAYSIZE = BattlePawnRole_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattlePawnRole_descriptor();
+template<typename T>
+inline const std::string& BattlePawnRole_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, BattlePawnRole>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function BattlePawnRole_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    BattlePawnRole_descriptor(), enum_t_value);
+}
+inline bool BattlePawnRole_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, BattlePawnRole* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<BattlePawnRole>(
+    BattlePawnRole_descriptor(), name, value);
+}
 // ===================================================================
 
 
@@ -241,6 +268,11 @@ template <> struct is_proto_enum< ::Protocol::BattleFacingDirection> : ::std::tr
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::BattleFacingDirection>() {
   return ::Protocol::BattleFacingDirection_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::BattlePawnRole> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::BattlePawnRole>() {
+  return ::Protocol::BattlePawnRole_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE
