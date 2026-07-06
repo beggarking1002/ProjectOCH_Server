@@ -24,6 +24,7 @@ private:
 		bool isShieldUnit = false;
 		bool isMelee = true;
 		bool isDead = false;
+		Protocol::BattleFacingDirection facingDirection = Protocol::BATTLE_FACING_DIRECTION_RIGHT;
 	};
 
 	struct SkillSpec
@@ -94,6 +95,8 @@ private:
 	bool TryFinishBattle(BattleState& battle, uint64 fallbackWinnerOwnerId);
 	void StartTurn(BattlePawnState& pawn);
 	void ApplyDamage(BattlePawnState& target, int32 damage);
+	void UpdateFacingByMove(BattlePawnState& pawn, const Protocol::AxialCoord& start, const Protocol::AxialCoord& target);
+	bool IsBackAttack(const BattlePawnState& attacker, const BattlePawnState& defender);
 	void AddActionLog(google::protobuf::RepeatedPtrField<Protocol::BattleActionLog>* logs,
 		uint64 attackerPawnId, uint64 defenderPawnId, int32 skillSlot, const string& actionType,
 		int32 damage, const BattlePawnState& defender, bool isCounter = false);

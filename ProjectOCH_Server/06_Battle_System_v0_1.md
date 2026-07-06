@@ -19,6 +19,7 @@ The server owns battle judgment. The Unity client should use input, preview, ani
 - `maxArmor`
 - `isShieldUnit`
 - `isMelee`
+- `facingDirection`
 
 `BattleState` owns `currentTurnPawnId`.
 
@@ -50,6 +51,12 @@ Movement does not consume AP. A successful move sets `hasMovedThisTurn = true` a
 
 If AP 2 has already been spent, movement fails with `BATTLE_MOVE_RESULT_CANNOT_MOVE`.
 
+On successful movement, the server updates `facingDirection` from the move start and target:
+
+- target `q` greater than start `q`: `BATTLE_FACING_DIRECTION_RIGHT`
+- target `q` less than start `q`: `BATTLE_FACING_DIRECTION_LEFT`
+- same `q`: keep the previous facing
+
 ## Skills
 
 Temporary v0.1 skill specs:
@@ -66,6 +73,8 @@ Skill success does not advance the turn. AP 2 skills make movement unavailable a
 
 Damage is applied to armor first, then HP.
 
+Back attack judgment is server authoritative. The server compares attacker position, defender position, and defender `facingDirection`; the result is sent as `BattleActionLog.is_back_attack`.
+
 ## Response Fields
 
 `S_BATTLE_MOVE`, `S_BATTLE_SKILL`, and `S_BATTLE_END_TURN` now include battle-state feedback needed by the client:
@@ -80,6 +89,8 @@ Damage is applied to armor first, then HP.
 - `target_armor`
 - `used_sub_action_this_turn`
 - `used_ultimate`
+
+`BattlePawnInfo` and `BattlePawnDelta` include `facing_direction`, so `S_ENTER_BATTLE`, `S_BATTLE_MOVE`, `S_BATTLE_SKILL`, and other delta-bearing battle responses can drive client sprite direction from server state.
 
 ## Still TODO
 

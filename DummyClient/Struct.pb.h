@@ -722,6 +722,7 @@ class BattlePawnInfo final :
     kIsShieldUnitFieldNumber = 14,
     kIsMeleeFieldNumber = 15,
     kIsDeadFieldNumber = 16,
+    kFacingDirectionFieldNumber = 17,
   };
   // .Protocol.AxialCoord axial = 4;
   bool has_axial() const;
@@ -876,6 +877,15 @@ class BattlePawnInfo final :
   void _internal_set_is_dead(bool value);
   public:
 
+  // .Protocol.BattleFacingDirection facing_direction = 17;
+  void clear_facing_direction();
+  ::Protocol::BattleFacingDirection facing_direction() const;
+  void set_facing_direction(::Protocol::BattleFacingDirection value);
+  private:
+  ::Protocol::BattleFacingDirection _internal_facing_direction() const;
+  void _internal_set_facing_direction(::Protocol::BattleFacingDirection value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.BattlePawnInfo)
  private:
   class _Internal;
@@ -900,6 +910,7 @@ class BattlePawnInfo final :
     bool is_shield_unit_;
     bool is_melee_;
     bool is_dead_;
+    int facing_direction_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1036,6 +1047,7 @@ class BattlePawnDelta final :
     kUsedSubActionThisTurnFieldNumber = 6,
     kUsedUltimateFieldNumber = 7,
     kIsDeadFieldNumber = 8,
+    kFacingDirectionFieldNumber = 9,
   };
   // uint64 pawn_id = 1;
   void clear_pawn_id();
@@ -1109,6 +1121,15 @@ class BattlePawnDelta final :
   void _internal_set_is_dead(bool value);
   public:
 
+  // .Protocol.BattleFacingDirection facing_direction = 9;
+  void clear_facing_direction();
+  ::Protocol::BattleFacingDirection facing_direction() const;
+  void set_facing_direction(::Protocol::BattleFacingDirection value);
+  private:
+  ::Protocol::BattleFacingDirection _internal_facing_direction() const;
+  void _internal_set_facing_direction(::Protocol::BattleFacingDirection value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.BattlePawnDelta)
  private:
   class _Internal;
@@ -1125,6 +1146,7 @@ class BattlePawnDelta final :
     bool used_sub_action_this_turn_;
     bool used_ultimate_;
     bool is_dead_;
+    int facing_direction_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1262,8 +1284,9 @@ class BattleActionLog final :
     kIsEvadedFieldNumber = 7,
     kIsGuardedFieldNumber = 8,
     kIsPerfectGuardedFieldNumber = 9,
-    kIsCounterFieldNumber = 10,
     kHpAfterFieldNumber = 11,
+    kIsCounterFieldNumber = 10,
+    kIsBackAttackFieldNumber = 13,
     kArmorAfterFieldNumber = 12,
   };
   // string action_type = 4;
@@ -1352,6 +1375,15 @@ class BattleActionLog final :
   void _internal_set_is_perfect_guarded(bool value);
   public:
 
+  // int32 hp_after = 11;
+  void clear_hp_after();
+  int32_t hp_after() const;
+  void set_hp_after(int32_t value);
+  private:
+  int32_t _internal_hp_after() const;
+  void _internal_set_hp_after(int32_t value);
+  public:
+
   // bool is_counter = 10;
   void clear_is_counter();
   bool is_counter() const;
@@ -1361,13 +1393,13 @@ class BattleActionLog final :
   void _internal_set_is_counter(bool value);
   public:
 
-  // int32 hp_after = 11;
-  void clear_hp_after();
-  int32_t hp_after() const;
-  void set_hp_after(int32_t value);
+  // bool is_back_attack = 13;
+  void clear_is_back_attack();
+  bool is_back_attack() const;
+  void set_is_back_attack(bool value);
   private:
-  int32_t _internal_hp_after() const;
-  void _internal_set_hp_after(int32_t value);
+  bool _internal_is_back_attack() const;
+  void _internal_set_is_back_attack(bool value);
   public:
 
   // int32 armor_after = 12;
@@ -1396,8 +1428,9 @@ class BattleActionLog final :
     bool is_evaded_;
     bool is_guarded_;
     bool is_perfect_guarded_;
-    bool is_counter_;
     int32_t hp_after_;
+    bool is_counter_;
+    bool is_back_attack_;
     int32_t armor_after_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -2047,6 +2080,26 @@ inline void BattlePawnInfo::set_is_dead(bool value) {
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.is_dead)
 }
 
+// .Protocol.BattleFacingDirection facing_direction = 17;
+inline void BattlePawnInfo::clear_facing_direction() {
+  _impl_.facing_direction_ = 0;
+}
+inline ::Protocol::BattleFacingDirection BattlePawnInfo::_internal_facing_direction() const {
+  return static_cast< ::Protocol::BattleFacingDirection >(_impl_.facing_direction_);
+}
+inline ::Protocol::BattleFacingDirection BattlePawnInfo::facing_direction() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.facing_direction)
+  return _internal_facing_direction();
+}
+inline void BattlePawnInfo::_internal_set_facing_direction(::Protocol::BattleFacingDirection value) {
+  
+  _impl_.facing_direction_ = value;
+}
+inline void BattlePawnInfo::set_facing_direction(::Protocol::BattleFacingDirection value) {
+  _internal_set_facing_direction(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.facing_direction)
+}
+
 // -------------------------------------------------------------------
 
 // BattlePawnDelta
@@ -2209,6 +2262,26 @@ inline void BattlePawnDelta::_internal_set_is_dead(bool value) {
 inline void BattlePawnDelta::set_is_dead(bool value) {
   _internal_set_is_dead(value);
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.is_dead)
+}
+
+// .Protocol.BattleFacingDirection facing_direction = 9;
+inline void BattlePawnDelta::clear_facing_direction() {
+  _impl_.facing_direction_ = 0;
+}
+inline ::Protocol::BattleFacingDirection BattlePawnDelta::_internal_facing_direction() const {
+  return static_cast< ::Protocol::BattleFacingDirection >(_impl_.facing_direction_);
+}
+inline ::Protocol::BattleFacingDirection BattlePawnDelta::facing_direction() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnDelta.facing_direction)
+  return _internal_facing_direction();
+}
+inline void BattlePawnDelta::_internal_set_facing_direction(::Protocol::BattleFacingDirection value) {
+  
+  _impl_.facing_direction_ = value;
+}
+inline void BattlePawnDelta::set_facing_direction(::Protocol::BattleFacingDirection value) {
+  _internal_set_facing_direction(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.facing_direction)
 }
 
 // -------------------------------------------------------------------
@@ -2483,6 +2556,26 @@ inline void BattleActionLog::_internal_set_armor_after(int32_t value) {
 inline void BattleActionLog::set_armor_after(int32_t value) {
   _internal_set_armor_after(value);
   // @@protoc_insertion_point(field_set:Protocol.BattleActionLog.armor_after)
+}
+
+// bool is_back_attack = 13;
+inline void BattleActionLog::clear_is_back_attack() {
+  _impl_.is_back_attack_ = false;
+}
+inline bool BattleActionLog::_internal_is_back_attack() const {
+  return _impl_.is_back_attack_;
+}
+inline bool BattleActionLog::is_back_attack() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleActionLog.is_back_attack)
+  return _internal_is_back_attack();
+}
+inline void BattleActionLog::_internal_set_is_back_attack(bool value) {
+  
+  _impl_.is_back_attack_ = value;
+}
+inline void BattleActionLog::set_is_back_attack(bool value) {
+  _internal_set_is_back_attack(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleActionLog.is_back_attack)
 }
 
 #ifdef __GNUC__

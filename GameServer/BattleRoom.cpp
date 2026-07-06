@@ -245,6 +245,7 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 	}
 
 	pawn->axial.CopyFrom(pkt.target());
+	UpdateFacingByMove(*pawn, start, pawn->axial);
 	pawn->hasMovedThisTurn = true;
 
 	SendBattleMoveResult(session, true, battle.battleId, pawn->pawnId, start, pawn->axial, battle.currentTurnPawnId,
@@ -406,6 +407,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (skillSpec.apCost >= 2)
 		caster->hasMovedThisTurn = true;
 
+	const bool isBackAttack = IsBackAttack(*caster, *target);
 	const bool targetWasAlive = IsAlive(*target);
 	ApplyDamage(*target, skillSpec.damage);
 	if (targetWasAlive && target->hp <= 0)
@@ -431,6 +433,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	actionLog.set_is_guarded(false);
 	actionLog.set_is_perfect_guarded(false);
 	actionLog.set_is_counter(false);
+	actionLog.set_is_back_attack(isBackAttack);
 	actionLog.set_hp_after(target->hp);
 	actionLog.set_armor_after(target->armor);
 	logs.push_back(actionLog);
@@ -687,6 +690,7 @@ BattleRoom::BattlePawnState BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol:
 	pawn.isShieldUnit = isShieldUnit;
 	pawn.isMelee = isMelee;
 	pawn.isDead = false;
+	pawn.facingDirection = q <= 0 ? Protocol::BATTLE_FACING_DIRECTION_RIGHT : Protocol::BATTLE_FACING_DIRECTION_LEFT;
 	return pawn;
 }
 
@@ -737,6 +741,7 @@ void BattleRoom::CopyBattlePawn(const BattlePawnState& src, Protocol::BattlePawn
 	dst->set_is_shield_unit(src.isShieldUnit);
 	dst->set_is_melee(src.isMelee);
 	dst->set_is_dead(src.isDead);
+	dst->set_facing_direction(src.facingDirection);
 }
 
 void BattleRoom::CopyBattlePawnDelta(const BattlePawnState& src, Protocol::BattlePawnDelta* dst)
@@ -749,6 +754,7 @@ void BattleRoom::CopyBattlePawnDelta(const BattlePawnState& src, Protocol::Battl
 	dst->set_used_sub_action_this_turn(src.usedSubActionThisTurn);
 	dst->set_used_ultimate(src.usedUltimate);
 	dst->set_is_dead(src.isDead);
+	dst->set_facing_direction(src.facingDirection);
 }
 
 BattleRoom::BattlePawnState* BattleRoom::FindPawn(BattleState& battle, uint64 pawnId)
@@ -1013,6 +1019,28 @@ void BattleRoom::ApplyDamage(BattlePawnState& target, int32 damage)
 		target.hp = max(0, target.hp - hpDamage);
 }
 
+void BattleRoom::UpdateFacingByMove(BattlePawnState& pawn, const Protocol::AxialCoord& start, const Protocol::AxialCoord& target)
+{
+	if (target.q() > start.q())
+		pawn.facingDirection = Protocol::BATTLE_FACING_DIRECTION_RIGHT;
+	else if (target.q() < start.q())
+		pawn.facingDirection = Protocol::BATTLE_FACING_DIRECTION_LEFT;
+}
+
+bool BattleRoom::IsBackAttack(const BattlePawnState& attacker, const BattlePawnState& defender)
+{
+	if (attacker.axial.q() == defender.axial.q())
+		return false;
+
+	if (defender.facingDirection == Protocol::BATTLE_FACING_DIRECTION_RIGHT)
+		return attacker.axial.q() < defender.axial.q();
+
+	if (defender.facingDirection == Protocol::BATTLE_FACING_DIRECTION_LEFT)
+		return attacker.axial.q() > defender.axial.q();
+
+	return false;
+}
+
 void BattleRoom::AddActionLog(google::protobuf::RepeatedPtrField<Protocol::BattleActionLog>* logs,
 	uint64 attackerPawnId, uint64 defenderPawnId, int32 skillSlot, const string& actionType,
 	int32 damage, const BattlePawnState& defender, bool isCounter)
@@ -1028,6 +1056,7 @@ void BattleRoom::AddActionLog(google::protobuf::RepeatedPtrField<Protocol::Battl
 	log->set_is_guarded(false);
 	log->set_is_perfect_guarded(false);
 	log->set_is_counter(isCounter);
+	log->set_is_back_attack(false);
 	log->set_hp_after(defender.hp);
 	log->set_armor_after(defender.armor);
 }

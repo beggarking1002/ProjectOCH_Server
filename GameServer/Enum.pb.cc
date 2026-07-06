@@ -22,7 +22,7 @@ namespace _pbi = _pb::internal;
 
 namespace Protocol {
 }  // namespace Protocol
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_Enum_2eproto[4];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_Enum_2eproto[5];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Enum_2eproto = nullptr;
 const uint32_t TableStruct_Enum_2eproto::offsets[1] = {};
 static constexpr ::_pbi::MigrationSchema* schemas = nullptr;
@@ -53,11 +53,14 @@ const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "TTLE_MOVE_RESULT_OCCUPIED\020\006\022%\n!BATTLE_MO"
   "VE_RESULT_INVALID_BATTLE\020\007\022#\n\037BATTLE_MOV"
   "E_RESULT_INVALID_PAWN\020\010\022\"\n\036BATTLE_MOVE_R"
-  "ESULT_CANNOT_MOVE\020\tb\006proto3"
+  "ESULT_CANNOT_MOVE\020\t*~\n\025BattleFacingDirec"
+  "tion\022 \n\034BATTLE_FACING_DIRECTION_NONE\020\000\022 "
+  "\n\034BATTLE_FACING_DIRECTION_LEFT\020\001\022!\n\035BATT"
+  "LE_FACING_DIRECTION_RIGHT\020\002b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_Enum_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Enum_2eproto = {
-    false, false, 987, descriptor_table_protodef_Enum_2eproto,
+    false, false, 1115, descriptor_table_protodef_Enum_2eproto,
     "Enum.proto",
     &descriptor_table_Enum_2eproto_once, nullptr, 0, 0,
     schemas, file_default_instances, TableStruct_Enum_2eproto::offsets,
@@ -143,6 +146,21 @@ bool BattleMoveResult_IsValid(int value) {
     case 7:
     case 8:
     case 9:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattleFacingDirection_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
+  return file_level_enum_descriptors_Enum_2eproto[4];
+}
+bool BattleFacingDirection_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
       return true;
     default:
       return false;

@@ -41,6 +41,7 @@ message BattlePawnInfo
 	bool is_shield_unit = 14;
 	bool is_melee = 15;
 	bool is_dead = 16;
+	BattleFacingDirection facing_direction = 17;
 }
 
 message BattlePawnDelta
@@ -53,6 +54,7 @@ message BattlePawnDelta
 	bool used_sub_action_this_turn = 6;
 	bool used_ultimate = 7;
 	bool is_dead = 8;
+	BattleFacingDirection facing_direction = 9;
 }
 
 message BattleActionLog
@@ -69,4 +71,5 @@ message BattleActionLog
 	bool is_counter = 10;
 	int32 hp_after = 11;
 	int32 armor_after = 12;
+	bool is_back_attack = 13;
 }

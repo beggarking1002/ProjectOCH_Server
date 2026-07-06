@@ -169,6 +169,32 @@ inline bool BattleMoveResult_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<BattleMoveResult>(
     BattleMoveResult_descriptor(), name, value);
 }
+enum BattleFacingDirection : int {
+  BATTLE_FACING_DIRECTION_NONE = 0,
+  BATTLE_FACING_DIRECTION_LEFT = 1,
+  BATTLE_FACING_DIRECTION_RIGHT = 2,
+  BattleFacingDirection_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  BattleFacingDirection_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool BattleFacingDirection_IsValid(int value);
+constexpr BattleFacingDirection BattleFacingDirection_MIN = BATTLE_FACING_DIRECTION_NONE;
+constexpr BattleFacingDirection BattleFacingDirection_MAX = BATTLE_FACING_DIRECTION_RIGHT;
+constexpr int BattleFacingDirection_ARRAYSIZE = BattleFacingDirection_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattleFacingDirection_descriptor();
+template<typename T>
+inline const std::string& BattleFacingDirection_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, BattleFacingDirection>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function BattleFacingDirection_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    BattleFacingDirection_descriptor(), enum_t_value);
+}
+inline bool BattleFacingDirection_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, BattleFacingDirection* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<BattleFacingDirection>(
+    BattleFacingDirection_descriptor(), name, value);
+}
 // ===================================================================
 
 
@@ -210,6 +236,11 @@ template <> struct is_proto_enum< ::Protocol::BattleMoveResult> : ::std::true_ty
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::BattleMoveResult>() {
   return ::Protocol::BattleMoveResult_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::BattleFacingDirection> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::BattleFacingDirection>() {
+  return ::Protocol::BattleFacingDirection_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE
