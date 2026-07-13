@@ -3,9 +3,16 @@
 
 struct BattleBarrierState
 {
-	string sourceEffectGroupKey;
+	uint64 barrierId = 0;
+	string sourceSkillKey;
 	int32 value = 0;
 	int32 remainingOwnerTurns = 0;
+};
+
+struct BattleStatusState
+{
+	int32 stacks = 0;
+	int32 remainingOwnerTurns = -1;
 };
 
 struct BattleEffectPawnContext
@@ -16,10 +23,10 @@ struct BattleEffectPawnContext
 	Protocol::AxialCoord* axial = nullptr;
 	int32* hp = nullptr;
 	int32* armor = nullptr;
-	unordered_map<string, int32>* resources = nullptr;
-	unordered_map<string, int32>* maxResources = nullptr;
+	unordered_map<Protocol::BattleResourceType, int32>* resources = nullptr;
+	unordered_map<Protocol::BattleResourceType, int32>* maxResources = nullptr;
 	vector<BattleBarrierState>* barriers = nullptr;
-	unordered_map<string, int32>* statusStacks = nullptr;
+	unordered_map<string, BattleStatusState>* statuses = nullptr;
 };
 
 struct BattleEffectExecutionRequest
@@ -31,6 +38,7 @@ struct BattleEffectExecutionRequest
 	bool isBackAttack = false;
 	BattleEffectPawnContext caster;
 	BattleEffectPawnContext target;
+	uint64* barrierIdGenerator = nullptr;
 	vector<Protocol::BattleActionLog>* logs = nullptr;
 };
 

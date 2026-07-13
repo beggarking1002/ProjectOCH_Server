@@ -2226,6 +2226,7 @@ class S_ENTER_BATTLE final :
     kReasonFieldNumber = 7,
     kBattleIdFieldNumber = 2,
     kCurrentTurnPawnIdFieldNumber = 6,
+    kBattleStateVersionFieldNumber = 8,
     kSuccessFieldNumber = 1,
   };
   // repeated .Protocol.BattlePawnInfo allied_pawns = 4;
@@ -2310,6 +2311,15 @@ class S_ENTER_BATTLE final :
   void _internal_set_current_turn_pawn_id(uint64_t value);
   public:
 
+  // uint64 battle_state_version = 8;
+  void clear_battle_state_version();
+  uint64_t battle_state_version() const;
+  void set_battle_state_version(uint64_t value);
+  private:
+  uint64_t _internal_battle_state_version() const;
+  void _internal_set_battle_state_version(uint64_t value);
+  public:
+
   // bool success = 1;
   void clear_success();
   bool success() const;
@@ -2333,6 +2343,7 @@ class S_ENTER_BATTLE final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
     uint64_t battle_id_;
     uint64_t current_turn_pawn_id_;
+    uint64_t battle_state_version_;
     bool success_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -2652,6 +2663,7 @@ class S_BATTLE_MOVE final :
     kSuccessFieldNumber = 1,
     kCanMoveFieldNumber = 10,
     kResultFieldNumber = 7,
+    kBattleStateVersionFieldNumber = 13,
     kRemainingApFieldNumber = 9,
   };
   // repeated .Protocol.BattlePawnDelta pawn_deltas = 11;
@@ -2794,6 +2806,15 @@ class S_BATTLE_MOVE final :
   void _internal_set_result(::Protocol::BattleMoveResult value);
   public:
 
+  // uint64 battle_state_version = 13;
+  void clear_battle_state_version();
+  uint64_t battle_state_version() const;
+  void set_battle_state_version(uint64_t value);
+  private:
+  uint64_t _internal_battle_state_version() const;
+  void _internal_set_battle_state_version(uint64_t value);
+  public:
+
   // int32 remaining_ap = 9;
   void clear_remaining_ap();
   int32_t remaining_ap() const;
@@ -2822,6 +2843,7 @@ class S_BATTLE_MOVE final :
     bool success_;
     bool can_move_;
     int result_;
+    uint64_t battle_state_version_;
     int32_t remaining_ap_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -3169,6 +3191,7 @@ class S_BATTLE_SKILL final :
     kUsedUltimateFieldNumber = 14,
     kRemainingApFieldNumber = 11,
     kTargetArmorFieldNumber = 15,
+    kBattleStateVersionFieldNumber = 18,
   };
   // repeated .Protocol.BattlePawnDelta pawn_deltas = 16;
   int pawn_deltas_size() const;
@@ -3355,6 +3378,15 @@ class S_BATTLE_SKILL final :
   void _internal_set_target_armor(int32_t value);
   public:
 
+  // uint64 battle_state_version = 18;
+  void clear_battle_state_version();
+  uint64_t battle_state_version() const;
+  void set_battle_state_version(uint64_t value);
+  private:
+  uint64_t _internal_battle_state_version() const;
+  void _internal_set_battle_state_version(uint64_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_BATTLE_SKILL)
  private:
   class _Internal;
@@ -3380,6 +3412,7 @@ class S_BATTLE_SKILL final :
     bool used_ultimate_;
     int32_t remaining_ap_;
     int32_t target_armor_;
+    uint64_t battle_state_version_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3678,6 +3711,7 @@ class S_BATTLE_END_TURN final :
     kCanMoveFieldNumber = 7,
     kUsedSubActionThisTurnFieldNumber = 8,
     kUsedUltimateFieldNumber = 9,
+    kBattleStateVersionFieldNumber = 12,
   };
   // repeated .Protocol.BattlePawnDelta pawn_deltas = 10;
   int pawn_deltas_size() const;
@@ -3801,6 +3835,15 @@ class S_BATTLE_END_TURN final :
   void _internal_set_used_ultimate(bool value);
   public:
 
+  // uint64 battle_state_version = 12;
+  void clear_battle_state_version();
+  uint64_t battle_state_version() const;
+  void set_battle_state_version(uint64_t value);
+  private:
+  uint64_t _internal_battle_state_version() const;
+  void _internal_set_battle_state_version(uint64_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_BATTLE_END_TURN)
  private:
   class _Internal;
@@ -3820,6 +3863,7 @@ class S_BATTLE_END_TURN final :
     bool can_move_;
     bool used_sub_action_this_turn_;
     bool used_ultimate_;
+    uint64_t battle_state_version_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -6245,6 +6289,26 @@ inline void S_ENTER_BATTLE::set_allocated_reason(std::string* reason) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_ENTER_BATTLE.reason)
 }
 
+// uint64 battle_state_version = 8;
+inline void S_ENTER_BATTLE::clear_battle_state_version() {
+  _impl_.battle_state_version_ = uint64_t{0u};
+}
+inline uint64_t S_ENTER_BATTLE::_internal_battle_state_version() const {
+  return _impl_.battle_state_version_;
+}
+inline uint64_t S_ENTER_BATTLE::battle_state_version() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_BATTLE.battle_state_version)
+  return _internal_battle_state_version();
+}
+inline void S_ENTER_BATTLE::_internal_set_battle_state_version(uint64_t value) {
+  
+  _impl_.battle_state_version_ = value;
+}
+inline void S_ENTER_BATTLE::set_battle_state_version(uint64_t value) {
+  _internal_set_battle_state_version(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_ENTER_BATTLE.battle_state_version)
+}
+
 // -------------------------------------------------------------------
 
 // C_BATTLE_MOVE
@@ -6810,6 +6874,26 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAction
 S_BATTLE_MOVE::logs() const {
   // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_MOVE.logs)
   return _impl_.logs_;
+}
+
+// uint64 battle_state_version = 13;
+inline void S_BATTLE_MOVE::clear_battle_state_version() {
+  _impl_.battle_state_version_ = uint64_t{0u};
+}
+inline uint64_t S_BATTLE_MOVE::_internal_battle_state_version() const {
+  return _impl_.battle_state_version_;
+}
+inline uint64_t S_BATTLE_MOVE::battle_state_version() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_MOVE.battle_state_version)
+  return _internal_battle_state_version();
+}
+inline void S_BATTLE_MOVE::_internal_set_battle_state_version(uint64_t value) {
+  
+  _impl_.battle_state_version_ = value;
+}
+inline void S_BATTLE_MOVE::set_battle_state_version(uint64_t value) {
+  _internal_set_battle_state_version(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_MOVE.battle_state_version)
 }
 
 // -------------------------------------------------------------------
@@ -7454,6 +7538,26 @@ S_BATTLE_SKILL::logs() const {
   return _impl_.logs_;
 }
 
+// uint64 battle_state_version = 18;
+inline void S_BATTLE_SKILL::clear_battle_state_version() {
+  _impl_.battle_state_version_ = uint64_t{0u};
+}
+inline uint64_t S_BATTLE_SKILL::_internal_battle_state_version() const {
+  return _impl_.battle_state_version_;
+}
+inline uint64_t S_BATTLE_SKILL::battle_state_version() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_SKILL.battle_state_version)
+  return _internal_battle_state_version();
+}
+inline void S_BATTLE_SKILL::_internal_set_battle_state_version(uint64_t value) {
+  
+  _impl_.battle_state_version_ = value;
+}
+inline void S_BATTLE_SKILL::set_battle_state_version(uint64_t value) {
+  _internal_set_battle_state_version(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_SKILL.battle_state_version)
+}
+
 // -------------------------------------------------------------------
 
 // C_BATTLE_END_TURN
@@ -7784,6 +7888,26 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAction
 S_BATTLE_END_TURN::logs() const {
   // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_END_TURN.logs)
   return _impl_.logs_;
+}
+
+// uint64 battle_state_version = 12;
+inline void S_BATTLE_END_TURN::clear_battle_state_version() {
+  _impl_.battle_state_version_ = uint64_t{0u};
+}
+inline uint64_t S_BATTLE_END_TURN::_internal_battle_state_version() const {
+  return _impl_.battle_state_version_;
+}
+inline uint64_t S_BATTLE_END_TURN::battle_state_version() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_END_TURN.battle_state_version)
+  return _internal_battle_state_version();
+}
+inline void S_BATTLE_END_TURN::_internal_set_battle_state_version(uint64_t value) {
+  
+  _impl_.battle_state_version_ = value;
+}
+inline void S_BATTLE_END_TURN::set_battle_state_version(uint64_t value) {
+  _internal_set_battle_state_version(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_END_TURN.battle_state_version)
 }
 
 // -------------------------------------------------------------------

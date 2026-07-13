@@ -222,6 +222,31 @@ inline bool BattlePawnRole_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<BattlePawnRole>(
     BattlePawnRole_descriptor(), name, value);
 }
+enum BattleResourceType : int {
+  BATTLE_RESOURCE_TYPE_NONE = 0,
+  BATTLE_RESOURCE_TYPE_COLD = 1,
+  BattleResourceType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  BattleResourceType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool BattleResourceType_IsValid(int value);
+constexpr BattleResourceType BattleResourceType_MIN = BATTLE_RESOURCE_TYPE_NONE;
+constexpr BattleResourceType BattleResourceType_MAX = BATTLE_RESOURCE_TYPE_COLD;
+constexpr int BattleResourceType_ARRAYSIZE = BattleResourceType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattleResourceType_descriptor();
+template<typename T>
+inline const std::string& BattleResourceType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, BattleResourceType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function BattleResourceType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    BattleResourceType_descriptor(), enum_t_value);
+}
+inline bool BattleResourceType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, BattleResourceType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<BattleResourceType>(
+    BattleResourceType_descriptor(), name, value);
+}
 // ===================================================================
 
 
@@ -273,6 +298,11 @@ template <> struct is_proto_enum< ::Protocol::BattlePawnRole> : ::std::true_type
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::BattlePawnRole>() {
   return ::Protocol::BattlePawnRole_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::BattleResourceType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::BattleResourceType>() {
+  return ::Protocol::BattleResourceType_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

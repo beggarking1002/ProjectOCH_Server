@@ -249,6 +249,7 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 	pawn->axial.CopyFrom(pkt.target());
 	UpdateFacingByMove(*pawn, start, pawn->axial);
 	pawn->hasMovedThisTurn = true;
+	battle.stateVersion++;
 
 	SendBattleMoveResult(session, true, battle.battleId, pawn->pawnId, start, pawn->axial, battle.currentTurnPawnId,
 		Protocol::BATTLE_MOVE_RESULT_OK, "", pawn);
@@ -449,10 +450,10 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		effectRequest.caster.axial = &caster->axial;
 		effectRequest.caster.hp = &caster->hp;
 		effectRequest.caster.armor = &caster->armor;
-	effectRequest.caster.resources = &caster->resources;
+		effectRequest.caster.resources = &caster->resources;
 		effectRequest.caster.maxResources = &caster->maxResources;
 		effectRequest.caster.barriers = &caster->barriers;
-		effectRequest.caster.statusStacks = &caster->statusStacks;
+		effectRequest.caster.statuses = &caster->statuses;
 		effectRequest.target.pawnId = target->pawnId;
 		effectRequest.target.ownerId = target->ownerId;
 		effectRequest.target.pawnClass = target->pawnClass;
@@ -462,7 +463,8 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		effectRequest.target.resources = &target->resources;
 		effectRequest.target.maxResources = &target->maxResources;
 		effectRequest.target.barriers = &target->barriers;
-		effectRequest.target.statusStacks = &target->statusStacks;
+		effectRequest.target.statuses = &target->statuses;
+		effectRequest.barrierIdGenerator = &_barrierIdGenerator;
 
 		BattleEffectExecutor executor;
 		const BattleEffectExecutionResult effectResult = executor.ExecuteOnCast(effectRequest);
@@ -498,6 +500,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		if (battle.turnQueueIndex > battle.turnQueue.size())
 			battle.turnQueueIndex = battle.turnQueue.size();
 	}
+	battle.stateVersion++;
 
 	SendBattleSkillResult(session, true, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
 		target->axial, appliedDamage, target->hp, target->armor, battle.currentTurnPawnId, "", caster, target, logs);
@@ -588,6 +591,7 @@ void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_
 	ExecutePassiveTrigger(*pawn, "ON_OWNER_TURN_END");
 	AdvanceOwnerTurnEffects(*pawn);
 	AdvanceTurn(battle);
+	battle.stateVersion++;
 	BattlePawnState* nextPawn = FindPawn(battle, battle.currentTurnPawnId);
 
 	SendBattleEndTurnResult(session, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn);
@@ -867,6 +871,7 @@ void BattleRoom::FillEnterBattlePacket(const BattleState& battle, uint64 viewerO
 	pkt.set_battle_id(battle.battleId);
 	pkt.set_map_id(battle.mapId);
 	pkt.set_current_turn_pawn_id(battle.currentTurnPawnId);
+	pkt.set_battle_state_version(battle.stateVersion);
 
 	const vector<BattlePawnState>* alliedPawns = &battle.alliedPawns;
 	const vector<BattlePawnState>* enemyPawns = &battle.enemyPawns;
@@ -901,6 +906,31 @@ void BattleRoom::CopyBattlePawn(const BattlePawnState& src, Protocol::BattlePawn
 	dst->set_is_dead(src.isDead);
 	dst->set_facing_direction(src.facingDirection);
 	dst->set_role(src.role);
+	for (const auto& resource : src.resources)
+	{
+		Protocol::BattleResourceState* resourceState = dst->add_resources();
+		resourceState->set_resource_type(resource.first);
+		resourceState->set_value(resource.second);
+		auto maxIt = src.maxResources.find(resource.first);
+		resourceState->set_max_value(maxIt != src.maxResources.end() ? maxIt->second : 0);
+	}
+
+	for (const BattleBarrierState& barrier : src.barriers)
+	{
+		Protocol::BattleBarrierState* barrierState = dst->add_barriers();
+		barrierState->set_barrier_id(barrier.barrierId);
+		barrierState->set_source_skill_key(barrier.sourceSkillKey);
+		barrierState->set_value(barrier.value);
+		barrierState->set_remaining_owner_turns(barrier.remainingOwnerTurns);
+	}
+
+	for (const auto& item : src.statuses)
+	{
+		Protocol::BattleStatusState* statusState = dst->add_statuses();
+		statusState->set_status_key(item.first);
+		statusState->set_stacks(item.second.stacks);
+		statusState->set_remaining_owner_turns(item.second.remainingOwnerTurns);
+	}
 }
 
 void BattleRoom::CopyBattlePawnDelta(const BattlePawnState& src, Protocol::BattlePawnDelta* dst)
@@ -914,6 +944,31 @@ void BattleRoom::CopyBattlePawnDelta(const BattlePawnState& src, Protocol::Battl
 	dst->set_used_ultimate(src.usedUltimate);
 	dst->set_is_dead(src.isDead);
 	dst->set_facing_direction(src.facingDirection);
+	for (const auto& resource : src.resources)
+	{
+		Protocol::BattleResourceState* resourceState = dst->add_resources();
+		resourceState->set_resource_type(resource.first);
+		resourceState->set_value(resource.second);
+		auto maxIt = src.maxResources.find(resource.first);
+		resourceState->set_max_value(maxIt != src.maxResources.end() ? maxIt->second : 0);
+	}
+
+	for (const BattleBarrierState& barrier : src.barriers)
+	{
+		Protocol::BattleBarrierState* barrierState = dst->add_barriers();
+		barrierState->set_barrier_id(barrier.barrierId);
+		barrierState->set_source_skill_key(barrier.sourceSkillKey);
+		barrierState->set_value(barrier.value);
+		barrierState->set_remaining_owner_turns(barrier.remainingOwnerTurns);
+	}
+
+	for (const auto& item : src.statuses)
+	{
+		Protocol::BattleStatusState* statusState = dst->add_statuses();
+		statusState->set_status_key(item.first);
+		statusState->set_stacks(item.second.stacks);
+		statusState->set_remaining_owner_turns(item.second.remainingOwnerTurns);
+	}
 }
 
 BattleRoom::BattlePawnState* BattleRoom::FindPawn(BattleState& battle, uint64 pawnId)
@@ -1277,8 +1332,9 @@ void BattleRoom::ExecutePassiveTrigger(BattlePawnState& pawn, const string& trig
 	request.caster.resources = &pawn.resources;
 	request.caster.maxResources = &pawn.maxResources;
 	request.caster.barriers = &pawn.barriers;
-	request.caster.statusStacks = &pawn.statusStacks;
+	request.caster.statuses = &pawn.statuses;
 	request.target = request.caster;
+	request.barrierIdGenerator = &_barrierIdGenerator;
 
 	BattleEffectExecutor executor;
 	executor.ExecuteTrigger(request, trigger);
@@ -1296,7 +1352,7 @@ void BattleRoom::AdvanceOwnerTurnEffects(BattlePawnState& pawn)
 	context.resources = &pawn.resources;
 	context.maxResources = &pawn.maxResources;
 	context.barriers = &pawn.barriers;
-	context.statusStacks = &pawn.statusStacks;
+	context.statuses = &pawn.statuses;
 
 	BattleEffectExecutor executor;
 	executor.AdvanceOwnerTurn(context);
@@ -1390,6 +1446,9 @@ void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint
 	const Protocol::AxialCoord& start, const Protocol::AxialCoord& target, uint64 nextTurnPawnId,
 	Protocol::BattleMoveResult result, const string& reason, const BattlePawnState* pawn)
 {
+	const auto battleIt = _battles.find(battleId);
+	const uint64 stateVersion = battleIt != _battles.end() ? battleIt->second.stateVersion : 0;
+
 	cout << "S_BATTLE_MOVE"
 		<< " success=" << success
 		<< " battle_id=" << battleId
@@ -1400,6 +1459,7 @@ void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint
 		<< " result=" << Protocol::BattleMoveResult_Name(result)
 		<< " remaining_ap=" << (pawn != nullptr ? pawn->currentAp : 0)
 		<< " can_move=" << (pawn != nullptr ? CanMove(*pawn) : false)
+		<< " battle_state_version=" << stateVersion
 		<< " reason=\"" << reason << "\""
 		<< endl;
 
@@ -1417,6 +1477,7 @@ void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint
 	movePkt.set_reason(reason);
 	movePkt.set_remaining_ap(pawn != nullptr ? pawn->currentAp : 0);
 	movePkt.set_can_move(pawn != nullptr ? CanMove(*pawn) : false);
+	movePkt.set_battle_state_version(stateVersion);
 	if (pawn != nullptr)
 		CopyBattlePawnDelta(*pawn, movePkt.add_pawn_deltas());
 
@@ -1429,6 +1490,9 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 	int32 damage, int32 targetHp, int32 targetArmor, uint64 nextTurnPawnId, const string& reason,
 	const BattlePawnState* caster, const BattlePawnState* target, const vector<Protocol::BattleActionLog>& logs)
 {
+	const auto battleIt = _battles.find(battleId);
+	const uint64 stateVersion = battleIt != _battles.end() ? battleIt->second.stateVersion : 0;
+
 	cout << "S_BATTLE_SKILL"
 		<< " success=" << success
 		<< " battle_id=" << battleId
@@ -1442,6 +1506,7 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 		<< " next_turn_pawn_id=" << nextTurnPawnId
 		<< " remaining_ap=" << (caster != nullptr ? caster->currentAp : 0)
 		<< " can_move=" << (caster != nullptr ? CanMove(*caster) : false)
+		<< " battle_state_version=" << stateVersion
 		<< " reason=\"" << reason << "\""
 		<< endl;
 
@@ -1464,6 +1529,7 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 	skillPkt.set_used_sub_action_this_turn(caster != nullptr ? caster->usedSubActionThisTurn : false);
 	skillPkt.set_used_ultimate(caster != nullptr ? caster->usedUltimate : false);
 	skillPkt.set_target_armor(targetArmor);
+	skillPkt.set_battle_state_version(stateVersion);
 	if (caster != nullptr)
 		CopyBattlePawnDelta(*caster, skillPkt.add_pawn_deltas());
 	if (target != nullptr && target != caster)
@@ -1479,6 +1545,8 @@ void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, u
 	uint64 nextTurnPawnId, const string& reason, const BattlePawnState* pawn, const BattlePawnState* nextPawn)
 {
 	const BattlePawnState* responsePawn = nextPawn != nullptr ? nextPawn : pawn;
+	const auto battleIt = _battles.find(battleId);
+	const uint64 stateVersion = battleIt != _battles.end() ? battleIt->second.stateVersion : 0;
 
 	cout << "S_BATTLE_END_TURN"
 		<< " success=" << success
@@ -1487,6 +1555,7 @@ void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, u
 		<< " next_turn_pawn_id=" << nextTurnPawnId
 		<< " remaining_ap=" << (responsePawn != nullptr ? responsePawn->currentAp : 0)
 		<< " can_move=" << (responsePawn != nullptr ? CanMove(*responsePawn) : false)
+		<< " battle_state_version=" << stateVersion
 		<< " reason=\"" << reason << "\""
 		<< endl;
 
@@ -1503,6 +1572,7 @@ void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, u
 	endTurnPkt.set_can_move(responsePawn != nullptr ? CanMove(*responsePawn) : false);
 	endTurnPkt.set_used_sub_action_this_turn(responsePawn != nullptr ? responsePawn->usedSubActionThisTurn : false);
 	endTurnPkt.set_used_ultimate(responsePawn != nullptr ? responsePawn->usedUltimate : false);
+	endTurnPkt.set_battle_state_version(stateVersion);
 	if (pawn != nullptr)
 		CopyBattlePawnDelta(*pawn, endTurnPkt.add_pawn_deltas());
 	if (nextPawn != nullptr && nextPawn != pawn)

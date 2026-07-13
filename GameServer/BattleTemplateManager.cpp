@@ -228,6 +228,12 @@ const vector<BattleEffectTemplate>* BattleTemplateManager::GetEffects(const stri
 	return &it->second;
 }
 
+bool BattleTemplateManager::TryParseBattleResourceType(const string& key, Protocol::BattleResourceType& resourceType) const
+{
+	const string enumName = "BATTLE_RESOURCE_TYPE_" + ToUpper(Trim(key));
+	return Protocol::BattleResourceType_Parse(enumName, &resourceType) && resourceType != Protocol::BATTLE_RESOURCE_TYPE_NONE;
+}
+
 bool BattleTemplateManager::LoadClassKey(const string& path)
 {
 	vector<vector<string>> rows;
@@ -479,6 +485,20 @@ bool BattleTemplateManager::ValidateTemplates()
 				<< " effect_instance_key=" << param.effectInstanceKey
 				<< endl;
 			return false;
+		}
+
+		if (param.paramKey == "resource_key" || param.paramKey == "condition_resource_key")
+		{
+			Protocol::BattleResourceType resourceType = Protocol::BATTLE_RESOURCE_TYPE_NONE;
+			if (TryParseBattleResourceType(param.paramValue, resourceType) == false)
+			{
+				cout << "[BattleTemplateManager] Invalid BattleResourceType"
+					<< " effect_group_key=" << param.effectGroupKey
+					<< " effect_instance_key=" << param.effectInstanceKey
+					<< " value=" << param.paramValue
+					<< endl;
+				return false;
+			}
 		}
 	}
 

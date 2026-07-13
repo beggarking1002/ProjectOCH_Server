@@ -26,10 +26,10 @@ private:
 		bool isDead = false;
 		Protocol::BattleFacingDirection facingDirection = Protocol::BATTLE_FACING_DIRECTION_RIGHT;
 		Protocol::BattlePawnRole role = Protocol::BATTLE_PAWN_ROLE_NONE;
-		unordered_map<string, int32> resources;
-		unordered_map<string, int32> maxResources;
+		unordered_map<Protocol::BattleResourceType, int32> resources;
+		unordered_map<Protocol::BattleResourceType, int32> maxResources;
 		vector<BattleBarrierState> barriers;
-		unordered_map<string, int32> statusStacks;
+		unordered_map<string, BattleStatusState> statuses;
 	};
 
 	struct SkillSpec
@@ -69,6 +69,7 @@ private:
 		size_t turnQueueIndex = 0;
 		uint64 currentTurnPawnId = 0;
 		bool isFinished = false;
+		uint64 stateVersion = 1;
 		uint64 winnerOwnerId = 0;
 		uint64 loserOwnerId = 0;
 		bool ownerResultAcked = false;
@@ -145,6 +146,7 @@ private:
 private:
 	uint64 _battleIdGenerator = 1;
 	uint64 _battlePawnIdGenerator = 1;
+	uint64 _barrierIdGenerator = 1;
 	unordered_map<uint64, BattleState> _battles;
 	unordered_map<uint64, uint64> _battleByOwnerId;
 };

@@ -82,7 +82,7 @@ void BattleEffectExecutor::AdvanceOwnerTurn(BattleEffectPawnContext pawn)
 		{
 			cout << "BATTLE_BARRIER_EXPIRE"
 				<< " pawn_id=" << pawn.pawnId
-				<< " source_effect_group_key=" << barrier.sourceEffectGroupKey
+				<< " source_skill_key=" << barrier.sourceSkillKey
 				<< endl;
 		}
 	}
@@ -133,7 +133,8 @@ void BattleEffectExecutor::ExecuteModifyResource(const BattleEffectTemplate& eff
 		return;
 
 	const string resourceKey = GetParam(effect, "resource_key");
-	if (resourceKey.empty())
+	Protocol::BattleResourceType resourceType = Protocol::BATTLE_RESOURCE_TYPE_NONE;
+	if (resourceKey.empty() || GBattleTemplates.TryParseBattleResourceType(resourceKey, resourceType) == false)
 		return;
 
 	int32 amount = GetIntParam(effect, "amount", 0);
@@ -141,17 +142,17 @@ void BattleEffectExecutor::ExecuteModifyResource(const BattleEffectTemplate& eff
 	if (operation == "MULTIPLY")
 	{
 		const double multiplier = GetDoubleParam(effect, "multiplier", 1.0);
-		const int32 currentValue = (*target.resources)[resourceKey];
+		const int32 currentValue = (*target.resources)[resourceType];
 		amount = static_cast<int32>(floor(static_cast<double>(currentValue) * multiplier)) - currentValue;
 	}
 
-	int32& value = (*target.resources)[resourceKey];
+	int32& value = (*target.resources)[resourceType];
 	value += amount;
 
 	int32 maxValue = 0;
 	if (target.maxResources != nullptr)
 	{
-		auto maxIt = target.maxResources->find(resourceKey);
+		auto maxIt = target.maxResources->find(resourceType);
 		if (maxIt != target.maxResources->end())
 			maxValue = maxIt->second;
 	}
@@ -161,7 +162,7 @@ void BattleEffectExecutor::ExecuteModifyResource(const BattleEffectTemplate& eff
 
 	cout << "BATTLE_RESOURCE_MODIFY"
 		<< " pawn_id=" << target.pawnId
-		<< " resource_key=" << resourceKey
+		<< " resource_type=" << Protocol::BattleResourceType_Name(resourceType)
 		<< " amount=" << amount
 		<< " value=" << value
 		<< " max_value=" << maxValue
@@ -175,17 +176,18 @@ void BattleEffectExecutor::ExecuteSetResourceMax(const BattleEffectTemplate& eff
 		return;
 
 	const string resourceKey = GetParam(effect, "resource_key");
-	if (resourceKey.empty())
+	Protocol::BattleResourceType resourceType = Protocol::BATTLE_RESOURCE_TYPE_NONE;
+	if (resourceKey.empty() || GBattleTemplates.TryParseBattleResourceType(resourceKey, resourceType) == false)
 		return;
 
 	const int32 maxValue = max(0, GetIntParam(effect, "max_value", 0));
-	(*target.maxResources)[resourceKey] = maxValue;
-	int32& value = (*target.resources)[resourceKey];
+	(*target.maxResources)[resourceType] = maxValue;
+	int32& value = (*target.resources)[resourceType];
 	value = min(max(value, 0), maxValue);
 
 	cout << "BATTLE_RESOURCE_MAX_SET"
 		<< " pawn_id=" << target.pawnId
-		<< " resource_key=" << resourceKey
+		<< " resource_type=" << Protocol::BattleResourceType_Name(resourceType)
 		<< " value=" << value
 		<< " max_value=" << maxValue
 		<< endl;
@@ -203,7 +205,8 @@ void BattleEffectExecutor::ExecuteApplyBarrier(const BattleEffectTemplate& effec
 		return;
 
 	BattleBarrierState barrier;
-	barrier.sourceEffectGroupKey = effect.effectGroupKey;
+	barrier.barrierId = request.barrierIdGenerator != nullptr ? (*request.barrierIdGenerator)++ : 0;
+	barrier.sourceSkillKey = request.skill != nullptr ? request.skill->skillKey : "";
 	barrier.value = value;
 	barrier.remainingOwnerTurns = durationTurns;
 	target.barriers->push_back(barrier);
@@ -218,7 +221,7 @@ void BattleEffectExecutor::ExecuteApplyBarrier(const BattleEffectTemplate& effec
 void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
 {
 	BattleEffectPawnContext target = SelectTarget(effect, request);
-	if (target.statusStacks == nullptr)
+	if (target.statuses == nullptr)
 		return;
 
 	const string statusKey = GetParam(effect, "status_key");
@@ -226,14 +229,14 @@ void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect
 		return;
 
 	const int32 stackDelta = GetIntParam(effect, "stack_delta", 1);
-	int32& stack = (*target.statusStacks)[statusKey];
-	stack = max(0, stack + stackDelta);
+	BattleStatusState& status = (*target.statuses)[statusKey];
+	status.stacks = max(0, status.stacks + stackDelta);
 
 	cout << "BATTLE_STATUS_APPLY"
 		<< " pawn_id=" << target.pawnId
 		<< " status_key=" << statusKey
 		<< " stack_delta=" << stackDelta
-		<< " stack=" << stack
+		<< " stack=" << status.stacks
 		<< endl;
 }
 
@@ -324,12 +327,16 @@ bool BattleEffectExecutor::IsConditionMet(const BattleEffectTemplate& effect, co
 	if (resourceKey.empty())
 		return true;
 
+	Protocol::BattleResourceType resourceType = Protocol::BATTLE_RESOURCE_TYPE_NONE;
+	if (GBattleTemplates.TryParseBattleResourceType(resourceKey, resourceType) == false)
+		return false;
+
 	BattleEffectPawnContext target = SelectTarget(effect, request);
 	if (target.resources == nullptr || target.maxResources == nullptr)
 		return false;
 
-	auto valueIt = target.resources->find(resourceKey);
-	auto maxIt = target.maxResources->find(resourceKey);
+	auto valueIt = target.resources->find(resourceType);
+	auto maxIt = target.maxResources->find(resourceType);
 	if (valueIt == target.resources->end() || maxIt == target.maxResources->end() || maxIt->second <= 0)
 		return false;
 

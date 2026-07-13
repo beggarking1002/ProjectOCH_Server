@@ -22,7 +22,7 @@ namespace _pbi = _pb::internal;
 
 namespace Protocol {
 }  // namespace Protocol
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_Enum_2eproto[6];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_Enum_2eproto[7];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Enum_2eproto = nullptr;
 const uint32_t TableStruct_Enum_2eproto::offsets[1] = {};
 static constexpr ::_pbi::MigrationSchema* schemas = nullptr;
@@ -59,12 +59,14 @@ const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "LE_FACING_DIRECTION_RIGHT\020\002*\201\001\n\016BattlePa"
   "wnRole\022\031\n\025BATTLE_PAWN_ROLE_NONE\020\000\022\033\n\027BAT"
   "TLE_PAWN_ROLE_TANKER\020\001\022\032\n\026BATTLE_PAWN_RO"
-  "LE_MELEE\020\002\022\033\n\027BATTLE_PAWN_ROLE_RANGED\020\003b"
-  "\006proto3"
+  "LE_MELEE\020\002\022\033\n\027BATTLE_PAWN_ROLE_RANGED\020\003*"
+  "R\n\022BattleResourceType\022\035\n\031BATTLE_RESOURCE"
+  "_TYPE_NONE\020\000\022\035\n\031BATTLE_RESOURCE_TYPE_COL"
+  "D\020\001b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_Enum_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Enum_2eproto = {
-    false, false, 1247, descriptor_table_protodef_Enum_2eproto,
+    false, false, 1331, descriptor_table_protodef_Enum_2eproto,
     "Enum.proto",
     &descriptor_table_Enum_2eproto_once, nullptr, 0, 0,
     schemas, file_default_instances, TableStruct_Enum_2eproto::offsets,
@@ -181,6 +183,20 @@ bool BattlePawnRole_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattleResourceType_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
+  return file_level_enum_descriptors_Enum_2eproto[6];
+}
+bool BattleResourceType_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
       return true;
     default:
       return false;

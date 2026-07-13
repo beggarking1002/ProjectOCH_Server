@@ -85,6 +85,7 @@ message S_ENTER_BATTLE
 
 	uint64 current_turn_pawn_id = 6;
 	string reason = 7;
+	uint64 battle_state_version = 8;
 }
 
 message C_BATTLE_MOVE
@@ -110,6 +111,7 @@ message S_BATTLE_MOVE
 	bool can_move = 10;
 	repeated BattlePawnDelta pawn_deltas = 11;
 	repeated BattleActionLog logs = 12;
+	uint64 battle_state_version = 13;
 }
 
 message C_BATTLE_SKILL {
@@ -138,6 +140,7 @@ message S_BATTLE_SKILL {
 	int32 target_armor = 15;
 	repeated BattlePawnDelta pawn_deltas = 16;
 	repeated BattleActionLog logs = 17;
+	uint64 battle_state_version = 18;
 }
 
 message C_BATTLE_END_TURN {
@@ -157,6 +160,7 @@ message S_BATTLE_END_TURN {
 	bool used_ultimate = 9;
 	repeated BattlePawnDelta pawn_deltas = 10;
 	repeated BattleActionLog logs = 11;
+	uint64 battle_state_version = 12;
 }
 
 message C_BATTLE_INVITE {

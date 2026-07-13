@@ -58,6 +58,7 @@ public:
 	const BattlePawnClassTemplate* GetPawnClassTemplate(Protocol::PawnClass pawnClass);
 	const BattleSkillTemplate* GetSkillByActionSlot(Protocol::PawnClass pawnClass, int32 actionSlot);
 	const vector<BattleEffectTemplate>* GetEffects(const string& effectGroupKey);
+	bool TryParseBattleResourceType(const string& key, Protocol::BattleResourceType& resourceType) const;
 
 private:
 	bool LoadClassKey(const string& path);

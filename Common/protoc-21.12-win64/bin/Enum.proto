@@ -67,3 +67,9 @@ enum BattlePawnRole
 	BATTLE_PAWN_ROLE_MELEE = 2;
 	BATTLE_PAWN_ROLE_RANGED = 3;
 }
+
+enum BattleResourceType
+{
+	BATTLE_RESOURCE_TYPE_NONE = 0;
+	BATTLE_RESOURCE_TYPE_COLD = 1;
+}

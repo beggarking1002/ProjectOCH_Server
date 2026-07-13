@@ -52,12 +52,21 @@ extern AxialCoordDefaultTypeInternal _AxialCoord_default_instance_;
 class BattleActionLog;
 struct BattleActionLogDefaultTypeInternal;
 extern BattleActionLogDefaultTypeInternal _BattleActionLog_default_instance_;
+class BattleBarrierState;
+struct BattleBarrierStateDefaultTypeInternal;
+extern BattleBarrierStateDefaultTypeInternal _BattleBarrierState_default_instance_;
 class BattlePawnDelta;
 struct BattlePawnDeltaDefaultTypeInternal;
 extern BattlePawnDeltaDefaultTypeInternal _BattlePawnDelta_default_instance_;
 class BattlePawnInfo;
 struct BattlePawnInfoDefaultTypeInternal;
 extern BattlePawnInfoDefaultTypeInternal _BattlePawnInfo_default_instance_;
+class BattleResourceState;
+struct BattleResourceStateDefaultTypeInternal;
+extern BattleResourceStateDefaultTypeInternal _BattleResourceState_default_instance_;
+class BattleStatusState;
+struct BattleStatusStateDefaultTypeInternal;
+extern BattleStatusStateDefaultTypeInternal _BattleStatusState_default_instance_;
 class ObjectInfo;
 struct ObjectInfoDefaultTypeInternal;
 extern ObjectInfoDefaultTypeInternal _ObjectInfo_default_instance_;
@@ -68,8 +77,11 @@ extern Vec2FixedDefaultTypeInternal _Vec2Fixed_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::Protocol::AxialCoord* Arena::CreateMaybeMessage<::Protocol::AxialCoord>(Arena*);
 template<> ::Protocol::BattleActionLog* Arena::CreateMaybeMessage<::Protocol::BattleActionLog>(Arena*);
+template<> ::Protocol::BattleBarrierState* Arena::CreateMaybeMessage<::Protocol::BattleBarrierState>(Arena*);
 template<> ::Protocol::BattlePawnDelta* Arena::CreateMaybeMessage<::Protocol::BattlePawnDelta>(Arena*);
 template<> ::Protocol::BattlePawnInfo* Arena::CreateMaybeMessage<::Protocol::BattlePawnInfo>(Arena*);
+template<> ::Protocol::BattleResourceState* Arena::CreateMaybeMessage<::Protocol::BattleResourceState>(Arena*);
+template<> ::Protocol::BattleStatusState* Arena::CreateMaybeMessage<::Protocol::BattleStatusState>(Arena*);
 template<> ::Protocol::ObjectInfo* Arena::CreateMaybeMessage<::Protocol::ObjectInfo>(Arena*);
 template<> ::Protocol::Vec2Fixed* Arena::CreateMaybeMessage<::Protocol::Vec2Fixed>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
@@ -585,6 +597,537 @@ class ObjectInfo final :
 };
 // -------------------------------------------------------------------
 
+class BattleResourceState final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.BattleResourceState) */ {
+ public:
+  inline BattleResourceState() : BattleResourceState(nullptr) {}
+  ~BattleResourceState() override;
+  explicit PROTOBUF_CONSTEXPR BattleResourceState(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  BattleResourceState(const BattleResourceState& from);
+  BattleResourceState(BattleResourceState&& from) noexcept
+    : BattleResourceState() {
+    *this = ::std::move(from);
+  }
+
+  inline BattleResourceState& operator=(const BattleResourceState& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline BattleResourceState& operator=(BattleResourceState&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const BattleResourceState& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const BattleResourceState* internal_default_instance() {
+    return reinterpret_cast<const BattleResourceState*>(
+               &_BattleResourceState_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(BattleResourceState& a, BattleResourceState& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(BattleResourceState* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(BattleResourceState* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  BattleResourceState* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<BattleResourceState>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const BattleResourceState& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const BattleResourceState& from) {
+    BattleResourceState::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BattleResourceState* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.BattleResourceState";
+  }
+  protected:
+  explicit BattleResourceState(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kResourceTypeFieldNumber = 1,
+    kValueFieldNumber = 2,
+    kMaxValueFieldNumber = 3,
+  };
+  // .Protocol.BattleResourceType resource_type = 1;
+  void clear_resource_type();
+  ::Protocol::BattleResourceType resource_type() const;
+  void set_resource_type(::Protocol::BattleResourceType value);
+  private:
+  ::Protocol::BattleResourceType _internal_resource_type() const;
+  void _internal_set_resource_type(::Protocol::BattleResourceType value);
+  public:
+
+  // int32 value = 2;
+  void clear_value();
+  int32_t value() const;
+  void set_value(int32_t value);
+  private:
+  int32_t _internal_value() const;
+  void _internal_set_value(int32_t value);
+  public:
+
+  // int32 max_value = 3;
+  void clear_max_value();
+  int32_t max_value() const;
+  void set_max_value(int32_t value);
+  private:
+  int32_t _internal_max_value() const;
+  void _internal_set_max_value(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.BattleResourceState)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int resource_type_;
+    int32_t value_;
+    int32_t max_value_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Struct_2eproto;
+};
+// -------------------------------------------------------------------
+
+class BattleBarrierState final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.BattleBarrierState) */ {
+ public:
+  inline BattleBarrierState() : BattleBarrierState(nullptr) {}
+  ~BattleBarrierState() override;
+  explicit PROTOBUF_CONSTEXPR BattleBarrierState(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  BattleBarrierState(const BattleBarrierState& from);
+  BattleBarrierState(BattleBarrierState&& from) noexcept
+    : BattleBarrierState() {
+    *this = ::std::move(from);
+  }
+
+  inline BattleBarrierState& operator=(const BattleBarrierState& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline BattleBarrierState& operator=(BattleBarrierState&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const BattleBarrierState& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const BattleBarrierState* internal_default_instance() {
+    return reinterpret_cast<const BattleBarrierState*>(
+               &_BattleBarrierState_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(BattleBarrierState& a, BattleBarrierState& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(BattleBarrierState* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(BattleBarrierState* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  BattleBarrierState* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<BattleBarrierState>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const BattleBarrierState& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const BattleBarrierState& from) {
+    BattleBarrierState::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BattleBarrierState* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.BattleBarrierState";
+  }
+  protected:
+  explicit BattleBarrierState(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSourceSkillKeyFieldNumber = 2,
+    kBarrierIdFieldNumber = 1,
+    kValueFieldNumber = 3,
+    kRemainingOwnerTurnsFieldNumber = 4,
+  };
+  // string source_skill_key = 2;
+  void clear_source_skill_key();
+  const std::string& source_skill_key() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_source_skill_key(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_source_skill_key();
+  PROTOBUF_NODISCARD std::string* release_source_skill_key();
+  void set_allocated_source_skill_key(std::string* source_skill_key);
+  private:
+  const std::string& _internal_source_skill_key() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_source_skill_key(const std::string& value);
+  std::string* _internal_mutable_source_skill_key();
+  public:
+
+  // uint64 barrier_id = 1;
+  void clear_barrier_id();
+  uint64_t barrier_id() const;
+  void set_barrier_id(uint64_t value);
+  private:
+  uint64_t _internal_barrier_id() const;
+  void _internal_set_barrier_id(uint64_t value);
+  public:
+
+  // int32 value = 3;
+  void clear_value();
+  int32_t value() const;
+  void set_value(int32_t value);
+  private:
+  int32_t _internal_value() const;
+  void _internal_set_value(int32_t value);
+  public:
+
+  // int32 remaining_owner_turns = 4;
+  void clear_remaining_owner_turns();
+  int32_t remaining_owner_turns() const;
+  void set_remaining_owner_turns(int32_t value);
+  private:
+  int32_t _internal_remaining_owner_turns() const;
+  void _internal_set_remaining_owner_turns(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.BattleBarrierState)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr source_skill_key_;
+    uint64_t barrier_id_;
+    int32_t value_;
+    int32_t remaining_owner_turns_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Struct_2eproto;
+};
+// -------------------------------------------------------------------
+
+class BattleStatusState final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.BattleStatusState) */ {
+ public:
+  inline BattleStatusState() : BattleStatusState(nullptr) {}
+  ~BattleStatusState() override;
+  explicit PROTOBUF_CONSTEXPR BattleStatusState(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  BattleStatusState(const BattleStatusState& from);
+  BattleStatusState(BattleStatusState&& from) noexcept
+    : BattleStatusState() {
+    *this = ::std::move(from);
+  }
+
+  inline BattleStatusState& operator=(const BattleStatusState& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline BattleStatusState& operator=(BattleStatusState&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const BattleStatusState& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const BattleStatusState* internal_default_instance() {
+    return reinterpret_cast<const BattleStatusState*>(
+               &_BattleStatusState_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(BattleStatusState& a, BattleStatusState& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(BattleStatusState* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(BattleStatusState* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  BattleStatusState* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<BattleStatusState>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const BattleStatusState& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const BattleStatusState& from) {
+    BattleStatusState::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BattleStatusState* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.BattleStatusState";
+  }
+  protected:
+  explicit BattleStatusState(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kStatusKeyFieldNumber = 1,
+    kStacksFieldNumber = 2,
+    kRemainingOwnerTurnsFieldNumber = 3,
+  };
+  // string status_key = 1;
+  void clear_status_key();
+  const std::string& status_key() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_status_key(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_status_key();
+  PROTOBUF_NODISCARD std::string* release_status_key();
+  void set_allocated_status_key(std::string* status_key);
+  private:
+  const std::string& _internal_status_key() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_status_key(const std::string& value);
+  std::string* _internal_mutable_status_key();
+  public:
+
+  // int32 stacks = 2;
+  void clear_stacks();
+  int32_t stacks() const;
+  void set_stacks(int32_t value);
+  private:
+  int32_t _internal_stacks() const;
+  void _internal_set_stacks(int32_t value);
+  public:
+
+  // int32 remaining_owner_turns = 3;
+  void clear_remaining_owner_turns();
+  int32_t remaining_owner_turns() const;
+  void set_remaining_owner_turns(int32_t value);
+  private:
+  int32_t _internal_remaining_owner_turns() const;
+  void _internal_set_remaining_owner_turns(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.BattleStatusState)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr status_key_;
+    int32_t stacks_;
+    int32_t remaining_owner_turns_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Struct_2eproto;
+};
+// -------------------------------------------------------------------
+
 class BattlePawnInfo final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.BattlePawnInfo) */ {
  public:
@@ -633,7 +1176,7 @@ class BattlePawnInfo final :
                &_BattlePawnInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    6;
 
   friend void swap(BattlePawnInfo& a, BattlePawnInfo& b) {
     a.Swap(&b);
@@ -706,6 +1249,9 @@ class BattlePawnInfo final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kResourcesFieldNumber = 19,
+    kBarriersFieldNumber = 20,
+    kStatusesFieldNumber = 21,
     kAxialFieldNumber = 4,
     kPawnIdFieldNumber = 1,
     kOwnerIdFieldNumber = 2,
@@ -723,6 +1269,60 @@ class BattlePawnInfo final :
     kFacingDirectionFieldNumber = 17,
     kRoleFieldNumber = 18,
   };
+  // repeated .Protocol.BattleResourceState resources = 19;
+  int resources_size() const;
+  private:
+  int _internal_resources_size() const;
+  public:
+  void clear_resources();
+  ::Protocol::BattleResourceState* mutable_resources(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleResourceState >*
+      mutable_resources();
+  private:
+  const ::Protocol::BattleResourceState& _internal_resources(int index) const;
+  ::Protocol::BattleResourceState* _internal_add_resources();
+  public:
+  const ::Protocol::BattleResourceState& resources(int index) const;
+  ::Protocol::BattleResourceState* add_resources();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleResourceState >&
+      resources() const;
+
+  // repeated .Protocol.BattleBarrierState barriers = 20;
+  int barriers_size() const;
+  private:
+  int _internal_barriers_size() const;
+  public:
+  void clear_barriers();
+  ::Protocol::BattleBarrierState* mutable_barriers(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleBarrierState >*
+      mutable_barriers();
+  private:
+  const ::Protocol::BattleBarrierState& _internal_barriers(int index) const;
+  ::Protocol::BattleBarrierState* _internal_add_barriers();
+  public:
+  const ::Protocol::BattleBarrierState& barriers(int index) const;
+  ::Protocol::BattleBarrierState* add_barriers();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleBarrierState >&
+      barriers() const;
+
+  // repeated .Protocol.BattleStatusState statuses = 21;
+  int statuses_size() const;
+  private:
+  int _internal_statuses_size() const;
+  public:
+  void clear_statuses();
+  ::Protocol::BattleStatusState* mutable_statuses(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState >*
+      mutable_statuses();
+  private:
+  const ::Protocol::BattleStatusState& _internal_statuses(int index) const;
+  ::Protocol::BattleStatusState* _internal_add_statuses();
+  public:
+  const ::Protocol::BattleStatusState& statuses(int index) const;
+  ::Protocol::BattleStatusState* add_statuses();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState >&
+      statuses() const;
+
   // .Protocol.AxialCoord axial = 4;
   bool has_axial() const;
   private:
@@ -884,6 +1484,9 @@ class BattlePawnInfo final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleResourceState > resources_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleBarrierState > barriers_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState > statuses_;
     ::Protocol::AxialCoord* axial_;
     uint64_t pawn_id_;
     uint64_t owner_id_;
@@ -955,7 +1558,7 @@ class BattlePawnDelta final :
                &_BattlePawnDelta_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    7;
 
   friend void swap(BattlePawnDelta& a, BattlePawnDelta& b) {
     a.Swap(&b);
@@ -1028,6 +1631,9 @@ class BattlePawnDelta final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kResourcesFieldNumber = 11,
+    kBarriersFieldNumber = 12,
+    kStatusesFieldNumber = 13,
     kPawnIdFieldNumber = 1,
     kHpFieldNumber = 2,
     kArmorFieldNumber = 3,
@@ -1038,6 +1644,60 @@ class BattlePawnDelta final :
     kIsDeadFieldNumber = 8,
     kFacingDirectionFieldNumber = 9,
   };
+  // repeated .Protocol.BattleResourceState resources = 11;
+  int resources_size() const;
+  private:
+  int _internal_resources_size() const;
+  public:
+  void clear_resources();
+  ::Protocol::BattleResourceState* mutable_resources(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleResourceState >*
+      mutable_resources();
+  private:
+  const ::Protocol::BattleResourceState& _internal_resources(int index) const;
+  ::Protocol::BattleResourceState* _internal_add_resources();
+  public:
+  const ::Protocol::BattleResourceState& resources(int index) const;
+  ::Protocol::BattleResourceState* add_resources();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleResourceState >&
+      resources() const;
+
+  // repeated .Protocol.BattleBarrierState barriers = 12;
+  int barriers_size() const;
+  private:
+  int _internal_barriers_size() const;
+  public:
+  void clear_barriers();
+  ::Protocol::BattleBarrierState* mutable_barriers(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleBarrierState >*
+      mutable_barriers();
+  private:
+  const ::Protocol::BattleBarrierState& _internal_barriers(int index) const;
+  ::Protocol::BattleBarrierState* _internal_add_barriers();
+  public:
+  const ::Protocol::BattleBarrierState& barriers(int index) const;
+  ::Protocol::BattleBarrierState* add_barriers();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleBarrierState >&
+      barriers() const;
+
+  // repeated .Protocol.BattleStatusState statuses = 13;
+  int statuses_size() const;
+  private:
+  int _internal_statuses_size() const;
+  public:
+  void clear_statuses();
+  ::Protocol::BattleStatusState* mutable_statuses(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState >*
+      mutable_statuses();
+  private:
+  const ::Protocol::BattleStatusState& _internal_statuses(int index) const;
+  ::Protocol::BattleStatusState* _internal_add_statuses();
+  public:
+  const ::Protocol::BattleStatusState& statuses(int index) const;
+  ::Protocol::BattleStatusState* add_statuses();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState >&
+      statuses() const;
+
   // uint64 pawn_id = 1;
   void clear_pawn_id();
   uint64_t pawn_id() const;
@@ -1127,6 +1787,9 @@ class BattlePawnDelta final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleResourceState > resources_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleBarrierState > barriers_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState > statuses_;
     uint64_t pawn_id_;
     int32_t hp_;
     int32_t armor_;
@@ -1191,7 +1854,7 @@ class BattleActionLog final :
                &_BattleActionLog_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    8;
 
   friend void swap(BattleActionLog& a, BattleActionLog& b) {
     a.Swap(&b);
@@ -1677,6 +2340,278 @@ inline void ObjectInfo::set_allocated_position(::Protocol::Vec2Fixed* position) 
 
 // -------------------------------------------------------------------
 
+// BattleResourceState
+
+// .Protocol.BattleResourceType resource_type = 1;
+inline void BattleResourceState::clear_resource_type() {
+  _impl_.resource_type_ = 0;
+}
+inline ::Protocol::BattleResourceType BattleResourceState::_internal_resource_type() const {
+  return static_cast< ::Protocol::BattleResourceType >(_impl_.resource_type_);
+}
+inline ::Protocol::BattleResourceType BattleResourceState::resource_type() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleResourceState.resource_type)
+  return _internal_resource_type();
+}
+inline void BattleResourceState::_internal_set_resource_type(::Protocol::BattleResourceType value) {
+  
+  _impl_.resource_type_ = value;
+}
+inline void BattleResourceState::set_resource_type(::Protocol::BattleResourceType value) {
+  _internal_set_resource_type(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleResourceState.resource_type)
+}
+
+// int32 value = 2;
+inline void BattleResourceState::clear_value() {
+  _impl_.value_ = 0;
+}
+inline int32_t BattleResourceState::_internal_value() const {
+  return _impl_.value_;
+}
+inline int32_t BattleResourceState::value() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleResourceState.value)
+  return _internal_value();
+}
+inline void BattleResourceState::_internal_set_value(int32_t value) {
+  
+  _impl_.value_ = value;
+}
+inline void BattleResourceState::set_value(int32_t value) {
+  _internal_set_value(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleResourceState.value)
+}
+
+// int32 max_value = 3;
+inline void BattleResourceState::clear_max_value() {
+  _impl_.max_value_ = 0;
+}
+inline int32_t BattleResourceState::_internal_max_value() const {
+  return _impl_.max_value_;
+}
+inline int32_t BattleResourceState::max_value() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleResourceState.max_value)
+  return _internal_max_value();
+}
+inline void BattleResourceState::_internal_set_max_value(int32_t value) {
+  
+  _impl_.max_value_ = value;
+}
+inline void BattleResourceState::set_max_value(int32_t value) {
+  _internal_set_max_value(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleResourceState.max_value)
+}
+
+// -------------------------------------------------------------------
+
+// BattleBarrierState
+
+// uint64 barrier_id = 1;
+inline void BattleBarrierState::clear_barrier_id() {
+  _impl_.barrier_id_ = uint64_t{0u};
+}
+inline uint64_t BattleBarrierState::_internal_barrier_id() const {
+  return _impl_.barrier_id_;
+}
+inline uint64_t BattleBarrierState::barrier_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleBarrierState.barrier_id)
+  return _internal_barrier_id();
+}
+inline void BattleBarrierState::_internal_set_barrier_id(uint64_t value) {
+  
+  _impl_.barrier_id_ = value;
+}
+inline void BattleBarrierState::set_barrier_id(uint64_t value) {
+  _internal_set_barrier_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleBarrierState.barrier_id)
+}
+
+// string source_skill_key = 2;
+inline void BattleBarrierState::clear_source_skill_key() {
+  _impl_.source_skill_key_.ClearToEmpty();
+}
+inline const std::string& BattleBarrierState::source_skill_key() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleBarrierState.source_skill_key)
+  return _internal_source_skill_key();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void BattleBarrierState::set_source_skill_key(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.source_skill_key_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.BattleBarrierState.source_skill_key)
+}
+inline std::string* BattleBarrierState::mutable_source_skill_key() {
+  std::string* _s = _internal_mutable_source_skill_key();
+  // @@protoc_insertion_point(field_mutable:Protocol.BattleBarrierState.source_skill_key)
+  return _s;
+}
+inline const std::string& BattleBarrierState::_internal_source_skill_key() const {
+  return _impl_.source_skill_key_.Get();
+}
+inline void BattleBarrierState::_internal_set_source_skill_key(const std::string& value) {
+  
+  _impl_.source_skill_key_.Set(value, GetArenaForAllocation());
+}
+inline std::string* BattleBarrierState::_internal_mutable_source_skill_key() {
+  
+  return _impl_.source_skill_key_.Mutable(GetArenaForAllocation());
+}
+inline std::string* BattleBarrierState::release_source_skill_key() {
+  // @@protoc_insertion_point(field_release:Protocol.BattleBarrierState.source_skill_key)
+  return _impl_.source_skill_key_.Release();
+}
+inline void BattleBarrierState::set_allocated_source_skill_key(std::string* source_skill_key) {
+  if (source_skill_key != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.source_skill_key_.SetAllocated(source_skill_key, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.source_skill_key_.IsDefault()) {
+    _impl_.source_skill_key_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.BattleBarrierState.source_skill_key)
+}
+
+// int32 value = 3;
+inline void BattleBarrierState::clear_value() {
+  _impl_.value_ = 0;
+}
+inline int32_t BattleBarrierState::_internal_value() const {
+  return _impl_.value_;
+}
+inline int32_t BattleBarrierState::value() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleBarrierState.value)
+  return _internal_value();
+}
+inline void BattleBarrierState::_internal_set_value(int32_t value) {
+  
+  _impl_.value_ = value;
+}
+inline void BattleBarrierState::set_value(int32_t value) {
+  _internal_set_value(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleBarrierState.value)
+}
+
+// int32 remaining_owner_turns = 4;
+inline void BattleBarrierState::clear_remaining_owner_turns() {
+  _impl_.remaining_owner_turns_ = 0;
+}
+inline int32_t BattleBarrierState::_internal_remaining_owner_turns() const {
+  return _impl_.remaining_owner_turns_;
+}
+inline int32_t BattleBarrierState::remaining_owner_turns() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleBarrierState.remaining_owner_turns)
+  return _internal_remaining_owner_turns();
+}
+inline void BattleBarrierState::_internal_set_remaining_owner_turns(int32_t value) {
+  
+  _impl_.remaining_owner_turns_ = value;
+}
+inline void BattleBarrierState::set_remaining_owner_turns(int32_t value) {
+  _internal_set_remaining_owner_turns(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleBarrierState.remaining_owner_turns)
+}
+
+// -------------------------------------------------------------------
+
+// BattleStatusState
+
+// string status_key = 1;
+inline void BattleStatusState::clear_status_key() {
+  _impl_.status_key_.ClearToEmpty();
+}
+inline const std::string& BattleStatusState::status_key() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleStatusState.status_key)
+  return _internal_status_key();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void BattleStatusState::set_status_key(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.status_key_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.BattleStatusState.status_key)
+}
+inline std::string* BattleStatusState::mutable_status_key() {
+  std::string* _s = _internal_mutable_status_key();
+  // @@protoc_insertion_point(field_mutable:Protocol.BattleStatusState.status_key)
+  return _s;
+}
+inline const std::string& BattleStatusState::_internal_status_key() const {
+  return _impl_.status_key_.Get();
+}
+inline void BattleStatusState::_internal_set_status_key(const std::string& value) {
+  
+  _impl_.status_key_.Set(value, GetArenaForAllocation());
+}
+inline std::string* BattleStatusState::_internal_mutable_status_key() {
+  
+  return _impl_.status_key_.Mutable(GetArenaForAllocation());
+}
+inline std::string* BattleStatusState::release_status_key() {
+  // @@protoc_insertion_point(field_release:Protocol.BattleStatusState.status_key)
+  return _impl_.status_key_.Release();
+}
+inline void BattleStatusState::set_allocated_status_key(std::string* status_key) {
+  if (status_key != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.status_key_.SetAllocated(status_key, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.status_key_.IsDefault()) {
+    _impl_.status_key_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.BattleStatusState.status_key)
+}
+
+// int32 stacks = 2;
+inline void BattleStatusState::clear_stacks() {
+  _impl_.stacks_ = 0;
+}
+inline int32_t BattleStatusState::_internal_stacks() const {
+  return _impl_.stacks_;
+}
+inline int32_t BattleStatusState::stacks() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleStatusState.stacks)
+  return _internal_stacks();
+}
+inline void BattleStatusState::_internal_set_stacks(int32_t value) {
+  
+  _impl_.stacks_ = value;
+}
+inline void BattleStatusState::set_stacks(int32_t value) {
+  _internal_set_stacks(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleStatusState.stacks)
+}
+
+// int32 remaining_owner_turns = 3;
+inline void BattleStatusState::clear_remaining_owner_turns() {
+  _impl_.remaining_owner_turns_ = 0;
+}
+inline int32_t BattleStatusState::_internal_remaining_owner_turns() const {
+  return _impl_.remaining_owner_turns_;
+}
+inline int32_t BattleStatusState::remaining_owner_turns() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleStatusState.remaining_owner_turns)
+  return _internal_remaining_owner_turns();
+}
+inline void BattleStatusState::_internal_set_remaining_owner_turns(int32_t value) {
+  
+  _impl_.remaining_owner_turns_ = value;
+}
+inline void BattleStatusState::set_remaining_owner_turns(int32_t value) {
+  _internal_set_remaining_owner_turns(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleStatusState.remaining_owner_turns)
+}
+
+// -------------------------------------------------------------------
+
 // BattlePawnInfo
 
 // uint64 pawn_id = 1;
@@ -2069,6 +3004,126 @@ inline void BattlePawnInfo::set_role(::Protocol::BattlePawnRole value) {
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.role)
 }
 
+// repeated .Protocol.BattleResourceState resources = 19;
+inline int BattlePawnInfo::_internal_resources_size() const {
+  return _impl_.resources_.size();
+}
+inline int BattlePawnInfo::resources_size() const {
+  return _internal_resources_size();
+}
+inline void BattlePawnInfo::clear_resources() {
+  _impl_.resources_.Clear();
+}
+inline ::Protocol::BattleResourceState* BattlePawnInfo::mutable_resources(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.BattlePawnInfo.resources)
+  return _impl_.resources_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleResourceState >*
+BattlePawnInfo::mutable_resources() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.BattlePawnInfo.resources)
+  return &_impl_.resources_;
+}
+inline const ::Protocol::BattleResourceState& BattlePawnInfo::_internal_resources(int index) const {
+  return _impl_.resources_.Get(index);
+}
+inline const ::Protocol::BattleResourceState& BattlePawnInfo::resources(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.resources)
+  return _internal_resources(index);
+}
+inline ::Protocol::BattleResourceState* BattlePawnInfo::_internal_add_resources() {
+  return _impl_.resources_.Add();
+}
+inline ::Protocol::BattleResourceState* BattlePawnInfo::add_resources() {
+  ::Protocol::BattleResourceState* _add = _internal_add_resources();
+  // @@protoc_insertion_point(field_add:Protocol.BattlePawnInfo.resources)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleResourceState >&
+BattlePawnInfo::resources() const {
+  // @@protoc_insertion_point(field_list:Protocol.BattlePawnInfo.resources)
+  return _impl_.resources_;
+}
+
+// repeated .Protocol.BattleBarrierState barriers = 20;
+inline int BattlePawnInfo::_internal_barriers_size() const {
+  return _impl_.barriers_.size();
+}
+inline int BattlePawnInfo::barriers_size() const {
+  return _internal_barriers_size();
+}
+inline void BattlePawnInfo::clear_barriers() {
+  _impl_.barriers_.Clear();
+}
+inline ::Protocol::BattleBarrierState* BattlePawnInfo::mutable_barriers(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.BattlePawnInfo.barriers)
+  return _impl_.barriers_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleBarrierState >*
+BattlePawnInfo::mutable_barriers() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.BattlePawnInfo.barriers)
+  return &_impl_.barriers_;
+}
+inline const ::Protocol::BattleBarrierState& BattlePawnInfo::_internal_barriers(int index) const {
+  return _impl_.barriers_.Get(index);
+}
+inline const ::Protocol::BattleBarrierState& BattlePawnInfo::barriers(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.barriers)
+  return _internal_barriers(index);
+}
+inline ::Protocol::BattleBarrierState* BattlePawnInfo::_internal_add_barriers() {
+  return _impl_.barriers_.Add();
+}
+inline ::Protocol::BattleBarrierState* BattlePawnInfo::add_barriers() {
+  ::Protocol::BattleBarrierState* _add = _internal_add_barriers();
+  // @@protoc_insertion_point(field_add:Protocol.BattlePawnInfo.barriers)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleBarrierState >&
+BattlePawnInfo::barriers() const {
+  // @@protoc_insertion_point(field_list:Protocol.BattlePawnInfo.barriers)
+  return _impl_.barriers_;
+}
+
+// repeated .Protocol.BattleStatusState statuses = 21;
+inline int BattlePawnInfo::_internal_statuses_size() const {
+  return _impl_.statuses_.size();
+}
+inline int BattlePawnInfo::statuses_size() const {
+  return _internal_statuses_size();
+}
+inline void BattlePawnInfo::clear_statuses() {
+  _impl_.statuses_.Clear();
+}
+inline ::Protocol::BattleStatusState* BattlePawnInfo::mutable_statuses(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.BattlePawnInfo.statuses)
+  return _impl_.statuses_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState >*
+BattlePawnInfo::mutable_statuses() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.BattlePawnInfo.statuses)
+  return &_impl_.statuses_;
+}
+inline const ::Protocol::BattleStatusState& BattlePawnInfo::_internal_statuses(int index) const {
+  return _impl_.statuses_.Get(index);
+}
+inline const ::Protocol::BattleStatusState& BattlePawnInfo::statuses(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.statuses)
+  return _internal_statuses(index);
+}
+inline ::Protocol::BattleStatusState* BattlePawnInfo::_internal_add_statuses() {
+  return _impl_.statuses_.Add();
+}
+inline ::Protocol::BattleStatusState* BattlePawnInfo::add_statuses() {
+  ::Protocol::BattleStatusState* _add = _internal_add_statuses();
+  // @@protoc_insertion_point(field_add:Protocol.BattlePawnInfo.statuses)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState >&
+BattlePawnInfo::statuses() const {
+  // @@protoc_insertion_point(field_list:Protocol.BattlePawnInfo.statuses)
+  return _impl_.statuses_;
+}
+
 // -------------------------------------------------------------------
 
 // BattlePawnDelta
@@ -2251,6 +3306,126 @@ inline void BattlePawnDelta::_internal_set_facing_direction(::Protocol::BattleFa
 inline void BattlePawnDelta::set_facing_direction(::Protocol::BattleFacingDirection value) {
   _internal_set_facing_direction(value);
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.facing_direction)
+}
+
+// repeated .Protocol.BattleResourceState resources = 11;
+inline int BattlePawnDelta::_internal_resources_size() const {
+  return _impl_.resources_.size();
+}
+inline int BattlePawnDelta::resources_size() const {
+  return _internal_resources_size();
+}
+inline void BattlePawnDelta::clear_resources() {
+  _impl_.resources_.Clear();
+}
+inline ::Protocol::BattleResourceState* BattlePawnDelta::mutable_resources(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.BattlePawnDelta.resources)
+  return _impl_.resources_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleResourceState >*
+BattlePawnDelta::mutable_resources() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.BattlePawnDelta.resources)
+  return &_impl_.resources_;
+}
+inline const ::Protocol::BattleResourceState& BattlePawnDelta::_internal_resources(int index) const {
+  return _impl_.resources_.Get(index);
+}
+inline const ::Protocol::BattleResourceState& BattlePawnDelta::resources(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnDelta.resources)
+  return _internal_resources(index);
+}
+inline ::Protocol::BattleResourceState* BattlePawnDelta::_internal_add_resources() {
+  return _impl_.resources_.Add();
+}
+inline ::Protocol::BattleResourceState* BattlePawnDelta::add_resources() {
+  ::Protocol::BattleResourceState* _add = _internal_add_resources();
+  // @@protoc_insertion_point(field_add:Protocol.BattlePawnDelta.resources)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleResourceState >&
+BattlePawnDelta::resources() const {
+  // @@protoc_insertion_point(field_list:Protocol.BattlePawnDelta.resources)
+  return _impl_.resources_;
+}
+
+// repeated .Protocol.BattleBarrierState barriers = 12;
+inline int BattlePawnDelta::_internal_barriers_size() const {
+  return _impl_.barriers_.size();
+}
+inline int BattlePawnDelta::barriers_size() const {
+  return _internal_barriers_size();
+}
+inline void BattlePawnDelta::clear_barriers() {
+  _impl_.barriers_.Clear();
+}
+inline ::Protocol::BattleBarrierState* BattlePawnDelta::mutable_barriers(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.BattlePawnDelta.barriers)
+  return _impl_.barriers_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleBarrierState >*
+BattlePawnDelta::mutable_barriers() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.BattlePawnDelta.barriers)
+  return &_impl_.barriers_;
+}
+inline const ::Protocol::BattleBarrierState& BattlePawnDelta::_internal_barriers(int index) const {
+  return _impl_.barriers_.Get(index);
+}
+inline const ::Protocol::BattleBarrierState& BattlePawnDelta::barriers(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnDelta.barriers)
+  return _internal_barriers(index);
+}
+inline ::Protocol::BattleBarrierState* BattlePawnDelta::_internal_add_barriers() {
+  return _impl_.barriers_.Add();
+}
+inline ::Protocol::BattleBarrierState* BattlePawnDelta::add_barriers() {
+  ::Protocol::BattleBarrierState* _add = _internal_add_barriers();
+  // @@protoc_insertion_point(field_add:Protocol.BattlePawnDelta.barriers)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleBarrierState >&
+BattlePawnDelta::barriers() const {
+  // @@protoc_insertion_point(field_list:Protocol.BattlePawnDelta.barriers)
+  return _impl_.barriers_;
+}
+
+// repeated .Protocol.BattleStatusState statuses = 13;
+inline int BattlePawnDelta::_internal_statuses_size() const {
+  return _impl_.statuses_.size();
+}
+inline int BattlePawnDelta::statuses_size() const {
+  return _internal_statuses_size();
+}
+inline void BattlePawnDelta::clear_statuses() {
+  _impl_.statuses_.Clear();
+}
+inline ::Protocol::BattleStatusState* BattlePawnDelta::mutable_statuses(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.BattlePawnDelta.statuses)
+  return _impl_.statuses_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState >*
+BattlePawnDelta::mutable_statuses() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.BattlePawnDelta.statuses)
+  return &_impl_.statuses_;
+}
+inline const ::Protocol::BattleStatusState& BattlePawnDelta::_internal_statuses(int index) const {
+  return _impl_.statuses_.Get(index);
+}
+inline const ::Protocol::BattleStatusState& BattlePawnDelta::statuses(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnDelta.statuses)
+  return _internal_statuses(index);
+}
+inline ::Protocol::BattleStatusState* BattlePawnDelta::_internal_add_statuses() {
+  return _impl_.statuses_.Add();
+}
+inline ::Protocol::BattleStatusState* BattlePawnDelta::add_statuses() {
+  ::Protocol::BattleStatusState* _add = _internal_add_statuses();
+  // @@protoc_insertion_point(field_add:Protocol.BattlePawnDelta.statuses)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState >&
+BattlePawnDelta::statuses() const {
+  // @@protoc_insertion_point(field_list:Protocol.BattlePawnDelta.statuses)
+  return _impl_.statuses_;
 }
 
 // -------------------------------------------------------------------
@@ -2550,6 +3725,12 @@ inline void BattleActionLog::set_is_back_attack(bool value) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

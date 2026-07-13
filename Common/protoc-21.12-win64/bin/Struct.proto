@@ -23,6 +23,28 @@ message ObjectInfo
 	Vec2Fixed position = 4;
 }
 
+message BattleResourceState
+{
+	BattleResourceType resource_type = 1;
+	int32 value = 2;
+	int32 max_value = 3;
+}
+
+message BattleBarrierState
+{
+	uint64 barrier_id = 1;
+	string source_skill_key = 2;
+	int32 value = 3;
+	int32 remaining_owner_turns = 4;
+}
+
+message BattleStatusState
+{
+	string status_key = 1;
+	int32 stacks = 2;
+	int32 remaining_owner_turns = 3;
+}
+
 message BattlePawnInfo
 {
 	reserved 14, 15;
@@ -43,6 +65,9 @@ message BattlePawnInfo
 	bool is_dead = 16;
 	BattleFacingDirection facing_direction = 17;
 	BattlePawnRole role = 18;
+	repeated BattleResourceState resources = 19;
+	repeated BattleBarrierState barriers = 20;
+	repeated BattleStatusState statuses = 21;
 }
 
 message BattlePawnDelta
@@ -58,6 +83,9 @@ message BattlePawnDelta
 	bool used_ultimate = 7;
 	bool is_dead = 8;
 	BattleFacingDirection facing_direction = 9;
+	repeated BattleResourceState resources = 11;
+	repeated BattleBarrierState barriers = 12;
+	repeated BattleStatusState statuses = 13;
 }
 
 message BattleActionLog
