@@ -449,8 +449,10 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		effectRequest.caster.axial = &caster->axial;
 		effectRequest.caster.hp = &caster->hp;
 		effectRequest.caster.armor = &caster->armor;
-		effectRequest.caster.resources = &caster->resources;
+	effectRequest.caster.resources = &caster->resources;
 		effectRequest.caster.maxResources = &caster->maxResources;
+		effectRequest.caster.barriers = &caster->barriers;
+		effectRequest.caster.statusStacks = &caster->statusStacks;
 		effectRequest.target.pawnId = target->pawnId;
 		effectRequest.target.ownerId = target->ownerId;
 		effectRequest.target.pawnClass = target->pawnClass;
@@ -459,6 +461,8 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		effectRequest.target.armor = &target->armor;
 		effectRequest.target.resources = &target->resources;
 		effectRequest.target.maxResources = &target->maxResources;
+		effectRequest.target.barriers = &target->barriers;
+		effectRequest.target.statusStacks = &target->statusStacks;
 
 		BattleEffectExecutor executor;
 		const BattleEffectExecutionResult effectResult = executor.ExecuteOnCast(effectRequest);
@@ -581,6 +585,8 @@ void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_
 		return;
 	}
 
+	ExecutePassiveTrigger(*pawn, "ON_OWNER_TURN_END");
+	AdvanceOwnerTurnEffects(*pawn);
 	AdvanceTurn(battle);
 	BattlePawnState* nextPawn = FindPawn(battle, battle.currentTurnPawnId);
 
@@ -710,6 +716,7 @@ BattleRoom::BattleState BattleRoom::CreateBattle(PlayerRef ownerPlayer)
 			enemyTemplate.moveRange, enemyTemplate.maxArmor, enemyTemplate.role));
 	}
 
+	ExecuteBattleStartEffects(battle);
 	BuildTurnQueue(battle);
 	if (BattlePawnState* currentPawn = FindPawn(battle, battle.currentTurnPawnId))
 		StartTurn(*currentPawn);
@@ -730,6 +737,7 @@ BattleRoom::BattleState BattleRoom::CreatePvpBattle(PlayerRef ownerPlayer, Playe
 	AddOwnedBattlePawns(battle.alliedPawns, ownerPlayer, -2, 0);
 	AddOwnedBattlePawns(battle.enemyPawns, opponentPlayer, 2, -1);
 
+	ExecuteBattleStartEffects(battle);
 	BuildTurnQueue(battle);
 	if (BattlePawnState* currentPawn = FindPawn(battle, battle.currentTurnPawnId))
 		StartTurn(*currentPawn);
@@ -757,31 +765,27 @@ BattleRoom::BattlePawnState BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol:
 	pawn.isDead = false;
 	pawn.facingDirection = q <= 0 ? Protocol::BATTLE_FACING_DIRECTION_RIGHT : Protocol::BATTLE_FACING_DIRECTION_LEFT;
 	pawn.role = role;
-	if (pawnClass == Protocol::PAWN_CLASS_BEIGE_ICE)
-	{
-		pawn.resources["COLD"] = 0;
-		pawn.maxResources["COLD"] = 20;
-	}
 	return pawn;
 }
 
 BattleRoom::BattlePawnState BattleRoom::MakeBattlePawnFromOwnedPawn(PawnRef sourcePawn, int32 q, int32 r)
 {
-	constexpr Protocol::PawnClass kBattleTestPawnClass = Protocol::PAWN_CLASS_BEIGE_ICE;
-
 	if (sourcePawn == nullptr)
-		return MakeBattlePawn(0, kBattleTestPawnClass, q, r, 80, 3, 0, Protocol::BATTLE_PAWN_ROLE_RANGED);
+		return BattlePawnState();
 
 	PawnTemplate pawnTemplate;
-	if (TryGetPawnTemplate(kBattleTestPawnClass, pawnTemplate) == false)
+	if (TryGetPawnTemplate(sourcePawn->pawnClass, pawnTemplate) == false)
 	{
-		pawnTemplate.hp = 80;
-		pawnTemplate.moveRange = 3;
-		pawnTemplate.maxArmor = 0;
-		pawnTemplate.role = Protocol::BATTLE_PAWN_ROLE_RANGED;
+		cout << "BATTLE_PAWN_CREATE_FAIL"
+			<< " owner_id=" << sourcePawn->ownerId
+			<< " pawn_id=" << sourcePawn->pawnId
+			<< " pawn_class=" << Protocol::PawnClass_Name(sourcePawn->pawnClass)
+			<< " reason=\"missing pawn template\""
+			<< endl;
+		return BattlePawnState();
 	}
 
-	return MakeBattlePawn(sourcePawn->ownerId, kBattleTestPawnClass, q, r, pawnTemplate.hp, pawnTemplate.moveRange,
+	return MakeBattlePawn(sourcePawn->ownerId, sourcePawn->pawnClass, q, r, pawnTemplate.hp, pawnTemplate.moveRange,
 		pawnTemplate.maxArmor, pawnTemplate.role);
 }
 
@@ -796,7 +800,9 @@ void BattleRoom::AddOwnedBattlePawns(vector<BattlePawnState>& dst, PlayerRef own
 		if (sourcePawn == nullptr)
 			continue;
 
-		dst.push_back(MakeBattlePawnFromOwnedPawn(sourcePawn, q, firstR + static_cast<int32>(i)));
+		BattlePawnState battlePawn = MakeBattlePawnFromOwnedPawn(sourcePawn, q, firstR + static_cast<int32>(i));
+		if (battlePawn.pawnId != 0)
+			dst.push_back(move(battlePawn));
 	}
 }
 
@@ -1079,6 +1085,7 @@ bool BattleRoom::TryGetSkillSpec(Protocol::PawnClass pawnClass, int32 skillSlot,
 		return true;
 	}
 
+	// Legacy classes remain playable until their BattleSkill.csv rows are authored.
 	auto setSpec = [&spec](int32 apCost, int32 damage, int32 range, bool isUltimate = false)
 		{
 			spec = SkillSpec();
@@ -1096,44 +1103,44 @@ bool BattleRoom::TryGetSkillSpec(Protocol::PawnClass pawnClass, int32 skillSlot,
 	case Protocol::PAWN_CLASS_SUEN_AXE_SWORD:
 		switch (skillSlot)
 		{
-		case 1: return setSpec(1, 30, 1);
-		case 2: return setSpec(2, 45, 1);
-		case 3: return setSpec(2, 35, 1);
-		case 4: return setSpec(2, 55, 1);
-		case 5: return setSpec(0, 90, 1, true);
+		case 2: return setSpec(1, 30, 1);
+		case 3: return setSpec(2, 45, 1);
+		case 4: return setSpec(2, 35, 1);
+		case 5: return setSpec(2, 55, 1);
+		case 6: return setSpec(0, 90, 1, true);
 		default: break;
 		}
 		break;
 	case Protocol::PAWN_CLASS_BEIGE_FIRE:
 		switch (skillSlot)
 		{
-		case 1: return setSpec(1, 20, 3);
-		case 2: return setSpec(2, 40, 3);
-		case 3: return setSpec(2, 30, 4);
-		case 4: return setSpec(2, 50, 3);
-		case 5: return setSpec(0, 85, 4, true);
+		case 2: return setSpec(1, 20, 3);
+		case 3: return setSpec(2, 40, 3);
+		case 4: return setSpec(2, 30, 4);
+		case 5: return setSpec(2, 50, 3);
+		case 6: return setSpec(0, 85, 4, true);
 		default: break;
 		}
 		break;
 	case Protocol::PAWN_CLASS_ZILLIAN_LONGBOW:
 		switch (skillSlot)
 		{
-		case 1: return setSpec(1, 20, 4);
-		case 2: return setSpec(2, 35, 5);
-		case 3: return setSpec(2, 45, 4);
-		case 4: return setSpec(2, 30, 6);
-		case 5: return setSpec(0, 80, 6, true);
+		case 2: return setSpec(1, 20, 4);
+		case 3: return setSpec(2, 35, 5);
+		case 4: return setSpec(2, 45, 4);
+		case 5: return setSpec(2, 30, 6);
+		case 6: return setSpec(0, 80, 6, true);
 		default: break;
 		}
 		break;
 	case Protocol::PAWN_CLASS_ALEN_SPEAR:
 		switch (skillSlot)
 		{
-		case 1: return setSpec(1, 25, 2);
-		case 2: return setSpec(2, 35, 2);
-		case 3: return setSpec(2, 45, 2);
-		case 4: return setSpec(2, 30, 3);
-		case 5: return setSpec(0, 80, 2, true);
+		case 2: return setSpec(1, 25, 2);
+		case 3: return setSpec(2, 35, 2);
+		case 4: return setSpec(2, 45, 2);
+		case 5: return setSpec(2, 30, 3);
+		case 6: return setSpec(0, 80, 2, true);
 		default: break;
 		}
 		break;
@@ -1143,15 +1150,15 @@ bool BattleRoom::TryGetSkillSpec(Protocol::PawnClass pawnClass, int32 skillSlot,
 
 	switch (skillSlot)
 	{
-	case 1:
-		return setSpec(1, 25, 1);
 	case 2:
-		return setSpec(2, 35, 3);
+		return setSpec(1, 25, 1);
 	case 3:
-		return setSpec(2, 45, 2);
+		return setSpec(2, 35, 3);
 	case 4:
-		return setSpec(2, 30, 4);
+		return setSpec(2, 45, 2);
 	case 5:
+		return setSpec(2, 30, 4);
+	case 6:
 		return setSpec(0, 80, 3, true);
 	default:
 		spec = SkillSpec();
@@ -1236,10 +1243,90 @@ void BattleRoom::StartTurn(BattlePawnState& pawn)
 		const int32 recoverArmor = lostArmor / 2;
 		pawn.armor = min(pawn.maxArmor, pawn.armor + recoverArmor);
 	}
+
+	ExecutePassiveTrigger(pawn, "ON_OWNER_TURN_START");
+}
+
+void BattleRoom::ExecuteBattleStartEffects(BattleState& battle)
+{
+	for (BattlePawnState& pawn : battle.alliedPawns)
+		ExecutePassiveTrigger(pawn, "ON_BATTLE_START");
+
+	for (BattlePawnState& pawn : battle.enemyPawns)
+		ExecutePassiveTrigger(pawn, "ON_BATTLE_START");
+}
+
+void BattleRoom::ExecutePassiveTrigger(BattlePawnState& pawn, const string& trigger)
+{
+	const BattleSkillTemplate* passiveSkill = GBattleTemplates.GetSkillByActionSlot(pawn.pawnClass, 1);
+	const BattlePawnClassTemplate* pawnTemplate = GBattleTemplates.GetPawnClassTemplate(pawn.pawnClass);
+	if (passiveSkill == nullptr || pawnTemplate == nullptr || passiveSkill->skillCategory != "PASSIVE")
+		return;
+
+	BattleEffectExecutionRequest request;
+	request.skill = passiveSkill;
+	request.casterTemplate = pawnTemplate;
+	request.skillSlot = passiveSkill->actionSlot;
+	request.actionType = "passive";
+	request.caster.pawnId = pawn.pawnId;
+	request.caster.ownerId = pawn.ownerId;
+	request.caster.pawnClass = pawn.pawnClass;
+	request.caster.axial = &pawn.axial;
+	request.caster.hp = &pawn.hp;
+	request.caster.armor = &pawn.armor;
+	request.caster.resources = &pawn.resources;
+	request.caster.maxResources = &pawn.maxResources;
+	request.caster.barriers = &pawn.barriers;
+	request.caster.statusStacks = &pawn.statusStacks;
+	request.target = request.caster;
+
+	BattleEffectExecutor executor;
+	executor.ExecuteTrigger(request, trigger);
+}
+
+void BattleRoom::AdvanceOwnerTurnEffects(BattlePawnState& pawn)
+{
+	BattleEffectPawnContext context;
+	context.pawnId = pawn.pawnId;
+	context.ownerId = pawn.ownerId;
+	context.pawnClass = pawn.pawnClass;
+	context.axial = &pawn.axial;
+	context.hp = &pawn.hp;
+	context.armor = &pawn.armor;
+	context.resources = &pawn.resources;
+	context.maxResources = &pawn.maxResources;
+	context.barriers = &pawn.barriers;
+	context.statusStacks = &pawn.statusStacks;
+
+	BattleEffectExecutor executor;
+	executor.AdvanceOwnerTurn(context);
 }
 
 void BattleRoom::ApplyDamage(BattlePawnState& target, int32 damage)
 {
+	int32 barrierDamage = 0;
+	for (auto it = target.barriers.rbegin(); it != target.barriers.rend() && damage > 0; ++it)
+	{
+		const int32 absorbed = min(it->value, damage);
+		it->value -= absorbed;
+		damage -= absorbed;
+		barrierDamage += absorbed;
+	}
+
+	if (barrierDamage > 0)
+	{
+		cout << "BATTLE_BARRIER_ABSORB"
+			<< " pawn_id=" << target.pawnId
+			<< " amount=" << barrierDamage
+			<< endl;
+	}
+
+	auto eraseBegin = remove_if(target.barriers.begin(), target.barriers.end(), [](const BattleBarrierState& barrier)
+		{
+			return barrier.value <= 0;
+		});
+	target.barriers.erase(eraseBegin, target.barriers.end());
+
 	const int32 armorDamage = min(target.armor, damage);
 	target.armor -= armorDamage;
 

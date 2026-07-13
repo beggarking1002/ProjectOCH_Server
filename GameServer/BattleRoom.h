@@ -1,7 +1,7 @@
 #pragma once
 #include "JobQueue.h"
 #include "Pawn.h"
-#include "BattleTemplateManager.h"
+#include "BattleEffectExecutor.h"
 
 using BattleRoomRef = shared_ptr<class BattleRoom>;
 
@@ -28,6 +28,8 @@ private:
 		Protocol::BattlePawnRole role = Protocol::BATTLE_PAWN_ROLE_NONE;
 		unordered_map<string, int32> resources;
 		unordered_map<string, int32> maxResources;
+		vector<BattleBarrierState> barriers;
+		unordered_map<string, int32> statusStacks;
 	};
 
 	struct SkillSpec
@@ -115,6 +117,9 @@ private:
 	bool HasAlivePawn(const vector<BattlePawnState>& pawns);
 	bool TryFinishBattle(BattleState& battle, uint64 fallbackWinnerOwnerId);
 	void StartTurn(BattlePawnState& pawn);
+	void ExecutePassiveTrigger(BattlePawnState& pawn, const string& trigger);
+	void ExecuteBattleStartEffects(BattleState& battle);
+	void AdvanceOwnerTurnEffects(BattlePawnState& pawn);
 	void ApplyDamage(BattlePawnState& target, int32 damage);
 	void UpdateFacingByMove(BattlePawnState& pawn, const Protocol::AxialCoord& start, const Protocol::AxialCoord& target);
 	bool IsBackAttack(const BattlePawnState& attacker, const BattlePawnState& defender);

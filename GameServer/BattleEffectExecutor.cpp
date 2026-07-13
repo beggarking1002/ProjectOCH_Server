@@ -17,6 +17,11 @@ namespace
 
 BattleEffectExecutionResult BattleEffectExecutor::ExecuteOnCast(const BattleEffectExecutionRequest& request)
 {
+	return ExecuteTrigger(request, "ON_CAST");
+}
+
+BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEffectExecutionRequest& request, const string& trigger)
+{
 	BattleEffectExecutionResult result;
 	if (request.skill == nullptr || request.casterTemplate == nullptr)
 		return result;
@@ -25,18 +30,68 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteOnCast(const BattleEffe
 	if (effects == nullptr)
 		return result;
 
+	unordered_map<string, int32> stopPriorities;
 	for (const BattleEffectTemplate& effect : *effects)
 	{
-		if (effect.trigger != "ON_CAST")
+		if (effect.trigger != trigger || effect.exclusiveGroup.empty() || effect.stopOnMatch == false || IsConditionMet(effect, request) == false)
 			continue;
+
+		auto [it, inserted] = stopPriorities.emplace(effect.exclusiveGroup, effect.exclusivePriority);
+		if (inserted == false)
+			it->second = min(it->second, effect.exclusivePriority);
+	}
+
+	for (const BattleEffectTemplate& effect : *effects)
+	{
+		if (effect.trigger != trigger || IsConditionMet(effect, request) == false)
+			continue;
+
+		if (effect.exclusiveGroup.empty() == false)
+		{
+			auto stopIt = stopPriorities.find(effect.exclusiveGroup);
+			if (stopIt != stopPriorities.end() && effect.exclusivePriority > stopIt->second)
+				continue;
+		}
 
 		if (effect.effectKey == "DEAL_DAMAGE")
 			ExecuteDealDamage(effect, request, result);
 		else if (effect.effectKey == "MODIFY_RESOURCE")
 			ExecuteModifyResource(effect, request);
+		else if (effect.effectKey == "SET_RESOURCE_MAX")
+			ExecuteSetResourceMax(effect, request);
+		else if (effect.effectKey == "APPLY_BARRIER")
+			ExecuteApplyBarrier(effect, request);
+		else if (effect.effectKey == "APPLY_STATUS")
+			ExecuteApplyStatus(effect, request);
 	}
 
 	return result;
+}
+
+void BattleEffectExecutor::AdvanceOwnerTurn(BattleEffectPawnContext pawn)
+{
+	if (pawn.barriers == nullptr)
+		return;
+
+	for (BattleBarrierState& barrier : *pawn.barriers)
+		barrier.remainingOwnerTurns--;
+
+	for (const BattleBarrierState& barrier : *pawn.barriers)
+	{
+		if (barrier.value > 0 && barrier.remainingOwnerTurns <= 0)
+		{
+			cout << "BATTLE_BARRIER_EXPIRE"
+				<< " pawn_id=" << pawn.pawnId
+				<< " source_effect_group_key=" << barrier.sourceEffectGroupKey
+				<< endl;
+		}
+	}
+
+	auto eraseBegin = remove_if(pawn.barriers->begin(), pawn.barriers->end(), [](const BattleBarrierState& barrier)
+		{
+			return barrier.value <= 0 || barrier.remainingOwnerTurns <= 0;
+		});
+	pawn.barriers->erase(eraseBegin, pawn.barriers->end());
 }
 
 void BattleEffectExecutor::ExecuteDealDamage(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
@@ -113,6 +168,75 @@ void BattleEffectExecutor::ExecuteModifyResource(const BattleEffectTemplate& eff
 		<< endl;
 }
 
+void BattleEffectExecutor::ExecuteSetResourceMax(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
+{
+	BattleEffectPawnContext target = SelectTarget(effect, request);
+	if (target.resources == nullptr || target.maxResources == nullptr)
+		return;
+
+	const string resourceKey = GetParam(effect, "resource_key");
+	if (resourceKey.empty())
+		return;
+
+	const int32 maxValue = max(0, GetIntParam(effect, "max_value", 0));
+	(*target.maxResources)[resourceKey] = maxValue;
+	int32& value = (*target.resources)[resourceKey];
+	value = min(max(value, 0), maxValue);
+
+	cout << "BATTLE_RESOURCE_MAX_SET"
+		<< " pawn_id=" << target.pawnId
+		<< " resource_key=" << resourceKey
+		<< " value=" << value
+		<< " max_value=" << maxValue
+		<< endl;
+}
+
+void BattleEffectExecutor::ExecuteApplyBarrier(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
+{
+	BattleEffectPawnContext target = SelectTarget(effect, request);
+	if (target.barriers == nullptr)
+		return;
+
+	const int32 value = CalculateValue(effect, *request.casterTemplate);
+	const int32 durationTurns = GetIntParam(effect, "duration_turns", 0);
+	if (value <= 0 || durationTurns <= 0)
+		return;
+
+	BattleBarrierState barrier;
+	barrier.sourceEffectGroupKey = effect.effectGroupKey;
+	barrier.value = value;
+	barrier.remainingOwnerTurns = durationTurns;
+	target.barriers->push_back(barrier);
+
+	cout << "BATTLE_BARRIER_APPLY"
+		<< " pawn_id=" << target.pawnId
+		<< " value=" << value
+		<< " duration_turns=" << durationTurns
+		<< endl;
+}
+
+void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
+{
+	BattleEffectPawnContext target = SelectTarget(effect, request);
+	if (target.statusStacks == nullptr)
+		return;
+
+	const string statusKey = GetParam(effect, "status_key");
+	if (statusKey.empty())
+		return;
+
+	const int32 stackDelta = GetIntParam(effect, "stack_delta", 1);
+	int32& stack = (*target.statusStacks)[statusKey];
+	stack = max(0, stack + stackDelta);
+
+	cout << "BATTLE_STATUS_APPLY"
+		<< " pawn_id=" << target.pawnId
+		<< " status_key=" << statusKey
+		<< " stack_delta=" << stackDelta
+		<< " stack=" << stack
+		<< endl;
+}
+
 int32 BattleEffectExecutor::CalculateValue(const BattleEffectTemplate& effect, const BattlePawnClassTemplate& casterTemplate)
 {
 	const int32 baseValue = GetIntParam(effect, "base_value", 0);
@@ -149,6 +273,32 @@ int32 BattleEffectExecutor::ApplyDamage(BattleEffectPawnContext target, int32 da
 
 	const int32 beforeHp = *target.hp;
 	const int32 beforeArmor = *target.armor;
+	int32 barrierDamage = 0;
+	if (target.barriers != nullptr)
+	{
+		for (auto it = target.barriers->rbegin(); it != target.barriers->rend() && damage > 0; ++it)
+		{
+			const int32 absorbed = min(it->value, damage);
+			it->value -= absorbed;
+			damage -= absorbed;
+			barrierDamage += absorbed;
+		}
+
+		if (barrierDamage > 0)
+		{
+			cout << "BATTLE_BARRIER_ABSORB"
+				<< " pawn_id=" << target.pawnId
+				<< " amount=" << barrierDamage
+				<< endl;
+		}
+
+		auto eraseBegin = remove_if(target.barriers->begin(), target.barriers->end(), [](const BattleBarrierState& barrier)
+			{
+				return barrier.value <= 0;
+			});
+		target.barriers->erase(eraseBegin, target.barriers->end());
+	}
+
 	const int32 armorDamage = min(*target.armor, damage);
 	*target.armor -= armorDamage;
 
@@ -158,14 +308,33 @@ int32 BattleEffectExecutor::ApplyDamage(BattleEffectPawnContext target, int32 da
 
 	const int32 afterHp = *target.hp;
 	const int32 afterArmor = *target.armor;
-	return (beforeHp - afterHp) + (beforeArmor - afterArmor);
+	return barrierDamage + (beforeHp - afterHp) + (beforeArmor - afterArmor);
 }
 
-BattleEffectPawnContext BattleEffectExecutor::SelectTarget(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
+BattleEffectPawnContext BattleEffectExecutor::SelectTarget(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request) const
 {
 	if (effect.effectTarget == "CASTER" || effect.effectTarget == "SELF")
 		return request.caster;
 	return request.target;
+}
+
+bool BattleEffectExecutor::IsConditionMet(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request) const
+{
+	const string resourceKey = GetParam(effect, "condition_resource_key");
+	if (resourceKey.empty())
+		return true;
+
+	BattleEffectPawnContext target = SelectTarget(effect, request);
+	if (target.resources == nullptr || target.maxResources == nullptr)
+		return false;
+
+	auto valueIt = target.resources->find(resourceKey);
+	auto maxIt = target.maxResources->find(resourceKey);
+	if (valueIt == target.resources->end() || maxIt == target.maxResources->end() || maxIt->second <= 0)
+		return false;
+
+	const double thresholdRatio = GetDoubleParam(effect, "threshold_ratio", 0.0);
+	return static_cast<double>(valueIt->second) / static_cast<double>(maxIt->second) >= thresholdRatio;
 }
 
 string BattleEffectExecutor::GetParam(const BattleEffectTemplate& effect, const string& key, const string& fallback) const
