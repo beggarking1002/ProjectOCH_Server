@@ -1,4 +1,4 @@
-#include "pch.h"
+Ôªø#include "pch.h"
 #include "ObjectUtils.h"
 #include "Player.h"
 #include "GameSession.h"
@@ -7,7 +7,7 @@ atomic<int64> ObjectUtils::s_idGenerator = 1;
 
 PlayerRef ObjectUtils::CreatePlayer(GameSessionRef session)
 {
-	// ID ª˝º∫±‚
+	// ID ÏÉùÏÑ±Í∏∞
 	const int64 newId = s_idGenerator.fetch_add(1);
 
 	PlayerRef player = make_shared<Player>();
@@ -15,7 +15,7 @@ PlayerRef ObjectUtils::CreatePlayer(GameSessionRef session)
 	if (newId % 2 == 1)
 	{
 		player->AddBattlePawn(Protocol::PAWN_CLASS_SUEN_AXE_SWORD);
-		player->AddBattlePawn(Protocol::PAWN_CLASS_BEIGE_FIRE);
+		player->AddBattlePawn(Protocol::PAWN_CLASS_BEIGE_ICE);
 	}
 	else
 	{
@@ -28,3 +28,4 @@ PlayerRef ObjectUtils::CreatePlayer(GameSessionRef session)
 
 	return player;
 }
+

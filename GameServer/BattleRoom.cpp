@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "BattleRoom.h"
+#include "BattleEffectExecutor.h"
+#include "BattleTemplateManager.h"
 #include "GameSession.h"
 #include "Player.h"
 #include "Room.h"
@@ -355,6 +357,13 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		return;
 	}
 
+	if (skillSpec.isSubAction && caster->usedSubActionThisTurn)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
+			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, "sub action already used this turn", caster);
+		return;
+	}
+
 	if (caster->currentAp < skillSpec.apCost)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
@@ -362,7 +371,8 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		return;
 	}
 
-	BattlePawnState* target = FindPawn(battle, pkt.target_pawn_id());
+	const bool selfTarget = skillSpec.targetType == "SELF" || skillSpec.targetType == "SELF_TOGGLE";
+	BattlePawnState* target = selfTarget ? caster : FindPawn(battle, pkt.target_pawn_id());
 	if (target == nullptr)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
@@ -370,14 +380,23 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		return;
 	}
 
-	if (target->ownerId == caster->ownerId)
+	const bool enemyTarget = skillSpec.targetType == "ENEMY_SINGLE" || skillSpec.targetType == "TILE_OR_ENEMY";
+	const bool allyTarget = skillSpec.targetType == "ALLY_SINGLE";
+	if (enemyTarget && target->ownerId == caster->ownerId)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
 			target->axial, 0, target->hp, target->armor, battle.currentTurnPawnId, "cannot target ally", caster, target);
 		return;
 	}
 
-	const Protocol::AxialCoord targetAxial = pkt.has_target_axial() ? pkt.target_axial() : target->axial;
+	if (allyTarget && target->ownerId != caster->ownerId)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
+			target->axial, 0, target->hp, target->armor, battle.currentTurnPawnId, "target is not ally", caster, target);
+		return;
+	}
+
+	const Protocol::AxialCoord targetAxial = selfTarget ? target->axial : (pkt.has_target_axial() ? pkt.target_axial() : target->axial);
 	if (targetAxial.q() != target->axial.q() || targetAxial.r() != target->axial.r())
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
@@ -392,7 +411,8 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		return;
 	}
 
-	if (AxialDistance(caster->axial, target->axial) > skillSpec.range)
+	const int32 targetDistance = AxialDistance(caster->axial, target->axial);
+	if (targetDistance < skillSpec.rangeMin || targetDistance > skillSpec.rangeMax)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
 			target->axial, 0, target->hp, target->armor, battle.currentTurnPawnId, "target out of range", caster, target);
@@ -401,6 +421,8 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 
 	if (skillSpec.isUltimate)
 		caster->usedUltimate = true;
+	else if (skillSpec.isSubAction)
+		caster->usedSubActionThisTurn = true;
 	else
 		caster->currentAp = max(0, caster->currentAp - skillSpec.apCost);
 
@@ -409,7 +431,59 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 
 	const bool isBackAttack = IsBackAttack(*caster, *target);
 	const bool targetWasAlive = IsAlive(*target);
-	ApplyDamage(*target, skillSpec.damage);
+
+	vector<Protocol::BattleActionLog> logs;
+	int32 appliedDamage = skillSpec.damage;
+	if (skillSpec.skillTemplate != nullptr && skillSpec.casterTemplate != nullptr)
+	{
+		BattleEffectExecutionRequest effectRequest;
+		effectRequest.skill = skillSpec.skillTemplate;
+		effectRequest.casterTemplate = skillSpec.casterTemplate;
+		effectRequest.skillSlot = pkt.skill_slot();
+		effectRequest.actionType = skillSpec.isUltimate ? "ultimate" : "skill";
+		effectRequest.isBackAttack = isBackAttack;
+		effectRequest.logs = &logs;
+		effectRequest.caster.pawnId = caster->pawnId;
+		effectRequest.caster.ownerId = caster->ownerId;
+		effectRequest.caster.pawnClass = caster->pawnClass;
+		effectRequest.caster.axial = &caster->axial;
+		effectRequest.caster.hp = &caster->hp;
+		effectRequest.caster.armor = &caster->armor;
+		effectRequest.caster.resources = &caster->resources;
+		effectRequest.caster.maxResources = &caster->maxResources;
+		effectRequest.target.pawnId = target->pawnId;
+		effectRequest.target.ownerId = target->ownerId;
+		effectRequest.target.pawnClass = target->pawnClass;
+		effectRequest.target.axial = &target->axial;
+		effectRequest.target.hp = &target->hp;
+		effectRequest.target.armor = &target->armor;
+		effectRequest.target.resources = &target->resources;
+		effectRequest.target.maxResources = &target->maxResources;
+
+		BattleEffectExecutor executor;
+		const BattleEffectExecutionResult effectResult = executor.ExecuteOnCast(effectRequest);
+		appliedDamage = effectResult.totalDamage;
+	}
+	else
+	{
+		ApplyDamage(*target, appliedDamage);
+		Protocol::BattleActionLog actionLog;
+		actionLog.set_attacker_pawn_id(caster->pawnId);
+		actionLog.set_defender_pawn_id(target->pawnId);
+		actionLog.set_skill_slot(pkt.skill_slot());
+		actionLog.set_action_type(skillSpec.isUltimate ? "ultimate" : "skill");
+		actionLog.set_damage(appliedDamage);
+		actionLog.set_is_critical(false);
+		actionLog.set_is_evaded(false);
+		actionLog.set_is_guarded(false);
+		actionLog.set_is_perfect_guarded(false);
+		actionLog.set_is_counter(false);
+		actionLog.set_is_back_attack(isBackAttack);
+		actionLog.set_hp_after(target->hp);
+		actionLog.set_armor_after(target->armor);
+		logs.push_back(actionLog);
+	}
+
 	if (targetWasAlive && target->hp <= 0)
 	{
 		target->hp = 0;
@@ -421,39 +495,22 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 			battle.turnQueueIndex = battle.turnQueue.size();
 	}
 
-	vector<Protocol::BattleActionLog> logs;
-	Protocol::BattleActionLog actionLog;
-	actionLog.set_attacker_pawn_id(caster->pawnId);
-	actionLog.set_defender_pawn_id(target->pawnId);
-	actionLog.set_skill_slot(pkt.skill_slot());
-	actionLog.set_action_type(skillSpec.isUltimate ? "ultimate" : "skill");
-	actionLog.set_damage(skillSpec.damage);
-	actionLog.set_is_critical(false);
-	actionLog.set_is_evaded(false);
-	actionLog.set_is_guarded(false);
-	actionLog.set_is_perfect_guarded(false);
-	actionLog.set_is_counter(false);
-	actionLog.set_is_back_attack(isBackAttack);
-	actionLog.set_hp_after(target->hp);
-	actionLog.set_armor_after(target->armor);
-	logs.push_back(actionLog);
-
 	SendBattleSkillResult(session, true, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-		target->axial, skillSpec.damage, target->hp, target->armor, battle.currentTurnPawnId, "", caster, target, logs);
+		target->axial, appliedDamage, target->hp, target->armor, battle.currentTurnPawnId, "", caster, target, logs);
 	if (battle.isPvp)
 	{
 		GameSessionRef ownerSession = battle.ownerSession.lock();
 		if (ownerSession != nullptr && ownerSession != session)
 		{
 			SendBattleSkillResult(ownerSession, true, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-				target->axial, skillSpec.damage, target->hp, target->armor, battle.currentTurnPawnId, "", caster, target, logs);
+				target->axial, appliedDamage, target->hp, target->armor, battle.currentTurnPawnId, "", caster, target, logs);
 		}
 
 		GameSessionRef opponentSession = battle.opponentSession.lock();
 		if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
 		{
 			SendBattleSkillResult(opponentSession, true, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-				target->axial, skillSpec.damage, target->hp, target->armor, battle.currentTurnPawnId, "", caster, target, logs);
+				target->axial, appliedDamage, target->hp, target->armor, battle.currentTurnPawnId, "", caster, target, logs);
 		}
 	}
 
@@ -641,8 +698,17 @@ BattleRoom::BattleState BattleRoom::CreateBattle(PlayerRef ownerPlayer)
 	battle.mapId = "Battle_Test_001";
 
 	AddOwnedBattlePawns(battle.alliedPawns, ownerPlayer, -2, 0);
-	battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_ZILLIAN_LONGBOW, 2, -1, 70, 3, 2, Protocol::BATTLE_PAWN_ROLE_RANGED));
-	battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_ALEN_SPEAR, 2, 0, 90, 3, 8, Protocol::BATTLE_PAWN_ROLE_MELEE));
+	PawnTemplate enemyTemplate;
+	if (TryGetPawnTemplate(Protocol::PAWN_CLASS_BEIGE_ICE, enemyTemplate))
+	{
+		battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_BEIGE_ICE, 2, -1, enemyTemplate.hp,
+			enemyTemplate.moveRange, enemyTemplate.maxArmor, enemyTemplate.role));
+	}
+	if (TryGetPawnTemplate(Protocol::PAWN_CLASS_BEIGE_ICE, enemyTemplate))
+	{
+		battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_BEIGE_ICE, 2, 0, enemyTemplate.hp,
+			enemyTemplate.moveRange, enemyTemplate.maxArmor, enemyTemplate.role));
+	}
 
 	BuildTurnQueue(battle);
 	if (BattlePawnState* currentPawn = FindPawn(battle, battle.currentTurnPawnId))
@@ -691,24 +757,31 @@ BattleRoom::BattlePawnState BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol:
 	pawn.isDead = false;
 	pawn.facingDirection = q <= 0 ? Protocol::BATTLE_FACING_DIRECTION_RIGHT : Protocol::BATTLE_FACING_DIRECTION_LEFT;
 	pawn.role = role;
+	if (pawnClass == Protocol::PAWN_CLASS_BEIGE_ICE)
+	{
+		pawn.resources["COLD"] = 0;
+		pawn.maxResources["COLD"] = 20;
+	}
 	return pawn;
 }
 
 BattleRoom::BattlePawnState BattleRoom::MakeBattlePawnFromOwnedPawn(PawnRef sourcePawn, int32 q, int32 r)
 {
+	constexpr Protocol::PawnClass kBattleTestPawnClass = Protocol::PAWN_CLASS_BEIGE_ICE;
+
 	if (sourcePawn == nullptr)
-		return MakeBattlePawn(0, Protocol::PAWN_CLASS_NONE, q, r, 80, 3, 0, Protocol::BATTLE_PAWN_ROLE_MELEE);
+		return MakeBattlePawn(0, kBattleTestPawnClass, q, r, 80, 3, 0, Protocol::BATTLE_PAWN_ROLE_RANGED);
 
 	PawnTemplate pawnTemplate;
-	if (TryGetPawnTemplate(sourcePawn->pawnClass, pawnTemplate) == false)
+	if (TryGetPawnTemplate(kBattleTestPawnClass, pawnTemplate) == false)
 	{
 		pawnTemplate.hp = 80;
 		pawnTemplate.moveRange = 3;
 		pawnTemplate.maxArmor = 0;
-		pawnTemplate.role = Protocol::BATTLE_PAWN_ROLE_MELEE;
+		pawnTemplate.role = Protocol::BATTLE_PAWN_ROLE_RANGED;
 	}
 
-	return MakeBattlePawn(sourcePawn->ownerId, sourcePawn->pawnClass, q, r, pawnTemplate.hp, pawnTemplate.moveRange,
+	return MakeBattlePawn(sourcePawn->ownerId, kBattleTestPawnClass, q, r, pawnTemplate.hp, pawnTemplate.moveRange,
 		pawnTemplate.maxArmor, pawnTemplate.role);
 }
 
@@ -729,6 +802,20 @@ void BattleRoom::AddOwnedBattlePawns(vector<BattlePawnState>& dst, PlayerRef own
 
 bool BattleRoom::TryGetPawnTemplate(Protocol::PawnClass pawnClass, PawnTemplate& pawnTemplate)
 {
+	const BattlePawnClassTemplate* data = GBattleTemplates.GetPawnClassTemplate(pawnClass);
+	if (data != nullptr)
+	{
+		constexpr int32 kBaseHp = 50;
+		constexpr int32 kHpPerCon = 5;
+		constexpr int32 kFixedMoveRange = 3;
+
+		pawnTemplate.hp = kBaseHp + data->baseCon * kHpPerCon;
+		pawnTemplate.moveRange = kFixedMoveRange;
+		pawnTemplate.maxArmor = data->role == Protocol::BATTLE_PAWN_ROLE_TANKER ? data->baseDefense : 0;
+		pawnTemplate.role = data->role;
+		return true;
+	}
+
 	switch (pawnClass)
 	{
 	case Protocol::PAWN_CLASS_SUEN_AXE_SWORD:
@@ -967,12 +1054,39 @@ uint64 BattleRoom::AdvanceTurn(BattleState& battle)
 
 bool BattleRoom::TryGetSkillSpec(Protocol::PawnClass pawnClass, int32 skillSlot, SkillSpec& spec, string& reason)
 {
+	const BattleSkillTemplate* skill = GBattleTemplates.GetSkillByActionSlot(pawnClass, skillSlot);
+	const BattlePawnClassTemplate* pawnTemplate = GBattleTemplates.GetPawnClassTemplate(pawnClass);
+	if (skill != nullptr && pawnTemplate != nullptr)
+	{
+		if (skill->skillCategory == "PASSIVE" || skill->skillCategory == "REACTION")
+		{
+			spec = SkillSpec();
+			reason = "skill category cannot be cast";
+			return false;
+		}
+
+		spec = SkillSpec();
+	spec.skillKey = skill->skillKey;
+	spec.targetType = skill->targetType;
+	spec.skillTemplate = skill;
+	spec.casterTemplate = pawnTemplate;
+	spec.apCost = skill->apCost;
+	spec.damage = 0;
+		spec.rangeMin = skill->rangeMin;
+		spec.rangeMax = skill->rangeMax;
+		spec.isUltimate = skill->actionSlot == 6;
+		spec.isSubAction = skill->actionSlot == 7;
+		return true;
+	}
+
 	auto setSpec = [&spec](int32 apCost, int32 damage, int32 range, bool isUltimate = false)
 		{
 			spec = SkillSpec();
 			spec.apCost = apCost;
 			spec.damage = damage;
-			spec.range = range;
+			spec.rangeMin = 0;
+			spec.rangeMax = range;
+			spec.targetType = "ENEMY_SINGLE";
 			spec.isUltimate = isUltimate;
 			return true;
 		};

@@ -1,0 +1,81 @@
+﻿EnumName,EnumValue,Description
+string,string,string
+PawnRole,TANKER,장갑 회복/전방 유지 역할군
+PawnRole,MELEE,근접 공격 역할군
+PawnRole,RANGED,원거리/주문 공격 역할군
+PawnClass,PAWN_CLASS_BEIGE_ICE,베이지 얼음
+PawnClass,PAWN_CLASS_BEIGE_FIRE,베이지 불
+PawnClass,PAWN_CLASS_SUEN_AXE_SWORD,수엔 도끼/검
+PawnClass,PAWN_CLASS_SUEN_PARVIS,수엔 파비스
+PawnClass,PAWN_CLASS_ALEN_SWORD_SHIELD,알렌 검방패
+PawnClass,PAWN_CLASS_ALEN_SPEAR,알렌 창
+PawnClass,PAWN_CLASS_ZILLIAN_LONGBOW,질리언 장궁
+PawnClass,PAWN_CLASS_ZILLIAN_MACE,질리언 메이스
+SkillCategory,PASSIVE,직접 시전하지 않는 상시/조건 발동 스킬
+SkillCategory,CAST,버튼 입력으로 1회 시전되는 스킬
+SkillCategory,TOGGLE,켜기/끄기 상태를 가지는 지속형 스킬
+SkillCategory,REACTION,직접 입력 없이 특정 전투 이벤트에 반응하는 스킬
+TargetType,SELF,자기 자신 대상
+TargetType,ENEMY_SINGLE,적 단일 대상
+TargetType,ALLY_SINGLE,아군 단일 대상
+TargetType,TILE_OR_ENEMY,타일 또는 적 대상
+TargetType,SELF_TOGGLE,자기 자신 On/Off 토글
+ScalingStat,NONE,스탯 계수 없음
+ScalingStat,STR,힘 계수
+ScalingStat,CON,체력/내구 계수
+ScalingStat,DEX,민첩 계수
+ScalingStat,SPELL,주문력 계수
+ScalingStat,DEFENSE,방어 계수
+ScalingStat,FOCUS,집중 계수
+ScalingStat,WILL,의지 계수
+TextOwnerType,SKILL,스킬 텍스트
+TextOwnerType,PAWN,Pawn 텍스트 확장용
+TextOwnerType,BUFF,버프/디버프 텍스트 확장용
+TextOwnerType,ITEM,아이템 텍스트 확장용
+TextType,NAME,표시 이름
+TextType,SHORT,짧은 설명
+TextType,DESC,상세 설명
+EffectTrigger,ON_BATTLE_START,전투 시작 시
+EffectTrigger,ON_OWNER_TURN_START,효과 소유자 턴 시작 시
+EffectTrigger,ON_OWNER_TURN_END,효과 소유자 턴 종료 시
+EffectTrigger,ON_CAST,스킬 시전 시
+EffectTrigger,ON_HIT_DEALT,공격자가 명중시켰을 때
+EffectTrigger,ON_HIT_RECEIVED,피격자가 명중당했을 때
+EffectTrigger,ON_DAMAGE_DEALT,공격자가 실제 피해를 입혔을 때
+EffectTrigger,ON_DAMAGE_RECEIVED,피격자가 실제 피해를 받았을 때
+EffectTrigger,ON_BARRIER_BREAK,방어막 파괴 시
+EffectTrigger,WHILE_EMPOWERED,강화 상태 중 적용
+EffectTarget,SELF,자기 자신
+EffectTarget,CASTER,시전자
+EffectTarget,TARGET,선택 대상
+EffectTarget,TARGET_TILE,선택 타일
+EffectTarget,TARGET_AND_NEIGHBORS,선택 타일과 인접 타일
+EffectTarget,TARGET_ENEMY,선택된 적
+EffectTarget,ADJACENT_ENEMY,인접한 적
+EffectTarget,ENEMY_IN_AURA,오라 범위 내 적
+EffectTarget,SKILL,TargetSkillKey가 가리키는 스킬
+EffectKey,SET_RESOURCE_MAX,자원 최대치 설정
+EffectKey,MODIFY_RESOURCE,자원 증감/배율 변경
+EffectKey,DEAL_DAMAGE,피해 적용
+EffectKey,APPLY_BARRIER,방어막 부여
+EffectKey,APPLY_STATUS,상태 부여
+EffectKey,CHANGE_TILE_TYPE,타일 타입 변경
+EffectKey,APPLY_STAT_MODIFIER,스탯/전투 수치 보정 적용
+EffectKey,TOGGLE_AURA,오라 토글
+EffectKey,IGNORE_COLD_BACKLASH,냉기 과열 피해 무시
+EffectKey,EMPOWER_SKILLS,스킬 강화 상태 부여
+EffectKey,EMPOWER_SKILL_DAMAGE_MULTIPLIER,특정 스킬 피해 배율 강화
+EffectKey,EMPOWER_SHIELD_CHAIN,보호막 추가 대상 강화
+EffectKey,EMPOWER_HAIL_SHAPE,우박 범위 모양 강화
+EffectKey,EMPOWER_AURA_RADIUS,오라 반경 강화
+ResourceKey,COLD,냉기 자원
+StatusKey,FROSTBITE,동상 상태
+DamageType,MAGIC,마법 피해
+TileType,ICE,빙판 타일
+StatKey,DAMAGE_DEALT,주는 피해
+ModifierType,ADD_RATIO,비율 가산
+Operation,ADD,덧셈
+Operation,MULTIPLY,곱셈
+Bool,TRUE,참
+Bool,FALSE,거짓
+SystemAction,MOVE,ActionSlot 8 고정 이동 시스템 액션

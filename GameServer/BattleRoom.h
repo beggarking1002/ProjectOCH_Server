@@ -1,6 +1,7 @@
 #pragma once
 #include "JobQueue.h"
 #include "Pawn.h"
+#include "BattleTemplateManager.h"
 
 using BattleRoomRef = shared_ptr<class BattleRoom>;
 
@@ -25,14 +26,22 @@ private:
 		bool isDead = false;
 		Protocol::BattleFacingDirection facingDirection = Protocol::BATTLE_FACING_DIRECTION_RIGHT;
 		Protocol::BattlePawnRole role = Protocol::BATTLE_PAWN_ROLE_NONE;
+		unordered_map<string, int32> resources;
+		unordered_map<string, int32> maxResources;
 	};
 
 	struct SkillSpec
 	{
+		string skillKey;
+		string targetType;
+		const BattleSkillTemplate* skillTemplate = nullptr;
+		const BattlePawnClassTemplate* casterTemplate = nullptr;
 		int32 apCost = 0;
 		int32 damage = 0;
-		int32 range = 0;
+		int32 rangeMin = 0;
+		int32 rangeMax = 0;
 		bool isUltimate = false;
+		bool isSubAction = false;
 	};
 
 	struct PawnTemplate

@@ -21,6 +21,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BattleEffectExecutor.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="BattleTemplateManager.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
     <ClCompile Include="BattleRoom.cpp">
       <Filter>Game</Filter>
     </ClCompile>
@@ -75,6 +81,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BattleEffectExecutor.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="BattleTemplateManager.h">
+      <Filter>Game</Filter>
+    </ClInclude>
     <ClInclude Include="BattleRoom.h">
       <Filter>Game</Filter>
     </ClInclude>
