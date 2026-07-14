@@ -6,6 +6,7 @@ struct BattleBarrierState
 	uint64 barrierId = 0;
 	string sourceSkillKey;
 	int32 value = 0;
+	int32 maxValue = 0;
 	int32 remainingOwnerTurns = 0;
 };
 

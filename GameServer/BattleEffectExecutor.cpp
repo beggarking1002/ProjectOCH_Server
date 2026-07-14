@@ -208,6 +208,7 @@ void BattleEffectExecutor::ExecuteApplyBarrier(const BattleEffectTemplate& effec
 	barrier.barrierId = request.barrierIdGenerator != nullptr ? (*request.barrierIdGenerator)++ : 0;
 	barrier.sourceSkillKey = request.skill != nullptr ? request.skill->skillKey : "";
 	barrier.value = value;
+	barrier.maxValue = value;
 	barrier.remainingOwnerTurns = durationTurns;
 	target.barriers->push_back(barrier);
 

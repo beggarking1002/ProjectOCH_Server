@@ -36,6 +36,7 @@ message BattleBarrierState
 	string source_skill_key = 2;
 	int32 value = 3;
 	int32 remaining_owner_turns = 4;
+	int32 max_value = 5;
 }
 
 message BattleStatusState
@@ -68,6 +69,8 @@ message BattlePawnInfo
 	repeated BattleResourceState resources = 19;
 	repeated BattleBarrierState barriers = 20;
 	repeated BattleStatusState statuses = 21;
+	int32 shield_current = 22;
+	int32 shield_max = 23;
 }
 
 message BattlePawnDelta
@@ -86,6 +89,8 @@ message BattlePawnDelta
 	repeated BattleResourceState resources = 11;
 	repeated BattleBarrierState barriers = 12;
 	repeated BattleStatusState statuses = 13;
+	int32 shield_current = 14;
+	int32 shield_max = 15;
 }
 
 message BattleActionLog

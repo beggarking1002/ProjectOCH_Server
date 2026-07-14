@@ -892,6 +892,7 @@ class BattleBarrierState final :
     kBarrierIdFieldNumber = 1,
     kValueFieldNumber = 3,
     kRemainingOwnerTurnsFieldNumber = 4,
+    kMaxValueFieldNumber = 5,
   };
   // string source_skill_key = 2;
   void clear_source_skill_key();
@@ -934,6 +935,15 @@ class BattleBarrierState final :
   void _internal_set_remaining_owner_turns(int32_t value);
   public:
 
+  // int32 max_value = 5;
+  void clear_max_value();
+  int32_t max_value() const;
+  void set_max_value(int32_t value);
+  private:
+  int32_t _internal_max_value() const;
+  void _internal_set_max_value(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.BattleBarrierState)
  private:
   class _Internal;
@@ -946,6 +956,7 @@ class BattleBarrierState final :
     uint64_t barrier_id_;
     int32_t value_;
     int32_t remaining_owner_turns_;
+    int32_t max_value_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1268,6 +1279,8 @@ class BattlePawnInfo final :
     kIsDeadFieldNumber = 16,
     kFacingDirectionFieldNumber = 17,
     kRoleFieldNumber = 18,
+    kShieldCurrentFieldNumber = 22,
+    kShieldMaxFieldNumber = 23,
   };
   // repeated .Protocol.BattleResourceState resources = 19;
   int resources_size() const;
@@ -1476,6 +1489,24 @@ class BattlePawnInfo final :
   void _internal_set_role(::Protocol::BattlePawnRole value);
   public:
 
+  // int32 shield_current = 22;
+  void clear_shield_current();
+  int32_t shield_current() const;
+  void set_shield_current(int32_t value);
+  private:
+  int32_t _internal_shield_current() const;
+  void _internal_set_shield_current(int32_t value);
+  public:
+
+  // int32 shield_max = 23;
+  void clear_shield_max();
+  int32_t shield_max() const;
+  void set_shield_max(int32_t value);
+  private:
+  int32_t _internal_shield_max() const;
+  void _internal_set_shield_max(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.BattlePawnInfo)
  private:
   class _Internal;
@@ -1503,6 +1534,8 @@ class BattlePawnInfo final :
     bool is_dead_;
     int facing_direction_;
     int role_;
+    int32_t shield_current_;
+    int32_t shield_max_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1643,6 +1676,8 @@ class BattlePawnDelta final :
     kUsedUltimateFieldNumber = 7,
     kIsDeadFieldNumber = 8,
     kFacingDirectionFieldNumber = 9,
+    kShieldCurrentFieldNumber = 14,
+    kShieldMaxFieldNumber = 15,
   };
   // repeated .Protocol.BattleResourceState resources = 11;
   int resources_size() const;
@@ -1779,6 +1814,24 @@ class BattlePawnDelta final :
   void _internal_set_facing_direction(::Protocol::BattleFacingDirection value);
   public:
 
+  // int32 shield_current = 14;
+  void clear_shield_current();
+  int32_t shield_current() const;
+  void set_shield_current(int32_t value);
+  private:
+  int32_t _internal_shield_current() const;
+  void _internal_set_shield_current(int32_t value);
+  public:
+
+  // int32 shield_max = 15;
+  void clear_shield_max();
+  int32_t shield_max() const;
+  void set_shield_max(int32_t value);
+  private:
+  int32_t _internal_shield_max() const;
+  void _internal_set_shield_max(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.BattlePawnDelta)
  private:
   class _Internal;
@@ -1799,6 +1852,8 @@ class BattlePawnDelta final :
     bool used_ultimate_;
     bool is_dead_;
     int facing_direction_;
+    int32_t shield_current_;
+    int32_t shield_max_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2516,6 +2571,26 @@ inline void BattleBarrierState::set_remaining_owner_turns(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.BattleBarrierState.remaining_owner_turns)
 }
 
+// int32 max_value = 5;
+inline void BattleBarrierState::clear_max_value() {
+  _impl_.max_value_ = 0;
+}
+inline int32_t BattleBarrierState::_internal_max_value() const {
+  return _impl_.max_value_;
+}
+inline int32_t BattleBarrierState::max_value() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleBarrierState.max_value)
+  return _internal_max_value();
+}
+inline void BattleBarrierState::_internal_set_max_value(int32_t value) {
+  
+  _impl_.max_value_ = value;
+}
+inline void BattleBarrierState::set_max_value(int32_t value) {
+  _internal_set_max_value(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleBarrierState.max_value)
+}
+
 // -------------------------------------------------------------------
 
 // BattleStatusState
@@ -3124,6 +3199,46 @@ BattlePawnInfo::statuses() const {
   return _impl_.statuses_;
 }
 
+// int32 shield_current = 22;
+inline void BattlePawnInfo::clear_shield_current() {
+  _impl_.shield_current_ = 0;
+}
+inline int32_t BattlePawnInfo::_internal_shield_current() const {
+  return _impl_.shield_current_;
+}
+inline int32_t BattlePawnInfo::shield_current() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.shield_current)
+  return _internal_shield_current();
+}
+inline void BattlePawnInfo::_internal_set_shield_current(int32_t value) {
+  
+  _impl_.shield_current_ = value;
+}
+inline void BattlePawnInfo::set_shield_current(int32_t value) {
+  _internal_set_shield_current(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.shield_current)
+}
+
+// int32 shield_max = 23;
+inline void BattlePawnInfo::clear_shield_max() {
+  _impl_.shield_max_ = 0;
+}
+inline int32_t BattlePawnInfo::_internal_shield_max() const {
+  return _impl_.shield_max_;
+}
+inline int32_t BattlePawnInfo::shield_max() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.shield_max)
+  return _internal_shield_max();
+}
+inline void BattlePawnInfo::_internal_set_shield_max(int32_t value) {
+  
+  _impl_.shield_max_ = value;
+}
+inline void BattlePawnInfo::set_shield_max(int32_t value) {
+  _internal_set_shield_max(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.shield_max)
+}
+
 // -------------------------------------------------------------------
 
 // BattlePawnDelta
@@ -3426,6 +3541,46 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatus
 BattlePawnDelta::statuses() const {
   // @@protoc_insertion_point(field_list:Protocol.BattlePawnDelta.statuses)
   return _impl_.statuses_;
+}
+
+// int32 shield_current = 14;
+inline void BattlePawnDelta::clear_shield_current() {
+  _impl_.shield_current_ = 0;
+}
+inline int32_t BattlePawnDelta::_internal_shield_current() const {
+  return _impl_.shield_current_;
+}
+inline int32_t BattlePawnDelta::shield_current() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnDelta.shield_current)
+  return _internal_shield_current();
+}
+inline void BattlePawnDelta::_internal_set_shield_current(int32_t value) {
+  
+  _impl_.shield_current_ = value;
+}
+inline void BattlePawnDelta::set_shield_current(int32_t value) {
+  _internal_set_shield_current(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.shield_current)
+}
+
+// int32 shield_max = 15;
+inline void BattlePawnDelta::clear_shield_max() {
+  _impl_.shield_max_ = 0;
+}
+inline int32_t BattlePawnDelta::_internal_shield_max() const {
+  return _impl_.shield_max_;
+}
+inline int32_t BattlePawnDelta::shield_max() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnDelta.shield_max)
+  return _internal_shield_max();
+}
+inline void BattlePawnDelta::_internal_set_shield_max(int32_t value) {
+  
+  _impl_.shield_max_ = value;
+}
+inline void BattlePawnDelta::set_shield_max(int32_t value) {
+  _internal_set_shield_max(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.shield_max)
 }
 
 // -------------------------------------------------------------------
