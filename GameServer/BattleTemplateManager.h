@@ -53,8 +53,8 @@ struct BattleEffectTemplate
 struct BattleMapTileTemplate
 {
 	string mapId;
-	int32 q = 0;
-	int32 r = 0;
+	int32 axialQ = 0;
+	int32 axialR = 0;
 	Protocol::BattleTileType tileType = Protocol::BATTLE_TILE_TYPE_NORMAL;
 };
 
@@ -65,6 +65,7 @@ public:
 
 	const BattlePawnClassTemplate* GetPawnClassTemplate(Protocol::PawnClass pawnClass);
 	const BattleSkillTemplate* GetSkillByActionSlot(Protocol::PawnClass pawnClass, int32 actionSlot);
+	const BattleSkillTemplate* GetSkillByKey(const string& skillKey);
 	const vector<BattleEffectTemplate>* GetEffects(const string& effectGroupKey);
 	const vector<BattleMapTileTemplate>* GetBattleMapTiles(const string& mapId);
 	bool TryParseBattleResourceType(const string& key, Protocol::BattleResourceType& resourceType) const;

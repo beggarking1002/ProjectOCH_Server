@@ -46,6 +46,7 @@ public:
 	unordered_map<Protocol::BattleResourceType, int32> maxResources;
 	vector<BattleBarrierState> barriers;
 	unordered_map<string, BattleStatusState> statuses;
+	unordered_map<string, BattleAuraState> auras;
 };
 
 class BeigeIceBattlePawn final : public BattlePawn

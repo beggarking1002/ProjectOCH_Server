@@ -46,6 +46,12 @@ message BattleStatusState
 	int32 remaining_owner_turns = 3;
 }
 
+message BattleAuraState
+{
+	string source_skill_key = 1;
+	int32 radius = 2;
+}
+
 message BattleTileInfo
 {
 	AxialCoord axial = 1;
@@ -78,6 +84,7 @@ message BattlePawnInfo
 	repeated BattleStatusState statuses = 21;
 	int32 shield_current = 22;
 	int32 shield_max = 23;
+	repeated BattleAuraState auras = 24;
 }
 
 message BattlePawnDelta
@@ -98,6 +105,7 @@ message BattlePawnDelta
 	repeated BattleStatusState statuses = 13;
 	int32 shield_current = 14;
 	int32 shield_max = 15;
+	repeated BattleAuraState auras = 16;
 }
 
 message BattleActionLog

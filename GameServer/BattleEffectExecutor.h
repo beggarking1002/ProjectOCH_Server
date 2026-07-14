@@ -16,6 +16,12 @@ struct BattleStatusState
 	int32 remainingOwnerTurns = -1;
 };
 
+struct BattleAuraState
+{
+	string sourceSkillKey;
+	int32 radius = 0;
+};
+
 struct BattleEffectPawnContext
 {
 	uint64 pawnId = 0;
@@ -28,6 +34,7 @@ struct BattleEffectPawnContext
 	unordered_map<Protocol::BattleResourceType, int32>* maxResources = nullptr;
 	vector<BattleBarrierState>* barriers = nullptr;
 	unordered_map<string, BattleStatusState>* statuses = nullptr;
+	unordered_map<string, BattleAuraState>* auras = nullptr;
 };
 
 struct BattleEffectExecutionRequest
@@ -55,11 +62,19 @@ struct BattleEffectExecutionResult
 	vector<Protocol::BattleTileInfo> tileDeltas;
 };
 
+enum class BattleEffectTargetScope
+{
+	All,
+	CasterOnly,
+	TargetOnly,
+};
+
 class BattleEffectExecutor
 {
 public:
 	BattleEffectExecutionResult ExecuteOnCast(const BattleEffectExecutionRequest& request);
-	BattleEffectExecutionResult ExecuteTrigger(const BattleEffectExecutionRequest& request, const string& trigger);
+	BattleEffectExecutionResult ExecuteTrigger(const BattleEffectExecutionRequest& request, const string& trigger,
+		BattleEffectTargetScope scope = BattleEffectTargetScope::All);
 	void AdvanceOwnerTurn(BattleEffectPawnContext pawn);
 
 private:
@@ -69,6 +84,7 @@ private:
 	void ExecuteSetResourceMax(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteApplyBarrier(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteApplyStatus(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
+	void ExecuteToggleAura(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteChangeTileOverlay(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
 		BattleEffectExecutionResult& result);
 

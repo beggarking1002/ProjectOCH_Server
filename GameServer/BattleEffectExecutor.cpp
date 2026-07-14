@@ -20,7 +20,8 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteOnCast(const BattleEffe
 	return ExecuteTrigger(request, "ON_CAST");
 }
 
-BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEffectExecutionRequest& request, const string& trigger)
+BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEffectExecutionRequest& request, const string& trigger,
+	BattleEffectTargetScope scope)
 {
 	BattleEffectExecutionResult result;
 	if (request.skill == nullptr || request.casterTemplate == nullptr)
@@ -30,10 +31,20 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 	if (effects == nullptr)
 		return result;
 
+	auto matchesScope = [scope](const BattleEffectTemplate& effect)
+		{
+			const bool casterEffect = effect.effectTarget == "CASTER" || effect.effectTarget == "SELF";
+			if (scope == BattleEffectTargetScope::CasterOnly)
+				return casterEffect;
+			if (scope == BattleEffectTargetScope::TargetOnly)
+				return casterEffect == false;
+			return true;
+		};
+
 	unordered_map<string, int32> stopPriorities;
 	for (const BattleEffectTemplate& effect : *effects)
 	{
-		if (effect.trigger != trigger || effect.exclusiveGroup.empty() || effect.stopOnMatch == false || IsConditionMet(effect, request) == false)
+		if (matchesScope(effect) == false || effect.trigger != trigger || effect.exclusiveGroup.empty() || effect.stopOnMatch == false || IsConditionMet(effect, request) == false)
 			continue;
 
 		auto [it, inserted] = stopPriorities.emplace(effect.exclusiveGroup, effect.exclusivePriority);
@@ -43,7 +54,7 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 
 	for (const BattleEffectTemplate& effect : *effects)
 	{
-		if (effect.trigger != trigger || IsConditionMet(effect, request) == false)
+		if (matchesScope(effect) == false || effect.trigger != trigger || IsConditionMet(effect, request) == false)
 			continue;
 
 		if (effect.exclusiveGroup.empty() == false)
@@ -63,6 +74,8 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 			ExecuteApplyBarrier(effect, request);
 		else if (effect.effectKey == "APPLY_STATUS")
 			ExecuteApplyStatus(effect, request);
+		else if (effect.effectKey == "TOGGLE_AURA")
+			ExecuteToggleAura(effect, request);
 		else if (effect.effectKey == "CHANGE_TILE_TYPE")
 			ExecuteChangeTileOverlay(effect, request, result);
 	}
@@ -241,6 +254,32 @@ void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect
 		<< " stack_delta=" << stackDelta
 		<< " stack=" << status.stacks
 		<< endl;
+}
+
+void BattleEffectExecutor::ExecuteToggleAura(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
+{
+	if (request.skill == nullptr || request.caster.auras == nullptr)
+		return;
+
+	const int32 radius = max(0, GetIntParam(effect, "aura_radius", 0));
+	if (radius <= 0)
+		return;
+
+	auto it = request.caster.auras->find(request.skill->skillKey);
+	if (it != request.caster.auras->end())
+	{
+		request.caster.auras->erase(it);
+		cout << "BATTLE_AURA_TOGGLE pawn_id=" << request.caster.pawnId
+			<< " skill_key=" << request.skill->skillKey << " active=0" << endl;
+		return;
+	}
+
+	BattleAuraState aura;
+	aura.sourceSkillKey = request.skill->skillKey;
+	aura.radius = radius;
+	(*request.caster.auras)[aura.sourceSkillKey] = aura;
+	cout << "BATTLE_AURA_TOGGLE pawn_id=" << request.caster.pawnId
+		<< " skill_key=" << aura.sourceSkillKey << " radius=" << aura.radius << " active=1" << endl;
 }
 
 void BattleEffectExecutor::ExecuteChangeTileOverlay(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,

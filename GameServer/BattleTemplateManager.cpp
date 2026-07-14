@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "BattleTemplateManager.h"
+#include "BattleCoordinate.h"
 
 #include <algorithm>
 #include <cmath>
@@ -215,6 +216,23 @@ const BattleSkillTemplate* BattleTemplateManager::GetSkillByActionSlot(Protocol:
 	{
 		if (skill.actionSlot == actionSlot)
 			return &skill;
+	}
+
+	return nullptr;
+}
+
+const BattleSkillTemplate* BattleTemplateManager::GetSkillByKey(const string& skillKey)
+{
+	if (Load() == false)
+		return nullptr;
+
+	for (const auto& item : _skillsByClassKey)
+	{
+		for (const BattleSkillTemplate& skill : item.second)
+		{
+			if (skill.skillKey == skillKey)
+				return &skill;
+		}
 	}
 
 	return nullptr;
@@ -470,8 +488,11 @@ bool BattleTemplateManager::LoadBattleMapTile(const string& path)
 		if (tile.mapId.empty())
 			continue;
 
-		tile.q = ToInt(Cell(rows[i], header, "Q"));
-		tile.r = ToInt(Cell(rows[i], header, "R"));
+		const int32 cellX = ToInt(Cell(rows[i], header, "CellX"));
+		const int32 cellY = ToInt(Cell(rows[i], header, "CellY"));
+		const Protocol::AxialCoord axial = BattleCoordinate::CellToAxial(cellX, cellY);
+		tile.axialQ = axial.q();
+		tile.axialR = axial.r();
 		if (TryParseBattleTileType(Cell(rows[i], header, "TileType"), tile.tileType) == false)
 		{
 			cout << "[BattleTemplateManager] Invalid BattleTileType map_id=" << tile.mapId << endl;

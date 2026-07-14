@@ -2,6 +2,7 @@
 #include "BattleRoom.h"
 #include "BattleEffectExecutor.h"
 #include "BattleTemplateManager.h"
+#include "BattleCoordinate.h"
 #include "GameSession.h"
 #include "Player.h"
 #include "Room.h"
@@ -485,6 +486,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		effectRequest.caster.maxResources = &caster->maxResources;
 		effectRequest.caster.barriers = &caster->barriers;
 		effectRequest.caster.statuses = &caster->statuses;
+		effectRequest.caster.auras = &caster->auras;
 		effectRequest.target.pawnId = effectTarget->pawnId;
 		effectRequest.target.ownerId = effectTarget->ownerId;
 		effectRequest.target.pawnClass = effectTarget->pawnClass;
@@ -495,6 +497,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		effectRequest.target.maxResources = &effectTarget->maxResources;
 		effectRequest.target.barriers = &effectTarget->barriers;
 		effectRequest.target.statuses = &effectTarget->statuses;
+		effectRequest.target.auras = &effectTarget->auras;
 		effectRequest.barrierIdGenerator = &_barrierIdGenerator;
 
 		BattleEffectExecutor executor;
@@ -647,18 +650,42 @@ void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_
 	AdvanceTurn(battle);
 	battle.stateVersion++;
 	BattlePawn* nextPawn = FindPawn(battle, battle.currentTurnPawnId);
+	vector<const BattlePawn*> extraPawns;
+	unordered_set<uint64> extraPawnIds;
+	for (uint64 changedPawnId : battle.turnStartChangedPawnIds)
+	{
+		BattlePawn* changedPawn = FindPawn(battle, changedPawnId);
+		if (changedPawn != nullptr && extraPawnIds.insert(changedPawnId).second)
+			extraPawns.push_back(changedPawn);
+	}
 
-	SendBattleEndTurnResult(session, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn);
+	SendBattleEndTurnResult(session, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn,
+		{}, extraPawns, battle.turnStartLogs);
 	if (battle.isPvp)
 	{
 		GameSessionRef ownerSession = battle.ownerSession.lock();
 		if (ownerSession != nullptr && ownerSession != session)
-			SendBattleEndTurnResult(ownerSession, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn);
+			SendBattleEndTurnResult(ownerSession, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn,
+				{}, extraPawns, battle.turnStartLogs);
 
 		GameSessionRef opponentSession = battle.opponentSession.lock();
 		if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
-			SendBattleEndTurnResult(opponentSession, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn);
+			SendBattleEndTurnResult(opponentSession, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn,
+				{}, extraPawns, battle.turnStartLogs);
+
+		for (const auto& death : battle.turnStartDeaths)
+		{
+			if (ownerSession != nullptr && ownerSession != session)
+				SendBattlePawnDead(ownerSession, battle.battleId, death.first, death.second);
+			if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
+				SendBattlePawnDead(opponentSession, battle.battleId, death.first, death.second);
+		}
 	}
+
+	for (const auto& death : battle.turnStartDeaths)
+		SendBattlePawnDead(session, battle.battleId, death.first, death.second);
+
+	TryFinishBattle(battle, pawn->ownerId);
 }
 
 void BattleRoom::HandleBattleResultAck(GameSessionRef session, Protocol::C_BATTLE_RESULT_ACK pkt)
@@ -778,7 +805,7 @@ BattleRoom::BattleState BattleRoom::CreateBattle(PlayerRef ownerPlayer)
 	ExecuteBattleStartEffects(battle);
 	BuildTurnQueue(battle);
 	if (BattlePawn* currentPawn = FindPawn(battle, battle.currentTurnPawnId))
-		StartTurn(*currentPawn);
+		StartTurn(battle, *currentPawn);
 	return battle;
 }
 
@@ -800,12 +827,12 @@ BattleRoom::BattleState BattleRoom::CreatePvpBattle(PlayerRef ownerPlayer, Playe
 	ExecuteBattleStartEffects(battle);
 	BuildTurnQueue(battle);
 	if (BattlePawn* currentPawn = FindPawn(battle, battle.currentTurnPawnId))
-		StartTurn(*currentPawn);
+		StartTurn(battle, *currentPawn);
 
 	return battle;
 }
 
-BattlePawnRef BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol::PawnClass pawnClass, int32 q, int32 r, int32 hp, int32 moveRange,
+BattlePawnRef BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol::PawnClass pawnClass, int32 cellX, int32 cellY, int32 hp, int32 moveRange,
 	int32 maxArmor, Protocol::BattlePawnRole role)
 {
 	BattlePawnRef pawn;
@@ -817,7 +844,7 @@ BattlePawnRef BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol::PawnClass paw
 	pawn->pawnId = _battlePawnIdGenerator++;
 	pawn->ownerId = ownerId;
 	pawn->pawnClass = pawnClass;
-	pawn->axial = MakeAxial(q, r);
+	pawn->axial = BattleCoordinate::CellToAxial(cellX, cellY);
 	pawn->hp = hp;
 	pawn->maxHp = hp;
 	pawn->moveRange = moveRange;
@@ -828,12 +855,12 @@ BattlePawnRef BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol::PawnClass paw
 	pawn->usedSubActionThisTurn = false;
 	pawn->usedUltimate = false;
 	pawn->isDead = false;
-	pawn->facingDirection = q <= 0 ? Protocol::BATTLE_FACING_DIRECTION_RIGHT : Protocol::BATTLE_FACING_DIRECTION_LEFT;
+	pawn->facingDirection = cellX <= 0 ? Protocol::BATTLE_FACING_DIRECTION_RIGHT : Protocol::BATTLE_FACING_DIRECTION_LEFT;
 	pawn->role = role;
 	return pawn;
 }
 
-BattlePawnRef BattleRoom::MakeBattlePawnFromOwnedPawn(PawnRef sourcePawn, int32 q, int32 r)
+BattlePawnRef BattleRoom::MakeBattlePawnFromOwnedPawn(PawnRef sourcePawn, int32 cellX, int32 cellY)
 {
 	if (sourcePawn == nullptr)
 		return nullptr;
@@ -850,11 +877,11 @@ BattlePawnRef BattleRoom::MakeBattlePawnFromOwnedPawn(PawnRef sourcePawn, int32 
 		return nullptr;
 	}
 
-	return MakeBattlePawn(sourcePawn->ownerId, sourcePawn->pawnClass, q, r, pawnTemplate.hp, pawnTemplate.moveRange,
+	return MakeBattlePawn(sourcePawn->ownerId, sourcePawn->pawnClass, cellX, cellY, pawnTemplate.hp, pawnTemplate.moveRange,
 		pawnTemplate.maxArmor, pawnTemplate.role);
 }
 
-void BattleRoom::AddOwnedBattlePawns(vector<BattlePawnRef>& dst, PlayerRef ownerPlayer, int32 q, int32 firstR)
+void BattleRoom::AddOwnedBattlePawns(vector<BattlePawnRef>& dst, PlayerRef ownerPlayer, int32 cellX, int32 firstCellY)
 {
 	if (ownerPlayer == nullptr)
 		return;
@@ -865,7 +892,7 @@ void BattleRoom::AddOwnedBattlePawns(vector<BattlePawnRef>& dst, PlayerRef owner
 		if (sourcePawn == nullptr)
 			continue;
 
-		BattlePawnRef battlePawn = MakeBattlePawnFromOwnedPawn(sourcePawn, q, firstR + static_cast<int32>(i));
+		BattlePawnRef battlePawn = MakeBattlePawnFromOwnedPawn(sourcePawn, cellX, firstCellY + static_cast<int32>(i));
 		if (battlePawn != nullptr)
 			dst.push_back(move(battlePawn));
 	}
@@ -955,7 +982,7 @@ void BattleRoom::InitializeBattleTiles(BattleState& battle)
 
 	for (const BattleMapTileTemplate& tile : *tiles)
 	{
-		const Protocol::AxialCoord axial = MakeAxial(tile.q, tile.r);
+		const Protocol::AxialCoord axial = MakeAxial(tile.axialQ, tile.axialR);
 		BattleTileState& state = battle.tileStates[MakeTileKey(axial)];
 		state.baseTileType = tile.tileType;
 		state.overlayType = Protocol::BATTLE_TILE_OVERLAY_TYPE_NONE;
@@ -1073,6 +1100,13 @@ void BattleRoom::CopyBattlePawn(const BattlePawn& src, Protocol::BattlePawnInfo*
 		statusState->set_stacks(item.second.stacks);
 		statusState->set_remaining_owner_turns(item.second.remainingOwnerTurns);
 	}
+
+	for (const auto& item : src.auras)
+	{
+		Protocol::BattleAuraState* auraState = dst->add_auras();
+		auraState->set_source_skill_key(item.second.sourceSkillKey);
+		auraState->set_radius(item.second.radius);
+	}
 }
 
 void BattleRoom::CopyBattlePawnDelta(const BattlePawn& src, Protocol::BattlePawnDelta* dst)
@@ -1113,6 +1147,13 @@ void BattleRoom::CopyBattlePawnDelta(const BattlePawn& src, Protocol::BattlePawn
 		statusState->set_status_key(item.first);
 		statusState->set_stacks(item.second.stacks);
 		statusState->set_remaining_owner_turns(item.second.remainingOwnerTurns);
+	}
+
+	for (const auto& item : src.auras)
+	{
+		Protocol::BattleAuraState* auraState = dst->add_auras();
+		auraState->set_source_skill_key(item.second.sourceSkillKey);
+		auraState->set_radius(item.second.radius);
 	}
 }
 
@@ -1283,7 +1324,7 @@ uint64 BattleRoom::AdvanceTurn(BattleState& battle)
 	}
 
 	if (BattlePawn* nextPawn = FindPawn(battle, battle.currentTurnPawnId))
-		StartTurn(*nextPawn);
+		StartTurn(battle, *nextPawn);
 
 	return battle.currentTurnPawnId;
 }
@@ -1461,8 +1502,12 @@ bool BattleRoom::TryFinishBattle(BattleState& battle, uint64 fallbackWinnerOwner
 	return true;
 }
 
-void BattleRoom::StartTurn(BattlePawn& pawn)
+void BattleRoom::StartTurn(BattleState& battle, BattlePawn& pawn)
 {
+	battle.turnStartChangedPawnIds.clear();
+	battle.turnStartLogs.clear();
+	battle.turnStartDeaths.clear();
+
 	// Expire duration effects before AP and player input are made available for this turn.
 	AdvanceOwnerTurnEffects(pawn);
 
@@ -1478,6 +1523,7 @@ void BattleRoom::StartTurn(BattlePawn& pawn)
 	}
 
 	ExecutePassiveTrigger(pawn, "ON_OWNER_TURN_START");
+	ExecuteAuraTurnStartEffects(battle, pawn);
 }
 
 void BattleRoom::ExecuteBattleStartEffects(BattleState& battle)
@@ -1517,11 +1563,92 @@ void BattleRoom::ExecutePassiveTrigger(BattlePawn& pawn, const string& trigger)
 	request.caster.maxResources = &pawn.maxResources;
 	request.caster.barriers = &pawn.barriers;
 	request.caster.statuses = &pawn.statuses;
+	request.caster.auras = &pawn.auras;
 	request.target = request.caster;
 	request.barrierIdGenerator = &_barrierIdGenerator;
 
 	BattleEffectExecutor executor;
 	executor.ExecuteTrigger(request, trigger);
+}
+
+void BattleRoom::ExecuteAuraTurnStartEffects(BattleState& battle, BattlePawn& pawn)
+{
+	if (pawn.auras.empty())
+		return;
+
+	auto makeContext = [](BattlePawn& source)
+		{
+			BattleEffectPawnContext context;
+			context.pawnId = source.pawnId;
+			context.ownerId = source.ownerId;
+			context.pawnClass = source.pawnClass;
+			context.axial = &source.axial;
+			context.hp = &source.hp;
+			context.armor = &source.armor;
+			context.resources = &source.resources;
+			context.maxResources = &source.maxResources;
+			context.barriers = &source.barriers;
+			context.statuses = &source.statuses;
+			context.auras = &source.auras;
+			return context;
+		};
+
+	for (const auto& item : pawn.auras)
+	{
+		const BattleAuraState& aura = item.second;
+		const BattleSkillTemplate* skill = GBattleTemplates.GetSkillByKey(aura.sourceSkillKey);
+		const BattlePawnClassTemplate* casterTemplate = GBattleTemplates.GetPawnClassTemplate(pawn.pawnClass);
+		if (skill == nullptr || casterTemplate == nullptr)
+			continue;
+
+		BattleEffectExecutionRequest request;
+		request.skill = skill;
+		request.casterTemplate = casterTemplate;
+		request.skillSlot = skill->actionSlot;
+		request.actionType = "aura";
+		request.caster = makeContext(pawn);
+		request.target = request.caster;
+		request.barrierIdGenerator = &_barrierIdGenerator;
+		request.logs = &battle.turnStartLogs;
+
+		BattleEffectExecutor executor;
+		executor.ExecuteTrigger(request, "ON_OWNER_TURN_START", BattleEffectTargetScope::CasterOnly);
+		battle.turnStartChangedPawnIds.push_back(pawn.pawnId);
+
+		for (const BattlePawnRef& candidate : battle.alliedPawns)
+		{
+			if (candidate != nullptr && candidate->ownerId != pawn.ownerId && IsAlive(*candidate) && AxialDistance(pawn.axial, candidate->axial) <= aura.radius)
+			{
+				request.target = makeContext(*candidate);
+				executor.ExecuteTrigger(request, "ON_OWNER_TURN_START", BattleEffectTargetScope::TargetOnly);
+				battle.turnStartChangedPawnIds.push_back(candidate->pawnId);
+			}
+		}
+
+		for (const BattlePawnRef& candidate : battle.enemyPawns)
+		{
+			if (candidate != nullptr && candidate->ownerId != pawn.ownerId && IsAlive(*candidate) && AxialDistance(pawn.axial, candidate->axial) <= aura.radius)
+			{
+				request.target = makeContext(*candidate);
+				executor.ExecuteTrigger(request, "ON_OWNER_TURN_START", BattleEffectTargetScope::TargetOnly);
+				battle.turnStartChangedPawnIds.push_back(candidate->pawnId);
+			}
+		}
+	}
+
+	for (uint64 pawnId : battle.turnStartChangedPawnIds)
+	{
+		BattlePawn* changedPawn = FindPawn(battle, pawnId);
+		if (changedPawn == nullptr || changedPawn->isDead || changedPawn->hp > 0)
+			continue;
+
+		changedPawn->hp = 0;
+		changedPawn->currentAp = 0;
+		changedPawn->hasMovedThisTurn = true;
+		changedPawn->isDead = true;
+		battle.turnQueue.erase(remove(battle.turnQueue.begin(), battle.turnQueue.end(), changedPawn->pawnId), battle.turnQueue.end());
+		battle.turnStartDeaths.emplace_back(changedPawn->pawnId, pawn.pawnId);
+	}
 }
 
 void BattleRoom::AdvanceOwnerTurnEffects(BattlePawn& pawn)
@@ -1577,22 +1704,28 @@ void BattleRoom::ApplyDamage(BattlePawn& target, int32 damage)
 
 void BattleRoom::UpdateFacingByMove(BattlePawn& pawn, const Protocol::AxialCoord& start, const Protocol::AxialCoord& target)
 {
-	if (target.q() > start.q())
+	const BattleCellCoord startCell = BattleCoordinate::AxialToCell(start);
+	const BattleCellCoord targetCell = BattleCoordinate::AxialToCell(target);
+
+	if (targetCell.col > startCell.col)
 		pawn.facingDirection = Protocol::BATTLE_FACING_DIRECTION_RIGHT;
-	else if (target.q() < start.q())
+	else if (targetCell.col < startCell.col)
 		pawn.facingDirection = Protocol::BATTLE_FACING_DIRECTION_LEFT;
 }
 
 bool BattleRoom::IsBackAttack(const BattlePawn& attacker, const BattlePawn& defender)
 {
-	if (attacker.axial.q() == defender.axial.q())
+	const BattleCellCoord attackerCell = BattleCoordinate::AxialToCell(attacker.axial);
+	const BattleCellCoord defenderCell = BattleCoordinate::AxialToCell(defender.axial);
+
+	if (attackerCell.col == defenderCell.col)
 		return false;
 
 	if (defender.facingDirection == Protocol::BATTLE_FACING_DIRECTION_RIGHT)
-		return attacker.axial.q() < defender.axial.q();
+		return attackerCell.col < defenderCell.col;
 
 	if (defender.facingDirection == Protocol::BATTLE_FACING_DIRECTION_LEFT)
-		return attacker.axial.q() > defender.axial.q();
+		return attackerCell.col > defenderCell.col;
 
 	return false;
 }
@@ -1730,7 +1863,8 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 
 void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
 	uint64 nextTurnPawnId, const string& reason, const BattlePawn* pawn, const BattlePawn* nextPawn,
-	const vector<Protocol::BattleTileInfo>& tileDeltas)
+	const vector<Protocol::BattleTileInfo>& tileDeltas, const vector<const BattlePawn*>& extraPawns,
+	const vector<Protocol::BattleActionLog>& logs)
 {
 	const BattlePawn* responsePawn = nextPawn != nullptr ? nextPawn : pawn;
 	const auto battleIt = _battles.find(battleId);
@@ -1761,10 +1895,18 @@ void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, u
 	endTurnPkt.set_used_sub_action_this_turn(responsePawn != nullptr ? responsePawn->usedSubActionThisTurn : false);
 	endTurnPkt.set_used_ultimate(responsePawn != nullptr ? responsePawn->usedUltimate : false);
 	endTurnPkt.set_battle_state_version(stateVersion);
-	if (pawn != nullptr)
-		CopyBattlePawnDelta(*pawn, endTurnPkt.add_pawn_deltas());
-	if (nextPawn != nullptr && nextPawn != pawn)
-		CopyBattlePawnDelta(*nextPawn, endTurnPkt.add_pawn_deltas());
+	unordered_set<uint64> deltaPawnIds;
+	auto addPawnDelta = [this, &endTurnPkt, &deltaPawnIds](const BattlePawn* source)
+		{
+			if (source != nullptr && deltaPawnIds.insert(source->pawnId).second)
+				CopyBattlePawnDelta(*source, endTurnPkt.add_pawn_deltas());
+		};
+	addPawnDelta(pawn);
+	addPawnDelta(nextPawn);
+	for (const BattlePawn* extraPawn : extraPawns)
+		addPawnDelta(extraPawn);
+	for (const Protocol::BattleActionLog& log : logs)
+		endTurnPkt.add_logs()->CopyFrom(log);
 	for (const Protocol::BattleTileInfo& tileDelta : tileDeltas)
 		endTurnPkt.add_tile_deltas()->CopyFrom(tileDelta);
 

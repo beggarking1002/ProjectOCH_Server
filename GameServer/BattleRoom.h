@@ -49,6 +49,9 @@ private:
 		uint64 loserOwnerId = 0;
 		bool ownerResultAcked = false;
 		bool opponentResultAcked = false;
+		vector<uint64> turnStartChangedPawnIds;
+		vector<Protocol::BattleActionLog> turnStartLogs;
+		vector<pair<uint64, uint64>> turnStartDeaths;
 	};
 
 public:
@@ -68,10 +71,10 @@ private:
 	BattleState& GetOrCreateBattle(PlayerRef ownerPlayer);
 	BattleState CreateBattle(PlayerRef ownerPlayer);
 	BattleState CreatePvpBattle(PlayerRef ownerPlayer, PlayerRef opponentPlayer);
-	BattlePawnRef MakeBattlePawn(uint64 ownerId, Protocol::PawnClass pawnClass, int32 q, int32 r, int32 hp, int32 moveRange,
+	BattlePawnRef MakeBattlePawn(uint64 ownerId, Protocol::PawnClass pawnClass, int32 cellX, int32 cellY, int32 hp, int32 moveRange,
 		int32 maxArmor, Protocol::BattlePawnRole role);
-	BattlePawnRef MakeBattlePawnFromOwnedPawn(PawnRef sourcePawn, int32 q, int32 r);
-	void AddOwnedBattlePawns(vector<BattlePawnRef>& dst, PlayerRef ownerPlayer, int32 q, int32 firstR);
+	BattlePawnRef MakeBattlePawnFromOwnedPawn(PawnRef sourcePawn, int32 cellX, int32 cellY);
+	void AddOwnedBattlePawns(vector<BattlePawnRef>& dst, PlayerRef ownerPlayer, int32 cellX, int32 firstCellY);
 	bool TryGetPawnTemplate(Protocol::PawnClass pawnClass, BattlePawnInitialStats& pawnTemplate);
 	Protocol::AxialCoord MakeAxial(int32 q, int32 r);
 	uint64 MakeTileKey(const Protocol::AxialCoord& axial) const;
@@ -100,8 +103,9 @@ private:
 	bool IsAlive(const BattlePawn& pawn);
 	bool HasAlivePawn(const vector<BattlePawnRef>& pawns);
 	bool TryFinishBattle(BattleState& battle, uint64 fallbackWinnerOwnerId);
-	void StartTurn(BattlePawn& pawn);
+	void StartTurn(BattleState& battle, BattlePawn& pawn);
 	void ExecutePassiveTrigger(BattlePawn& pawn, const string& trigger);
+	void ExecuteAuraTurnStartEffects(BattleState& battle, BattlePawn& pawn);
 	void ExecuteBattleStartEffects(BattleState& battle);
 	void AdvanceOwnerTurnEffects(BattlePawn& pawn);
 	void ApplyDamage(BattlePawn& target, int32 damage);
@@ -122,7 +126,8 @@ private:
 		const vector<Protocol::BattleActionLog>& logs = {}, const vector<Protocol::BattleTileInfo>& tileDeltas = {});
 	void SendBattleEndTurnResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
 		uint64 nextTurnPawnId, const string& reason, const BattlePawn* pawn = nullptr, const BattlePawn* nextPawn = nullptr,
-		const vector<Protocol::BattleTileInfo>& tileDeltas = {});
+		const vector<Protocol::BattleTileInfo>& tileDeltas = {}, const vector<const BattlePawn*>& extraPawns = {},
+		const vector<Protocol::BattleActionLog>& logs = {});
 	void SendBattlePawnDead(GameSessionRef session, uint64 battleId, uint64 pawnId, uint64 killerPawnId);
 	void SendBattleResult(GameSessionRef session, const BattleState& battle, uint64 viewerOwnerId);
 	void SendBattleResultAck(GameSessionRef session, bool success, uint64 battleId, const string& reason);

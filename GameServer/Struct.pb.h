@@ -52,6 +52,9 @@ extern AxialCoordDefaultTypeInternal _AxialCoord_default_instance_;
 class BattleActionLog;
 struct BattleActionLogDefaultTypeInternal;
 extern BattleActionLogDefaultTypeInternal _BattleActionLog_default_instance_;
+class BattleAuraState;
+struct BattleAuraStateDefaultTypeInternal;
+extern BattleAuraStateDefaultTypeInternal _BattleAuraState_default_instance_;
 class BattleBarrierState;
 struct BattleBarrierStateDefaultTypeInternal;
 extern BattleBarrierStateDefaultTypeInternal _BattleBarrierState_default_instance_;
@@ -80,6 +83,7 @@ extern Vec2FixedDefaultTypeInternal _Vec2Fixed_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::Protocol::AxialCoord* Arena::CreateMaybeMessage<::Protocol::AxialCoord>(Arena*);
 template<> ::Protocol::BattleActionLog* Arena::CreateMaybeMessage<::Protocol::BattleActionLog>(Arena*);
+template<> ::Protocol::BattleAuraState* Arena::CreateMaybeMessage<::Protocol::BattleAuraState>(Arena*);
 template<> ::Protocol::BattleBarrierState* Arena::CreateMaybeMessage<::Protocol::BattleBarrierState>(Arena*);
 template<> ::Protocol::BattlePawnDelta* Arena::CreateMaybeMessage<::Protocol::BattlePawnDelta>(Arena*);
 template<> ::Protocol::BattlePawnInfo* Arena::CreateMaybeMessage<::Protocol::BattlePawnInfo>(Arena*);
@@ -1143,6 +1147,170 @@ class BattleStatusState final :
 };
 // -------------------------------------------------------------------
 
+class BattleAuraState final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.BattleAuraState) */ {
+ public:
+  inline BattleAuraState() : BattleAuraState(nullptr) {}
+  ~BattleAuraState() override;
+  explicit PROTOBUF_CONSTEXPR BattleAuraState(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  BattleAuraState(const BattleAuraState& from);
+  BattleAuraState(BattleAuraState&& from) noexcept
+    : BattleAuraState() {
+    *this = ::std::move(from);
+  }
+
+  inline BattleAuraState& operator=(const BattleAuraState& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline BattleAuraState& operator=(BattleAuraState&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const BattleAuraState& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const BattleAuraState* internal_default_instance() {
+    return reinterpret_cast<const BattleAuraState*>(
+               &_BattleAuraState_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  friend void swap(BattleAuraState& a, BattleAuraState& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(BattleAuraState* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(BattleAuraState* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  BattleAuraState* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<BattleAuraState>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const BattleAuraState& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const BattleAuraState& from) {
+    BattleAuraState::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BattleAuraState* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.BattleAuraState";
+  }
+  protected:
+  explicit BattleAuraState(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSourceSkillKeyFieldNumber = 1,
+    kRadiusFieldNumber = 2,
+  };
+  // string source_skill_key = 1;
+  void clear_source_skill_key();
+  const std::string& source_skill_key() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_source_skill_key(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_source_skill_key();
+  PROTOBUF_NODISCARD std::string* release_source_skill_key();
+  void set_allocated_source_skill_key(std::string* source_skill_key);
+  private:
+  const std::string& _internal_source_skill_key() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_source_skill_key(const std::string& value);
+  std::string* _internal_mutable_source_skill_key();
+  public:
+
+  // int32 radius = 2;
+  void clear_radius();
+  int32_t radius() const;
+  void set_radius(int32_t value);
+  private:
+  int32_t _internal_radius() const;
+  void _internal_set_radius(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.BattleAuraState)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr source_skill_key_;
+    int32_t radius_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Struct_2eproto;
+};
+// -------------------------------------------------------------------
+
 class BattleTileInfo final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.BattleTileInfo) */ {
  public:
@@ -1191,7 +1359,7 @@ class BattleTileInfo final :
                &_BattleTileInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(BattleTileInfo& a, BattleTileInfo& b) {
     a.Swap(&b);
@@ -1370,7 +1538,7 @@ class BattlePawnInfo final :
                &_BattlePawnInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(BattlePawnInfo& a, BattlePawnInfo& b) {
     a.Swap(&b);
@@ -1446,6 +1614,7 @@ class BattlePawnInfo final :
     kResourcesFieldNumber = 19,
     kBarriersFieldNumber = 20,
     kStatusesFieldNumber = 21,
+    kAurasFieldNumber = 24,
     kAxialFieldNumber = 4,
     kPawnIdFieldNumber = 1,
     kOwnerIdFieldNumber = 2,
@@ -1518,6 +1687,24 @@ class BattlePawnInfo final :
   ::Protocol::BattleStatusState* add_statuses();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState >&
       statuses() const;
+
+  // repeated .Protocol.BattleAuraState auras = 24;
+  int auras_size() const;
+  private:
+  int _internal_auras_size() const;
+  public:
+  void clear_auras();
+  ::Protocol::BattleAuraState* mutable_auras(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAuraState >*
+      mutable_auras();
+  private:
+  const ::Protocol::BattleAuraState& _internal_auras(int index) const;
+  ::Protocol::BattleAuraState* _internal_add_auras();
+  public:
+  const ::Protocol::BattleAuraState& auras(int index) const;
+  ::Protocol::BattleAuraState* add_auras();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAuraState >&
+      auras() const;
 
   // .Protocol.AxialCoord axial = 4;
   bool has_axial() const;
@@ -1701,6 +1888,7 @@ class BattlePawnInfo final :
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleResourceState > resources_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleBarrierState > barriers_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState > statuses_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAuraState > auras_;
     ::Protocol::AxialCoord* axial_;
     uint64_t pawn_id_;
     uint64_t owner_id_;
@@ -1774,7 +1962,7 @@ class BattlePawnDelta final :
                &_BattlePawnDelta_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    9;
 
   friend void swap(BattlePawnDelta& a, BattlePawnDelta& b) {
     a.Swap(&b);
@@ -1850,6 +2038,7 @@ class BattlePawnDelta final :
     kResourcesFieldNumber = 11,
     kBarriersFieldNumber = 12,
     kStatusesFieldNumber = 13,
+    kAurasFieldNumber = 16,
     kPawnIdFieldNumber = 1,
     kHpFieldNumber = 2,
     kArmorFieldNumber = 3,
@@ -1915,6 +2104,24 @@ class BattlePawnDelta final :
   ::Protocol::BattleStatusState* add_statuses();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState >&
       statuses() const;
+
+  // repeated .Protocol.BattleAuraState auras = 16;
+  int auras_size() const;
+  private:
+  int _internal_auras_size() const;
+  public:
+  void clear_auras();
+  ::Protocol::BattleAuraState* mutable_auras(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAuraState >*
+      mutable_auras();
+  private:
+  const ::Protocol::BattleAuraState& _internal_auras(int index) const;
+  ::Protocol::BattleAuraState* _internal_add_auras();
+  public:
+  const ::Protocol::BattleAuraState& auras(int index) const;
+  ::Protocol::BattleAuraState* add_auras();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAuraState >&
+      auras() const;
 
   // uint64 pawn_id = 1;
   void clear_pawn_id();
@@ -2026,6 +2233,7 @@ class BattlePawnDelta final :
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleResourceState > resources_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleBarrierState > barriers_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState > statuses_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAuraState > auras_;
     uint64_t pawn_id_;
     int32_t hp_;
     int32_t armor_;
@@ -2092,7 +2300,7 @@ class BattleActionLog final :
                &_BattleActionLog_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    10;
 
   friend void swap(BattleActionLog& a, BattleActionLog& b) {
     a.Swap(&b);
@@ -2870,6 +3078,80 @@ inline void BattleStatusState::set_remaining_owner_turns(int32_t value) {
 
 // -------------------------------------------------------------------
 
+// BattleAuraState
+
+// string source_skill_key = 1;
+inline void BattleAuraState::clear_source_skill_key() {
+  _impl_.source_skill_key_.ClearToEmpty();
+}
+inline const std::string& BattleAuraState::source_skill_key() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleAuraState.source_skill_key)
+  return _internal_source_skill_key();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void BattleAuraState::set_source_skill_key(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.source_skill_key_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.BattleAuraState.source_skill_key)
+}
+inline std::string* BattleAuraState::mutable_source_skill_key() {
+  std::string* _s = _internal_mutable_source_skill_key();
+  // @@protoc_insertion_point(field_mutable:Protocol.BattleAuraState.source_skill_key)
+  return _s;
+}
+inline const std::string& BattleAuraState::_internal_source_skill_key() const {
+  return _impl_.source_skill_key_.Get();
+}
+inline void BattleAuraState::_internal_set_source_skill_key(const std::string& value) {
+  
+  _impl_.source_skill_key_.Set(value, GetArenaForAllocation());
+}
+inline std::string* BattleAuraState::_internal_mutable_source_skill_key() {
+  
+  return _impl_.source_skill_key_.Mutable(GetArenaForAllocation());
+}
+inline std::string* BattleAuraState::release_source_skill_key() {
+  // @@protoc_insertion_point(field_release:Protocol.BattleAuraState.source_skill_key)
+  return _impl_.source_skill_key_.Release();
+}
+inline void BattleAuraState::set_allocated_source_skill_key(std::string* source_skill_key) {
+  if (source_skill_key != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.source_skill_key_.SetAllocated(source_skill_key, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.source_skill_key_.IsDefault()) {
+    _impl_.source_skill_key_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.BattleAuraState.source_skill_key)
+}
+
+// int32 radius = 2;
+inline void BattleAuraState::clear_radius() {
+  _impl_.radius_ = 0;
+}
+inline int32_t BattleAuraState::_internal_radius() const {
+  return _impl_.radius_;
+}
+inline int32_t BattleAuraState::radius() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleAuraState.radius)
+  return _internal_radius();
+}
+inline void BattleAuraState::_internal_set_radius(int32_t value) {
+  
+  _impl_.radius_ = value;
+}
+inline void BattleAuraState::set_radius(int32_t value) {
+  _internal_set_radius(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleAuraState.radius)
+}
+
+// -------------------------------------------------------------------
+
 // BattleTileInfo
 
 // .Protocol.AxialCoord axial = 1;
@@ -3556,6 +3838,46 @@ inline void BattlePawnInfo::set_shield_max(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.shield_max)
 }
 
+// repeated .Protocol.BattleAuraState auras = 24;
+inline int BattlePawnInfo::_internal_auras_size() const {
+  return _impl_.auras_.size();
+}
+inline int BattlePawnInfo::auras_size() const {
+  return _internal_auras_size();
+}
+inline void BattlePawnInfo::clear_auras() {
+  _impl_.auras_.Clear();
+}
+inline ::Protocol::BattleAuraState* BattlePawnInfo::mutable_auras(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.BattlePawnInfo.auras)
+  return _impl_.auras_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAuraState >*
+BattlePawnInfo::mutable_auras() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.BattlePawnInfo.auras)
+  return &_impl_.auras_;
+}
+inline const ::Protocol::BattleAuraState& BattlePawnInfo::_internal_auras(int index) const {
+  return _impl_.auras_.Get(index);
+}
+inline const ::Protocol::BattleAuraState& BattlePawnInfo::auras(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.auras)
+  return _internal_auras(index);
+}
+inline ::Protocol::BattleAuraState* BattlePawnInfo::_internal_add_auras() {
+  return _impl_.auras_.Add();
+}
+inline ::Protocol::BattleAuraState* BattlePawnInfo::add_auras() {
+  ::Protocol::BattleAuraState* _add = _internal_add_auras();
+  // @@protoc_insertion_point(field_add:Protocol.BattlePawnInfo.auras)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAuraState >&
+BattlePawnInfo::auras() const {
+  // @@protoc_insertion_point(field_list:Protocol.BattlePawnInfo.auras)
+  return _impl_.auras_;
+}
+
 // -------------------------------------------------------------------
 
 // BattlePawnDelta
@@ -3900,6 +4222,46 @@ inline void BattlePawnDelta::set_shield_max(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.shield_max)
 }
 
+// repeated .Protocol.BattleAuraState auras = 16;
+inline int BattlePawnDelta::_internal_auras_size() const {
+  return _impl_.auras_.size();
+}
+inline int BattlePawnDelta::auras_size() const {
+  return _internal_auras_size();
+}
+inline void BattlePawnDelta::clear_auras() {
+  _impl_.auras_.Clear();
+}
+inline ::Protocol::BattleAuraState* BattlePawnDelta::mutable_auras(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.BattlePawnDelta.auras)
+  return _impl_.auras_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAuraState >*
+BattlePawnDelta::mutable_auras() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.BattlePawnDelta.auras)
+  return &_impl_.auras_;
+}
+inline const ::Protocol::BattleAuraState& BattlePawnDelta::_internal_auras(int index) const {
+  return _impl_.auras_.Get(index);
+}
+inline const ::Protocol::BattleAuraState& BattlePawnDelta::auras(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnDelta.auras)
+  return _internal_auras(index);
+}
+inline ::Protocol::BattleAuraState* BattlePawnDelta::_internal_add_auras() {
+  return _impl_.auras_.Add();
+}
+inline ::Protocol::BattleAuraState* BattlePawnDelta::add_auras() {
+  ::Protocol::BattleAuraState* _add = _internal_add_auras();
+  // @@protoc_insertion_point(field_add:Protocol.BattlePawnDelta.auras)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAuraState >&
+BattlePawnDelta::auras() const {
+  // @@protoc_insertion_point(field_list:Protocol.BattlePawnDelta.auras)
+  return _impl_.auras_;
+}
+
 // -------------------------------------------------------------------
 
 // BattleActionLog
@@ -4197,6 +4559,8 @@ inline void BattleActionLog::set_is_back_attack(bool value) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
