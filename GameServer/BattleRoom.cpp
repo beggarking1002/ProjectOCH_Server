@@ -589,7 +589,6 @@ void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_
 	}
 
 	ExecutePassiveTrigger(*pawn, "ON_OWNER_TURN_END");
-	AdvanceOwnerTurnEffects(*pawn);
 	AdvanceTurn(battle);
 	battle.stateVersion++;
 	BattlePawn* nextPawn = FindPawn(battle, battle.currentTurnPawnId);
@@ -1308,6 +1307,9 @@ bool BattleRoom::TryFinishBattle(BattleState& battle, uint64 fallbackWinnerOwner
 
 void BattleRoom::StartTurn(BattlePawn& pawn)
 {
+	// Expire duration effects before AP and player input are made available for this turn.
+	AdvanceOwnerTurnEffects(pawn);
+
 	pawn.currentAp = 2;
 	pawn.hasMovedThisTurn = false;
 	pawn.usedSubActionThisTurn = false;
