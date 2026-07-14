@@ -73,6 +73,7 @@ private:
 	void CopyBattlePawnDelta(const BattlePawn& src, Protocol::BattlePawnDelta* dst);
 
 	BattlePawn* FindPawn(BattleState& battle, uint64 pawnId);
+	BattlePawn* FindAlivePawnAt(BattleState& battle, const Protocol::AxialCoord& axial);
 	bool IsOccupied(const BattleState& battle, const Protocol::AxialCoord& coord, uint64 exceptPawnId);
 	bool IsBattleWalkable(const Protocol::AxialCoord& coord);
 	int32 AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs);

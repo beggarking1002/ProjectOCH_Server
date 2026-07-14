@@ -372,51 +372,63 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		return;
 	}
 
-	const bool selfTarget = skillSpec.targetType == "SELF" || skillSpec.targetType == "SELF_TOGGLE";
-	BattlePawn* target = selfTarget ? caster : FindPawn(battle, pkt.target_pawn_id());
-	if (target == nullptr)
+	if (pkt.has_target_axial() == false)
 	{
-		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
-			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, "invalid target pawn", caster);
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), 0,
+			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, "target axial is missing", caster);
 		return;
+	}
+
+	const Protocol::AxialCoord targetAxial = pkt.target_axial();
+	if (IsBattleWalkable(targetAxial) == false)
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), 0,
+			targetAxial, 0, 0, 0, battle.currentTurnPawnId, "target tile is not walkable", caster);
+		return;
+	}
+
+	const bool selfTarget = skillSpec.targetType == "SELF" || skillSpec.targetType == "SELF_TOGGLE";
+	BattlePawn* target = FindAlivePawnAt(battle, targetAxial);
+	if (selfTarget)
+	{
+		if (target != caster)
+		{
+			SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), 0,
+				targetAxial, 0, 0, 0, battle.currentTurnPawnId, "self skill requires caster tile", caster);
+			return;
+		}
 	}
 
 	const bool enemyTarget = skillSpec.targetType == "ENEMY_SINGLE" || skillSpec.targetType == "TILE_OR_ENEMY";
 	const bool allyTarget = skillSpec.targetType == "ALLY_SINGLE";
-	if (enemyTarget && target->ownerId == caster->ownerId)
+	const bool requiresPawn = selfTarget || (enemyTarget && skillSpec.targetType != "TILE_OR_ENEMY") || allyTarget;
+	if (requiresPawn && target == nullptr)
 	{
-		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-			target->axial, 0, target->hp, target->armor, battle.currentTurnPawnId, "cannot target ally", caster, target);
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), 0,
+			targetAxial, 0, 0, 0, battle.currentTurnPawnId, "target pawn is not on selected tile", caster);
 		return;
 	}
 
-	if (allyTarget && target->ownerId != caster->ownerId)
+	if (enemyTarget && target != nullptr && target->ownerId == caster->ownerId)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-			target->axial, 0, target->hp, target->armor, battle.currentTurnPawnId, "target is not ally", caster, target);
+			targetAxial, 0, target->hp, target->armor, battle.currentTurnPawnId, "cannot target ally", caster, target);
 		return;
 	}
 
-	const Protocol::AxialCoord targetAxial = selfTarget ? target->axial : (pkt.has_target_axial() ? pkt.target_axial() : target->axial);
-	if (targetAxial.q() != target->axial.q() || targetAxial.r() != target->axial.r())
+	if (allyTarget && target != nullptr && target->ownerId != caster->ownerId)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-			targetAxial, 0, target->hp, target->armor, battle.currentTurnPawnId, "target axial mismatch", caster, target);
+			targetAxial, 0, target->hp, target->armor, battle.currentTurnPawnId, "target is not ally", caster, target);
 		return;
 	}
 
-	if (IsAlive(*target) == false)
-	{
-		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-			target->axial, 0, target->hp, target->armor, battle.currentTurnPawnId, "target is dead", caster, target);
-		return;
-	}
-
-	const int32 targetDistance = AxialDistance(caster->axial, target->axial);
+	const int32 targetDistance = AxialDistance(caster->axial, targetAxial);
 	if (targetDistance < skillSpec.rangeMin || targetDistance > skillSpec.rangeMax)
 	{
-		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-			target->axial, 0, target->hp, target->armor, battle.currentTurnPawnId, "target out of range", caster, target);
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target != nullptr ? target->pawnId : 0,
+			targetAxial, 0, target != nullptr ? target->hp : 0, target != nullptr ? target->armor : 0,
+			battle.currentTurnPawnId, "target out of range", caster, target);
 		return;
 	}
 
@@ -430,13 +442,14 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	if (skillSpec.apCost >= 2)
 		caster->hasMovedThisTurn = true;
 
-	const bool isBackAttack = IsBackAttack(*caster, *target);
-	const bool targetWasAlive = IsAlive(*target);
+	const bool isBackAttack = target != nullptr && IsBackAttack(*caster, *target);
+	const bool targetWasAlive = target != nullptr && IsAlive(*target);
 
 	vector<Protocol::BattleActionLog> logs;
 	int32 appliedDamage = skillSpec.damage;
 	if (skillSpec.skillTemplate != nullptr && skillSpec.casterTemplate != nullptr)
 	{
+		BattlePawn* effectTarget = target != nullptr ? target : caster;
 		BattleEffectExecutionRequest effectRequest;
 		effectRequest.skill = skillSpec.skillTemplate;
 		effectRequest.casterTemplate = skillSpec.casterTemplate;
@@ -454,16 +467,16 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		effectRequest.caster.maxResources = &caster->maxResources;
 		effectRequest.caster.barriers = &caster->barriers;
 		effectRequest.caster.statuses = &caster->statuses;
-		effectRequest.target.pawnId = target->pawnId;
-		effectRequest.target.ownerId = target->ownerId;
-		effectRequest.target.pawnClass = target->pawnClass;
-		effectRequest.target.axial = &target->axial;
-		effectRequest.target.hp = &target->hp;
-		effectRequest.target.armor = &target->armor;
-		effectRequest.target.resources = &target->resources;
-		effectRequest.target.maxResources = &target->maxResources;
-		effectRequest.target.barriers = &target->barriers;
-		effectRequest.target.statuses = &target->statuses;
+		effectRequest.target.pawnId = effectTarget->pawnId;
+		effectRequest.target.ownerId = effectTarget->ownerId;
+		effectRequest.target.pawnClass = effectTarget->pawnClass;
+		effectRequest.target.axial = &effectTarget->axial;
+		effectRequest.target.hp = &effectTarget->hp;
+		effectRequest.target.armor = &effectTarget->armor;
+		effectRequest.target.resources = &effectTarget->resources;
+		effectRequest.target.maxResources = &effectTarget->maxResources;
+		effectRequest.target.barriers = &effectTarget->barriers;
+		effectRequest.target.statuses = &effectTarget->statuses;
 		effectRequest.barrierIdGenerator = &_barrierIdGenerator;
 
 		BattleEffectExecutor executor;
@@ -472,22 +485,29 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	}
 	else
 	{
-		ApplyDamage(*target, appliedDamage);
-		Protocol::BattleActionLog actionLog;
-		actionLog.set_attacker_pawn_id(caster->pawnId);
-		actionLog.set_defender_pawn_id(target->pawnId);
-		actionLog.set_skill_slot(pkt.skill_slot());
-		actionLog.set_action_type(skillSpec.isUltimate ? "ultimate" : "skill");
-		actionLog.set_damage(appliedDamage);
-		actionLog.set_is_critical(false);
-		actionLog.set_is_evaded(false);
-		actionLog.set_is_guarded(false);
-		actionLog.set_is_perfect_guarded(false);
-		actionLog.set_is_counter(false);
-		actionLog.set_is_back_attack(isBackAttack);
-		actionLog.set_hp_after(target->hp);
-		actionLog.set_armor_after(target->armor);
-		logs.push_back(actionLog);
+		if (target == nullptr)
+		{
+			appliedDamage = 0;
+		}
+		else
+		{
+			ApplyDamage(*target, appliedDamage);
+			Protocol::BattleActionLog actionLog;
+			actionLog.set_attacker_pawn_id(caster->pawnId);
+			actionLog.set_defender_pawn_id(target->pawnId);
+			actionLog.set_skill_slot(pkt.skill_slot());
+			actionLog.set_action_type(skillSpec.isUltimate ? "ultimate" : "skill");
+			actionLog.set_damage(appliedDamage);
+			actionLog.set_is_critical(false);
+			actionLog.set_is_evaded(false);
+			actionLog.set_is_guarded(false);
+			actionLog.set_is_perfect_guarded(false);
+			actionLog.set_is_counter(false);
+			actionLog.set_is_back_attack(isBackAttack);
+			actionLog.set_hp_after(target->hp);
+			actionLog.set_armor_after(target->armor);
+			logs.push_back(actionLog);
+		}
 	}
 
 	if (targetWasAlive && target->hp <= 0)
@@ -502,26 +522,30 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	}
 	battle.stateVersion++;
 
-	SendBattleSkillResult(session, true, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-		target->axial, appliedDamage, target->hp, target->armor, battle.currentTurnPawnId, "", caster, target, logs);
+	const uint64 resolvedTargetPawnId = target != nullptr ? target->pawnId : 0;
+	const int32 resolvedTargetHp = target != nullptr ? target->hp : 0;
+	const int32 resolvedTargetArmor = target != nullptr ? target->armor : 0;
+
+	SendBattleSkillResult(session, true, battle.battleId, caster->pawnId, pkt.skill_slot(), resolvedTargetPawnId,
+		targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs);
 	if (battle.isPvp)
 	{
 		GameSessionRef ownerSession = battle.ownerSession.lock();
 		if (ownerSession != nullptr && ownerSession != session)
 		{
-			SendBattleSkillResult(ownerSession, true, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-				target->axial, appliedDamage, target->hp, target->armor, battle.currentTurnPawnId, "", caster, target, logs);
+			SendBattleSkillResult(ownerSession, true, battle.battleId, caster->pawnId, pkt.skill_slot(), resolvedTargetPawnId,
+				targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs);
 		}
 
 		GameSessionRef opponentSession = battle.opponentSession.lock();
 		if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
 		{
-			SendBattleSkillResult(opponentSession, true, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-				target->axial, appliedDamage, target->hp, target->armor, battle.currentTurnPawnId, "", caster, target, logs);
+			SendBattleSkillResult(opponentSession, true, battle.battleId, caster->pawnId, pkt.skill_slot(), resolvedTargetPawnId,
+				targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs);
 		}
 	}
 
-	if (target->isDead)
+	if (target != nullptr && target->isDead)
 	{
 		SendBattlePawnDead(session, battle.battleId, target->pawnId, caster->pawnId);
 		if (battle.isPvp)
@@ -1002,6 +1026,23 @@ BattlePawn* BattleRoom::FindPawn(BattleState& battle, uint64 pawnId)
 	}
 
 	return nullptr;
+}
+
+BattlePawn* BattleRoom::FindAlivePawnAt(BattleState& battle, const Protocol::AxialCoord& axial)
+{
+	auto findAt = [this, &axial](const vector<BattlePawnRef>& pawns) -> BattlePawn*
+		{
+			for (const BattlePawnRef& pawn : pawns)
+			{
+				if (pawn != nullptr && IsAlive(*pawn) && pawn->axial.q() == axial.q() && pawn->axial.r() == axial.r())
+					return pawn.get();
+			}
+			return nullptr;
+		};
+
+	if (BattlePawn* pawn = findAt(battle.alliedPawns))
+		return pawn;
+	return findAt(battle.enemyPawns);
 }
 
 bool BattleRoom::IsOccupied(const BattleState& battle, const Protocol::AxialCoord& coord, uint64 exceptPawnId)
