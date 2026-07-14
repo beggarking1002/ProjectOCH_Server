@@ -50,6 +50,14 @@ struct BattleEffectTemplate
 	unordered_map<string, string> params;
 };
 
+struct BattleMapTileTemplate
+{
+	string mapId;
+	int32 q = 0;
+	int32 r = 0;
+	Protocol::BattleTileType tileType = Protocol::BATTLE_TILE_TYPE_NORMAL;
+};
+
 class BattleTemplateManager
 {
 public:
@@ -58,7 +66,10 @@ public:
 	const BattlePawnClassTemplate* GetPawnClassTemplate(Protocol::PawnClass pawnClass);
 	const BattleSkillTemplate* GetSkillByActionSlot(Protocol::PawnClass pawnClass, int32 actionSlot);
 	const vector<BattleEffectTemplate>* GetEffects(const string& effectGroupKey);
+	const vector<BattleMapTileTemplate>* GetBattleMapTiles(const string& mapId);
 	bool TryParseBattleResourceType(const string& key, Protocol::BattleResourceType& resourceType) const;
+	bool TryParseBattleTileType(const string& key, Protocol::BattleTileType& tileType) const;
+	bool TryParseBattleTileOverlayType(const string& key, Protocol::BattleTileOverlayType& overlayType) const;
 
 private:
 	bool LoadClassKey(const string& path);
@@ -66,6 +77,7 @@ private:
 	bool LoadBattleSkill(const string& path);
 	bool LoadBattleSkillEffect(const string& path);
 	bool LoadBattleSkillEffectParam(const string& path);
+	bool LoadBattleMapTile(const string& path);
 	bool ValidateTemplates();
 
 	string ResolveDataPath(const string& fileName);
@@ -77,6 +89,7 @@ private:
 	unordered_map<Protocol::PawnClass, BattlePawnClassTemplate> _pawnClassTemplates;
 	unordered_map<string, vector<BattleSkillTemplate>> _skillsByClassKey;
 	unordered_map<string, vector<BattleEffectTemplate>> _effectsByGroupKey;
+	unordered_map<string, vector<BattleMapTileTemplate>> _battleMapTilesByMapId;
 	vector<BattleEffectParamTemplate> _effectParams;
 };
 

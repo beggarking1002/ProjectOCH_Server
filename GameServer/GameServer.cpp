@@ -11,6 +11,7 @@
 #include "Protocol.pb.h"
 #include "Room.h"
 #include "FieldWalkMapData.h"
+#include "BattleTemplateManager.h"
 
 enum
 {
@@ -37,6 +38,7 @@ void DoWorkerJob(ServerServiceRef& service)
 int main()
 {
 	ASSERT_CRASH(GFieldWalkMapData.LoadFromFile("C:\\ProjectOCH\\Server\\Data\\Maps\\Field_001.walkmap.json"));
+	ASSERT_CRASH(GBattleTemplates.Load());
 
 	ServerPacketHandler::Init();
 

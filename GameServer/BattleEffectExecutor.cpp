@@ -63,6 +63,8 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 			ExecuteApplyBarrier(effect, request);
 		else if (effect.effectKey == "APPLY_STATUS")
 			ExecuteApplyStatus(effect, request);
+		else if (effect.effectKey == "CHANGE_TILE_TYPE")
+			ExecuteChangeTileOverlay(effect, request, result);
 	}
 
 	return result;
@@ -239,6 +241,62 @@ void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect
 		<< " stack_delta=" << stackDelta
 		<< " stack=" << status.stacks
 		<< endl;
+}
+
+void BattleEffectExecutor::ExecuteChangeTileOverlay(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
+	BattleEffectExecutionResult& result)
+{
+	if (request.targetAxial == nullptr || request.getBaseTileType == nullptr || request.getTileOverlayType == nullptr ||
+		request.setTileOverlayType == nullptr || request.isTileValid == nullptr)
+		return;
+
+	Protocol::BattleTileType requiredTileType = Protocol::BATTLE_TILE_TYPE_NONE;
+	Protocol::BattleTileOverlayType changedOverlayType = Protocol::BATTLE_TILE_OVERLAY_TYPE_NONE;
+	if (GBattleTemplates.TryParseBattleTileType(GetParam(effect, "tile_filter"), requiredTileType) == false ||
+		GBattleTemplates.TryParseBattleTileOverlayType(GetParam(effect, "overlay_type"), changedOverlayType) == false)
+		return;
+
+	const Protocol::AxialCoord& center = *request.targetAxial;
+	if (request.getBaseTileType(center) != requiredTileType)
+		return;
+
+	vector<Protocol::AxialCoord> targets;
+	targets.push_back(center);
+	if (effect.effectTarget == "TARGET_AND_NEIGHBORS")
+	{
+		static constexpr int32 kNeighborOffsets[6][2] =
+		{
+			{ 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, 0 }, { -1, 1 }, { 0, 1 }
+		};
+
+		for (const auto& offset : kNeighborOffsets)
+		{
+			Protocol::AxialCoord neighbor;
+			neighbor.set_q(center.q() + offset[0]);
+			neighbor.set_r(center.r() + offset[1]);
+			targets.push_back(neighbor);
+		}
+	}
+
+	for (const Protocol::AxialCoord& target : targets)
+	{
+		if (request.isTileValid(target) == false || request.getTileOverlayType(target) == changedOverlayType)
+			continue;
+
+		request.setTileOverlayType(target, changedOverlayType);
+		Protocol::BattleTileInfo delta;
+		delta.mutable_axial()->CopyFrom(target);
+		delta.set_tile_type(request.getBaseTileType(target));
+		delta.set_overlay_type(changedOverlayType);
+		result.tileDeltas.push_back(delta);
+
+		cout << "BATTLE_TILE_CHANGE"
+			<< " q=" << target.q()
+			<< " r=" << target.r()
+			<< " base_tile_type=" << Protocol::BattleTileType_Name(request.getBaseTileType(target))
+			<< " overlay_type=" << Protocol::BattleTileOverlayType_Name(changedOverlayType)
+			<< endl;
+	}
 }
 
 int32 BattleEffectExecutor::CalculateValue(const BattleEffectTemplate& effect, const BattlePawnClassTemplate& casterTemplate)

@@ -225,7 +225,7 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 		return;
 	}
 
-	if (IsBattleWalkable(pkt.target()) == false)
+	if (IsBattleWalkable(battle, pkt.target()) == false)
 	{
 		SendBattleMoveResult(session, false, battle.battleId, pawn->pawnId, start, start, battle.currentTurnPawnId,
 			Protocol::BATTLE_MOVE_RESULT_NOT_WALKABLE, "not walkable", pawn);
@@ -380,10 +380,10 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	}
 
 	const Protocol::AxialCoord targetAxial = pkt.target_axial();
-	if (IsBattleWalkable(targetAxial) == false)
+	if (IsBattleTileInBounds(targetAxial) == false)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), 0,
-			targetAxial, 0, 0, 0, battle.currentTurnPawnId, "target tile is not walkable", caster);
+			targetAxial, 0, 0, 0, battle.currentTurnPawnId, "target tile is out of bounds", caster);
 		return;
 	}
 
@@ -446,6 +446,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	const bool targetWasAlive = target != nullptr && IsAlive(*target);
 
 	vector<Protocol::BattleActionLog> logs;
+	vector<Protocol::BattleTileInfo> tileDeltas;
 	int32 appliedDamage = skillSpec.damage;
 	if (skillSpec.skillTemplate != nullptr && skillSpec.casterTemplate != nullptr)
 	{
@@ -456,6 +457,23 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		effectRequest.skillSlot = pkt.skill_slot();
 		effectRequest.actionType = skillSpec.isUltimate ? "ultimate" : "skill";
 		effectRequest.isBackAttack = isBackAttack;
+		effectRequest.targetAxial = &targetAxial;
+		effectRequest.getBaseTileType = [this, &battle](const Protocol::AxialCoord& axial)
+			{
+				return GetBaseTileType(battle, axial);
+			};
+		effectRequest.getTileOverlayType = [this, &battle](const Protocol::AxialCoord& axial)
+			{
+				return GetTileOverlayType(battle, axial);
+			};
+		effectRequest.setTileOverlayType = [this, &battle](const Protocol::AxialCoord& axial, Protocol::BattleTileOverlayType overlayType)
+			{
+				SetTileOverlayType(battle, axial, overlayType);
+			};
+		effectRequest.isTileValid = [this](const Protocol::AxialCoord& axial)
+			{
+				return IsBattleTileInBounds(axial);
+			};
 		effectRequest.logs = &logs;
 		effectRequest.caster.pawnId = caster->pawnId;
 		effectRequest.caster.ownerId = caster->ownerId;
@@ -480,8 +498,21 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		effectRequest.barrierIdGenerator = &_barrierIdGenerator;
 
 		BattleEffectExecutor executor;
-		const BattleEffectExecutionResult effectResult = executor.ExecuteOnCast(effectRequest);
+		BattleEffectExecutionResult effectResult = executor.ExecuteOnCast(effectRequest);
+		if (target == nullptr)
+		{
+			BattleEffectExecutionResult tileResult = executor.ExecuteTrigger(effectRequest, "ON_EMPTY_TILE_CAST");
+			effectResult.totalDamage += tileResult.totalDamage;
+			effectResult.tileDeltas = move(tileResult.tileDeltas);
+		}
+		else if (skillSpec.targetType == "TILE_OR_ENEMY")
+		{
+			BattleEffectExecutionResult hitResult = executor.ExecuteTrigger(effectRequest, "ON_HIT_DEALT");
+			effectResult.totalDamage += hitResult.totalDamage;
+			effectResult.tileDeltas = move(hitResult.tileDeltas);
+		}
 		appliedDamage = effectResult.totalDamage;
+		tileDeltas = move(effectResult.tileDeltas);
 	}
 	else
 	{
@@ -527,21 +558,21 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	const int32 resolvedTargetArmor = target != nullptr ? target->armor : 0;
 
 	SendBattleSkillResult(session, true, battle.battleId, caster->pawnId, pkt.skill_slot(), resolvedTargetPawnId,
-		targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs);
+		targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas);
 	if (battle.isPvp)
 	{
 		GameSessionRef ownerSession = battle.ownerSession.lock();
 		if (ownerSession != nullptr && ownerSession != session)
 		{
 			SendBattleSkillResult(ownerSession, true, battle.battleId, caster->pawnId, pkt.skill_slot(), resolvedTargetPawnId,
-				targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs);
+				targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas);
 		}
 
 		GameSessionRef opponentSession = battle.opponentSession.lock();
 		if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
 		{
 			SendBattleSkillResult(opponentSession, true, battle.battleId, caster->pawnId, pkt.skill_slot(), resolvedTargetPawnId,
-				targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs);
+				targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas);
 		}
 	}
 
@@ -729,6 +760,7 @@ BattleRoom::BattleState BattleRoom::CreateBattle(PlayerRef ownerPlayer)
 	battle.ownerId = ownerId;
 	battle.isPvp = false;
 	battle.mapId = "Battle_Test_001";
+	InitializeBattleTiles(battle);
 
 	AddOwnedBattlePawns(battle.alliedPawns, ownerPlayer, -2, 0);
 	BattlePawnInitialStats enemyTemplate;
@@ -760,6 +792,7 @@ BattleRoom::BattleState BattleRoom::CreatePvpBattle(PlayerRef ownerPlayer, Playe
 	battle.opponentOwnerId = opponentOwnerId;
 	battle.isPvp = true;
 	battle.mapId = "Battle_PVP_001";
+	InitializeBattleTiles(battle);
 
 	AddOwnedBattlePawns(battle.alliedPawns, ownerPlayer, -2, 0);
 	AddOwnedBattlePawns(battle.enemyPawns, opponentPlayer, 2, -1);
@@ -894,12 +927,84 @@ Protocol::AxialCoord BattleRoom::MakeAxial(int32 q, int32 r)
 	return coord;
 }
 
+uint64 BattleRoom::MakeTileKey(const Protocol::AxialCoord& axial) const
+{
+	return (static_cast<uint64>(static_cast<uint32>(axial.q())) << 32) |
+		static_cast<uint32>(axial.r());
+}
+
+void BattleRoom::InitializeBattleTiles(BattleState& battle)
+{
+	battle.tileStates.clear();
+	constexpr int32 kBattleMapRadius = 6;
+	for (int32 q = -kBattleMapRadius; q <= kBattleMapRadius; q++)
+	{
+		for (int32 r = -kBattleMapRadius; r <= kBattleMapRadius; r++)
+		{
+			const Protocol::AxialCoord axial = MakeAxial(q, r);
+			if (IsBattleTileInBounds(axial) == false)
+				continue;
+
+			battle.tileStates.emplace(MakeTileKey(axial), BattleTileState());
+		}
+	}
+
+	const vector<BattleMapTileTemplate>* tiles = GBattleTemplates.GetBattleMapTiles(battle.mapId);
+	if (tiles == nullptr)
+		return;
+
+	for (const BattleMapTileTemplate& tile : *tiles)
+	{
+		const Protocol::AxialCoord axial = MakeAxial(tile.q, tile.r);
+		BattleTileState& state = battle.tileStates[MakeTileKey(axial)];
+		state.baseTileType = tile.tileType;
+		state.overlayType = Protocol::BATTLE_TILE_OVERLAY_TYPE_NONE;
+	}
+}
+
+Protocol::BattleTileType BattleRoom::GetBaseTileType(const BattleState& battle, const Protocol::AxialCoord& axial) const
+{
+	auto it = battle.tileStates.find(MakeTileKey(axial));
+	return it != battle.tileStates.end() ? it->second.baseTileType : Protocol::BATTLE_TILE_TYPE_NORMAL;
+}
+
+Protocol::BattleTileOverlayType BattleRoom::GetTileOverlayType(const BattleState& battle, const Protocol::AxialCoord& axial) const
+{
+	auto it = battle.tileStates.find(MakeTileKey(axial));
+	return it != battle.tileStates.end() ? it->second.overlayType : Protocol::BATTLE_TILE_OVERLAY_TYPE_NONE;
+}
+
+void BattleRoom::SetTileOverlayType(BattleState& battle, const Protocol::AxialCoord& axial, Protocol::BattleTileOverlayType overlayType)
+{
+	BattleTileState& state = battle.tileStates[MakeTileKey(axial)];
+	state.overlayType = overlayType;
+}
+
+void BattleRoom::AppendBattleTileStates(const BattleState& battle, google::protobuf::RepeatedPtrField<Protocol::BattleTileInfo>* dst) const
+{
+	vector<pair<uint64, BattleTileState>> tiles(battle.tileStates.begin(), battle.tileStates.end());
+	sort(tiles.begin(), tiles.end(), [](const auto& lhs, const auto& rhs)
+		{
+			return lhs.first < rhs.first;
+		});
+
+	for (const auto& tile : tiles)
+	{
+		Protocol::BattleTileInfo* tileInfo = dst->Add();
+		tileInfo->mutable_axial()->set_q(static_cast<int32>(tile.first >> 32));
+		tileInfo->mutable_axial()->set_r(static_cast<int32>(tile.first & 0xFFFFFFFF));
+		tileInfo->set_tile_type(tile.second.baseTileType);
+		tileInfo->set_overlay_type(tile.second.overlayType);
+	}
+}
+
 void BattleRoom::FillEnterBattlePacket(const BattleState& battle, uint64 viewerOwnerId, Protocol::S_ENTER_BATTLE& pkt)
 {
 	pkt.set_battle_id(battle.battleId);
 	pkt.set_map_id(battle.mapId);
 	pkt.set_current_turn_pawn_id(battle.currentTurnPawnId);
 	pkt.set_battle_state_version(battle.stateVersion);
+	AppendBattleTileStates(battle, pkt.mutable_tiles());
 
 	const vector<BattlePawnRef>* alliedPawns = &battle.alliedPawns;
 	const vector<BattlePawnRef>* enemyPawns = &battle.enemyPawns;
@@ -1067,13 +1172,23 @@ bool BattleRoom::IsOccupied(const BattleState& battle, const Protocol::AxialCoor
 	return false;
 }
 
-bool BattleRoom::IsBattleWalkable(const Protocol::AxialCoord& coord)
+bool BattleRoom::IsBattleTileInBounds(const Protocol::AxialCoord& coord) const
 {
 	constexpr int32 kBattleMapRadius = 6;
 	const int32 q = coord.q();
 	const int32 r = coord.r();
 	const int32 s = -q - r;
 	return abs(q) <= kBattleMapRadius && abs(r) <= kBattleMapRadius && abs(s) <= kBattleMapRadius;
+}
+
+bool BattleRoom::IsBattleWalkable(const BattleState& battle, const Protocol::AxialCoord& coord) const
+{
+	if (IsBattleTileInBounds(coord) == false)
+		return false;
+
+	const Protocol::BattleTileType baseTileType = GetBaseTileType(battle, coord);
+	const Protocol::BattleTileOverlayType overlayType = GetTileOverlayType(battle, coord);
+	return baseTileType != Protocol::BATTLE_TILE_TYPE_WATER || overlayType == Protocol::BATTLE_TILE_OVERLAY_TYPE_ICE;
 }
 
 int32 BattleRoom::AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs)
@@ -1557,7 +1672,8 @@ void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint
 void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uint64 battleId, uint64 casterPawnId,
 	int32 skillSlot, uint64 targetPawnId, const Protocol::AxialCoord& targetAxial,
 	int32 damage, int32 targetHp, int32 targetArmor, uint64 nextTurnPawnId, const string& reason,
-	const BattlePawn* caster, const BattlePawn* target, const vector<Protocol::BattleActionLog>& logs)
+	const BattlePawn* caster, const BattlePawn* target, const vector<Protocol::BattleActionLog>& logs,
+	const vector<Protocol::BattleTileInfo>& tileDeltas)
 {
 	const auto battleIt = _battles.find(battleId);
 	const uint64 stateVersion = battleIt != _battles.end() ? battleIt->second.stateVersion : 0;
@@ -1605,13 +1721,16 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 		CopyBattlePawnDelta(*target, skillPkt.add_pawn_deltas());
 	for (const Protocol::BattleActionLog& log : logs)
 		skillPkt.add_logs()->CopyFrom(log);
+	for (const Protocol::BattleTileInfo& tileDelta : tileDeltas)
+		skillPkt.add_tile_deltas()->CopyFrom(tileDelta);
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(skillPkt);
 	session->Send(sendBuffer);
 }
 
 void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
-	uint64 nextTurnPawnId, const string& reason, const BattlePawn* pawn, const BattlePawn* nextPawn)
+	uint64 nextTurnPawnId, const string& reason, const BattlePawn* pawn, const BattlePawn* nextPawn,
+	const vector<Protocol::BattleTileInfo>& tileDeltas)
 {
 	const BattlePawn* responsePawn = nextPawn != nullptr ? nextPawn : pawn;
 	const auto battleIt = _battles.find(battleId);
@@ -1646,6 +1765,8 @@ void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, u
 		CopyBattlePawnDelta(*pawn, endTurnPkt.add_pawn_deltas());
 	if (nextPawn != nullptr && nextPawn != pawn)
 		CopyBattlePawnDelta(*nextPawn, endTurnPkt.add_pawn_deltas());
+	for (const Protocol::BattleTileInfo& tileDelta : tileDeltas)
+		endTurnPkt.add_tile_deltas()->CopyFrom(tileDelta);
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(endTurnPkt);
 	session->Send(sendBuffer);

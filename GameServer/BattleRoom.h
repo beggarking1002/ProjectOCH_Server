@@ -22,6 +22,12 @@ private:
 		bool isSubAction = false;
 	};
 
+	struct BattleTileState
+	{
+		Protocol::BattleTileType baseTileType = Protocol::BATTLE_TILE_TYPE_NORMAL;
+		Protocol::BattleTileOverlayType overlayType = Protocol::BATTLE_TILE_OVERLAY_TYPE_NONE;
+	};
+
 	struct BattleState
 	{
 		uint64 battleId = 0;
@@ -31,6 +37,7 @@ private:
 		weak_ptr<GameSession> ownerSession;
 		weak_ptr<GameSession> opponentSession;
 		string mapId;
+		unordered_map<uint64, BattleTileState> tileStates;
 		vector<BattlePawnRef> alliedPawns;
 		vector<BattlePawnRef> enemyPawns;
 		vector<uint64> turnQueue;
@@ -67,6 +74,12 @@ private:
 	void AddOwnedBattlePawns(vector<BattlePawnRef>& dst, PlayerRef ownerPlayer, int32 q, int32 firstR);
 	bool TryGetPawnTemplate(Protocol::PawnClass pawnClass, BattlePawnInitialStats& pawnTemplate);
 	Protocol::AxialCoord MakeAxial(int32 q, int32 r);
+	uint64 MakeTileKey(const Protocol::AxialCoord& axial) const;
+	void InitializeBattleTiles(BattleState& battle);
+	Protocol::BattleTileType GetBaseTileType(const BattleState& battle, const Protocol::AxialCoord& axial) const;
+	Protocol::BattleTileOverlayType GetTileOverlayType(const BattleState& battle, const Protocol::AxialCoord& axial) const;
+	void SetTileOverlayType(BattleState& battle, const Protocol::AxialCoord& axial, Protocol::BattleTileOverlayType overlayType);
+	void AppendBattleTileStates(const BattleState& battle, google::protobuf::RepeatedPtrField<Protocol::BattleTileInfo>* dst) const;
 
 	void FillEnterBattlePacket(const BattleState& battle, uint64 viewerOwnerId, Protocol::S_ENTER_BATTLE& pkt);
 	void CopyBattlePawn(const BattlePawn& src, Protocol::BattlePawnInfo* dst);
@@ -75,7 +88,8 @@ private:
 	BattlePawn* FindPawn(BattleState& battle, uint64 pawnId);
 	BattlePawn* FindAlivePawnAt(BattleState& battle, const Protocol::AxialCoord& axial);
 	bool IsOccupied(const BattleState& battle, const Protocol::AxialCoord& coord, uint64 exceptPawnId);
-	bool IsBattleWalkable(const Protocol::AxialCoord& coord);
+	bool IsBattleTileInBounds(const Protocol::AxialCoord& coord) const;
+	bool IsBattleWalkable(const BattleState& battle, const Protocol::AxialCoord& coord) const;
 	int32 AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs);
 	uint64 GetNextAlliedTurnPawnId(const BattleState& battle, uint64 currentPawnId);
 	void BuildTurnQueue(BattleState& battle);
@@ -105,9 +119,10 @@ private:
 		int32 skillSlot, uint64 targetPawnId, const Protocol::AxialCoord& targetAxial,
 		int32 damage, int32 targetHp, int32 targetArmor, uint64 nextTurnPawnId, const string& reason,
 		const BattlePawn* caster = nullptr, const BattlePawn* target = nullptr,
-		const vector<Protocol::BattleActionLog>& logs = {});
+		const vector<Protocol::BattleActionLog>& logs = {}, const vector<Protocol::BattleTileInfo>& tileDeltas = {});
 	void SendBattleEndTurnResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
-		uint64 nextTurnPawnId, const string& reason, const BattlePawn* pawn = nullptr, const BattlePawn* nextPawn = nullptr);
+		uint64 nextTurnPawnId, const string& reason, const BattlePawn* pawn = nullptr, const BattlePawn* nextPawn = nullptr,
+		const vector<Protocol::BattleTileInfo>& tileDeltas = {});
 	void SendBattlePawnDead(GameSessionRef session, uint64 battleId, uint64 pawnId, uint64 killerPawnId);
 	void SendBattleResult(GameSessionRef session, const BattleState& battle, uint64 viewerOwnerId);
 	void SendBattleResultAck(GameSessionRef session, bool success, uint64 battleId, const string& reason);

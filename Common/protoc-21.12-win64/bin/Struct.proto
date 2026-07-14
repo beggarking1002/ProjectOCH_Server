@@ -46,6 +46,13 @@ message BattleStatusState
 	int32 remaining_owner_turns = 3;
 }
 
+message BattleTileInfo
+{
+	AxialCoord axial = 1;
+	BattleTileType tile_type = 2;
+	BattleTileOverlayType overlay_type = 3;
+}
+
 message BattlePawnInfo
 {
 	reserved 14, 15;

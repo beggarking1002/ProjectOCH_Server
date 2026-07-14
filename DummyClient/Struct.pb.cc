@@ -112,6 +112,21 @@ struct BattleStatusStateDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BattleStatusStateDefaultTypeInternal _BattleStatusState_default_instance_;
+PROTOBUF_CONSTEXPR BattleTileInfo::BattleTileInfo(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.axial_)*/nullptr
+  , /*decltype(_impl_.tile_type_)*/0
+  , /*decltype(_impl_.overlay_type_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct BattleTileInfoDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR BattleTileInfoDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~BattleTileInfoDefaultTypeInternal() {}
+  union {
+    BattleTileInfo _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BattleTileInfoDefaultTypeInternal _BattleTileInfo_default_instance_;
 PROTOBUF_CONSTEXPR BattlePawnInfo::BattlePawnInfo(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.resources_)*/{}
@@ -197,7 +212,7 @@ struct BattleActionLogDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BattleActionLogDefaultTypeInternal _BattleActionLog_default_instance_;
 }  // namespace Protocol
-static ::_pb::Metadata file_level_metadata_Struct_2eproto[9];
+static ::_pb::Metadata file_level_metadata_Struct_2eproto[10];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_Struct_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Struct_2eproto = nullptr;
 
@@ -257,6 +272,15 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::Protocol::BattleStatusState, _impl_.status_key_),
   PROTOBUF_FIELD_OFFSET(::Protocol::BattleStatusState, _impl_.stacks_),
   PROTOBUF_FIELD_OFFSET(::Protocol::BattleStatusState, _impl_.remaining_owner_turns_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleTileInfo, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleTileInfo, _impl_.axial_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleTileInfo, _impl_.tile_type_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleTileInfo, _impl_.overlay_type_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -331,9 +355,10 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 26, -1, -1, sizeof(::Protocol::BattleResourceState)},
   { 35, -1, -1, sizeof(::Protocol::BattleBarrierState)},
   { 46, -1, -1, sizeof(::Protocol::BattleStatusState)},
-  { 55, -1, -1, sizeof(::Protocol::BattlePawnInfo)},
-  { 82, -1, -1, sizeof(::Protocol::BattlePawnDelta)},
-  { 102, -1, -1, sizeof(::Protocol::BattleActionLog)},
+  { 55, -1, -1, sizeof(::Protocol::BattleTileInfo)},
+  { 64, -1, -1, sizeof(::Protocol::BattlePawnInfo)},
+  { 91, -1, -1, sizeof(::Protocol::BattlePawnDelta)},
+  { 111, -1, -1, sizeof(::Protocol::BattleActionLog)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -343,6 +368,7 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::Protocol::_BattleResourceState_default_instance_._instance,
   &::Protocol::_BattleBarrierState_default_instance_._instance,
   &::Protocol::_BattleStatusState_default_instance_._instance,
+  &::Protocol::_BattleTileInfo_default_instance_._instance,
   &::Protocol::_BattlePawnInfo_default_instance_._instance,
   &::Protocol::_BattlePawnDelta_default_instance_._instance,
   &::Protocol::_BattleActionLog_default_instance_._instance,
@@ -364,50 +390,54 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "ner_turns\030\004 \001(\005\022\021\n\tmax_value\030\005 \001(\005\"V\n\021Ba"
   "ttleStatusState\022\022\n\nstatus_key\030\001 \001(\t\022\016\n\006s"
   "tacks\030\002 \001(\005\022\035\n\025remaining_owner_turns\030\003 \001"
-  "(\005\"\360\004\n\016BattlePawnInfo\022\017\n\007pawn_id\030\001 \001(\004\022\020"
-  "\n\010owner_id\030\002 \001(\004\022\'\n\npawn_class\030\003 \001(\0162\023.P"
-  "rotocol.PawnClass\022#\n\005axial\030\004 \001(\0132\024.Proto"
-  "col.AxialCoord\022\n\n\002hp\030\005 \001(\005\022\016\n\006max_hp\030\006 \001"
-  "(\005\022\022\n\nmove_range\030\007 \001(\005\022\r\n\005armor\030\010 \001(\005\022\021\n"
-  "\tmax_armor\030\t \001(\005\022\022\n\ncurrent_ap\030\n \001(\005\022\020\n\010"
-  "can_move\030\013 \001(\010\022!\n\031used_sub_action_this_t"
-  "urn\030\014 \001(\010\022\025\n\rused_ultimate\030\r \001(\010\022\017\n\007is_d"
-  "ead\030\020 \001(\010\0229\n\020facing_direction\030\021 \001(\0162\037.Pr"
-  "otocol.BattleFacingDirection\022&\n\004role\030\022 \001"
-  "(\0162\030.Protocol.BattlePawnRole\0220\n\tresource"
-  "s\030\023 \003(\0132\035.Protocol.BattleResourceState\022."
-  "\n\010barriers\030\024 \003(\0132\034.Protocol.BattleBarrie"
-  "rState\022-\n\010statuses\030\025 \003(\0132\033.Protocol.Batt"
-  "leStatusState\022\026\n\016shield_current\030\026 \001(\005\022\022\n"
-  "\nshield_max\030\027 \001(\005J\004\010\016\020\017J\004\010\017\020\020\"\254\003\n\017Battle"
-  "PawnDelta\022\017\n\007pawn_id\030\001 \001(\004\022\n\n\002hp\030\002 \001(\005\022\r"
-  "\n\005armor\030\003 \001(\005\022\022\n\ncurrent_ap\030\004 \001(\005\022\020\n\010can"
-  "_move\030\005 \001(\010\022!\n\031used_sub_action_this_turn"
-  "\030\006 \001(\010\022\025\n\rused_ultimate\030\007 \001(\010\022\017\n\007is_dead"
-  "\030\010 \001(\010\0229\n\020facing_direction\030\t \001(\0162\037.Proto"
-  "col.BattleFacingDirection\0220\n\tresources\030\013"
-  " \003(\0132\035.Protocol.BattleResourceState\022.\n\010b"
-  "arriers\030\014 \003(\0132\034.Protocol.BattleBarrierSt"
-  "ate\022-\n\010statuses\030\r \003(\0132\033.Protocol.BattleS"
-  "tatusState\022\026\n\016shield_current\030\016 \001(\005\022\022\n\nsh"
-  "ield_max\030\017 \001(\005J\004\010\n\020\013\"\251\002\n\017BattleActionLog"
-  "\022\030\n\020attacker_pawn_id\030\001 \001(\004\022\030\n\020defender_p"
-  "awn_id\030\002 \001(\004\022\022\n\nskill_slot\030\003 \001(\005\022\023\n\013acti"
-  "on_type\030\004 \001(\t\022\016\n\006damage\030\005 \001(\005\022\023\n\013is_crit"
-  "ical\030\006 \001(\010\022\021\n\tis_evaded\030\007 \001(\010\022\022\n\nis_guar"
-  "ded\030\010 \001(\010\022\032\n\022is_perfect_guarded\030\t \001(\010\022\022\n"
-  "\nis_counter\030\n \001(\010\022\020\n\010hp_after\030\013 \001(\005\022\023\n\013a"
-  "rmor_after\030\014 \001(\005\022\026\n\016is_back_attack\030\r \001(\010"
-  "b\006proto3"
+  "(\005\"\231\001\n\016BattleTileInfo\022#\n\005axial\030\001 \001(\0132\024.P"
+  "rotocol.AxialCoord\022+\n\ttile_type\030\002 \001(\0162\030."
+  "Protocol.BattleTileType\0225\n\014overlay_type\030"
+  "\003 \001(\0162\037.Protocol.BattleTileOverlayType\"\360"
+  "\004\n\016BattlePawnInfo\022\017\n\007pawn_id\030\001 \001(\004\022\020\n\010ow"
+  "ner_id\030\002 \001(\004\022\'\n\npawn_class\030\003 \001(\0162\023.Proto"
+  "col.PawnClass\022#\n\005axial\030\004 \001(\0132\024.Protocol."
+  "AxialCoord\022\n\n\002hp\030\005 \001(\005\022\016\n\006max_hp\030\006 \001(\005\022\022"
+  "\n\nmove_range\030\007 \001(\005\022\r\n\005armor\030\010 \001(\005\022\021\n\tmax"
+  "_armor\030\t \001(\005\022\022\n\ncurrent_ap\030\n \001(\005\022\020\n\010can_"
+  "move\030\013 \001(\010\022!\n\031used_sub_action_this_turn\030"
+  "\014 \001(\010\022\025\n\rused_ultimate\030\r \001(\010\022\017\n\007is_dead\030"
+  "\020 \001(\010\0229\n\020facing_direction\030\021 \001(\0162\037.Protoc"
+  "ol.BattleFacingDirection\022&\n\004role\030\022 \001(\0162\030"
+  ".Protocol.BattlePawnRole\0220\n\tresources\030\023 "
+  "\003(\0132\035.Protocol.BattleResourceState\022.\n\010ba"
+  "rriers\030\024 \003(\0132\034.Protocol.BattleBarrierSta"
+  "te\022-\n\010statuses\030\025 \003(\0132\033.Protocol.BattleSt"
+  "atusState\022\026\n\016shield_current\030\026 \001(\005\022\022\n\nshi"
+  "eld_max\030\027 \001(\005J\004\010\016\020\017J\004\010\017\020\020\"\254\003\n\017BattlePawn"
+  "Delta\022\017\n\007pawn_id\030\001 \001(\004\022\n\n\002hp\030\002 \001(\005\022\r\n\005ar"
+  "mor\030\003 \001(\005\022\022\n\ncurrent_ap\030\004 \001(\005\022\020\n\010can_mov"
+  "e\030\005 \001(\010\022!\n\031used_sub_action_this_turn\030\006 \001"
+  "(\010\022\025\n\rused_ultimate\030\007 \001(\010\022\017\n\007is_dead\030\010 \001"
+  "(\010\0229\n\020facing_direction\030\t \001(\0162\037.Protocol."
+  "BattleFacingDirection\0220\n\tresources\030\013 \003(\013"
+  "2\035.Protocol.BattleResourceState\022.\n\010barri"
+  "ers\030\014 \003(\0132\034.Protocol.BattleBarrierState\022"
+  "-\n\010statuses\030\r \003(\0132\033.Protocol.BattleStatu"
+  "sState\022\026\n\016shield_current\030\016 \001(\005\022\022\n\nshield"
+  "_max\030\017 \001(\005J\004\010\n\020\013\"\251\002\n\017BattleActionLog\022\030\n\020"
+  "attacker_pawn_id\030\001 \001(\004\022\030\n\020defender_pawn_"
+  "id\030\002 \001(\004\022\022\n\nskill_slot\030\003 \001(\005\022\023\n\013action_t"
+  "ype\030\004 \001(\t\022\016\n\006damage\030\005 \001(\005\022\023\n\013is_critical"
+  "\030\006 \001(\010\022\021\n\tis_evaded\030\007 \001(\010\022\022\n\nis_guarded\030"
+  "\010 \001(\010\022\032\n\022is_perfect_guarded\030\t \001(\010\022\022\n\nis_"
+  "counter\030\n \001(\010\022\020\n\010hp_after\030\013 \001(\005\022\023\n\013armor"
+  "_after\030\014 \001(\005\022\026\n\016is_back_attack\030\r \001(\010b\006pr"
+  "oto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_Struct_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Struct_2eproto = {
-    false, false, 1968, descriptor_table_protodef_Struct_2eproto,
+    false, false, 2124, descriptor_table_protodef_Struct_2eproto,
     "Struct.proto",
-    &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 9,
+    &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 10,
     schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
     file_level_metadata_Struct_2eproto, file_level_enum_descriptors_Struct_2eproto,
     file_level_service_descriptors_Struct_2eproto,
@@ -1938,6 +1968,264 @@ void BattleStatusState::InternalSwap(BattleStatusState* other) {
 
 // ===================================================================
 
+class BattleTileInfo::_Internal {
+ public:
+  static const ::Protocol::AxialCoord& axial(const BattleTileInfo* msg);
+};
+
+const ::Protocol::AxialCoord&
+BattleTileInfo::_Internal::axial(const BattleTileInfo* msg) {
+  return *msg->_impl_.axial_;
+}
+BattleTileInfo::BattleTileInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:Protocol.BattleTileInfo)
+}
+BattleTileInfo::BattleTileInfo(const BattleTileInfo& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  BattleTileInfo* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.axial_){nullptr}
+    , decltype(_impl_.tile_type_){}
+    , decltype(_impl_.overlay_type_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_axial()) {
+    _this->_impl_.axial_ = new ::Protocol::AxialCoord(*from._impl_.axial_);
+  }
+  ::memcpy(&_impl_.tile_type_, &from._impl_.tile_type_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.overlay_type_) -
+    reinterpret_cast<char*>(&_impl_.tile_type_)) + sizeof(_impl_.overlay_type_));
+  // @@protoc_insertion_point(copy_constructor:Protocol.BattleTileInfo)
+}
+
+inline void BattleTileInfo::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.axial_){nullptr}
+    , decltype(_impl_.tile_type_){0}
+    , decltype(_impl_.overlay_type_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+BattleTileInfo::~BattleTileInfo() {
+  // @@protoc_insertion_point(destructor:Protocol.BattleTileInfo)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void BattleTileInfo::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.axial_;
+}
+
+void BattleTileInfo::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void BattleTileInfo::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.BattleTileInfo)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  if (GetArenaForAllocation() == nullptr && _impl_.axial_ != nullptr) {
+    delete _impl_.axial_;
+  }
+  _impl_.axial_ = nullptr;
+  ::memset(&_impl_.tile_type_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.overlay_type_) -
+      reinterpret_cast<char*>(&_impl_.tile_type_)) + sizeof(_impl_.overlay_type_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* BattleTileInfo::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // .Protocol.AxialCoord axial = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          ptr = ctx->ParseMessage(_internal_mutable_axial(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .Protocol.BattleTileType tile_type = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_tile_type(static_cast<::Protocol::BattleTileType>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // .Protocol.BattleTileOverlayType overlay_type = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_overlay_type(static_cast<::Protocol::BattleTileOverlayType>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* BattleTileInfo::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.BattleTileInfo)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .Protocol.AxialCoord axial = 1;
+  if (this->_internal_has_axial()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(1, _Internal::axial(this),
+        _Internal::axial(this).GetCachedSize(), target, stream);
+  }
+
+  // .Protocol.BattleTileType tile_type = 2;
+  if (this->_internal_tile_type() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      2, this->_internal_tile_type(), target);
+  }
+
+  // .Protocol.BattleTileOverlayType overlay_type = 3;
+  if (this->_internal_overlay_type() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      3, this->_internal_overlay_type(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.BattleTileInfo)
+  return target;
+}
+
+size_t BattleTileInfo::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.BattleTileInfo)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // .Protocol.AxialCoord axial = 1;
+  if (this->_internal_has_axial()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.axial_);
+  }
+
+  // .Protocol.BattleTileType tile_type = 2;
+  if (this->_internal_tile_type() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_tile_type());
+  }
+
+  // .Protocol.BattleTileOverlayType overlay_type = 3;
+  if (this->_internal_overlay_type() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_overlay_type());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData BattleTileInfo::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    BattleTileInfo::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*BattleTileInfo::GetClassData() const { return &_class_data_; }
+
+
+void BattleTileInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<BattleTileInfo*>(&to_msg);
+  auto& from = static_cast<const BattleTileInfo&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.BattleTileInfo)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_axial()) {
+    _this->_internal_mutable_axial()->::Protocol::AxialCoord::MergeFrom(
+        from._internal_axial());
+  }
+  if (from._internal_tile_type() != 0) {
+    _this->_internal_set_tile_type(from._internal_tile_type());
+  }
+  if (from._internal_overlay_type() != 0) {
+    _this->_internal_set_overlay_type(from._internal_overlay_type());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void BattleTileInfo::CopyFrom(const BattleTileInfo& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.BattleTileInfo)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool BattleTileInfo::IsInitialized() const {
+  return true;
+}
+
+void BattleTileInfo::InternalSwap(BattleTileInfo* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(BattleTileInfo, _impl_.overlay_type_)
+      + sizeof(BattleTileInfo::_impl_.overlay_type_)
+      - PROTOBUF_FIELD_OFFSET(BattleTileInfo, _impl_.axial_)>(
+          reinterpret_cast<char*>(&_impl_.axial_),
+          reinterpret_cast<char*>(&other->_impl_.axial_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata BattleTileInfo::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Struct_2eproto_getter, &descriptor_table_Struct_2eproto_once,
+      file_level_metadata_Struct_2eproto[6]);
+}
+
+// ===================================================================
+
 class BattlePawnInfo::_Internal {
  public:
   static const ::Protocol::AxialCoord& axial(const BattlePawnInfo* msg);
@@ -2660,7 +2948,7 @@ void BattlePawnInfo::InternalSwap(BattlePawnInfo* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata BattlePawnInfo::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Struct_2eproto_getter, &descriptor_table_Struct_2eproto_once,
-      file_level_metadata_Struct_2eproto[6]);
+      file_level_metadata_Struct_2eproto[7]);
 }
 
 // ===================================================================
@@ -3192,7 +3480,7 @@ void BattlePawnDelta::InternalSwap(BattlePawnDelta* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata BattlePawnDelta::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Struct_2eproto_getter, &descriptor_table_Struct_2eproto_once,
-      file_level_metadata_Struct_2eproto[7]);
+      file_level_metadata_Struct_2eproto[8]);
 }
 
 // ===================================================================
@@ -3695,7 +3983,7 @@ void BattleActionLog::InternalSwap(BattleActionLog* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata BattleActionLog::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Struct_2eproto_getter, &descriptor_table_Struct_2eproto_once,
-      file_level_metadata_Struct_2eproto[8]);
+      file_level_metadata_Struct_2eproto[9]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -3724,6 +4012,10 @@ Arena::CreateMaybeMessage< ::Protocol::BattleBarrierState >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::Protocol::BattleStatusState*
 Arena::CreateMaybeMessage< ::Protocol::BattleStatusState >(Arena* arena) {
   return Arena::CreateMessageInternal< ::Protocol::BattleStatusState >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::BattleTileInfo*
+Arena::CreateMaybeMessage< ::Protocol::BattleTileInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::BattleTileInfo >(arena);
 }
 template<> PROTOBUF_NOINLINE ::Protocol::BattlePawnInfo*
 Arena::CreateMaybeMessage< ::Protocol::BattlePawnInfo >(Arena* arena) {

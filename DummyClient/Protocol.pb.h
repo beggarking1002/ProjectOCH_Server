@@ -2222,6 +2222,7 @@ class S_ENTER_BATTLE final :
   enum : int {
     kAlliedPawnsFieldNumber = 4,
     kEnemyPawnsFieldNumber = 5,
+    kTilesFieldNumber = 9,
     kMapIdFieldNumber = 3,
     kReasonFieldNumber = 7,
     kBattleIdFieldNumber = 2,
@@ -2264,6 +2265,24 @@ class S_ENTER_BATTLE final :
   ::Protocol::BattlePawnInfo* add_enemy_pawns();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnInfo >&
       enemy_pawns() const;
+
+  // repeated .Protocol.BattleTileInfo tiles = 9;
+  int tiles_size() const;
+  private:
+  int _internal_tiles_size() const;
+  public:
+  void clear_tiles();
+  ::Protocol::BattleTileInfo* mutable_tiles(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >*
+      mutable_tiles();
+  private:
+  const ::Protocol::BattleTileInfo& _internal_tiles(int index) const;
+  ::Protocol::BattleTileInfo* _internal_add_tiles();
+  public:
+  const ::Protocol::BattleTileInfo& tiles(int index) const;
+  ::Protocol::BattleTileInfo* add_tiles();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >&
+      tiles() const;
 
   // string map_id = 3;
   void clear_map_id();
@@ -2339,6 +2358,7 @@ class S_ENTER_BATTLE final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnInfo > allied_pawns_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnInfo > enemy_pawns_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo > tiles_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr map_id_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
     uint64_t battle_id_;
@@ -3176,6 +3196,7 @@ class S_BATTLE_SKILL final :
   enum : int {
     kPawnDeltasFieldNumber = 16,
     kLogsFieldNumber = 17,
+    kTileDeltasFieldNumber = 19,
     kReasonFieldNumber = 10,
     kTargetAxialFieldNumber = 6,
     kBattleIdFieldNumber = 2,
@@ -3228,6 +3249,24 @@ class S_BATTLE_SKILL final :
   ::Protocol::BattleActionLog* add_logs();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >&
       logs() const;
+
+  // repeated .Protocol.BattleTileInfo tile_deltas = 19;
+  int tile_deltas_size() const;
+  private:
+  int _internal_tile_deltas_size() const;
+  public:
+  void clear_tile_deltas();
+  ::Protocol::BattleTileInfo* mutable_tile_deltas(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >*
+      mutable_tile_deltas();
+  private:
+  const ::Protocol::BattleTileInfo& _internal_tile_deltas(int index) const;
+  ::Protocol::BattleTileInfo* _internal_add_tile_deltas();
+  public:
+  const ::Protocol::BattleTileInfo& tile_deltas(int index) const;
+  ::Protocol::BattleTileInfo* add_tile_deltas();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >&
+      tile_deltas() const;
 
   // string reason = 10;
   void clear_reason();
@@ -3397,6 +3436,7 @@ class S_BATTLE_SKILL final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta > pawn_deltas_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog > logs_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo > tile_deltas_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
     ::Protocol::AxialCoord* target_axial_;
     uint64_t battle_id_;
@@ -3702,6 +3742,7 @@ class S_BATTLE_END_TURN final :
   enum : int {
     kPawnDeltasFieldNumber = 10,
     kLogsFieldNumber = 11,
+    kTileDeltasFieldNumber = 13,
     kReasonFieldNumber = 5,
     kBattleIdFieldNumber = 2,
     kPawnIdFieldNumber = 3,
@@ -3748,6 +3789,24 @@ class S_BATTLE_END_TURN final :
   ::Protocol::BattleActionLog* add_logs();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >&
       logs() const;
+
+  // repeated .Protocol.BattleTileInfo tile_deltas = 13;
+  int tile_deltas_size() const;
+  private:
+  int _internal_tile_deltas_size() const;
+  public:
+  void clear_tile_deltas();
+  ::Protocol::BattleTileInfo* mutable_tile_deltas(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >*
+      mutable_tile_deltas();
+  private:
+  const ::Protocol::BattleTileInfo& _internal_tile_deltas(int index) const;
+  ::Protocol::BattleTileInfo* _internal_add_tile_deltas();
+  public:
+  const ::Protocol::BattleTileInfo& tile_deltas(int index) const;
+  ::Protocol::BattleTileInfo* add_tile_deltas();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >&
+      tile_deltas() const;
 
   // string reason = 5;
   void clear_reason();
@@ -3854,6 +3913,7 @@ class S_BATTLE_END_TURN final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta > pawn_deltas_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog > logs_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo > tile_deltas_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
     uint64_t battle_id_;
     uint64_t pawn_id_;
@@ -6309,6 +6369,43 @@ inline void S_ENTER_BATTLE::set_battle_state_version(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.S_ENTER_BATTLE.battle_state_version)
 }
 
+// repeated .Protocol.BattleTileInfo tiles = 9;
+inline int S_ENTER_BATTLE::_internal_tiles_size() const {
+  return _impl_.tiles_.size();
+}
+inline int S_ENTER_BATTLE::tiles_size() const {
+  return _internal_tiles_size();
+}
+inline ::Protocol::BattleTileInfo* S_ENTER_BATTLE::mutable_tiles(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_ENTER_BATTLE.tiles)
+  return _impl_.tiles_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >*
+S_ENTER_BATTLE::mutable_tiles() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_ENTER_BATTLE.tiles)
+  return &_impl_.tiles_;
+}
+inline const ::Protocol::BattleTileInfo& S_ENTER_BATTLE::_internal_tiles(int index) const {
+  return _impl_.tiles_.Get(index);
+}
+inline const ::Protocol::BattleTileInfo& S_ENTER_BATTLE::tiles(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_BATTLE.tiles)
+  return _internal_tiles(index);
+}
+inline ::Protocol::BattleTileInfo* S_ENTER_BATTLE::_internal_add_tiles() {
+  return _impl_.tiles_.Add();
+}
+inline ::Protocol::BattleTileInfo* S_ENTER_BATTLE::add_tiles() {
+  ::Protocol::BattleTileInfo* _add = _internal_add_tiles();
+  // @@protoc_insertion_point(field_add:Protocol.S_ENTER_BATTLE.tiles)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >&
+S_ENTER_BATTLE::tiles() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_ENTER_BATTLE.tiles)
+  return _impl_.tiles_;
+}
+
 // -------------------------------------------------------------------
 
 // C_BATTLE_MOVE
@@ -7558,6 +7655,43 @@ inline void S_BATTLE_SKILL::set_battle_state_version(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_SKILL.battle_state_version)
 }
 
+// repeated .Protocol.BattleTileInfo tile_deltas = 19;
+inline int S_BATTLE_SKILL::_internal_tile_deltas_size() const {
+  return _impl_.tile_deltas_.size();
+}
+inline int S_BATTLE_SKILL::tile_deltas_size() const {
+  return _internal_tile_deltas_size();
+}
+inline ::Protocol::BattleTileInfo* S_BATTLE_SKILL::mutable_tile_deltas(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_BATTLE_SKILL.tile_deltas)
+  return _impl_.tile_deltas_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >*
+S_BATTLE_SKILL::mutable_tile_deltas() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_SKILL.tile_deltas)
+  return &_impl_.tile_deltas_;
+}
+inline const ::Protocol::BattleTileInfo& S_BATTLE_SKILL::_internal_tile_deltas(int index) const {
+  return _impl_.tile_deltas_.Get(index);
+}
+inline const ::Protocol::BattleTileInfo& S_BATTLE_SKILL::tile_deltas(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_SKILL.tile_deltas)
+  return _internal_tile_deltas(index);
+}
+inline ::Protocol::BattleTileInfo* S_BATTLE_SKILL::_internal_add_tile_deltas() {
+  return _impl_.tile_deltas_.Add();
+}
+inline ::Protocol::BattleTileInfo* S_BATTLE_SKILL::add_tile_deltas() {
+  ::Protocol::BattleTileInfo* _add = _internal_add_tile_deltas();
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_SKILL.tile_deltas)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >&
+S_BATTLE_SKILL::tile_deltas() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_SKILL.tile_deltas)
+  return _impl_.tile_deltas_;
+}
+
 // -------------------------------------------------------------------
 
 // C_BATTLE_END_TURN
@@ -7908,6 +8042,43 @@ inline void S_BATTLE_END_TURN::_internal_set_battle_state_version(uint64_t value
 inline void S_BATTLE_END_TURN::set_battle_state_version(uint64_t value) {
   _internal_set_battle_state_version(value);
   // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_END_TURN.battle_state_version)
+}
+
+// repeated .Protocol.BattleTileInfo tile_deltas = 13;
+inline int S_BATTLE_END_TURN::_internal_tile_deltas_size() const {
+  return _impl_.tile_deltas_.size();
+}
+inline int S_BATTLE_END_TURN::tile_deltas_size() const {
+  return _internal_tile_deltas_size();
+}
+inline ::Protocol::BattleTileInfo* S_BATTLE_END_TURN::mutable_tile_deltas(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_BATTLE_END_TURN.tile_deltas)
+  return _impl_.tile_deltas_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >*
+S_BATTLE_END_TURN::mutable_tile_deltas() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_END_TURN.tile_deltas)
+  return &_impl_.tile_deltas_;
+}
+inline const ::Protocol::BattleTileInfo& S_BATTLE_END_TURN::_internal_tile_deltas(int index) const {
+  return _impl_.tile_deltas_.Get(index);
+}
+inline const ::Protocol::BattleTileInfo& S_BATTLE_END_TURN::tile_deltas(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_END_TURN.tile_deltas)
+  return _internal_tile_deltas(index);
+}
+inline ::Protocol::BattleTileInfo* S_BATTLE_END_TURN::_internal_add_tile_deltas() {
+  return _impl_.tile_deltas_.Add();
+}
+inline ::Protocol::BattleTileInfo* S_BATTLE_END_TURN::add_tile_deltas() {
+  ::Protocol::BattleTileInfo* _add = _internal_add_tile_deltas();
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_END_TURN.tile_deltas)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >&
+S_BATTLE_END_TURN::tile_deltas() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_END_TURN.tile_deltas)
+  return _impl_.tile_deltas_;
 }
 
 // -------------------------------------------------------------------

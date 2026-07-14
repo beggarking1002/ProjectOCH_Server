@@ -247,6 +247,57 @@ inline bool BattleResourceType_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<BattleResourceType>(
     BattleResourceType_descriptor(), name, value);
 }
+enum BattleTileType : int {
+  BATTLE_TILE_TYPE_NONE = 0,
+  BATTLE_TILE_TYPE_NORMAL = 1,
+  BATTLE_TILE_TYPE_WATER = 2,
+  BattleTileType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  BattleTileType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool BattleTileType_IsValid(int value);
+constexpr BattleTileType BattleTileType_MIN = BATTLE_TILE_TYPE_NONE;
+constexpr BattleTileType BattleTileType_MAX = BATTLE_TILE_TYPE_WATER;
+constexpr int BattleTileType_ARRAYSIZE = BattleTileType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattleTileType_descriptor();
+template<typename T>
+inline const std::string& BattleTileType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, BattleTileType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function BattleTileType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    BattleTileType_descriptor(), enum_t_value);
+}
+inline bool BattleTileType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, BattleTileType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<BattleTileType>(
+    BattleTileType_descriptor(), name, value);
+}
+enum BattleTileOverlayType : int {
+  BATTLE_TILE_OVERLAY_TYPE_NONE = 0,
+  BATTLE_TILE_OVERLAY_TYPE_ICE = 1,
+  BattleTileOverlayType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  BattleTileOverlayType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool BattleTileOverlayType_IsValid(int value);
+constexpr BattleTileOverlayType BattleTileOverlayType_MIN = BATTLE_TILE_OVERLAY_TYPE_NONE;
+constexpr BattleTileOverlayType BattleTileOverlayType_MAX = BATTLE_TILE_OVERLAY_TYPE_ICE;
+constexpr int BattleTileOverlayType_ARRAYSIZE = BattleTileOverlayType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattleTileOverlayType_descriptor();
+template<typename T>
+inline const std::string& BattleTileOverlayType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, BattleTileOverlayType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function BattleTileOverlayType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    BattleTileOverlayType_descriptor(), enum_t_value);
+}
+inline bool BattleTileOverlayType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, BattleTileOverlayType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<BattleTileOverlayType>(
+    BattleTileOverlayType_descriptor(), name, value);
+}
 // ===================================================================
 
 
@@ -303,6 +354,16 @@ template <> struct is_proto_enum< ::Protocol::BattleResourceType> : ::std::true_
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::BattleResourceType>() {
   return ::Protocol::BattleResourceType_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::BattleTileType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::BattleTileType>() {
+  return ::Protocol::BattleTileType_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::BattleTileOverlayType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::BattleTileOverlayType>() {
+  return ::Protocol::BattleTileOverlayType_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

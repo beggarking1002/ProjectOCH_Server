@@ -67,6 +67,9 @@ extern BattleResourceStateDefaultTypeInternal _BattleResourceState_default_insta
 class BattleStatusState;
 struct BattleStatusStateDefaultTypeInternal;
 extern BattleStatusStateDefaultTypeInternal _BattleStatusState_default_instance_;
+class BattleTileInfo;
+struct BattleTileInfoDefaultTypeInternal;
+extern BattleTileInfoDefaultTypeInternal _BattleTileInfo_default_instance_;
 class ObjectInfo;
 struct ObjectInfoDefaultTypeInternal;
 extern ObjectInfoDefaultTypeInternal _ObjectInfo_default_instance_;
@@ -82,6 +85,7 @@ template<> ::Protocol::BattlePawnDelta* Arena::CreateMaybeMessage<::Protocol::Ba
 template<> ::Protocol::BattlePawnInfo* Arena::CreateMaybeMessage<::Protocol::BattlePawnInfo>(Arena*);
 template<> ::Protocol::BattleResourceState* Arena::CreateMaybeMessage<::Protocol::BattleResourceState>(Arena*);
 template<> ::Protocol::BattleStatusState* Arena::CreateMaybeMessage<::Protocol::BattleStatusState>(Arena*);
+template<> ::Protocol::BattleTileInfo* Arena::CreateMaybeMessage<::Protocol::BattleTileInfo>(Arena*);
 template<> ::Protocol::ObjectInfo* Arena::CreateMaybeMessage<::Protocol::ObjectInfo>(Arena*);
 template<> ::Protocol::Vec2Fixed* Arena::CreateMaybeMessage<::Protocol::Vec2Fixed>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
@@ -1139,6 +1143,185 @@ class BattleStatusState final :
 };
 // -------------------------------------------------------------------
 
+class BattleTileInfo final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.BattleTileInfo) */ {
+ public:
+  inline BattleTileInfo() : BattleTileInfo(nullptr) {}
+  ~BattleTileInfo() override;
+  explicit PROTOBUF_CONSTEXPR BattleTileInfo(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  BattleTileInfo(const BattleTileInfo& from);
+  BattleTileInfo(BattleTileInfo&& from) noexcept
+    : BattleTileInfo() {
+    *this = ::std::move(from);
+  }
+
+  inline BattleTileInfo& operator=(const BattleTileInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline BattleTileInfo& operator=(BattleTileInfo&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const BattleTileInfo& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const BattleTileInfo* internal_default_instance() {
+    return reinterpret_cast<const BattleTileInfo*>(
+               &_BattleTileInfo_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  friend void swap(BattleTileInfo& a, BattleTileInfo& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(BattleTileInfo* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(BattleTileInfo* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  BattleTileInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<BattleTileInfo>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const BattleTileInfo& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const BattleTileInfo& from) {
+    BattleTileInfo::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BattleTileInfo* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.BattleTileInfo";
+  }
+  protected:
+  explicit BattleTileInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kAxialFieldNumber = 1,
+    kTileTypeFieldNumber = 2,
+    kOverlayTypeFieldNumber = 3,
+  };
+  // .Protocol.AxialCoord axial = 1;
+  bool has_axial() const;
+  private:
+  bool _internal_has_axial() const;
+  public:
+  void clear_axial();
+  const ::Protocol::AxialCoord& axial() const;
+  PROTOBUF_NODISCARD ::Protocol::AxialCoord* release_axial();
+  ::Protocol::AxialCoord* mutable_axial();
+  void set_allocated_axial(::Protocol::AxialCoord* axial);
+  private:
+  const ::Protocol::AxialCoord& _internal_axial() const;
+  ::Protocol::AxialCoord* _internal_mutable_axial();
+  public:
+  void unsafe_arena_set_allocated_axial(
+      ::Protocol::AxialCoord* axial);
+  ::Protocol::AxialCoord* unsafe_arena_release_axial();
+
+  // .Protocol.BattleTileType tile_type = 2;
+  void clear_tile_type();
+  ::Protocol::BattleTileType tile_type() const;
+  void set_tile_type(::Protocol::BattleTileType value);
+  private:
+  ::Protocol::BattleTileType _internal_tile_type() const;
+  void _internal_set_tile_type(::Protocol::BattleTileType value);
+  public:
+
+  // .Protocol.BattleTileOverlayType overlay_type = 3;
+  void clear_overlay_type();
+  ::Protocol::BattleTileOverlayType overlay_type() const;
+  void set_overlay_type(::Protocol::BattleTileOverlayType value);
+  private:
+  ::Protocol::BattleTileOverlayType _internal_overlay_type() const;
+  void _internal_set_overlay_type(::Protocol::BattleTileOverlayType value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.BattleTileInfo)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::Protocol::AxialCoord* axial_;
+    int tile_type_;
+    int overlay_type_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Struct_2eproto;
+};
+// -------------------------------------------------------------------
+
 class BattlePawnInfo final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.BattlePawnInfo) */ {
  public:
@@ -1187,7 +1370,7 @@ class BattlePawnInfo final :
                &_BattlePawnInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(BattlePawnInfo& a, BattlePawnInfo& b) {
     a.Swap(&b);
@@ -1591,7 +1774,7 @@ class BattlePawnDelta final :
                &_BattlePawnDelta_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(BattlePawnDelta& a, BattlePawnDelta& b) {
     a.Swap(&b);
@@ -1909,7 +2092,7 @@ class BattleActionLog final :
                &_BattleActionLog_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    9;
 
   friend void swap(BattleActionLog& a, BattleActionLog& b) {
     a.Swap(&b);
@@ -2683,6 +2866,140 @@ inline void BattleStatusState::_internal_set_remaining_owner_turns(int32_t value
 inline void BattleStatusState::set_remaining_owner_turns(int32_t value) {
   _internal_set_remaining_owner_turns(value);
   // @@protoc_insertion_point(field_set:Protocol.BattleStatusState.remaining_owner_turns)
+}
+
+// -------------------------------------------------------------------
+
+// BattleTileInfo
+
+// .Protocol.AxialCoord axial = 1;
+inline bool BattleTileInfo::_internal_has_axial() const {
+  return this != internal_default_instance() && _impl_.axial_ != nullptr;
+}
+inline bool BattleTileInfo::has_axial() const {
+  return _internal_has_axial();
+}
+inline void BattleTileInfo::clear_axial() {
+  if (GetArenaForAllocation() == nullptr && _impl_.axial_ != nullptr) {
+    delete _impl_.axial_;
+  }
+  _impl_.axial_ = nullptr;
+}
+inline const ::Protocol::AxialCoord& BattleTileInfo::_internal_axial() const {
+  const ::Protocol::AxialCoord* p = _impl_.axial_;
+  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::AxialCoord&>(
+      ::Protocol::_AxialCoord_default_instance_);
+}
+inline const ::Protocol::AxialCoord& BattleTileInfo::axial() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleTileInfo.axial)
+  return _internal_axial();
+}
+inline void BattleTileInfo::unsafe_arena_set_allocated_axial(
+    ::Protocol::AxialCoord* axial) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.axial_);
+  }
+  _impl_.axial_ = axial;
+  if (axial) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.BattleTileInfo.axial)
+}
+inline ::Protocol::AxialCoord* BattleTileInfo::release_axial() {
+  
+  ::Protocol::AxialCoord* temp = _impl_.axial_;
+  _impl_.axial_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::Protocol::AxialCoord* BattleTileInfo::unsafe_arena_release_axial() {
+  // @@protoc_insertion_point(field_release:Protocol.BattleTileInfo.axial)
+  
+  ::Protocol::AxialCoord* temp = _impl_.axial_;
+  _impl_.axial_ = nullptr;
+  return temp;
+}
+inline ::Protocol::AxialCoord* BattleTileInfo::_internal_mutable_axial() {
+  
+  if (_impl_.axial_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Protocol::AxialCoord>(GetArenaForAllocation());
+    _impl_.axial_ = p;
+  }
+  return _impl_.axial_;
+}
+inline ::Protocol::AxialCoord* BattleTileInfo::mutable_axial() {
+  ::Protocol::AxialCoord* _msg = _internal_mutable_axial();
+  // @@protoc_insertion_point(field_mutable:Protocol.BattleTileInfo.axial)
+  return _msg;
+}
+inline void BattleTileInfo::set_allocated_axial(::Protocol::AxialCoord* axial) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.axial_;
+  }
+  if (axial) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(axial);
+    if (message_arena != submessage_arena) {
+      axial = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, axial, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.axial_ = axial;
+  // @@protoc_insertion_point(field_set_allocated:Protocol.BattleTileInfo.axial)
+}
+
+// .Protocol.BattleTileType tile_type = 2;
+inline void BattleTileInfo::clear_tile_type() {
+  _impl_.tile_type_ = 0;
+}
+inline ::Protocol::BattleTileType BattleTileInfo::_internal_tile_type() const {
+  return static_cast< ::Protocol::BattleTileType >(_impl_.tile_type_);
+}
+inline ::Protocol::BattleTileType BattleTileInfo::tile_type() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleTileInfo.tile_type)
+  return _internal_tile_type();
+}
+inline void BattleTileInfo::_internal_set_tile_type(::Protocol::BattleTileType value) {
+  
+  _impl_.tile_type_ = value;
+}
+inline void BattleTileInfo::set_tile_type(::Protocol::BattleTileType value) {
+  _internal_set_tile_type(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleTileInfo.tile_type)
+}
+
+// .Protocol.BattleTileOverlayType overlay_type = 3;
+inline void BattleTileInfo::clear_overlay_type() {
+  _impl_.overlay_type_ = 0;
+}
+inline ::Protocol::BattleTileOverlayType BattleTileInfo::_internal_overlay_type() const {
+  return static_cast< ::Protocol::BattleTileOverlayType >(_impl_.overlay_type_);
+}
+inline ::Protocol::BattleTileOverlayType BattleTileInfo::overlay_type() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleTileInfo.overlay_type)
+  return _internal_overlay_type();
+}
+inline void BattleTileInfo::_internal_set_overlay_type(::Protocol::BattleTileOverlayType value) {
+  
+  _impl_.overlay_type_ = value;
+}
+inline void BattleTileInfo::set_overlay_type(::Protocol::BattleTileOverlayType value) {
+  _internal_set_overlay_type(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleTileInfo.overlay_type)
 }
 
 // -------------------------------------------------------------------
@@ -3880,6 +4197,8 @@ inline void BattleActionLog::set_is_back_attack(bool value) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

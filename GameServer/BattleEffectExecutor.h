@@ -37,6 +37,11 @@ struct BattleEffectExecutionRequest
 	int32 skillSlot = 0;
 	string actionType;
 	bool isBackAttack = false;
+	const Protocol::AxialCoord* targetAxial = nullptr;
+	function<Protocol::BattleTileType(const Protocol::AxialCoord&)> getBaseTileType;
+	function<Protocol::BattleTileOverlayType(const Protocol::AxialCoord&)> getTileOverlayType;
+	function<void(const Protocol::AxialCoord&, Protocol::BattleTileOverlayType)> setTileOverlayType;
+	function<bool(const Protocol::AxialCoord&)> isTileValid;
 	BattleEffectPawnContext caster;
 	BattleEffectPawnContext target;
 	uint64* barrierIdGenerator = nullptr;
@@ -47,6 +52,7 @@ struct BattleEffectExecutionResult
 {
 	int32 totalDamage = 0;
 	bool dealtDamage = false;
+	vector<Protocol::BattleTileInfo> tileDeltas;
 };
 
 class BattleEffectExecutor
@@ -63,6 +69,8 @@ private:
 	void ExecuteSetResourceMax(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteApplyBarrier(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteApplyStatus(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
+	void ExecuteChangeTileOverlay(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
+		BattleEffectExecutionResult& result);
 
 	int32 CalculateValue(const BattleEffectTemplate& effect, const BattlePawnClassTemplate& casterTemplate);
 	int32 GetStatValue(const BattlePawnClassTemplate& pawnTemplate, const string& statKey) const;

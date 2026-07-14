@@ -162,6 +162,7 @@ bool BattleTemplateManager::Load()
 	_pawnClassTemplates.clear();
 	_skillsByClassKey.clear();
 	_effectsByGroupKey.clear();
+	_battleMapTilesByMapId.clear();
 	_effectParams.clear();
 
 	const bool success =
@@ -170,6 +171,7 @@ bool BattleTemplateManager::Load()
 		LoadBattleSkill(ResolveDataPath("BattleSkill.csv")) &&
 		LoadBattleSkillEffect(ResolveDataPath("BattleSkillEffect.csv")) &&
 		LoadBattleSkillEffectParam(ResolveDataPath("BattleSkillEffectParam.csv")) &&
+		LoadBattleMapTile(ResolveDataPath("BattleMapTile.csv")) &&
 		ValidateTemplates();
 
 	_loaded = success;
@@ -178,6 +180,7 @@ bool BattleTemplateManager::Load()
 		<< " class_keys=" << _classKeyToPawnClass.size()
 		<< " skill_class_count=" << _skillsByClassKey.size()
 		<< " effect_group_count=" << _effectsByGroupKey.size()
+		<< " battle_map_count=" << _battleMapTilesByMapId.size()
 		<< " effect_params=" << _effectParams.size()
 		<< endl;
 
@@ -228,10 +231,31 @@ const vector<BattleEffectTemplate>* BattleTemplateManager::GetEffects(const stri
 	return &it->second;
 }
 
+const vector<BattleMapTileTemplate>* BattleTemplateManager::GetBattleMapTiles(const string& mapId)
+{
+	if (Load() == false)
+		return nullptr;
+
+	auto it = _battleMapTilesByMapId.find(mapId);
+	return it != _battleMapTilesByMapId.end() ? &it->second : nullptr;
+}
+
 bool BattleTemplateManager::TryParseBattleResourceType(const string& key, Protocol::BattleResourceType& resourceType) const
 {
 	const string enumName = "BATTLE_RESOURCE_TYPE_" + ToUpper(Trim(key));
 	return Protocol::BattleResourceType_Parse(enumName, &resourceType) && resourceType != Protocol::BATTLE_RESOURCE_TYPE_NONE;
+}
+
+bool BattleTemplateManager::TryParseBattleTileType(const string& key, Protocol::BattleTileType& tileType) const
+{
+	const string enumName = "BATTLE_TILE_TYPE_" + ToUpper(Trim(key));
+	return Protocol::BattleTileType_Parse(enumName, &tileType) && tileType != Protocol::BATTLE_TILE_TYPE_NONE;
+}
+
+bool BattleTemplateManager::TryParseBattleTileOverlayType(const string& key, Protocol::BattleTileOverlayType& overlayType) const
+{
+	const string enumName = "BATTLE_TILE_OVERLAY_TYPE_" + ToUpper(Trim(key));
+	return Protocol::BattleTileOverlayType_Parse(enumName, &overlayType) && overlayType != Protocol::BATTLE_TILE_OVERLAY_TYPE_NONE;
 }
 
 bool BattleTemplateManager::LoadClassKey(const string& path)
@@ -429,6 +453,37 @@ bool BattleTemplateManager::LoadBattleSkillEffectParam(const string& path)
 	return true;
 }
 
+bool BattleTemplateManager::LoadBattleMapTile(const string& path)
+{
+	vector<vector<string>> rows;
+	if (ReadCsv(path, rows) == false || rows.size() < 2)
+	{
+		cout << "[BattleTemplateManager] Failed to read BattleMapTile: " << path << endl;
+		return false;
+	}
+
+	const unordered_map<string, size_t> header = BuildHeader(rows[0]);
+	for (size_t i = 2; i < rows.size(); i++)
+	{
+		BattleMapTileTemplate tile;
+		tile.mapId = Cell(rows[i], header, "MapId");
+		if (tile.mapId.empty())
+			continue;
+
+		tile.q = ToInt(Cell(rows[i], header, "Q"));
+		tile.r = ToInt(Cell(rows[i], header, "R"));
+		if (TryParseBattleTileType(Cell(rows[i], header, "TileType"), tile.tileType) == false)
+		{
+			cout << "[BattleTemplateManager] Invalid BattleTileType map_id=" << tile.mapId << endl;
+			return false;
+		}
+
+		_battleMapTilesByMapId[tile.mapId].push_back(tile);
+	}
+
+	return true;
+}
+
 bool BattleTemplateManager::ValidateTemplates()
 {
 	for (const auto& item : _skillsByClassKey)
@@ -493,6 +548,34 @@ bool BattleTemplateManager::ValidateTemplates()
 			if (TryParseBattleResourceType(param.paramValue, resourceType) == false)
 			{
 				cout << "[BattleTemplateManager] Invalid BattleResourceType"
+					<< " effect_group_key=" << param.effectGroupKey
+					<< " effect_instance_key=" << param.effectInstanceKey
+					<< " value=" << param.paramValue
+					<< endl;
+				return false;
+			}
+		}
+
+		if (param.paramKey == "tile_filter")
+		{
+			Protocol::BattleTileType tileType = Protocol::BATTLE_TILE_TYPE_NONE;
+			if (TryParseBattleTileType(param.paramValue, tileType) == false)
+			{
+				cout << "[BattleTemplateManager] Invalid BattleTileType"
+					<< " effect_group_key=" << param.effectGroupKey
+					<< " effect_instance_key=" << param.effectInstanceKey
+					<< " value=" << param.paramValue
+					<< endl;
+				return false;
+			}
+		}
+
+		if (param.paramKey == "overlay_type")
+		{
+			Protocol::BattleTileOverlayType overlayType = Protocol::BATTLE_TILE_OVERLAY_TYPE_NONE;
+			if (TryParseBattleTileOverlayType(param.paramValue, overlayType) == false)
+			{
+				cout << "[BattleTemplateManager] Invalid BattleTileOverlayType"
 					<< " effect_group_key=" << param.effectGroupKey
 					<< " effect_instance_key=" << param.effectInstanceKey
 					<< " value=" << param.paramValue

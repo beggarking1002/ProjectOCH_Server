@@ -86,6 +86,7 @@ message S_ENTER_BATTLE
 	uint64 current_turn_pawn_id = 6;
 	string reason = 7;
 	uint64 battle_state_version = 8;
+	repeated BattleTileInfo tiles = 9;
 }
 
 message C_BATTLE_MOVE
@@ -141,6 +142,7 @@ message S_BATTLE_SKILL {
 	repeated BattlePawnDelta pawn_deltas = 16;
 	repeated BattleActionLog logs = 17;
 	uint64 battle_state_version = 18;
+	repeated BattleTileInfo tile_deltas = 19;
 }
 
 message C_BATTLE_END_TURN {
@@ -161,6 +163,7 @@ message S_BATTLE_END_TURN {
 	repeated BattlePawnDelta pawn_deltas = 10;
 	repeated BattleActionLog logs = 11;
 	uint64 battle_state_version = 12;
+	repeated BattleTileInfo tile_deltas = 13;
 }
 
 message C_BATTLE_INVITE {
