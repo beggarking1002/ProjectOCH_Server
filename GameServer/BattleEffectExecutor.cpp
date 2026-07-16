@@ -85,28 +85,56 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 
 void BattleEffectExecutor::AdvanceOwnerTurn(BattleEffectPawnContext pawn)
 {
-	if (pawn.barriers == nullptr)
+	if (pawn.barriers != nullptr)
+	{
+		for (BattleBarrierState& barrier : *pawn.barriers)
+			barrier.remainingOwnerTurns--;
+
+		for (const BattleBarrierState& barrier : *pawn.barriers)
+		{
+			if (barrier.value > 0 && barrier.remainingOwnerTurns <= 0)
+			{
+				cout << "BATTLE_BARRIER_EXPIRE"
+					<< " pawn_id=" << pawn.pawnId
+					<< " source_skill_key=" << barrier.sourceSkillKey
+					<< endl;
+			}
+		}
+
+		auto eraseBegin = remove_if(pawn.barriers->begin(), pawn.barriers->end(), [](const BattleBarrierState& barrier)
+			{
+				return barrier.value <= 0 || barrier.remainingOwnerTurns <= 0;
+			});
+		pawn.barriers->erase(eraseBegin, pawn.barriers->end());
+	}
+
+	if (pawn.statuses == nullptr)
 		return;
 
-	for (BattleBarrierState& barrier : *pawn.barriers)
-		barrier.remainingOwnerTurns--;
-
-	for (const BattleBarrierState& barrier : *pawn.barriers)
+	for (auto& item : *pawn.statuses)
 	{
-		if (barrier.value > 0 && barrier.remainingOwnerTurns <= 0)
+		if (item.second.remainingOwnerTurns > 0)
+			item.second.remainingOwnerTurns--;
+	}
+
+	for (const auto& item : *pawn.statuses)
+	{
+		if (item.second.remainingOwnerTurns == 0)
 		{
-			cout << "BATTLE_BARRIER_EXPIRE"
+			cout << "BATTLE_STATUS_EXPIRE"
 				<< " pawn_id=" << pawn.pawnId
-				<< " source_skill_key=" << barrier.sourceSkillKey
+				<< " status_key=" << item.first
 				<< endl;
 		}
 	}
 
-	auto eraseBegin = remove_if(pawn.barriers->begin(), pawn.barriers->end(), [](const BattleBarrierState& barrier)
-		{
-			return barrier.value <= 0 || barrier.remainingOwnerTurns <= 0;
-		});
-	pawn.barriers->erase(eraseBegin, pawn.barriers->end());
+	for (auto it = pawn.statuses->begin(); it != pawn.statuses->end();)
+	{
+		if (it->second.remainingOwnerTurns == 0)
+			it = pawn.statuses->erase(it);
+		else
+			++it;
+	}
 }
 
 void BattleEffectExecutor::ExecuteDealDamage(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
@@ -116,7 +144,8 @@ void BattleEffectExecutor::ExecuteDealDamage(const BattleEffectTemplate& effect,
 	if (target.hp == nullptr || target.armor == nullptr)
 		return;
 
-	const int32 damage = CalculateValue(effect, *request.casterTemplate);
+	const int32 damage = static_cast<int32>(floor(static_cast<double>(CalculateValue(effect, *request.casterTemplate)) *
+		max(0.0, request.damageMultiplier)));
 	const int32 appliedDamage = ApplyDamage(target, damage);
 	result.totalDamage += appliedDamage;
 	result.dealtDamage = true;
@@ -247,6 +276,9 @@ void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect
 	const int32 stackDelta = GetIntParam(effect, "stack_delta", 1);
 	BattleStatusState& status = (*target.statuses)[statusKey];
 	status.stacks = max(0, status.stacks + stackDelta);
+	const int32 durationTurns = GetIntParam(effect, "duration_turns", -1);
+	if (durationTurns > 0)
+		status.remainingOwnerTurns = max(status.remainingOwnerTurns, durationTurns);
 
 	cout << "BATTLE_STATUS_APPLY"
 		<< " pawn_id=" << target.pawnId
@@ -261,8 +293,8 @@ void BattleEffectExecutor::ExecuteToggleAura(const BattleEffectTemplate& effect,
 	if (request.skill == nullptr || request.caster.auras == nullptr)
 		return;
 
-	const int32 radius = max(0, GetIntParam(effect, "aura_radius", 0));
-	if (radius <= 0)
+	const int32 baseRadius = max(0, GetIntParam(effect, "aura_radius", 0));
+	if (baseRadius <= 0)
 		return;
 
 	auto it = request.caster.auras->find(request.skill->skillKey);
@@ -276,7 +308,8 @@ void BattleEffectExecutor::ExecuteToggleAura(const BattleEffectTemplate& effect,
 
 	BattleAuraState aura;
 	aura.sourceSkillKey = request.skill->skillKey;
-	aura.radius = radius;
+	aura.baseRadius = baseRadius;
+	aura.radius = baseRadius + max(0, request.auraRadiusBonus);
 	(*request.caster.auras)[aura.sourceSkillKey] = aura;
 	cout << "BATTLE_AURA_TOGGLE pawn_id=" << request.caster.pawnId
 		<< " skill_key=" << aura.sourceSkillKey << " radius=" << aura.radius << " active=1" << endl;
@@ -421,6 +454,22 @@ BattleEffectPawnContext BattleEffectExecutor::SelectTarget(const BattleEffectTem
 
 bool BattleEffectExecutor::IsConditionMet(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request) const
 {
+	BattleEffectPawnContext target = SelectTarget(effect, request);
+	const auto hasActiveStatus = [&target](const string& statusKey)
+		{
+			if (statusKey.empty() || target.statuses == nullptr)
+				return false;
+			auto it = target.statuses->find(statusKey);
+			return it != target.statuses->end() && it->second.remainingOwnerTurns != 0;
+		};
+
+	if (hasActiveStatus(GetParam(effect, "blocked_by_status")))
+		return false;
+
+	const string requiredStatusKey = GetParam(effect, "required_status_key");
+	if (requiredStatusKey.empty() == false && hasActiveStatus(requiredStatusKey) == false)
+		return false;
+
 	const string resourceKey = GetParam(effect, "condition_resource_key");
 	if (resourceKey.empty())
 		return true;
@@ -429,7 +478,6 @@ bool BattleEffectExecutor::IsConditionMet(const BattleEffectTemplate& effect, co
 	if (GBattleTemplates.TryParseBattleResourceType(resourceKey, resourceType) == false)
 		return false;
 
-	BattleEffectPawnContext target = SelectTarget(effect, request);
 	if (target.resources == nullptr || target.maxResources == nullptr)
 		return false;
 

@@ -90,10 +90,21 @@ private:
 
 	BattlePawn* FindPawn(BattleState& battle, uint64 pawnId);
 	BattlePawn* FindAlivePawnAt(BattleState& battle, const Protocol::AxialCoord& axial);
+	BattlePawn* FindAdjacentAliveAlly(BattleState& battle, const BattlePawn& source, uint64 excludedPawnId);
+	BattleEffectPawnContext MakeEffectContext(BattlePawn& pawn) const;
 	bool IsOccupied(const BattleState& battle, const Protocol::AxialCoord& coord, uint64 exceptPawnId);
 	bool IsBattleTileInBounds(const Protocol::AxialCoord& coord) const;
 	bool IsBattleWalkable(const BattleState& battle, const Protocol::AxialCoord& coord) const;
-	int32 AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs);
+	int32 AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs) const;
+	bool IsStatusActive(const BattlePawn& pawn, const string& statusKey) const;
+	const BattleEffectTemplate* FindActiveSkillModifier(const BattlePawn& pawn, const string& targetSkillKey,
+		const string& modifierType) const;
+	double GetSkillDamageMultiplier(const BattlePawn& pawn, const string& targetSkillKey) const;
+	int32 GetSkillExtraTargets(const BattlePawn& pawn, const string& targetSkillKey, const string& modifierType) const;
+	int32 GetSkillAuraRadiusBonus(const BattlePawn& pawn, const string& targetSkillKey) const;
+	string GetSkillAreaShape(const BattlePawn& pawn, const string& targetSkillKey) const;
+	void RefreshAuraRadii(BattlePawn& pawn) const;
+	vector<Protocol::AxialCoord> GetHailArea(const BattlePawn& caster, const Protocol::AxialCoord& target, const string& shape) const;
 	uint64 GetNextAlliedTurnPawnId(const BattleState& battle, uint64 currentPawnId);
 	void BuildTurnQueue(BattleState& battle);
 	uint64 AdvanceTurn(BattleState& battle);
@@ -121,9 +132,10 @@ private:
 		Protocol::BattleMoveResult result, const string& reason, const BattlePawn* pawn = nullptr);
 	void SendBattleSkillResult(GameSessionRef session, bool success, uint64 battleId, uint64 casterPawnId,
 		int32 skillSlot, uint64 targetPawnId, const Protocol::AxialCoord& targetAxial,
-		int32 damage, int32 targetHp, int32 targetArmor, uint64 nextTurnPawnId, const string& reason,
+	int32 damage, int32 targetHp, int32 targetArmor, uint64 nextTurnPawnId, const string& reason,
 		const BattlePawn* caster = nullptr, const BattlePawn* target = nullptr,
-		const vector<Protocol::BattleActionLog>& logs = {}, const vector<Protocol::BattleTileInfo>& tileDeltas = {});
+		const vector<Protocol::BattleActionLog>& logs = {}, const vector<Protocol::BattleTileInfo>& tileDeltas = {},
+		const vector<const BattlePawn*>& extraPawns = {});
 	void SendBattleEndTurnResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
 		uint64 nextTurnPawnId, const string& reason, const BattlePawn* pawn = nullptr, const BattlePawn* nextPawn = nullptr,
 		const vector<Protocol::BattleTileInfo>& tileDeltas = {}, const vector<const BattlePawn*>& extraPawns = {},

@@ -19,6 +19,7 @@ struct BattleStatusState
 struct BattleAuraState
 {
 	string sourceSkillKey;
+	int32 baseRadius = 0;
 	int32 radius = 0;
 };
 
@@ -44,6 +45,8 @@ struct BattleEffectExecutionRequest
 	int32 skillSlot = 0;
 	string actionType;
 	bool isBackAttack = false;
+	double damageMultiplier = 1.0;
+	int32 auraRadiusBonus = 0;
 	const Protocol::AxialCoord* targetAxial = nullptr;
 	function<Protocol::BattleTileType(const Protocol::AxialCoord&)> getBaseTileType;
 	function<Protocol::BattleTileOverlayType(const Protocol::AxialCoord&)> getTileOverlayType;

@@ -63,14 +63,11 @@ EffectKey,APPLY_STATUS,상태 부여
 EffectKey,CHANGE_TILE_TYPE,타일 타입 변경
 EffectKey,APPLY_STAT_MODIFIER,스탯/전투 수치 보정 적용
 EffectKey,TOGGLE_AURA,오라 토글
-EffectKey,IGNORE_COLD_BACKLASH,냉기 과열 피해 무시
-EffectKey,EMPOWER_SKILLS,스킬 강화 상태 부여
-EffectKey,EMPOWER_SKILL_DAMAGE_MULTIPLIER,특정 스킬 피해 배율 강화
-EffectKey,EMPOWER_SHIELD_CHAIN,보호막 추가 대상 강화
-EffectKey,EMPOWER_HAIL_SHAPE,우박 범위 모양 강화
-EffectKey,EMPOWER_AURA_RADIUS,오라 반경 강화
+EffectKey,ADD_SKILL_MODIFIER,지속 중 특정 스킬의 실행 규칙 보정
 ResourceKey,COLD,냉기 자원
 StatusKey,FROSTBITE,동상 상태
+StatusKey,BEIGE_ICE_COLD_HARD_WORKER_IGNORE_COLD_BACKLASH,차가운 노력가 냉기 역류 면역
+StatusKey,BEIGE_ICE_COLD_HARD_WORKER_EMPOWERED,차가운 노력가 스킬 강화
 DamageType,MAGIC,마법 피해
 TileType,NORMAL,일반 지형
 TileType,WATER,물 지형
@@ -78,6 +75,11 @@ TileOverlayType,NONE,오버레이 없음
 TileOverlayType,ICE,빙판 오버레이
 StatKey,DAMAGE_DEALT,주는 피해
 ModifierType,ADD_RATIO,비율 가산
+SkillModifierType,DAMAGE_MULTIPLIER,스킬 최종 피해 배율
+SkillModifierType,EXTRA_TARGET_COUNT,추가 대상 수
+SkillModifierType,TARGET_SHAPE_OVERRIDE,스킬 대상 범위 모양 변경
+SkillModifierType,AURA_RADIUS_DELTA,오라 반경 증감
+TargetShape,TRIANGLE_3,선택 타일 기준 3칸 삼각형
 Operation,ADD,덧셈
 Operation,MULTIPLY,곱셈
 Bool,TRUE,참

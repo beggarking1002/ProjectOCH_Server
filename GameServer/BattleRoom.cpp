@@ -444,10 +444,14 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		caster->hasMovedThisTurn = true;
 
 	const bool isBackAttack = target != nullptr && IsBackAttack(*caster, *target);
-	const bool targetWasAlive = target != nullptr && IsAlive(*target);
 
 	vector<Protocol::BattleActionLog> logs;
 	vector<Protocol::BattleTileInfo> tileDeltas;
+	vector<const BattlePawn*> extraChangedPawns;
+	vector<BattlePawn*> deathCandidates;
+	if (target != nullptr)
+		deathCandidates.push_back(target);
+
 	int32 appliedDamage = skillSpec.damage;
 	if (skillSpec.skillTemplate != nullptr && skillSpec.casterTemplate != nullptr)
 	{
@@ -458,6 +462,8 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		effectRequest.skillSlot = pkt.skill_slot();
 		effectRequest.actionType = skillSpec.isUltimate ? "ultimate" : "skill";
 		effectRequest.isBackAttack = isBackAttack;
+		effectRequest.damageMultiplier = GetSkillDamageMultiplier(*caster, skillSpec.skillKey);
+		effectRequest.auraRadiusBonus = GetSkillAuraRadiusBonus(*caster, skillSpec.skillKey);
 		effectRequest.targetAxial = &targetAxial;
 		effectRequest.getBaseTileType = [this, &battle](const Protocol::AxialCoord& axial)
 			{
@@ -476,44 +482,76 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 				return IsBattleTileInBounds(axial);
 			};
 		effectRequest.logs = &logs;
-		effectRequest.caster.pawnId = caster->pawnId;
-		effectRequest.caster.ownerId = caster->ownerId;
-		effectRequest.caster.pawnClass = caster->pawnClass;
-		effectRequest.caster.axial = &caster->axial;
-		effectRequest.caster.hp = &caster->hp;
-		effectRequest.caster.armor = &caster->armor;
-		effectRequest.caster.resources = &caster->resources;
-		effectRequest.caster.maxResources = &caster->maxResources;
-		effectRequest.caster.barriers = &caster->barriers;
-		effectRequest.caster.statuses = &caster->statuses;
-		effectRequest.caster.auras = &caster->auras;
-		effectRequest.target.pawnId = effectTarget->pawnId;
-		effectRequest.target.ownerId = effectTarget->ownerId;
-		effectRequest.target.pawnClass = effectTarget->pawnClass;
-		effectRequest.target.axial = &effectTarget->axial;
-		effectRequest.target.hp = &effectTarget->hp;
-		effectRequest.target.armor = &effectTarget->armor;
-		effectRequest.target.resources = &effectTarget->resources;
-		effectRequest.target.maxResources = &effectTarget->maxResources;
-		effectRequest.target.barriers = &effectTarget->barriers;
-		effectRequest.target.statuses = &effectTarget->statuses;
-		effectRequest.target.auras = &effectTarget->auras;
+		effectRequest.caster = MakeEffectContext(*caster);
+		effectRequest.target = MakeEffectContext(*effectTarget);
 		effectRequest.barrierIdGenerator = &_barrierIdGenerator;
 
 		BattleEffectExecutor executor;
 		BattleEffectExecutionResult effectResult = executor.ExecuteOnCast(effectRequest);
+		auto appendEffectResult = [&effectResult](const BattleEffectExecutionResult& additional)
+			{
+				effectResult.totalDamage += additional.totalDamage;
+				effectResult.dealtDamage = effectResult.dealtDamage || additional.dealtDamage;
+				for (const Protocol::BattleTileInfo& tileDelta : additional.tileDeltas)
+					effectResult.tileDeltas.push_back(tileDelta);
+			};
+
 		if (target == nullptr)
 		{
 			BattleEffectExecutionResult tileResult = executor.ExecuteTrigger(effectRequest, "ON_EMPTY_TILE_CAST");
-			effectResult.totalDamage += tileResult.totalDamage;
-			effectResult.tileDeltas = move(tileResult.tileDeltas);
+			appendEffectResult(tileResult);
 		}
 		else if (skillSpec.targetType == "TILE_OR_ENEMY")
 		{
 			BattleEffectExecutionResult hitResult = executor.ExecuteTrigger(effectRequest, "ON_HIT_DEALT");
-			effectResult.totalDamage += hitResult.totalDamage;
-			effectResult.tileDeltas = move(hitResult.tileDeltas);
+			appendEffectResult(hitResult);
 		}
+
+	const int32 extraShieldTargets = GetSkillExtraTargets(*caster, skillSpec.skillKey, "EXTRA_TARGET_COUNT");
+		if (extraShieldTargets > 0 && target != nullptr)
+		{
+			BattlePawn* extraTarget = FindAdjacentAliveAlly(battle, *target, target->pawnId);
+			if (extraTarget != nullptr)
+			{
+				effectRequest.target = MakeEffectContext(*extraTarget);
+				BattleEffectExecutionResult chainResult = executor.ExecuteTrigger(effectRequest, "ON_CAST", BattleEffectTargetScope::TargetOnly);
+				appendEffectResult(chainResult);
+				extraChangedPawns.push_back(extraTarget);
+			}
+		}
+
+		const string areaShape = GetSkillAreaShape(*caster, skillSpec.skillKey);
+		if (areaShape.empty() == false)
+		{
+			const vector<Protocol::AxialCoord> area = GetHailArea(*caster, targetAxial, areaShape);
+			for (size_t i = 1; i < area.size(); i++)
+			{
+				const Protocol::AxialCoord& areaAxial = area[i];
+				if (IsBattleTileInBounds(areaAxial) == false)
+					continue;
+
+				BattlePawn* areaTarget = FindAlivePawnAt(battle, areaAxial);
+				if (areaTarget != nullptr && areaTarget->ownerId == caster->ownerId)
+					continue;
+
+				effectRequest.targetAxial = &areaAxial;
+				effectRequest.target = MakeEffectContext(areaTarget != nullptr ? *areaTarget : *caster);
+				effectRequest.isBackAttack = false;
+				BattleEffectExecutionResult areaResult = executor.ExecuteTrigger(effectRequest,
+					areaTarget != nullptr ? "ON_HIT_DEALT" : "ON_EMPTY_TILE_CAST");
+				appendEffectResult(areaResult);
+
+				if (areaTarget != nullptr)
+				{
+					extraChangedPawns.push_back(areaTarget);
+					deathCandidates.push_back(areaTarget);
+				}
+			}
+		}
+
+		if (skillSpec.isUltimate)
+			RefreshAuraRadii(*caster);
+
 		appliedDamage = effectResult.totalDamage;
 		tileDeltas = move(effectResult.tileDeltas);
 	}
@@ -544,16 +582,22 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		}
 	}
 
-	if (targetWasAlive && target->hp <= 0)
+	vector<BattlePawn*> deadPawns;
+	unordered_set<uint64> checkedPawnIds;
+	for (BattlePawn* candidate : deathCandidates)
 	{
-		target->hp = 0;
-		target->currentAp = 0;
-		target->hasMovedThisTurn = true;
-		target->isDead = true;
-		battle.turnQueue.erase(remove(battle.turnQueue.begin(), battle.turnQueue.end(), target->pawnId), battle.turnQueue.end());
-		if (battle.turnQueueIndex > battle.turnQueue.size())
-			battle.turnQueueIndex = battle.turnQueue.size();
+		if (candidate == nullptr || checkedPawnIds.insert(candidate->pawnId).second == false || candidate->isDead || candidate->hp > 0)
+			continue;
+
+		candidate->hp = 0;
+		candidate->currentAp = 0;
+		candidate->hasMovedThisTurn = true;
+		candidate->isDead = true;
+		battle.turnQueue.erase(remove(battle.turnQueue.begin(), battle.turnQueue.end(), candidate->pawnId), battle.turnQueue.end());
+		deadPawns.push_back(candidate);
 	}
+	if (battle.turnQueueIndex > battle.turnQueue.size())
+		battle.turnQueueIndex = battle.turnQueue.size();
 	battle.stateVersion++;
 
 	const uint64 resolvedTargetPawnId = target != nullptr ? target->pawnId : 0;
@@ -561,36 +605,36 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	const int32 resolvedTargetArmor = target != nullptr ? target->armor : 0;
 
 	SendBattleSkillResult(session, true, battle.battleId, caster->pawnId, pkt.skill_slot(), resolvedTargetPawnId,
-		targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas);
+		targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas, extraChangedPawns);
 	if (battle.isPvp)
 	{
 		GameSessionRef ownerSession = battle.ownerSession.lock();
 		if (ownerSession != nullptr && ownerSession != session)
 		{
 			SendBattleSkillResult(ownerSession, true, battle.battleId, caster->pawnId, pkt.skill_slot(), resolvedTargetPawnId,
-				targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas);
+				targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas, extraChangedPawns);
 		}
 
 		GameSessionRef opponentSession = battle.opponentSession.lock();
 		if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
 		{
 			SendBattleSkillResult(opponentSession, true, battle.battleId, caster->pawnId, pkt.skill_slot(), resolvedTargetPawnId,
-				targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas);
+				targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas, extraChangedPawns);
 		}
 	}
 
-	if (target != nullptr && target->isDead)
+	for (const BattlePawn* deadPawn : deadPawns)
 	{
-		SendBattlePawnDead(session, battle.battleId, target->pawnId, caster->pawnId);
+		SendBattlePawnDead(session, battle.battleId, deadPawn->pawnId, caster->pawnId);
 		if (battle.isPvp)
 		{
 			GameSessionRef ownerSession = battle.ownerSession.lock();
 			if (ownerSession != nullptr && ownerSession != session)
-				SendBattlePawnDead(ownerSession, battle.battleId, target->pawnId, caster->pawnId);
+				SendBattlePawnDead(ownerSession, battle.battleId, deadPawn->pawnId, caster->pawnId);
 
 			GameSessionRef opponentSession = battle.opponentSession.lock();
 			if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
-				SendBattlePawnDead(opponentSession, battle.battleId, target->pawnId, caster->pawnId);
+				SendBattlePawnDead(opponentSession, battle.battleId, deadPawn->pawnId, caster->pawnId);
 		}
 	}
 
@@ -1191,6 +1235,50 @@ BattlePawn* BattleRoom::FindAlivePawnAt(BattleState& battle, const Protocol::Axi
 	return findAt(battle.enemyPawns);
 }
 
+BattlePawn* BattleRoom::FindAdjacentAliveAlly(BattleState& battle, const BattlePawn& source, uint64 excludedPawnId)
+{
+	vector<BattlePawn*> candidates;
+	auto collect = [this, &candidates, &source, excludedPawnId](const vector<BattlePawnRef>& pawns)
+		{
+			for (const BattlePawnRef& pawn : pawns)
+			{
+				if (pawn != nullptr && pawn->pawnId != excludedPawnId && pawn->ownerId == source.ownerId &&
+					IsAlive(*pawn) && AxialDistance(source.axial, pawn->axial) == 1)
+				{
+					candidates.push_back(pawn.get());
+				}
+			}
+		};
+
+	collect(battle.alliedPawns);
+	collect(battle.enemyPawns);
+	if (candidates.empty())
+		return nullptr;
+
+	sort(candidates.begin(), candidates.end(), [](const BattlePawn* lhs, const BattlePawn* rhs)
+		{
+			return lhs->pawnId < rhs->pawnId;
+		});
+	return candidates.front();
+}
+
+BattleEffectPawnContext BattleRoom::MakeEffectContext(BattlePawn& pawn) const
+{
+	BattleEffectPawnContext context;
+	context.pawnId = pawn.pawnId;
+	context.ownerId = pawn.ownerId;
+	context.pawnClass = pawn.pawnClass;
+	context.axial = &pawn.axial;
+	context.hp = &pawn.hp;
+	context.armor = &pawn.armor;
+	context.resources = &pawn.resources;
+	context.maxResources = &pawn.maxResources;
+	context.barriers = &pawn.barriers;
+	context.statuses = &pawn.statuses;
+	context.auras = &pawn.auras;
+	return context;
+}
+
 bool BattleRoom::IsOccupied(const BattleState& battle, const Protocol::AxialCoord& coord, uint64 exceptPawnId)
 {
 	auto isSameCell = [this, &coord, exceptPawnId](const BattlePawnRef& pawn)
@@ -1232,12 +1320,168 @@ bool BattleRoom::IsBattleWalkable(const BattleState& battle, const Protocol::Axi
 	return baseTileType != Protocol::BATTLE_TILE_TYPE_WATER || overlayType == Protocol::BATTLE_TILE_OVERLAY_TYPE_ICE;
 }
 
-int32 BattleRoom::AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs)
+int32 BattleRoom::AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs) const
 {
 	const int32 dq = lhs.q() - rhs.q();
 	const int32 dr = lhs.r() - rhs.r();
 	const int32 ds = -dq - dr;
 	return (abs(dq) + abs(dr) + abs(ds)) / 2;
+}
+
+bool BattleRoom::IsStatusActive(const BattlePawn& pawn, const string& statusKey) const
+{
+	auto it = pawn.statuses.find(statusKey);
+	return it != pawn.statuses.end() && it->second.remainingOwnerTurns != 0;
+}
+
+const BattleEffectTemplate* BattleRoom::FindActiveSkillModifier(const BattlePawn& pawn, const string& targetSkillKey,
+	const string& modifierType) const
+{
+	const BattleSkillTemplate* ultimate = GBattleTemplates.GetSkillByActionSlot(pawn.pawnClass, 6);
+	if (ultimate == nullptr)
+		return nullptr;
+
+	const vector<BattleEffectTemplate>* effects = GBattleTemplates.GetEffects(ultimate->effectGroupKey);
+	if (effects == nullptr)
+		return nullptr;
+
+	for (const BattleEffectTemplate& effect : *effects)
+	{
+		if (effect.trigger != "WHILE_EMPOWERED" || effect.targetSkillKey != targetSkillKey || effect.effectKey != "ADD_SKILL_MODIFIER")
+			continue;
+
+		auto modifierTypeIt = effect.params.find("modifier_type");
+		if (modifierTypeIt == effect.params.end() || modifierTypeIt->second != modifierType)
+			continue;
+
+		auto statusIt = effect.params.find("required_status_key");
+		if (statusIt != effect.params.end() && IsStatusActive(pawn, statusIt->second))
+			return &effect;
+	}
+
+	return nullptr;
+}
+
+double BattleRoom::GetSkillDamageMultiplier(const BattlePawn& pawn, const string& targetSkillKey) const
+{
+	const BattleEffectTemplate* effect = FindActiveSkillModifier(pawn, targetSkillKey, "DAMAGE_MULTIPLIER");
+	if (effect == nullptr)
+		return 1.0;
+
+	auto it = effect->params.find("multiplier");
+	if (it == effect->params.end())
+		return 1.0;
+
+	try
+	{
+		return max(0.0, stod(it->second));
+	}
+	catch (...)
+	{
+		return 1.0;
+	}
+}
+
+int32 BattleRoom::GetSkillExtraTargets(const BattlePawn& pawn, const string& targetSkillKey, const string& modifierType) const
+{
+	const BattleEffectTemplate* effect = FindActiveSkillModifier(pawn, targetSkillKey, modifierType);
+	if (effect == nullptr)
+		return 0;
+
+	auto it = effect->params.find("extra_targets");
+	if (it == effect->params.end())
+		return 0;
+
+	try
+	{
+		return max(0, static_cast<int32>(stod(it->second)));
+	}
+	catch (...)
+	{
+		return 0;
+	}
+}
+
+int32 BattleRoom::GetSkillAuraRadiusBonus(const BattlePawn& pawn, const string& targetSkillKey) const
+{
+	const BattleEffectTemplate* effect = FindActiveSkillModifier(pawn, targetSkillKey, "AURA_RADIUS_DELTA");
+	if (effect == nullptr)
+		return 0;
+
+	auto it = effect->params.find("radius_delta");
+	if (it == effect->params.end())
+		return 0;
+
+	try
+	{
+		return max(0, static_cast<int32>(stod(it->second)));
+	}
+	catch (...)
+	{
+		return 0;
+	}
+}
+
+string BattleRoom::GetSkillAreaShape(const BattlePawn& pawn, const string& targetSkillKey) const
+{
+	const BattleEffectTemplate* effect = FindActiveSkillModifier(pawn, targetSkillKey, "TARGET_SHAPE_OVERRIDE");
+	if (effect == nullptr)
+		return "";
+
+	auto it = effect->params.find("shape");
+	return it != effect->params.end() ? it->second : "";
+}
+
+void BattleRoom::RefreshAuraRadii(BattlePawn& pawn) const
+{
+	for (auto& item : pawn.auras)
+	{
+		BattleAuraState& aura = item.second;
+		if (aura.baseRadius <= 0)
+			aura.baseRadius = aura.radius;
+		aura.radius = aura.baseRadius + GetSkillAuraRadiusBonus(pawn, aura.sourceSkillKey);
+	}
+}
+
+vector<Protocol::AxialCoord> BattleRoom::GetHailArea(const BattlePawn& caster, const Protocol::AxialCoord& target,
+	const string& shape) const
+{
+	vector<Protocol::AxialCoord> area;
+	area.push_back(target);
+	if (shape != "TRIANGLE_3")
+		return area;
+
+	static constexpr int32 kDirections[6][2] =
+	{
+		{ 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, 0 }, { -1, 1 }, { 0, 1 }
+	};
+
+	const int32 distance = AxialDistance(caster.axial, target);
+	if (distance <= 0)
+		return area;
+
+	int32 directionIndex = 0;
+	for (int32 i = 0; i < 6; i++)
+	{
+		Protocol::AxialCoord step;
+		step.set_q(caster.axial.q() + kDirections[i][0]);
+		step.set_r(caster.axial.r() + kDirections[i][1]);
+		if (AxialDistance(step, target) == distance - 1)
+		{
+			directionIndex = i;
+			break;
+		}
+	}
+
+	for (int32 offsetIndex : { directionIndex, (directionIndex + 1) % 6 })
+	{
+		Protocol::AxialCoord extra;
+		extra.set_q(target.q() + kDirections[offsetIndex][0]);
+		extra.set_r(target.r() + kDirections[offsetIndex][1]);
+		area.push_back(extra);
+	}
+
+	return area;
 }
 
 uint64 BattleRoom::GetNextAlliedTurnPawnId(const BattleState& battle, uint64 currentPawnId)
@@ -1510,6 +1754,7 @@ void BattleRoom::StartTurn(BattleState& battle, BattlePawn& pawn)
 
 	// Expire duration effects before AP and player input are made available for this turn.
 	AdvanceOwnerTurnEffects(pawn);
+	RefreshAuraRadii(pawn);
 
 	pawn.currentAp = 2;
 	pawn.hasMovedThisTurn = false;
@@ -1806,7 +2051,7 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 	int32 skillSlot, uint64 targetPawnId, const Protocol::AxialCoord& targetAxial,
 	int32 damage, int32 targetHp, int32 targetArmor, uint64 nextTurnPawnId, const string& reason,
 	const BattlePawn* caster, const BattlePawn* target, const vector<Protocol::BattleActionLog>& logs,
-	const vector<Protocol::BattleTileInfo>& tileDeltas)
+	const vector<Protocol::BattleTileInfo>& tileDeltas, const vector<const BattlePawn*>& extraPawns)
 {
 	const auto battleIt = _battles.find(battleId);
 	const uint64 stateVersion = battleIt != _battles.end() ? battleIt->second.stateVersion : 0;
@@ -1848,10 +2093,16 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 	skillPkt.set_used_ultimate(caster != nullptr ? caster->usedUltimate : false);
 	skillPkt.set_target_armor(targetArmor);
 	skillPkt.set_battle_state_version(stateVersion);
-	if (caster != nullptr)
-		CopyBattlePawnDelta(*caster, skillPkt.add_pawn_deltas());
-	if (target != nullptr && target != caster)
-		CopyBattlePawnDelta(*target, skillPkt.add_pawn_deltas());
+	unordered_set<uint64> deltaPawnIds;
+	auto addPawnDelta = [this, &skillPkt, &deltaPawnIds](const BattlePawn* source)
+		{
+			if (source != nullptr && deltaPawnIds.insert(source->pawnId).second)
+				CopyBattlePawnDelta(*source, skillPkt.add_pawn_deltas());
+		};
+	addPawnDelta(caster);
+	addPawnDelta(target);
+	for (const BattlePawn* extraPawn : extraPawns)
+		addPawnDelta(extraPawn);
 	for (const Protocol::BattleActionLog& log : logs)
 		skillPkt.add_logs()->CopyFrom(log);
 	for (const Protocol::BattleTileInfo& tileDelta : tileDeltas)
