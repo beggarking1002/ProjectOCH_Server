@@ -1,0 +1,4 @@
+MapId,CellX,CellY,TileType
+string,int,int,enum
+Battle_Test_001,0,0,WATER
+Battle_PVP_001,0,0,WATER
