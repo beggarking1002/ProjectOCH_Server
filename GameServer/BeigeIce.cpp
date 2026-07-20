@@ -12,9 +12,10 @@ namespace
 	}
 }
 
-vector<Protocol::AxialCoord> BeigeIce::ResolveTargetArea(const string& shape, const Protocol::AxialCoord& target) const
+vector<Protocol::AxialCoord> BeigeIce::ResolveTargetArea(const string& shape, const Protocol::AxialCoord& target,
+	const Protocol::AxialCoord* directionTarget) const
 {
-	vector<Protocol::AxialCoord> area = BattlePawn::ResolveTargetArea(shape, target);
+	vector<Protocol::AxialCoord> area = BattlePawn::ResolveTargetArea(shape, target, directionTarget);
 	if (shape != "TRIANGLE_3")
 		return area;
 

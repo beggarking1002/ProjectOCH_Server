@@ -12,6 +12,7 @@ struct BattleSkillActionRequest
 	bool isUltimate = false;
 	bool isBackAttack = false;
 	const Protocol::AxialCoord* targetAxial = nullptr;
+	const Protocol::AxialCoord* areaDirectionAxial = nullptr;
 	function<BattlePawn*(const Protocol::AxialCoord&)> findAlivePawnAt;
 	function<BattlePawn*(const BattlePawn&, uint64)> findAdjacentAliveAlly;
 	function<Protocol::BattleTileType(const Protocol::AxialCoord&)> getBaseTileType;

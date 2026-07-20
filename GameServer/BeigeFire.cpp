@@ -28,9 +28,10 @@ namespace
 	}
 }
 
-vector<Protocol::AxialCoord> BeigeFire::ResolveTargetArea(const string& shape, const Protocol::AxialCoord& target) const
+vector<Protocol::AxialCoord> BeigeFire::ResolveTargetArea(const string& shape, const Protocol::AxialCoord& target,
+	const Protocol::AxialCoord* directionTarget) const
 {
-	vector<Protocol::AxialCoord> area = BattlePawn::ResolveTargetArea(shape, target);
+	vector<Protocol::AxialCoord> area = BattlePawn::ResolveTargetArea(shape, target, directionTarget);
 	static constexpr int32 kDirections[6][2] =
 	{
 		{ 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, 0 }, { -1, 1 }, { 0, 1 }
@@ -48,10 +49,10 @@ vector<Protocol::AxialCoord> BeigeFire::ResolveTargetArea(const string& shape, c
 		return area;
 	}
 
-	if (shape != "LINE_3" || AxialDistance(axial, target) <= 0)
+	if (shape != "LINE_3" || directionTarget == nullptr)
 		return area;
 
-	const int32 directionIndex = FindDirectionIndex(axial, target, kDirections);
+	const int32 directionIndex = FindDirectionIndex(target, *directionTarget, kDirections);
 	for (int32 distance = 1; distance <= 2; distance++)
 	{
 		Protocol::AxialCoord next;

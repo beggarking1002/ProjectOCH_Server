@@ -8,7 +8,8 @@ public:
 	virtual ~BattlePawn() = default;
 
 	virtual const char* GetBehaviorKey() const { return "DEFAULT"; }
-	virtual vector<Protocol::AxialCoord> ResolveTargetArea(const string& shape, const Protocol::AxialCoord& target) const;
+	virtual vector<Protocol::AxialCoord> ResolveTargetArea(const string& shape, const Protocol::AxialCoord& target,
+		const Protocol::AxialCoord* directionTarget = nullptr) const;
 
 	int32 GetShieldCurrent() const
 	{

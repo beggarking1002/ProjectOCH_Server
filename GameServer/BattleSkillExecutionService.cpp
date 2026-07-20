@@ -60,7 +60,7 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 		areaShape = request.skill->targetShape;
 	if (areaShape.empty() == false && request.findAlivePawnAt && request.isTileValid)
 	{
-		const vector<Protocol::AxialCoord> area = caster.ResolveTargetArea(areaShape, *request.targetAxial);
+		const vector<Protocol::AxialCoord> area = caster.ResolveTargetArea(areaShape, *request.targetAxial, request.areaDirectionAxial);
 		for (size_t i = 1; i < area.size(); i++)
 		{
 			const Protocol::AxialCoord& areaAxial = area[i];

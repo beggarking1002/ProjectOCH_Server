@@ -449,6 +449,34 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		return;
 	}
 
+	const Protocol::AxialCoord* areaDirectionAxial = nullptr;
+	if (skillSpec.skillTemplate != nullptr && skillSpec.skillTemplate->targetShape == "LINE_3")
+	{
+		if (pkt.has_line_direction_axial() == false)
+		{
+			SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), 0,
+				targetAxial, 0, 0, 0, battle.currentTurnPawnId, "line direction tile is missing", caster);
+			return;
+		}
+
+		const Protocol::AxialCoord& lineDirectionAxial = pkt.line_direction_axial();
+		if (IsBattleTileInBounds(lineDirectionAxial) == false)
+		{
+			SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), 0,
+				targetAxial, 0, 0, 0, battle.currentTurnPawnId, "line direction tile is out of bounds", caster);
+			return;
+		}
+
+		if (AxialDistance(targetAxial, lineDirectionAxial) != 1)
+		{
+			SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), 0,
+				targetAxial, 0, 0, 0, battle.currentTurnPawnId, "line direction tile must be adjacent to the start tile", caster);
+			return;
+		}
+
+		areaDirectionAxial = &lineDirectionAxial;
+	}
+
 	if (skillSpec.isUltimate)
 		caster->usedUltimate = true;
 	else if (skillSpec.isSubAction)
@@ -475,6 +503,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		actionRequest.isUltimate = skillSpec.isUltimate;
 		actionRequest.isBackAttack = isBackAttack;
 		actionRequest.targetAxial = &targetAxial;
+		actionRequest.areaDirectionAxial = areaDirectionAxial;
 		actionRequest.findAlivePawnAt = [this, &battle](const Protocol::AxialCoord& axial)
 			{
 				return FindAlivePawnAt(battle, axial);

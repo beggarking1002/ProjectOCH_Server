@@ -121,6 +121,7 @@ message C_BATTLE_SKILL {
 	int32 skill_slot = 3;
 	uint64 target_pawn_id = 4;
 	AxialCoord target_axial = 5;
+	AxialCoord line_direction_axial = 6;
 }
 
 message S_BATTLE_SKILL {

@@ -2994,6 +2994,7 @@ class C_BATTLE_SKILL final :
 
   enum : int {
     kTargetAxialFieldNumber = 5,
+    kLineDirectionAxialFieldNumber = 6,
     kBattleIdFieldNumber = 1,
     kCasterPawnIdFieldNumber = 2,
     kTargetPawnIdFieldNumber = 4,
@@ -3016,6 +3017,24 @@ class C_BATTLE_SKILL final :
   void unsafe_arena_set_allocated_target_axial(
       ::Protocol::AxialCoord* target_axial);
   ::Protocol::AxialCoord* unsafe_arena_release_target_axial();
+
+  // .Protocol.AxialCoord line_direction_axial = 6;
+  bool has_line_direction_axial() const;
+  private:
+  bool _internal_has_line_direction_axial() const;
+  public:
+  void clear_line_direction_axial();
+  const ::Protocol::AxialCoord& line_direction_axial() const;
+  PROTOBUF_NODISCARD ::Protocol::AxialCoord* release_line_direction_axial();
+  ::Protocol::AxialCoord* mutable_line_direction_axial();
+  void set_allocated_line_direction_axial(::Protocol::AxialCoord* line_direction_axial);
+  private:
+  const ::Protocol::AxialCoord& _internal_line_direction_axial() const;
+  ::Protocol::AxialCoord* _internal_mutable_line_direction_axial();
+  public:
+  void unsafe_arena_set_allocated_line_direction_axial(
+      ::Protocol::AxialCoord* line_direction_axial);
+  ::Protocol::AxialCoord* unsafe_arena_release_line_direction_axial();
 
   // uint64 battle_id = 1;
   void clear_battle_id();
@@ -3062,6 +3081,7 @@ class C_BATTLE_SKILL final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::Protocol::AxialCoord* target_axial_;
+    ::Protocol::AxialCoord* line_direction_axial_;
     uint64_t battle_id_;
     uint64_t caster_pawn_id_;
     uint64_t target_pawn_id_;
@@ -7160,6 +7180,91 @@ inline void C_BATTLE_SKILL::set_allocated_target_axial(::Protocol::AxialCoord* t
   }
   _impl_.target_axial_ = target_axial;
   // @@protoc_insertion_point(field_set_allocated:Protocol.C_BATTLE_SKILL.target_axial)
+}
+
+// .Protocol.AxialCoord line_direction_axial = 6;
+inline bool C_BATTLE_SKILL::_internal_has_line_direction_axial() const {
+  return this != internal_default_instance() && _impl_.line_direction_axial_ != nullptr;
+}
+inline bool C_BATTLE_SKILL::has_line_direction_axial() const {
+  return _internal_has_line_direction_axial();
+}
+inline const ::Protocol::AxialCoord& C_BATTLE_SKILL::_internal_line_direction_axial() const {
+  const ::Protocol::AxialCoord* p = _impl_.line_direction_axial_;
+  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::AxialCoord&>(
+      ::Protocol::_AxialCoord_default_instance_);
+}
+inline const ::Protocol::AxialCoord& C_BATTLE_SKILL::line_direction_axial() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_BATTLE_SKILL.line_direction_axial)
+  return _internal_line_direction_axial();
+}
+inline void C_BATTLE_SKILL::unsafe_arena_set_allocated_line_direction_axial(
+    ::Protocol::AxialCoord* line_direction_axial) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.line_direction_axial_);
+  }
+  _impl_.line_direction_axial_ = line_direction_axial;
+  if (line_direction_axial) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.C_BATTLE_SKILL.line_direction_axial)
+}
+inline ::Protocol::AxialCoord* C_BATTLE_SKILL::release_line_direction_axial() {
+  
+  ::Protocol::AxialCoord* temp = _impl_.line_direction_axial_;
+  _impl_.line_direction_axial_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::Protocol::AxialCoord* C_BATTLE_SKILL::unsafe_arena_release_line_direction_axial() {
+  // @@protoc_insertion_point(field_release:Protocol.C_BATTLE_SKILL.line_direction_axial)
+  
+  ::Protocol::AxialCoord* temp = _impl_.line_direction_axial_;
+  _impl_.line_direction_axial_ = nullptr;
+  return temp;
+}
+inline ::Protocol::AxialCoord* C_BATTLE_SKILL::_internal_mutable_line_direction_axial() {
+  
+  if (_impl_.line_direction_axial_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Protocol::AxialCoord>(GetArenaForAllocation());
+    _impl_.line_direction_axial_ = p;
+  }
+  return _impl_.line_direction_axial_;
+}
+inline ::Protocol::AxialCoord* C_BATTLE_SKILL::mutable_line_direction_axial() {
+  ::Protocol::AxialCoord* _msg = _internal_mutable_line_direction_axial();
+  // @@protoc_insertion_point(field_mutable:Protocol.C_BATTLE_SKILL.line_direction_axial)
+  return _msg;
+}
+inline void C_BATTLE_SKILL::set_allocated_line_direction_axial(::Protocol::AxialCoord* line_direction_axial) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.line_direction_axial_);
+  }
+  if (line_direction_axial) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(line_direction_axial));
+    if (message_arena != submessage_arena) {
+      line_direction_axial = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, line_direction_axial, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.line_direction_axial_ = line_direction_axial;
+  // @@protoc_insertion_point(field_set_allocated:Protocol.C_BATTLE_SKILL.line_direction_axial)
 }
 
 // -------------------------------------------------------------------

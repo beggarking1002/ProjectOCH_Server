@@ -3,7 +3,8 @@
 #include "BeigeFire.h"
 #include "BeigeIce.h"
 
-vector<Protocol::AxialCoord> BattlePawn::ResolveTargetArea(const string& /*shape*/, const Protocol::AxialCoord& target) const
+vector<Protocol::AxialCoord> BattlePawn::ResolveTargetArea(const string& /*shape*/, const Protocol::AxialCoord& target,
+	const Protocol::AxialCoord* /*directionTarget*/) const
 {
 	return { target };
 }
