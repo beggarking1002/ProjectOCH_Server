@@ -60,18 +60,19 @@ const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "wnRole\022\031\n\025BATTLE_PAWN_ROLE_NONE\020\000\022\033\n\027BAT"
   "TLE_PAWN_ROLE_TANKER\020\001\022\032\n\026BATTLE_PAWN_RO"
   "LE_MELEE\020\002\022\033\n\027BATTLE_PAWN_ROLE_RANGED\020\003*"
-  "R\n\022BattleResourceType\022\035\n\031BATTLE_RESOURCE"
+  "q\n\022BattleResourceType\022\035\n\031BATTLE_RESOURCE"
   "_TYPE_NONE\020\000\022\035\n\031BATTLE_RESOURCE_TYPE_COL"
-  "D\020\001*d\n\016BattleTileType\022\031\n\025BATTLE_TILE_TYP"
-  "E_NONE\020\000\022\033\n\027BATTLE_TILE_TYPE_NORMAL\020\001\022\032\n"
-  "\026BATTLE_TILE_TYPE_WATER\020\002*\\\n\025BattleTileO"
-  "verlayType\022!\n\035BATTLE_TILE_OVERLAY_TYPE_N"
-  "ONE\020\000\022 \n\034BATTLE_TILE_OVERLAY_TYPE_ICE\020\001b"
-  "\006proto3"
+  "D\020\001\022\035\n\031BATTLE_RESOURCE_TYPE_HEAT\020\002*d\n\016Ba"
+  "ttleTileType\022\031\n\025BATTLE_TILE_TYPE_NONE\020\000\022"
+  "\033\n\027BATTLE_TILE_TYPE_NORMAL\020\001\022\032\n\026BATTLE_T"
+  "ILE_TYPE_WATER\020\002*\177\n\025BattleTileOverlayTyp"
+  "e\022!\n\035BATTLE_TILE_OVERLAY_TYPE_NONE\020\000\022 \n\034"
+  "BATTLE_TILE_OVERLAY_TYPE_ICE\020\001\022!\n\035BATTLE"
+  "_TILE_OVERLAY_TYPE_FIRE\020\002b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_Enum_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Enum_2eproto = {
-    false, false, 1527, descriptor_table_protodef_Enum_2eproto,
+    false, false, 1593, descriptor_table_protodef_Enum_2eproto,
     "Enum.proto",
     &descriptor_table_Enum_2eproto_once, nullptr, 0, 0,
     schemas, file_default_instances, TableStruct_Enum_2eproto::offsets,
@@ -202,6 +203,7 @@ bool BattleResourceType_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
+    case 2:
       return true;
     default:
       return false;
@@ -231,6 +233,7 @@ bool BattleTileOverlayType_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
+    case 2:
       return true;
     default:
       return false;

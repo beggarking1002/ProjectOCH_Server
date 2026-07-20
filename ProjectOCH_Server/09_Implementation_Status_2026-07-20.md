@@ -15,6 +15,8 @@
 - Migrated the active PvP development roster's legacy Suen Axe, Zillian Longbow, and Alen Spear damage skills into the CSV/effect pipeline while preserving their AP costs, ranges, and damage values.
 - Extracted character-specific battle behavior from `BattleRoom`: `BattlePawn` subclasses now resolve class-only target areas, and `BattleSkillResolver` owns generic skill modifier/aura rules.
 - Added the current character hierarchy: `BattlePawn -> Beige -> BeigeIce`.
+- Extracted common skill execution from `BattleRoom` into `BattleSkillExecutionService`; `BattleRoom` now retains validation, turn/AP handling, death resolution, and packet delivery.
+- Implemented Beige Fire's HEAT passive, Fireball, Explosion, Fire Wall, FIRE-overlay teleport, ultimate damage/backlash modifiers, and Cooling Potion through the character behavior and data/effect pipeline.
 
 ## Current Important Files
 

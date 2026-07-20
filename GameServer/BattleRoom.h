@@ -3,6 +3,7 @@
 #include "Pawn.h"
 #include "BattlePawn.h"
 #include "BattleSkillResolver.h"
+#include "BattleSkillExecutionService.h"
 
 using BattleRoomRef = shared_ptr<class BattleRoom>;
 
@@ -92,7 +93,6 @@ private:
 	BattlePawn* FindPawn(BattleState& battle, uint64 pawnId);
 	BattlePawn* FindAlivePawnAt(BattleState& battle, const Protocol::AxialCoord& axial);
 	BattlePawn* FindAdjacentAliveAlly(BattleState& battle, const BattlePawn& source, uint64 excludedPawnId);
-	BattleEffectPawnContext MakeEffectContext(BattlePawn& pawn) const;
 	bool IsOccupied(const BattleState& battle, const Protocol::AxialCoord& coord, uint64 exceptPawnId);
 	bool IsBattleTileInBounds(const Protocol::AxialCoord& coord) const;
 	bool IsBattleWalkable(const BattleState& battle, const Protocol::AxialCoord& coord) const;
@@ -141,6 +141,7 @@ private:
 	uint64 _battlePawnIdGenerator = 1;
 	uint64 _barrierIdGenerator = 1;
 	BattleSkillResolver _skillResolver;
+	BattleSkillExecutionService _skillExecutionService{ _skillResolver };
 	unordered_map<uint64, BattleState> _battles;
 	unordered_map<uint64, uint64> _battleByOwnerId;
 };

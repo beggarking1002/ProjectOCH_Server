@@ -27,10 +27,16 @@
 	<ClCompile Include="Beige.cpp">
 	  <Filter>Game</Filter>
 	</ClCompile>
+	<ClCompile Include="BeigeFire.cpp">
+	  <Filter>Game</Filter>
+	</ClCompile>
 	<ClCompile Include="BeigeIce.cpp">
 	  <Filter>Game</Filter>
 	</ClCompile>
 	<ClCompile Include="BattlePawn.cpp">
+	  <Filter>Game</Filter>
+	</ClCompile>
+	<ClCompile Include="BattleSkillExecutionService.cpp">
 	  <Filter>Game</Filter>
 	</ClCompile>
 	<ClCompile Include="BattleSkillResolver.cpp">
@@ -99,10 +105,15 @@
 	<ClInclude Include="Beige.h">
 	  <Filter>Game</Filter>
 	</ClInclude>
+	<ClInclude Include="BeigeFire.h">
+	  <Filter>Game</Filter>
 	<ClInclude Include="BeigeIce.h">
 	  <Filter>Game</Filter>
 	</ClInclude>
 	<ClInclude Include="BattlePawn.h">
+	  <Filter>Game</Filter>
+	</ClInclude>
+	<ClInclude Include="BattleSkillExecutionService.h">
 	  <Filter>Game</Filter>
 	</ClInclude>
 	<ClInclude Include="BattleSkillResolver.h">

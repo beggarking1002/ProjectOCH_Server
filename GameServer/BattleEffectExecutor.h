@@ -47,6 +47,7 @@ struct BattleEffectExecutionRequest
 	bool isBackAttack = false;
 	double damageMultiplier = 1.0;
 	int32 auraRadiusBonus = 0;
+	bool hasTargetPawn = false;
 	const Protocol::AxialCoord* targetAxial = nullptr;
 	function<Protocol::BattleTileType(const Protocol::AxialCoord&)> getBaseTileType;
 	function<Protocol::BattleTileOverlayType(const Protocol::AxialCoord&)> getTileOverlayType;
@@ -90,6 +91,7 @@ private:
 	void ExecuteToggleAura(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteChangeTileOverlay(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
 		BattleEffectExecutionResult& result);
+	void ExecuteTeleportToOverlay(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 
 	int32 CalculateValue(const BattleEffectTemplate& effect, const BattlePawnClassTemplate& casterTemplate);
 	int32 GetStatValue(const BattlePawnClassTemplate& pawnTemplate, const string& statKey) const;

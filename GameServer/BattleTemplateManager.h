@@ -32,6 +32,8 @@ struct BattleSkillTemplate
 	int32 rangeMin = 0;
 	int32 rangeMax = 0;
 	string targetType;
+	string targetShape;
+	Protocol::BattleTileOverlayType requiredOverlayType = Protocol::BATTLE_TILE_OVERLAY_TYPE_NONE;
 	string effectGroupKey;
 };
 

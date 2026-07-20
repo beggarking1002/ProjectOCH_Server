@@ -15,7 +15,7 @@ PlayerRef ObjectUtils::CreatePlayer(GameSessionRef session)
 	if (newId % 2 == 1)
 	{
 		player->AddBattlePawn(Protocol::PAWN_CLASS_SUEN_AXE_SWORD);
-		player->AddBattlePawn(Protocol::PAWN_CLASS_BEIGE_ICE);
+		player->AddBattlePawn(Protocol::PAWN_CLASS_BEIGE_FIRE);
 	}
 	else
 	{

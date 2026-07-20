@@ -225,12 +225,13 @@ inline bool BattlePawnRole_Parse(
 enum BattleResourceType : int {
   BATTLE_RESOURCE_TYPE_NONE = 0,
   BATTLE_RESOURCE_TYPE_COLD = 1,
+  BATTLE_RESOURCE_TYPE_HEAT = 2,
   BattleResourceType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   BattleResourceType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool BattleResourceType_IsValid(int value);
 constexpr BattleResourceType BattleResourceType_MIN = BATTLE_RESOURCE_TYPE_NONE;
-constexpr BattleResourceType BattleResourceType_MAX = BATTLE_RESOURCE_TYPE_COLD;
+constexpr BattleResourceType BattleResourceType_MAX = BATTLE_RESOURCE_TYPE_HEAT;
 constexpr int BattleResourceType_ARRAYSIZE = BattleResourceType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattleResourceType_descriptor();
@@ -276,12 +277,13 @@ inline bool BattleTileType_Parse(
 enum BattleTileOverlayType : int {
   BATTLE_TILE_OVERLAY_TYPE_NONE = 0,
   BATTLE_TILE_OVERLAY_TYPE_ICE = 1,
+  BATTLE_TILE_OVERLAY_TYPE_FIRE = 2,
   BattleTileOverlayType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   BattleTileOverlayType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool BattleTileOverlayType_IsValid(int value);
 constexpr BattleTileOverlayType BattleTileOverlayType_MIN = BATTLE_TILE_OVERLAY_TYPE_NONE;
-constexpr BattleTileOverlayType BattleTileOverlayType_MAX = BATTLE_TILE_OVERLAY_TYPE_ICE;
+constexpr BattleTileOverlayType BattleTileOverlayType_MAX = BATTLE_TILE_OVERLAY_TYPE_FIRE;
 constexpr int BattleTileOverlayType_ARRAYSIZE = BattleTileOverlayType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattleTileOverlayType_descriptor();

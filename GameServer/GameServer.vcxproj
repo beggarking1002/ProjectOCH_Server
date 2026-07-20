@@ -151,8 +151,10 @@
   <ItemGroup>
     <ClCompile Include="BattleEffectExecutor.cpp" />
 	<ClCompile Include="Beige.cpp" />
+	<ClCompile Include="BeigeFire.cpp" />
 	<ClCompile Include="BeigeIce.cpp" />
 	<ClCompile Include="BattlePawn.cpp" />
+	<ClCompile Include="BattleSkillExecutionService.cpp" />
 	<ClCompile Include="BattleSkillResolver.cpp" />
     <ClCompile Include="BattleTemplateManager.cpp" />
     <ClCompile Include="BattleRoom.cpp" />
@@ -189,8 +191,10 @@
   <ItemGroup>
     <ClInclude Include="BattleEffectExecutor.h" />
 	<ClInclude Include="Beige.h" />
+	<ClInclude Include="BeigeFire.h" />
 	<ClInclude Include="BeigeIce.h" />
 	<ClInclude Include="BattlePawn.h" />
+	<ClInclude Include="BattleSkillExecutionService.h" />
 	<ClInclude Include="BattleSkillResolver.h" />
     <ClInclude Include="BattleTemplateManager.h" />
     <ClInclude Include="BattleRoom.h" />

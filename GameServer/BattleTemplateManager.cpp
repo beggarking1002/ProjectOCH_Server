@@ -396,6 +396,16 @@ bool BattleTemplateManager::LoadBattleSkill(const string& path)
 		skill.rangeMin = ToInt(Cell(rows[i], header, "RangeMin"));
 		skill.rangeMax = ToInt(Cell(rows[i], header, "RangeMax"));
 		skill.targetType = Cell(rows[i], header, "TargetType");
+		skill.targetShape = Cell(rows[i], header, "TargetShape");
+		const string requiredOverlayType = Cell(rows[i], header, "RequiredOverlayType");
+		if (requiredOverlayType.empty() == false && TryParseBattleTileOverlayType(requiredOverlayType, skill.requiredOverlayType) == false)
+		{
+			cout << "[BattleTemplateManager] Invalid RequiredOverlayType"
+				<< " skill_key=" << skill.skillKey
+				<< " value=" << requiredOverlayType
+				<< endl;
+			return false;
+		}
 		skill.effectGroupKey = Cell(rows[i], header, "EffectGroupKey");
 
 		_skillsByClassKey[skill.classKey].push_back(skill);

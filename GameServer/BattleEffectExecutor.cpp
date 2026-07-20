@@ -80,6 +80,8 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 			ExecuteToggleAura(effect, request);
 		else if (effect.effectKey == "CHANGE_TILE_TYPE")
 			ExecuteChangeTileOverlay(effect, request, result);
+		else if (effect.effectKey == "TELEPORT_TO_OVERLAY")
+			ExecuteTeleportToOverlay(effect, request);
 	}
 
 	return result;
@@ -142,6 +144,9 @@ void BattleEffectExecutor::AdvanceOwnerTurn(BattleEffectPawnContext pawn)
 void BattleEffectExecutor::ExecuteDealDamage(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
 	BattleEffectExecutionResult& result)
 {
+	if ((effect.effectTarget == "TARGET" || effect.effectTarget == "TARGET_ENEMY") && request.hasTargetPawn == false)
+		return;
+
 	BattleEffectPawnContext target = SelectTarget(effect, request);
 	if (target.hp == nullptr || target.armor == nullptr)
 		return;
@@ -375,6 +380,30 @@ void BattleEffectExecutor::ExecuteChangeTileOverlay(const BattleEffectTemplate& 
 			<< " overlay_type=" << Protocol::BattleTileOverlayType_Name(changedOverlayType)
 			<< endl;
 	}
+}
+
+void BattleEffectExecutor::ExecuteTeleportToOverlay(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
+{
+	if (request.targetAxial == nullptr || request.caster.axial == nullptr || request.getTileOverlayType == nullptr ||
+		request.isTileValid == nullptr)
+	{
+		return;
+	}
+
+	Protocol::BattleTileOverlayType requiredOverlayType = Protocol::BATTLE_TILE_OVERLAY_TYPE_NONE;
+	if (GBattleTemplates.TryParseBattleTileOverlayType(GetParam(effect, "required_overlay_type"), requiredOverlayType) == false ||
+		request.isTileValid(*request.targetAxial) == false || request.getTileOverlayType(*request.targetAxial) != requiredOverlayType)
+	{
+		return;
+	}
+
+	request.caster.axial->CopyFrom(*request.targetAxial);
+	cout << "BATTLE_TELEPORT"
+		<< " pawn_id=" << request.caster.pawnId
+		<< " q=" << request.targetAxial->q()
+		<< " r=" << request.targetAxial->r()
+		<< " overlay_type=" << Protocol::BattleTileOverlayType_Name(requiredOverlayType)
+		<< endl;
 }
 
 int32 BattleEffectExecutor::CalculateValue(const BattleEffectTemplate& effect, const BattlePawnClassTemplate& casterTemplate)

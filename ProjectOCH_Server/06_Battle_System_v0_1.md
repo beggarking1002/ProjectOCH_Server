@@ -8,7 +8,7 @@ Updated: 2026-07-20.
 
 `Player::battlePawns` stores player-owned `Pawn` records. `BattleRoom` creates `BattlePawn` runtime snapshots for a battle. Runtime state includes HP, armor, AP, turn flags, death, facing, resources, barriers, statuses, and auras.
 
-`BattlePawn` now owns the character-behavior boundary. It resolves class-specific target areas, while `BattleSkillResolver` evaluates generic table-driven modifiers and aura radius changes. The current hierarchy is `BattlePawn -> Beige -> BeigeIce`; `BeigeIce` implements the `TRIANGLE_3` Hail-area resolver. New character-only target rules belong in their own `BattlePawn` subclass, not in `BattleRoom`.
+`BattlePawn` now owns the character-behavior boundary. It resolves class-specific target areas, while `BattleSkillResolver` evaluates generic table-driven modifiers and aura radius changes. `BattleSkillExecutionService` builds effect requests, resolves chained/area targets, executes common effects, and collects deltas. The current hierarchy is `BattlePawn -> Beige -> BeigeIce`; `BeigeIce` implements the `TRIANGLE_3` Hail-area resolver. New character-only target rules belong in their own `BattlePawn` subclass, not in `BattleRoom`.
 
 ## Coordinate Contract
 
@@ -35,7 +35,7 @@ All distance, range, neighbor, Hail, and aura calculations use axial coordinates
 - Start of an owner turn: AP becomes 2, movement is reset, and sub-action usage resets.
 - Tanker pawns recover `floor((maxArmor - armor) / 2)`.
 - Movement consumes no AP, but is unavailable after an AP 2 action.
-- AP 1 actions preserve movement when the pawn has not moved.
+- AP 1 actions preserve movement when the pawn has not moved. Ultimate and sub-action AP costs are also defined by `BattleSkill.csv`; a cost of 0 leaves AP unchanged.
 - `C_BATTLE_END_TURN` is the action that advances the queue. At the end of a queue cycle, alive pawns are shuffled for the next cycle.
 - The server validates battle id, current turn, ownership, alive state, map bounds, walkability, range, and occupancy.
 
@@ -52,7 +52,7 @@ Critical, evade, guard, perfect guard, and counter chains are not implemented ye
 Each battle tile has:
 
 - `base_tile_type`: `NORMAL` or `WATER`
-- `overlay_type`: `NONE` or `ICE`
+- `overlay_type`: `NONE`, `ICE`, or `FIRE`
 
 `S_ENTER_BATTLE.tiles` sends the initial battle map. `S_BATTLE_SKILL.tile_deltas` and `S_BATTLE_END_TURN.tile_deltas` send changes. Water is walkable only while its overlay is `ICE`. Prop-tile collision export is still not integrated into server walkability.
 
@@ -67,6 +67,16 @@ All implemented Beige Ice rules are defined in [[08_Battle_Data_Tables]]. Summar
 - Storm Center: self toggle aura, turn-start enemy damage/Frostbite, and COLD +2.
 - Ultimate: 3-turn backlash immunity and generic skill modifiers.
 - Sub action: halves COLD and applies a non-stacking 2-turn 10 percent outgoing-damage reduction.
+
+## Beige Fire Implementation
+
+- Passive: HEAT maximum 20, owner-turn-start decay, and 70/90 percent turn-end backlash.
+- Fireball: single-target magic damage and HEAT +1.
+- Explosion: stronger center damage and weaker `RADIUS_1` outer damage, HEAT +3.
+- Fire Wall: applies the FIRE overlay to a `LINE_3`, HEAT +2.
+- Teleport: moves only to an empty FIRE-overlay tile in range, HEAT +4.
+- Ultimate: 3-turn HEAT-backlash immunity plus 30 percent damage modifiers for Fireball, Explosion, and Fire Wall.
+- Sub action: halves HEAT and applies a non-stacking 2-turn 10 percent outgoing-damage reduction.
 
 ## Client State Contract
 

@@ -20,6 +20,7 @@ TargetType,ENEMY_SINGLE,적 단일 대상
 TargetType,ALLY_SINGLE,아군 단일 대상
 TargetType,TILE_OR_ENEMY,타일 또는 적 대상
 TargetType,SELF_TOGGLE,자기 자신 On/Off 토글
+TargetType,EMPTY_TILE,비어 있는 타일 대상
 ScalingStat,NONE,스탯 계수 없음
 ScalingStat,STR,힘 계수
 ScalingStat,CON,체력/내구 계수
@@ -64,16 +65,22 @@ EffectKey,CHANGE_TILE_TYPE,타일 타입 변경
 EffectKey,APPLY_STAT_MODIFIER,스탯/전투 수치 보정 적용
 EffectKey,TOGGLE_AURA,오라 토글
 EffectKey,ADD_SKILL_MODIFIER,지속 중 특정 스킬의 실행 규칙 보정
+EffectKey,TELEPORT_TO_OVERLAY,지정 오버레이 타일로 이동
 ResourceKey,COLD,냉기 자원
+ResourceKey,HEAT,열기 자원
 StatusKey,FROSTBITE,동상 상태
 StatusKey,BEIGE_ICE_COLD_HARD_WORKER_IGNORE_COLD_BACKLASH,차가운 노력가 냉기 역류 면역
 StatusKey,BEIGE_ICE_COLD_HARD_WORKER_EMPOWERED,차가운 노력가 스킬 강화
 StatusKey,BEIGE_ICE_THAWING_POTION_DAMAGE_DOWN,해동 포션 공격력 감소
+StatusKey,BEIGE_FIRE_AMBITIOUS_IGNORE_HEAT_BACKLASH,야망가 열기 역류 면역
+StatusKey,BEIGE_FIRE_AMBITIOUS_EMPOWERED,야망가 강화
+StatusKey,BEIGE_FIRE_COOLING_POTION_DAMAGE_DOWN,냉각 포션 공격력 감소
 DamageType,MAGIC,마법 피해
 TileType,NORMAL,일반 지형
 TileType,WATER,물 지형
 TileOverlayType,NONE,오버레이 없음
 TileOverlayType,ICE,빙판 오버레이
+TileOverlayType,FIRE,화염 오버레이
 StatKey,DAMAGE_DEALT,주는 피해
 ModifierType,ADD_RATIO,비율 가산
 SkillModifierType,DAMAGE_MULTIPLIER,스킬 최종 피해 배율
@@ -81,6 +88,8 @@ SkillModifierType,EXTRA_TARGET_COUNT,추가 대상 수
 SkillModifierType,TARGET_SHAPE_OVERRIDE,스킬 대상 범위 모양 변경
 SkillModifierType,AURA_RADIUS_DELTA,오라 반경 증감
 TargetShape,TRIANGLE_3,선택 타일 기준 3칸 삼각형
+TargetShape,RADIUS_1,선택 타일과 인접한 6타일
+TargetShape,LINE_3,시전자에서 선택 타일 방향으로 이어지는 3타일
 StackPolicy,ADD,기존 중첩에 값을 더함
 StackPolicy,REFRESH,중첩 수는 유지하고 지속시간만 갱신
 Operation,ADD,덧셈

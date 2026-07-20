@@ -42,6 +42,8 @@ ClassKey -> PawnTemplate
 
 `BattleSkill.csv` uses `SkillCategory` values such as `PASSIVE`, `CAST`, and `TOGGLE`. It does not encode presentation assets.
 
+`TargetShape` is an optional character-resolved area policy. `RequiredOverlayType` is an optional target-tile prerequisite, used by Beige Fire Teleport to require `FIRE`.
+
 ## Effect Data Contract
 
 The table defines what happens. Code implements the generic primitive represented by `EffectKey`.
@@ -90,6 +92,8 @@ The current PvP development roster is also data-driven for its original single-t
 - `SUEN_AXE`: five cast skills with the legacy AP costs, ranges, and 30/45/35/55/90 damage values.
 - `ZILLIAN_LONGBOW`: five cast skills with the legacy AP costs, ranges, and 20/35/45/30/80 damage values.
 - `ALEN_SPEAR`: five cast skills with the legacy AP costs, ranges, and 25/35/45/30/80 damage values.
+
+`BEIGE_FIRE` uses HEAT as its resource and introduces two character-resolved target shapes: `RADIUS_1` for Explosion and `LINE_3` for Fire Wall. Its Fire Wall applies the `FIRE` overlay, and Teleport uses the reusable `TELEPORT_TO_OVERLAY` primitive with an `EMPTY_TILE` target and `RequiredOverlayType=FIRE`.
 
 ## Data Versus Code Boundary
 

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "BattlePawn.h"
+#include "BeigeFire.h"
 #include "BeigeIce.h"
 
 vector<Protocol::AxialCoord> BattlePawn::ResolveTargetArea(const string& /*shape*/, const Protocol::AxialCoord& target) const
@@ -9,6 +10,9 @@ vector<Protocol::AxialCoord> BattlePawn::ResolveTargetArea(const string& /*shape
 
 BattlePawnRef CreateBattlePawn(Protocol::PawnClass pawnClass)
 {
+	if (pawnClass == Protocol::PAWN_CLASS_BEIGE_FIRE)
+		return make_shared<BeigeFire>();
+
 	if (pawnClass == Protocol::PAWN_CLASS_BEIGE_ICE)
 		return make_shared<BeigeIce>();
 
