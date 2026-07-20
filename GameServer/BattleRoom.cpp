@@ -462,8 +462,8 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		effectRequest.skillSlot = pkt.skill_slot();
 		effectRequest.actionType = skillSpec.isUltimate ? "ultimate" : "skill";
 		effectRequest.isBackAttack = isBackAttack;
-		effectRequest.damageMultiplier = GetSkillDamageMultiplier(*caster, skillSpec.skillKey);
-		effectRequest.auraRadiusBonus = GetSkillAuraRadiusBonus(*caster, skillSpec.skillKey);
+		effectRequest.damageMultiplier = _skillResolver.GetDamageMultiplier(*caster, skillSpec.skillKey);
+		effectRequest.auraRadiusBonus = _skillResolver.GetAuraRadiusBonus(*caster, skillSpec.skillKey);
 		effectRequest.targetAxial = &targetAxial;
 		effectRequest.getBaseTileType = [this, &battle](const Protocol::AxialCoord& axial)
 			{
@@ -507,7 +507,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 			appendEffectResult(hitResult);
 		}
 
-	const int32 extraShieldTargets = GetSkillExtraTargets(*caster, skillSpec.skillKey, "EXTRA_TARGET_COUNT");
+	const int32 extraShieldTargets = _skillResolver.GetExtraTargets(*caster, skillSpec.skillKey, "EXTRA_TARGET_COUNT");
 		if (extraShieldTargets > 0 && target != nullptr)
 		{
 			BattlePawn* extraTarget = FindAdjacentAliveAlly(battle, *target, target->pawnId);
@@ -520,10 +520,10 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 			}
 		}
 
-		const string areaShape = GetSkillAreaShape(*caster, skillSpec.skillKey);
+		const string areaShape = _skillResolver.GetAreaShape(*caster, skillSpec.skillKey);
 		if (areaShape.empty() == false)
 		{
-			const vector<Protocol::AxialCoord> area = GetHailArea(*caster, targetAxial, areaShape);
+			const vector<Protocol::AxialCoord> area = caster->ResolveTargetArea(areaShape, targetAxial);
 			for (size_t i = 1; i < area.size(); i++)
 			{
 				const Protocol::AxialCoord& areaAxial = area[i];
@@ -550,7 +550,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		}
 
 		if (skillSpec.isUltimate)
-			RefreshAuraRadii(*caster);
+			_skillResolver.RefreshAuraRadii(*caster);
 
 		appliedDamage = effectResult.totalDamage;
 		tileDeltas = move(effectResult.tileDeltas);
@@ -879,11 +879,7 @@ BattleRoom::BattleState BattleRoom::CreatePvpBattle(PlayerRef ownerPlayer, Playe
 BattlePawnRef BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol::PawnClass pawnClass, int32 cellX, int32 cellY, int32 hp, int32 moveRange,
 	int32 maxArmor, Protocol::BattlePawnRole role)
 {
-	BattlePawnRef pawn;
-	if (pawnClass == Protocol::PAWN_CLASS_BEIGE_ICE)
-		pawn = make_shared<BeigeIceBattlePawn>();
-	else
-		pawn = make_shared<BattlePawn>();
+	BattlePawnRef pawn = CreateBattlePawn(pawnClass);
 
 	pawn->pawnId = _battlePawnIdGenerator++;
 	pawn->ownerId = ownerId;
@@ -1328,162 +1324,6 @@ int32 BattleRoom::AxialDistance(const Protocol::AxialCoord& lhs, const Protocol:
 	return (abs(dq) + abs(dr) + abs(ds)) / 2;
 }
 
-bool BattleRoom::IsStatusActive(const BattlePawn& pawn, const string& statusKey) const
-{
-	auto it = pawn.statuses.find(statusKey);
-	return it != pawn.statuses.end() && it->second.remainingOwnerTurns != 0;
-}
-
-const BattleEffectTemplate* BattleRoom::FindActiveSkillModifier(const BattlePawn& pawn, const string& targetSkillKey,
-	const string& modifierType) const
-{
-	const BattleSkillTemplate* ultimate = GBattleTemplates.GetSkillByActionSlot(pawn.pawnClass, 6);
-	if (ultimate == nullptr)
-		return nullptr;
-
-	const vector<BattleEffectTemplate>* effects = GBattleTemplates.GetEffects(ultimate->effectGroupKey);
-	if (effects == nullptr)
-		return nullptr;
-
-	for (const BattleEffectTemplate& effect : *effects)
-	{
-		if (effect.trigger != "WHILE_EMPOWERED" || effect.targetSkillKey != targetSkillKey || effect.effectKey != "ADD_SKILL_MODIFIER")
-			continue;
-
-		auto modifierTypeIt = effect.params.find("modifier_type");
-		if (modifierTypeIt == effect.params.end() || modifierTypeIt->second != modifierType)
-			continue;
-
-		auto statusIt = effect.params.find("required_status_key");
-		if (statusIt != effect.params.end() && IsStatusActive(pawn, statusIt->second))
-			return &effect;
-	}
-
-	return nullptr;
-}
-
-double BattleRoom::GetSkillDamageMultiplier(const BattlePawn& pawn, const string& targetSkillKey) const
-{
-	const BattleEffectTemplate* effect = FindActiveSkillModifier(pawn, targetSkillKey, "DAMAGE_MULTIPLIER");
-	if (effect == nullptr)
-		return 1.0;
-
-	auto it = effect->params.find("multiplier");
-	if (it == effect->params.end())
-		return 1.0;
-
-	try
-	{
-		return max(0.0, stod(it->second));
-	}
-	catch (...)
-	{
-		return 1.0;
-	}
-}
-
-int32 BattleRoom::GetSkillExtraTargets(const BattlePawn& pawn, const string& targetSkillKey, const string& modifierType) const
-{
-	const BattleEffectTemplate* effect = FindActiveSkillModifier(pawn, targetSkillKey, modifierType);
-	if (effect == nullptr)
-		return 0;
-
-	auto it = effect->params.find("extra_targets");
-	if (it == effect->params.end())
-		return 0;
-
-	try
-	{
-		return max(0, static_cast<int32>(stod(it->second)));
-	}
-	catch (...)
-	{
-		return 0;
-	}
-}
-
-int32 BattleRoom::GetSkillAuraRadiusBonus(const BattlePawn& pawn, const string& targetSkillKey) const
-{
-	const BattleEffectTemplate* effect = FindActiveSkillModifier(pawn, targetSkillKey, "AURA_RADIUS_DELTA");
-	if (effect == nullptr)
-		return 0;
-
-	auto it = effect->params.find("radius_delta");
-	if (it == effect->params.end())
-		return 0;
-
-	try
-	{
-		return max(0, static_cast<int32>(stod(it->second)));
-	}
-	catch (...)
-	{
-		return 0;
-	}
-}
-
-string BattleRoom::GetSkillAreaShape(const BattlePawn& pawn, const string& targetSkillKey) const
-{
-	const BattleEffectTemplate* effect = FindActiveSkillModifier(pawn, targetSkillKey, "TARGET_SHAPE_OVERRIDE");
-	if (effect == nullptr)
-		return "";
-
-	auto it = effect->params.find("shape");
-	return it != effect->params.end() ? it->second : "";
-}
-
-void BattleRoom::RefreshAuraRadii(BattlePawn& pawn) const
-{
-	for (auto& item : pawn.auras)
-	{
-		BattleAuraState& aura = item.second;
-		if (aura.baseRadius <= 0)
-			aura.baseRadius = aura.radius;
-		aura.radius = aura.baseRadius + GetSkillAuraRadiusBonus(pawn, aura.sourceSkillKey);
-	}
-}
-
-vector<Protocol::AxialCoord> BattleRoom::GetHailArea(const BattlePawn& caster, const Protocol::AxialCoord& target,
-	const string& shape) const
-{
-	vector<Protocol::AxialCoord> area;
-	area.push_back(target);
-	if (shape != "TRIANGLE_3")
-		return area;
-
-	static constexpr int32 kDirections[6][2] =
-	{
-		{ 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, 0 }, { -1, 1 }, { 0, 1 }
-	};
-
-	const int32 distance = AxialDistance(caster.axial, target);
-	if (distance <= 0)
-		return area;
-
-	int32 directionIndex = 0;
-	for (int32 i = 0; i < 6; i++)
-	{
-		Protocol::AxialCoord step;
-		step.set_q(caster.axial.q() + kDirections[i][0]);
-		step.set_r(caster.axial.r() + kDirections[i][1]);
-		if (AxialDistance(step, target) == distance - 1)
-		{
-			directionIndex = i;
-			break;
-		}
-	}
-
-	for (int32 offsetIndex : { directionIndex, (directionIndex + 1) % 6 })
-	{
-		Protocol::AxialCoord extra;
-		extra.set_q(target.q() + kDirections[offsetIndex][0]);
-		extra.set_r(target.r() + kDirections[offsetIndex][1]);
-		area.push_back(extra);
-	}
-
-	return area;
-}
-
 uint64 BattleRoom::GetNextAlliedTurnPawnId(const BattleState& battle, uint64 currentPawnId)
 {
 	if (battle.alliedPawns.empty())
@@ -1600,7 +1440,7 @@ bool BattleRoom::TryGetSkillSpec(Protocol::PawnClass pawnClass, int32 skillSlot,
 		return true;
 	}
 
-	// Legacy classes remain playable until their BattleSkill.csv rows are authored.
+	// Compatibility fallback for classes that do not yet have authored battle data.
 	auto setSpec = [&spec](int32 apCost, int32 damage, int32 range, bool isUltimate = false)
 		{
 			spec = SkillSpec();
@@ -1615,17 +1455,6 @@ bool BattleRoom::TryGetSkillSpec(Protocol::PawnClass pawnClass, int32 skillSlot,
 
 	switch (pawnClass)
 	{
-	case Protocol::PAWN_CLASS_SUEN_AXE_SWORD:
-		switch (skillSlot)
-		{
-		case 2: return setSpec(1, 30, 1);
-		case 3: return setSpec(2, 45, 1);
-		case 4: return setSpec(2, 35, 1);
-		case 5: return setSpec(2, 55, 1);
-		case 6: return setSpec(0, 90, 1, true);
-		default: break;
-		}
-		break;
 	case Protocol::PAWN_CLASS_BEIGE_FIRE:
 		switch (skillSlot)
 		{
@@ -1634,28 +1463,6 @@ bool BattleRoom::TryGetSkillSpec(Protocol::PawnClass pawnClass, int32 skillSlot,
 		case 4: return setSpec(2, 30, 4);
 		case 5: return setSpec(2, 50, 3);
 		case 6: return setSpec(0, 85, 4, true);
-		default: break;
-		}
-		break;
-	case Protocol::PAWN_CLASS_ZILLIAN_LONGBOW:
-		switch (skillSlot)
-		{
-		case 2: return setSpec(1, 20, 4);
-		case 3: return setSpec(2, 35, 5);
-		case 4: return setSpec(2, 45, 4);
-		case 5: return setSpec(2, 30, 6);
-		case 6: return setSpec(0, 80, 6, true);
-		default: break;
-		}
-		break;
-	case Protocol::PAWN_CLASS_ALEN_SPEAR:
-		switch (skillSlot)
-		{
-		case 2: return setSpec(1, 25, 2);
-		case 3: return setSpec(2, 35, 2);
-		case 4: return setSpec(2, 45, 2);
-		case 5: return setSpec(2, 30, 3);
-		case 6: return setSpec(0, 80, 2, true);
 		default: break;
 		}
 		break;
@@ -1754,7 +1561,7 @@ void BattleRoom::StartTurn(BattleState& battle, BattlePawn& pawn)
 
 	// Expire duration effects before AP and player input are made available for this turn.
 	AdvanceOwnerTurnEffects(pawn);
-	RefreshAuraRadii(pawn);
+	_skillResolver.RefreshAuraRadii(pawn);
 
 	pawn.currentAp = 2;
 	pawn.hasMovedThisTurn = false;
@@ -1851,6 +1658,7 @@ void BattleRoom::ExecuteAuraTurnStartEffects(BattleState& battle, BattlePawn& pa
 		request.casterTemplate = casterTemplate;
 		request.skillSlot = skill->actionSlot;
 		request.actionType = "aura";
+		request.damageMultiplier = _skillResolver.GetStatModifierMultiplier(pawn, "DAMAGE_DEALT");
 		request.caster = makeContext(pawn);
 		request.target = request.caster;
 		request.barrierIdGenerator = &_barrierIdGenerator;

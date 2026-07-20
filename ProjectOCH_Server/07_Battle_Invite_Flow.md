@@ -1,131 +1,58 @@
-# Battle Invite Flow
+# PvP Battle Invite and Return Flow
 
-Updated on 2026-07-06.
+Updated: 2026-07-20.
 
-## Goal
+## Invite Flow
 
-Players can start a PvP battle from the field:
+1. The initiating client shows its local Yes/No confirmation.
+2. Yes sends `C_BATTLE_INVITE(target_player_id)`.
+3. The field `Room` validates both players and sends `S_BATTLE_INVITE_REQUEST` to the requester and `S_BATTLE_INVITE_RECEIVED` to the target.
+4. The target sends `C_BATTLE_INVITE_RESPONSE(requester_player_id, accept)`.
+5. A rejection sends `S_BATTLE_INVITE_RESULT(accepted=false)` and leaves both players in the field.
+6. An acceptance sends `S_BATTLE_INVITE_RESULT(accepted=true)`, despawns both field objects, and queues PvP entry on `BattleRoom`.
+7. `BattleRoom::HandleEnterPvpBattle` creates one shared battle state and sends each player a personalized `S_ENTER_BATTLE`.
 
-1. Player 1 clicks Player 2 in the field.
-2. Client shows a local Yes/No confirmation.
-3. Yes sends `C_BATTLE_INVITE`.
-4. Server sends waiting/received packets.
-5. Player 2 accepts or declines with `C_BATTLE_INVITE_RESPONSE`.
-6. Decline notifies Player 1.
-7. Accept removes both field pawns and sends both players into one `BattleRoom`.
+The field `Room` owns pending invites because it owns field-player membership and sessions. Battle-room entry is queued through `DoAsync`, so room ownership changes happen in the target room's job context.
 
-## Packets
+## Battle Pawn Source
 
-New messages were appended after the existing battle packets, so existing packet IDs are preserved.
+PvP battle pawns are snapshots of `Player::battlePawns`; they are not the field player object and do not persist battle-only HP, AP, resource, or status state after the battle.
 
-- `C_BATTLE_INVITE = 1020`
-  - `target_player_id`
-- `S_BATTLE_INVITE_REQUEST = 1021`
-  - `success`
-  - `requester_player_id`
-  - `target_player_id`
-  - `reason`
-- `S_BATTLE_INVITE_RECEIVED = 1022`
-  - `requester_player_id`
-- `C_BATTLE_INVITE_RESPONSE = 1023`
-  - `requester_player_id`
-  - `accept`
-- `S_BATTLE_INVITE_RESULT = 1024`
-  - `accepted`
-  - `requester_player_id`
-  - `target_player_id`
-  - `reason`
+Current development defaults in `ObjectUtils.cpp` are:
 
-## Server Flow
+| Player ID parity | Pawn 1 | Pawn 2 |
+| --- | --- | --- |
+| Odd | `SUEN_AXE_SWORD` | `BEIGE_ICE` |
+| Even | `ZILLIAN_LONGBOW` | `ALEN_SPEAR` |
 
-`ServerPacketHandler.cpp` routes:
+Solo test enemies are currently spawned as `BEIGE_ICE` in `BattleRoom`. The battle implementation itself is designed to consume each player's actual `battlePawns` list.
 
-- `C_BATTLE_INVITE` to `Room::HandleBattleInvite`
-- `C_BATTLE_INVITE_RESPONSE` to `Room::HandleBattleInviteResponse`
+## Turn and Room Behavior
 
-`Room` owns pending battle invites because it has the active field players and their sessions.
+- Both participants share one `battle_id` and one server-authoritative turn queue.
+- At the beginning of each full alive-pawn cycle, the queue is shuffled again.
+- `S_ENTER_BATTLE` is personalized: each recipient receives its own pawns as allied and the other side as enemies.
+- Each action response is sent to both battle participants, enabling both clients to update turn, pawn, and tile state.
 
-`Room::HandleBattleInvite` validates:
+## Battle End and Field Return
 
-- requester is in the field
-- target id is valid
-- requester is not already waiting
-- requester does not already have an incoming invite
-- target exists in the field
-- target has a live session
-- target does not already have a pending invite
+When one side has no live pawns, the server sends `S_BATTLE_RESULT` to both participants. Each client presents its own result UI. Pressing OK sends `C_BATTLE_RESULT_ACK`.
 
-On success:
+The acknowledgement is independent per player:
 
-- requester receives `S_BATTLE_INVITE_REQUEST(success=true)`
-- target receives `S_BATTLE_INVITE_RECEIVED`
+1. Server validates that player's result acknowledgement.
+2. Server queues field-room entry for that player.
+3. Field room restores the player and completes its enter work.
+4. Server sends `S_BATTLE_RESULT_ACK` after the field-return operation is complete.
 
-On decline:
+The player must wait for `S_BATTLE_RESULT_ACK` before the Unity client considers field return finalized. The battle room is released only after both participants have completed their acknowledgement/return path.
 
-- requester receives `S_BATTLE_INVITE_RESULT(accepted=false, reason="declined")`
-- target also receives the same result so the UI can close deterministically
+## Client States
 
-On accept:
-
-- both players receive `S_BATTLE_INVITE_RESULT(accepted=true)`
-- both field pawns are removed from `Room`
-- `S_DESPAWN` with both object ids is sent to both players and remaining field players
-- `BattleRoom::HandleEnterPvpBattle` creates a shared PvP battle
-- both players receive `S_ENTER_BATTLE`
-
-## BattleRoom PvP
-
-PvP battle uses one shared `battle_id`.
-
-The requester pawns are stored in `alliedPawns`; the target pawns are stored in `enemyPawns`. `S_ENTER_BATTLE` is personalized:
-
-- requester sees requester pawns as `allied_pawns`
-- target sees target pawns as `allied_pawns`
-
-Current temporary PvP pawn setup is based on each player's owned `Player::battlePawns`.
-
-- odd player ids receive:
-  - `PAWN_CLASS_SUEN_AXE_SWORD`
-  - `PAWN_CLASS_BEIGE_FIRE`
-- even player ids receive:
-  - `PAWN_CLASS_ZILLIAN_LONGBOW`
-  - `PAWN_CLASS_ALEN_SPEAR`
-
-When PvP starts, requester-owned pawns are converted into `alliedPawns`, and target-owned pawns are converted into `enemyPawns`. These are battle-runtime snapshots; AP, HP, armor, movement flags, Ultimate usage, death, and facing are managed in `BattlePawnState`.
-
-## Turn Queue
-
-`BattleRoom` now has a random turn queue.
-
-- Solo test battles queue only allied pawns.
-- PvP battles queue both players' pawns.
-- At battle creation, alive pawn ids are collected and shuffled.
-- `C_BATTLE_END_TURN` advances through the queue.
-- When a cycle ends, the queue is rebuilt and shuffled again.
-
-## Client Notes
-
-Client-side UI should map these server packets to states:
-
-- local click confirmation: no packet until Yes
-- waiting: after `S_BATTLE_INVITE_REQUEST(success=true)`
-- received invite: after `S_BATTLE_INVITE_RECEIVED`
-- declined: after `S_BATTLE_INVITE_RESULT(accepted=false)`
-- accepted/transition: after `S_BATTLE_INVITE_RESULT(accepted=true)` followed by `S_DESPAWN` and `S_ENTER_BATTLE`
-
-The generated Unity C# packet files were copied by the GameServer pre-build.
-
-## Verification
-
-Build command:
-
-```powershell
-& 'C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe' Server.sln /t:GameServer /p:Configuration=Debug /p:Platform=x64 /m:1
-```
-
-Result:
-
-```text
-warning 0
-error 0
-```
+- Local confirmation: before sending an invite.
+- Waiting: successful `S_BATTLE_INVITE_REQUEST`.
+- Received invite: `S_BATTLE_INVITE_RECEIVED`.
+- Declined: `S_BATTLE_INVITE_RESULT(accepted=false)`.
+- Transitioning: accepted result, field `S_DESPAWN`, then `S_ENTER_BATTLE`.
+- Result UI: `S_BATTLE_RESULT`.
+- Field restored: `S_BATTLE_RESULT_ACK`.

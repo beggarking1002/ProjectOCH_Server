@@ -2,6 +2,7 @@
 #include "JobQueue.h"
 #include "Pawn.h"
 #include "BattlePawn.h"
+#include "BattleSkillResolver.h"
 
 using BattleRoomRef = shared_ptr<class BattleRoom>;
 
@@ -96,15 +97,6 @@ private:
 	bool IsBattleTileInBounds(const Protocol::AxialCoord& coord) const;
 	bool IsBattleWalkable(const BattleState& battle, const Protocol::AxialCoord& coord) const;
 	int32 AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs) const;
-	bool IsStatusActive(const BattlePawn& pawn, const string& statusKey) const;
-	const BattleEffectTemplate* FindActiveSkillModifier(const BattlePawn& pawn, const string& targetSkillKey,
-		const string& modifierType) const;
-	double GetSkillDamageMultiplier(const BattlePawn& pawn, const string& targetSkillKey) const;
-	int32 GetSkillExtraTargets(const BattlePawn& pawn, const string& targetSkillKey, const string& modifierType) const;
-	int32 GetSkillAuraRadiusBonus(const BattlePawn& pawn, const string& targetSkillKey) const;
-	string GetSkillAreaShape(const BattlePawn& pawn, const string& targetSkillKey) const;
-	void RefreshAuraRadii(BattlePawn& pawn) const;
-	vector<Protocol::AxialCoord> GetHailArea(const BattlePawn& caster, const Protocol::AxialCoord& target, const string& shape) const;
 	uint64 GetNextAlliedTurnPawnId(const BattleState& battle, uint64 currentPawnId);
 	void BuildTurnQueue(BattleState& battle);
 	uint64 AdvanceTurn(BattleState& battle);
@@ -148,6 +140,7 @@ private:
 	uint64 _battleIdGenerator = 1;
 	uint64 _battlePawnIdGenerator = 1;
 	uint64 _barrierIdGenerator = 1;
+	BattleSkillResolver _skillResolver;
 	unordered_map<uint64, BattleState> _battles;
 	unordered_map<uint64, uint64> _battleByOwnerId;
 };

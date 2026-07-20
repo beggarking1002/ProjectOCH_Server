@@ -24,6 +24,18 @@
     <ClCompile Include="BattleEffectExecutor.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+	<ClCompile Include="Beige.cpp">
+	  <Filter>Game</Filter>
+	</ClCompile>
+	<ClCompile Include="BeigeIce.cpp">
+	  <Filter>Game</Filter>
+	</ClCompile>
+	<ClCompile Include="BattlePawn.cpp">
+	  <Filter>Game</Filter>
+	</ClCompile>
+	<ClCompile Include="BattleSkillResolver.cpp">
+	  <Filter>Game</Filter>
+	</ClCompile>
     <ClCompile Include="BattleTemplateManager.cpp">
       <Filter>Game</Filter>
     </ClCompile>
@@ -84,6 +96,18 @@
     <ClInclude Include="BattleEffectExecutor.h">
       <Filter>Game</Filter>
     </ClInclude>
+	<ClInclude Include="Beige.h">
+	  <Filter>Game</Filter>
+	</ClInclude>
+	<ClInclude Include="BeigeIce.h">
+	  <Filter>Game</Filter>
+	</ClInclude>
+	<ClInclude Include="BattlePawn.h">
+	  <Filter>Game</Filter>
+	</ClInclude>
+	<ClInclude Include="BattleSkillResolver.h">
+	  <Filter>Game</Filter>
+	</ClInclude>
     <ClInclude Include="BattleTemplateManager.h">
       <Filter>Game</Filter>
     </ClInclude>

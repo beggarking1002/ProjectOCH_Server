@@ -1,53 +1,98 @@
 # Battle Data Tables
 
-Updated on 2026-07-10.
+Updated: 2026-07-20.
 
-## Overview
+## Loaded Server Data
 
-Battle data is split by ownership:
+`BattleTemplateManager` loads these files at GameServer startup. A failed load stops startup through `ASSERT_CRASH`.
 
-- `Data/PawnKey.csv`: short design key to proto `PawnClass`
-- `Data/BattlePawnTemplate.csv`: pawn role and base stats
-- `Data/BattleSkill.csv`: server-authoritative skill identity and numeric judgment data
-- `Data/BattleSkillEffect.csv`: one-to-many skill effects
-- `Data/BattleSkillPresentation.csv`: client presentation data keyed by `SkillKey`
+| File | Purpose |
+| --- | --- |
+| `ClassKey.csv` | Design class key to protobuf `PawnClass` mapping. |
+| `PawnTemplate.csv` | Role and base stats. Runtime max HP and armor derive from these stats in `BattleRoom`. |
+| `BattleSkill.csv` | Skill identity, action slot, AP cost, range, target type, and effect group. |
+| `BattleSkillEffect.csv` | Ordered effect instances and triggers for an effect group. |
+| `BattleSkillEffectParam.csv` | One parameter per effect instance. |
+| `BattleMapTile.csv` | Unity cell source data for base battle terrain. |
+| `EnumDef.csv` | Human-readable enum/value catalog for data authoring. It is not loaded by the C++ runtime. |
 
-The server should load `PawnKey`, `BattlePawnTemplate`, `BattleSkill`, and `BattleSkillEffect`.
+The client should mirror the battle skill/effect data it needs for tooltip and range preview, but the server remains authoritative for all results.
 
-The client should load `BattleSkill` for UI preview/tooltips and `BattleSkillPresentation` for display, animation, VFX, SFX, and icons.
+## Table Relationships
 
-## Skill Table
+```text
+ClassKey -> PawnTemplate
+             |
+             +-> BattleSkill (ClassKey, ActionSlot, EffectGroupKey)
+                       |
+                       +-> BattleSkillEffect (EffectGroupKey, EffectInstanceKey)
+                                      |
+                                      +-> BattleSkillEffectParam
+```
 
-`BattleSkill.csv` keeps one row per skill slot or non-slot ability.
+## Skill Slots
 
-- `SkillType`: `PASSIVE`, `ACTIVE`, `ULTIMATE`, `SUB_ACTION`
-- `TargetType`: `SELF`, `ENEMY_SINGLE`, `ALLY_SINGLE`, `ENEMY_AREA`, `TILE`, `TILE_OR_ENEMY`, `SELF_TOGGLE`
-- `SkillSlot`: passive and sub-action use `0`; active skills use `1-4`; ultimate uses `5`
-- `ScalingStat`: `NONE`, `BASE_STR`, `BASE_CON`, `BASE_DEX`, `BASE_INT`, `BASE_DEFENSE`, `BASE_FOCUS`, `BASE_WILL`
-- `BaseValue` and `Coefficient`: default formula is `final_value = BaseValue + selected_stat * Coefficient`
-- `EffectGroupKey`: links to zero or more rows in `BattleSkillEffect.csv`
+| ActionSlot | Meaning |
+| --- | --- |
+| 1 | Passive |
+| 2-5 | Skill1 through Skill4 |
+| 6 | Ultimate |
+| 7 | Sub action |
+| 8 | System Move action; not a `BattleSkill.csv` row |
 
-## Effect Table
+`BattleSkill.csv` uses `SkillCategory` values such as `PASSIVE`, `CAST`, and `TOGGLE`. It does not encode presentation assets.
 
-`BattleSkillEffect.csv` allows one skill to express multiple server effects without cramming structured logic into a single CSV cell.
+## Effect Data Contract
 
-- `EffectGroupKey`: joins to `BattleSkill.csv`
-- `EffectOrder`: deterministic execution order inside the group
-- `EffectKey`: server effect handler key
-- `Trigger`: when the effect is evaluated
-- `Target`: target scope for that effect
-- `ParamKey` / `ParamValue`: one parameter per row
+The table defines what happens. Code implements the generic primitive represented by `EffectKey`.
 
-Some effect handlers need multiple rows with the same `EffectKey`; the server loader can group rows by `EffectGroupKey + EffectOrder + EffectKey` if a richer parameter map is needed later.
+Implemented primitives include:
 
-## Beige Ice Notes
+- `SET_RESOURCE_MAX`
+- `MODIFY_RESOURCE`
+- `DEAL_DAMAGE`
+- `APPLY_BARRIER`
+- `APPLY_STATUS`
+- `APPLY_STAT_MODIFIER`
+- `TOGGLE_AURA`
+- `CHANGE_TILE_TYPE` (runtime meaning: change overlay)
+- `ADD_SKILL_MODIFIER` (persistent modifier definition evaluated while its required status is active)
 
-Beige Ice currently uses cold stack mechanics:
+`APPLY_STAT_MODIFIER` uses a timed status as its runtime marker. For `DAMAGE_DEALT`, `ADD_RATIO=-0.1` means 10 percent lower outgoing damage. `stack_policy=REFRESH` preserves one stack and refreshes duration on recast.
 
-- max cold stack: 20
-- cold decays by 1 at turn start
-- turn-end backlash at 70% and 90% cold thresholds
-- active skills add cold stacks to the caster
-- ultimate ignores cold backlash and empowers all active skills for 3 turns
+`ADD_SKILL_MODIFIER` uses these parameters:
 
-The exact formulas for backlash damage, barrier value, frostbite behavior, ice tile movement cost, and empowered skill details still need server effect handlers.
+| ModifierType | Parameters | Current behavior |
+| --- | --- | --- |
+| `DAMAGE_MULTIPLIER` | `multiplier` | Multiplies the matching skill's damage. |
+| `EXTRA_TARGET_COUNT` | `extra_targets` | Adds adjacent allies for a matching barrier skill. |
+| `TARGET_SHAPE_OVERRIDE` | `shape` | Uses a server-resolved area such as `TRIANGLE_3`. |
+| `AURA_RADIUS_DELTA` | `radius_delta` | Changes an active or newly toggled aura radius. |
+
+`required_status_key` gates a modifier. This lets the ultimate define modifiers without putting Beige-specific effect keys in the engine.
+
+## Beige Ice Current Data
+
+`BEIGE_ICE` is the first full data-driven class. Its current rows define:
+
+- COLD maximum: 20.
+- COLD decay: -1 at owner turn start.
+- Backlash: 90 percent threshold = 20 damage; 70 percent threshold = 10 damage; high priority suppresses low when both match.
+- Ice Bolt: `10 + SPELL * 1.0`, COLD +1.
+- Ice Shield: `20 + SPELL * 0.8` barrier for 2 owner turns, COLD +1.
+- Hail hit: `10 + SPELL * 0.8`, COLD +3; empty-tile overlay behavior is defined by tile filters.
+- Storm Center: radius 1, `8 + SPELL * 0.6` at owner turn start, Frostbite +1, COLD +2.
+- Ultimate: 3-turn immunity and empowerment status. It adds damage multiplier 2, one shield target, `TRIANGLE_3`, and aura radius +1 modifiers.
+- Thawing Potion: halves COLD and applies `DAMAGE_DEALT ADD_RATIO -0.1` for 2 owner turns with `REFRESH` stack policy.
+
+The current PvP development roster is also data-driven for its original single-target damage behavior:
+
+- `SUEN_AXE`: five cast skills with the legacy AP costs, ranges, and 30/45/35/55/90 damage values.
+- `ZILLIAN_LONGBOW`: five cast skills with the legacy AP costs, ranges, and 20/35/45/30/80 damage values.
+- `ALEN_SPEAR`: five cast skills with the legacy AP costs, ranges, and 25/35/45/30/80 damage values.
+
+## Data Versus Code Boundary
+
+Data must contain values, target selection intent, duration, conditions, and modifier type. Code must contain reusable rules that interpret those values: hex shape calculation, adjacent-pawn selection, damage application, barrier handling, status lifetime, and packet output.
+
+Do not add per-character effect keys when an existing primitive plus parameters can express the rule. Add a new primitive only when it is reusable by more than one planned skill or removes meaningful engine complexity.

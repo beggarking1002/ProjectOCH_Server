@@ -221,6 +221,19 @@ const BattleSkillTemplate* BattleTemplateManager::GetSkillByActionSlot(Protocol:
 	return nullptr;
 }
 
+const vector<BattleSkillTemplate>* BattleTemplateManager::GetSkills(Protocol::PawnClass pawnClass)
+{
+	if (Load() == false)
+		return nullptr;
+
+	auto classKeyIt = _pawnClassToClassKey.find(pawnClass);
+	if (classKeyIt == _pawnClassToClassKey.end())
+		return nullptr;
+
+	auto skillIt = _skillsByClassKey.find(classKeyIt->second);
+	return skillIt != _skillsByClassKey.end() ? &skillIt->second : nullptr;
+}
+
 const BattleSkillTemplate* BattleTemplateManager::GetSkillByKey(const string& skillKey)
 {
 	if (Load() == false)

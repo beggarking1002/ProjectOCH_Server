@@ -74,6 +74,8 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 			ExecuteApplyBarrier(effect, request);
 		else if (effect.effectKey == "APPLY_STATUS")
 			ExecuteApplyStatus(effect, request);
+		else if (effect.effectKey == "APPLY_STAT_MODIFIER")
+			ExecuteApplyStatus(effect, request);
 		else if (effect.effectKey == "TOGGLE_AURA")
 			ExecuteToggleAura(effect, request);
 		else if (effect.effectKey == "CHANGE_TILE_TYPE")
@@ -275,7 +277,11 @@ void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect
 
 	const int32 stackDelta = GetIntParam(effect, "stack_delta", 1);
 	BattleStatusState& status = (*target.statuses)[statusKey];
-	status.stacks = max(0, status.stacks + stackDelta);
+	const string stackPolicy = ToUpperString(GetParam(effect, "stack_policy", "ADD"));
+	if (stackPolicy == "REFRESH")
+		status.stacks = max(1, status.stacks);
+	else
+		status.stacks = max(0, status.stacks + stackDelta);
 	const int32 durationTurns = GetIntParam(effect, "duration_turns", -1);
 	if (durationTurns > 0)
 		status.remainingOwnerTurns = max(status.remainingOwnerTurns, durationTurns);

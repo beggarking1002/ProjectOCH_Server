@@ -150,6 +150,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BattleEffectExecutor.cpp" />
+	<ClCompile Include="Beige.cpp" />
+	<ClCompile Include="BeigeIce.cpp" />
+	<ClCompile Include="BattlePawn.cpp" />
+	<ClCompile Include="BattleSkillResolver.cpp" />
     <ClCompile Include="BattleTemplateManager.cpp" />
     <ClCompile Include="BattleRoom.cpp" />
     <ClCompile Include="Creature.cpp" />
@@ -184,6 +188,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BattleEffectExecutor.h" />
+	<ClInclude Include="Beige.h" />
+	<ClInclude Include="BeigeIce.h" />
+	<ClInclude Include="BattlePawn.h" />
+	<ClInclude Include="BattleSkillResolver.h" />
     <ClInclude Include="BattleTemplateManager.h" />
     <ClInclude Include="BattleRoom.h" />
     <ClInclude Include="Creature.h" />

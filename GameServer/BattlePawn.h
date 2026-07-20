@@ -8,6 +8,7 @@ public:
 	virtual ~BattlePawn() = default;
 
 	virtual const char* GetBehaviorKey() const { return "DEFAULT"; }
+	virtual vector<Protocol::AxialCoord> ResolveTargetArea(const string& shape, const Protocol::AxialCoord& target) const;
 
 	int32 GetShieldCurrent() const
 	{
@@ -49,13 +50,9 @@ public:
 	unordered_map<string, BattleAuraState> auras;
 };
 
-class BeigeIceBattlePawn final : public BattlePawn
-{
-public:
-	const char* GetBehaviorKey() const override { return "BEIGE_ICE"; }
-};
-
 using BattlePawnRef = shared_ptr<BattlePawn>;
+
+BattlePawnRef CreateBattlePawn(Protocol::PawnClass pawnClass);
 
 struct BattlePawnInitialStats
 {

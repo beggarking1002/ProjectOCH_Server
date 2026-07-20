@@ -65,6 +65,7 @@ public:
 
 	const BattlePawnClassTemplate* GetPawnClassTemplate(Protocol::PawnClass pawnClass);
 	const BattleSkillTemplate* GetSkillByActionSlot(Protocol::PawnClass pawnClass, int32 actionSlot);
+	const vector<BattleSkillTemplate>* GetSkills(Protocol::PawnClass pawnClass);
 	const BattleSkillTemplate* GetSkillByKey(const string& skillKey);
 	const vector<BattleEffectTemplate>* GetEffects(const string& effectGroupKey);
 	const vector<BattleMapTileTemplate>* GetBattleMapTiles(const string& mapId);
