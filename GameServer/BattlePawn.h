@@ -6,33 +6,30 @@ class BattlePawn
 {
 public:
 	virtual ~BattlePawn() = default;
+	static bool IsNormalSkillSlot(int32 skillSlot);
+	static bool IsUltimateSkillSlot(int32 skillSlot);
+	static bool IsSubActionSkillSlot(int32 skillSlot);
 
-	virtual const char* GetBehaviorKey() const { return "DEFAULT"; }
+	virtual const char* GetBehaviorKey() const;
 	virtual vector<Protocol::AxialCoord> ResolveTargetArea(const string& shape, const Protocol::AxialCoord& target,
 		const Protocol::AxialCoord* directionTarget = nullptr) const;
-	virtual bool CanInterceptSingleTargetAttack() const { return false; }
-	virtual bool TryConsumeGuaranteedEvade() { return false; }
-	virtual bool CanDropEquipment(const string& equipmentKey) const { return false; }
-	virtual bool CanPickupEquipment(const string& equipmentKey, uint64 equipmentOwnerPawnId) const { return false; }
-	virtual bool CanActivateSkill(int32 skillSlot, string& reason) const { return true; }
-	virtual void OnEquipmentPickedUp(const string& equipmentKey) { }
-	virtual bool ApplyStatFromStat(const string& sourceStat, const string& targetStat, int32 value) { return false; }
+	virtual bool CanInterceptSingleTargetAttack() const;
+	virtual bool TryConsumeGuaranteedEvade();
+	virtual bool CanDropEquipment(const string& equipmentKey) const;
+	virtual bool CanPickupEquipment(const string& equipmentKey, uint64 equipmentOwnerPawnId) const;
+	virtual bool CanActivateSkill(int32 skillSlot, string& reason) const;
+	virtual void OnEquipmentPickedUp(const string& equipmentKey);
+	virtual bool ApplyStatFromStat(const string& sourceStat, const string& targetStat, int32 value);
 
-	int32 GetShieldCurrent() const
-	{
-		int32 value = armor;
-		for (const BattleBarrierState& barrier : barriers)
-			value += barrier.value;
-		return value;
-	}
-
-	int32 GetShieldMax() const
-	{
-		int32 value = maxArmor;
-		for (const BattleBarrierState& barrier : barriers)
-			value += barrier.maxValue;
-		return value;
-	}
+	bool CanMove() const;
+	void MarkMoved();
+	bool CanUseSkillSlot(int32 skillSlot, string& reason) const;
+	void MarkSkillSlotUsed(int32 skillSlot);
+	void ResetTurnActionUsage();
+	void InitializeBattleActionUsage();
+	void MarkDefeated();
+	int32 GetShieldCurrent() const;
+	int32 GetShieldMax() const;
 
 public:
 	uint64 pawnId = 0;
@@ -46,6 +43,7 @@ public:
 	int32 maxArmor = 0;
 	int32 currentAp = 0;
 	bool hasMovedThisTurn = false;
+	bool usedNormalSkillThisTurn = false;
 	bool usedSubActionThisTurn = false;
 	bool usedUltimate = false;
 	bool isDead = false;

@@ -57,7 +57,11 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 	{
 		if (matchesScope(effect) == false || effect.trigger != trigger || IsConditionMet(effect, request) == false)
 			continue;
-		if (request.isEvaded && (effect.effectTarget == "TARGET" || effect.effectTarget == "TARGET_ENEMY"))
+		// A missed hit still needs a damage action log so the client can present
+		// the attempted attack in an exchange/counter sequence.  Other target
+		// effects (status, tile effects, etc.) must not resolve on an evaded hit.
+		if (request.isEvaded && (effect.effectTarget == "TARGET" || effect.effectTarget == "TARGET_ENEMY") &&
+			effect.effectKey != "DEAL_DAMAGE")
 			continue;
 
 		if (effect.exclusiveGroup.empty() == false)

@@ -295,7 +295,7 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 
 	pawn->axial.CopyFrom(pkt.target());
 	UpdateFacingByMove(*pawn, start, pawn->axial);
-	pawn->hasMovedThisTurn = true;
+	pawn->MarkMoved();
 	battle.stateVersion++;
 
 	SendBattleMoveResult(session, true, battle.battleId, pawn->pawnId, start, pawn->axial, battle.currentTurnPawnId,
@@ -404,24 +404,10 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		return;
 	}
 
-	if (skillSpec.isUltimate && caster->usedUltimate)
+	if (caster->CanUseSkillSlot(pkt.skill_slot(), skillError) == false)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
-			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, "ultimate already used", caster);
-		return;
-	}
-
-	if (skillSpec.isSubAction && caster->usedSubActionThisTurn)
-	{
-		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
-			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, "sub action already used this turn", caster);
-		return;
-	}
-
-	if (caster->currentAp < skillSpec.apCost)
-	{
-		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
-			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, "not enough ap", caster);
+			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, skillError, caster);
 		return;
 	}
 
@@ -552,12 +538,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		areaDirectionAxial = &lineDirectionAxial;
 	}
 
-	if (skillSpec.isUltimate)
-		caster->usedUltimate = true;
-	else if (skillSpec.isSubAction)
-		caster->usedSubActionThisTurn = true;
-
-	caster->currentAp = max(0, caster->currentAp - skillSpec.apCost);
+	caster->MarkSkillSlotUsed(pkt.skill_slot());
 
 	const Protocol::AxialCoord* executionTargetAxial = wasIntercepted ? &target->axial : &targetAxial;
 	const bool isBackAttack = target != nullptr && IsBackAttack(*caster, *target);
@@ -669,19 +650,25 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		TryExecuteCounterattack(battle, *target, *caster, logs, tileDeltas, extraChangedPawns, deathCandidates);
 	}
 
-	vector<BattlePawn*> deadPawns;
+	vector<pair<BattlePawn*, uint64>> deadPawns;
 	unordered_set<uint64> checkedPawnIds;
 	for (BattlePawn* candidate : deathCandidates)
 	{
 		if (candidate == nullptr || checkedPawnIds.insert(candidate->pawnId).second == false || candidate->isDead || candidate->hp > 0)
 			continue;
 
-		candidate->hp = 0;
-		candidate->currentAp = 0;
-		candidate->hasMovedThisTurn = true;
-		candidate->isDead = true;
+		uint64 killerPawnId = caster->pawnId;
+		for (auto actionIt = logs.rbegin(); actionIt != logs.rend(); ++actionIt)
+		{
+			if (actionIt->defender_pawn_id() == candidate->pawnId && actionIt->is_evaded() == false && actionIt->damage() > 0)
+			{
+				killerPawnId = actionIt->attacker_pawn_id();
+				break;
+			}
+		}
+		candidate->MarkDefeated();
 		battle.turnQueue.erase(remove(battle.turnQueue.begin(), battle.turnQueue.end(), candidate->pawnId), battle.turnQueue.end());
-		deadPawns.push_back(candidate);
+		deadPawns.emplace_back(candidate, killerPawnId);
 	}
 	if (battle.turnQueueIndex > battle.turnQueue.size())
 		battle.turnQueueIndex = battle.turnQueue.size();
@@ -690,6 +677,26 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	const uint64 resolvedTargetPawnId = target != nullptr ? target->pawnId : 0;
 	const int32 resolvedTargetHp = target != nullptr ? target->hp : 0;
 	const int32 resolvedTargetArmor = target != nullptr ? target->armor : 0;
+	for (size_t actionIndex = 0; actionIndex < logs.size(); ++actionIndex)
+	{
+		const Protocol::BattleActionLog& actionLog = logs[actionIndex];
+		cout << "BATTLE_ACTION_LOG"
+			<< " battle_id=" << battle.battleId
+			<< " sequence=" << actionIndex
+			<< " attacker_pawn_id=" << actionLog.attacker_pawn_id()
+			<< " defender_pawn_id=" << actionLog.defender_pawn_id()
+			<< " skill_slot=" << actionLog.skill_slot()
+			<< " action_type=" << actionLog.action_type()
+			<< " damage=" << actionLog.damage()
+			<< " evaded=" << actionLog.is_evaded()
+			<< " guarded=" << actionLog.is_guarded()
+			<< " perfect_guarded=" << actionLog.is_perfect_guarded()
+			<< " counter=" << actionLog.is_counter()
+			<< " back_attack=" << actionLog.is_back_attack()
+			<< " defender_hp_after=" << actionLog.hp_after()
+			<< " defender_armor_after=" << actionLog.armor_after()
+			<< endl;
+	}
 
 	SendBattleSkillResult(session, true, battle.battleId, caster->pawnId, pkt.skill_slot(), resolvedTargetPawnId,
 		targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas, extraChangedPawns);
@@ -710,18 +717,18 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		}
 	}
 
-	for (const BattlePawn* deadPawn : deadPawns)
+	for (const auto& death : deadPawns)
 	{
-		SendBattlePawnDead(session, battle.battleId, deadPawn->pawnId, caster->pawnId);
+		SendBattlePawnDead(session, battle.battleId, death.first->pawnId, death.second);
 		if (battle.isPvp)
 		{
 			GameSessionRef ownerSession = battle.ownerSession.lock();
 			if (ownerSession != nullptr && ownerSession != session)
-				SendBattlePawnDead(ownerSession, battle.battleId, deadPawn->pawnId, caster->pawnId);
+				SendBattlePawnDead(ownerSession, battle.battleId, death.first->pawnId, death.second);
 
 			GameSessionRef opponentSession = battle.opponentSession.lock();
 			if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
-				SendBattlePawnDead(opponentSession, battle.battleId, deadPawn->pawnId, caster->pawnId);
+				SendBattlePawnDead(opponentSession, battle.battleId, death.first->pawnId, death.second);
 		}
 	}
 
@@ -921,16 +928,18 @@ BattleRoom::BattleState BattleRoom::CreateBattle(PlayerRef ownerPlayer)
 	InitializeBattleTiles(battle);
 
 	AddOwnedBattlePawns(battle.alliedPawns, ownerPlayer, -2, 0);
+	constexpr int32 kTestDummyArmor = 100;
+	constexpr Protocol::PawnClass kTestDummyClass = Protocol::PAWN_CLASS_SUEN_AXE_SWORD;
 	BattlePawnInitialStats enemyTemplate;
-	if (TryGetPawnTemplate(Protocol::PAWN_CLASS_BEIGE_ICE, enemyTemplate))
+	if (TryGetPawnTemplate(kTestDummyClass, enemyTemplate))
 	{
-		battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_BEIGE_ICE, 2, -1, enemyTemplate.hp,
-			enemyTemplate.moveRange, enemyTemplate.maxArmor, enemyTemplate.role));
+		battle.enemyPawns.push_back(MakeBattlePawn(0, kTestDummyClass, 2, -1, enemyTemplate.hp,
+			enemyTemplate.moveRange, kTestDummyArmor, enemyTemplate.role));
 	}
-	if (TryGetPawnTemplate(Protocol::PAWN_CLASS_BEIGE_ICE, enemyTemplate))
+	if (TryGetPawnTemplate(kTestDummyClass, enemyTemplate))
 	{
-		battle.enemyPawns.push_back(MakeBattlePawn(0, Protocol::PAWN_CLASS_BEIGE_ICE, 2, 0, enemyTemplate.hp,
-			enemyTemplate.moveRange, enemyTemplate.maxArmor, enemyTemplate.role));
+		battle.enemyPawns.push_back(MakeBattlePawn(0, kTestDummyClass, 2, 0, enemyTemplate.hp,
+			enemyTemplate.moveRange, kTestDummyArmor, enemyTemplate.role));
 	}
 
 	ExecuteBattleStartEffects(battle);
@@ -977,10 +986,7 @@ BattlePawnRef BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol::PawnClass paw
 	pawn->moveRange = moveRange;
 	pawn->armor = maxArmor;
 	pawn->maxArmor = maxArmor;
-	pawn->currentAp = 0;
-	pawn->hasMovedThisTurn = false;
-	pawn->usedSubActionThisTurn = false;
-	pawn->usedUltimate = false;
+	pawn->InitializeBattleActionUsage();
 	pawn->isDead = false;
 	pawn->facingDirection = cellX <= 0 ? Protocol::BATTLE_FACING_DIRECTION_Q_POS : Protocol::BATTLE_FACING_DIRECTION_Q_NEG;
 	pawn->role = role;
@@ -1209,6 +1215,7 @@ void BattleRoom::CopyBattlePawn(const BattlePawn& src, Protocol::BattlePawnInfo*
 	dst->set_max_armor(src.maxArmor);
 	dst->set_current_ap(src.currentAp);
 	dst->set_can_move(CanMove(src));
+	dst->set_used_normal_skill_this_turn(src.usedNormalSkillThisTurn);
 	dst->set_used_sub_action_this_turn(src.usedSubActionThisTurn);
 	dst->set_used_ultimate(src.usedUltimate);
 	dst->set_is_dead(src.isDead);
@@ -1258,6 +1265,7 @@ void BattleRoom::CopyBattlePawnDelta(const BattlePawn& src, Protocol::BattlePawn
 	dst->set_armor(src.armor);
 	dst->set_current_ap(src.currentAp);
 	dst->set_can_move(CanMove(src));
+	dst->set_used_normal_skill_this_turn(src.usedNormalSkillThisTurn);
 	dst->set_used_sub_action_this_turn(src.usedSubActionThisTurn);
 	dst->set_used_ultimate(src.usedUltimate);
 	dst->set_is_dead(src.isDead);
@@ -1541,8 +1549,7 @@ bool BattleRoom::TryGetSkillSpec(Protocol::PawnClass pawnClass, int32 skillSlot,
 	spec.damage = 0;
 		spec.rangeMin = skill->rangeMin;
 		spec.rangeMax = skill->rangeMax;
-		spec.isUltimate = skill->actionSlot == 6;
-		spec.isSubAction = skill->actionSlot == 7;
+		spec.isUltimate = BattlePawn::IsUltimateSkillSlot(skill->actionSlot);
 		return true;
 	}
 
@@ -1597,7 +1604,7 @@ bool BattleRoom::TryGetSkillSpec(Protocol::PawnClass pawnClass, int32 skillSlot,
 
 bool BattleRoom::CanMove(const BattlePawn& pawn)
 {
-	return IsAlive(pawn) && pawn.hasMovedThisTurn == false;
+	return pawn.CanMove();
 }
 
 bool BattleRoom::CanRecoverArmor(const BattlePawn& pawn)
@@ -1669,9 +1676,7 @@ void BattleRoom::StartTurn(BattleState& battle, BattlePawn& pawn)
 	AdvanceOwnerTurnEffects(pawn);
 	_skillResolver.RefreshAuraRadii(pawn);
 
-	pawn.currentAp = 2;
-	pawn.hasMovedThisTurn = false;
-	pawn.usedSubActionThisTurn = false;
+	pawn.ResetTurnActionUsage();
 
 	if (CanRecoverArmor(pawn) && pawn.armor < pawn.maxArmor)
 	{
@@ -1811,10 +1816,7 @@ void BattleRoom::ExecuteAuraTurnStartEffects(BattleState& battle, BattlePawn& pa
 		if (changedPawn == nullptr || changedPawn->isDead || changedPawn->hp > 0)
 			continue;
 
-		changedPawn->hp = 0;
-		changedPawn->currentAp = 0;
-		changedPawn->hasMovedThisTurn = true;
-		changedPawn->isDead = true;
+		changedPawn->MarkDefeated();
 		battle.turnQueue.erase(remove(battle.turnQueue.begin(), battle.turnQueue.end(), changedPawn->pawnId), battle.turnQueue.end());
 		battle.turnStartDeaths.emplace_back(changedPawn->pawnId, pawn.pawnId);
 	}
@@ -1967,6 +1969,13 @@ bool BattleRoom::TryExecuteCounterattack(BattleState& battle, BattlePawn& defend
 		return false;
 	}
 
+	cout << "BATTLE_COUNTER_BEGIN"
+		<< " depth=" << counterChainDepth
+		<< " counter_caster_pawn_id=" << defender.pawnId
+		<< " counter_target_pawn_id=" << attacker.pawnId
+		<< " skill_slot=" << defenderTemplate->counterSkillSlot
+		<< endl;
+
 	BattleSkillActionRequest request;
 	request.skill = counterSkill;
 	request.casterTemplate = defenderTemplate;
@@ -2021,6 +2030,15 @@ bool BattleRoom::TryExecuteCounterattack(BattleState& battle, BattlePawn& defend
 
 	const int32 attackerHpBeforeCounter = attacker.hp;
 	BattleSkillActionResult result = _skillExecutionService.Execute(request);
+	for (const Protocol::BattleActionLog& counterLog : result.logs)
+	{
+		cout << "BATTLE_COUNTER_RESULT"
+			<< " expected_attacker_pawn_id=" << defender.pawnId
+			<< " expected_defender_pawn_id=" << attacker.pawnId
+			<< " logged_attacker_pawn_id=" << counterLog.attacker_pawn_id()
+			<< " logged_defender_pawn_id=" << counterLog.defender_pawn_id()
+			<< endl;
+	}
 	const bool counterWasEvaded = any_of(result.logs.begin(), result.logs.end(), [](const Protocol::BattleActionLog& log)
 		{
 			return log.is_evaded();

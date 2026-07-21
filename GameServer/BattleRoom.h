@@ -21,7 +21,6 @@ private:
 		int32 rangeMin = 0;
 		int32 rangeMax = 0;
 		bool isUltimate = false;
-		bool isSubAction = false;
 	};
 
 	struct BattleTileState

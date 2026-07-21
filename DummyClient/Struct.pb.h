@@ -1660,6 +1660,7 @@ class BattlePawnInfo final :
     kRoleFieldNumber = 18,
     kShieldCurrentFieldNumber = 22,
     kShieldMaxFieldNumber = 23,
+    kUsedNormalSkillThisTurnFieldNumber = 25,
   };
   // repeated .Protocol.BattleResourceState resources = 19;
   int resources_size() const;
@@ -1904,6 +1905,15 @@ class BattlePawnInfo final :
   void _internal_set_shield_max(int32_t value);
   public:
 
+  // bool used_normal_skill_this_turn = 25;
+  void clear_used_normal_skill_this_turn();
+  bool used_normal_skill_this_turn() const;
+  void set_used_normal_skill_this_turn(bool value);
+  private:
+  bool _internal_used_normal_skill_this_turn() const;
+  void _internal_set_used_normal_skill_this_turn(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.BattlePawnInfo)
  private:
   class _Internal;
@@ -1934,6 +1944,7 @@ class BattlePawnInfo final :
     int role_;
     int32_t shield_current_;
     int32_t shield_max_;
+    bool used_normal_skill_this_turn_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2077,6 +2088,7 @@ class BattlePawnDelta final :
     kFacingDirectionFieldNumber = 9,
     kShieldCurrentFieldNumber = 14,
     kShieldMaxFieldNumber = 15,
+    kUsedNormalSkillThisTurnFieldNumber = 17,
   };
   // repeated .Protocol.BattleResourceState resources = 11;
   int resources_size() const;
@@ -2249,6 +2261,15 @@ class BattlePawnDelta final :
   void _internal_set_shield_max(int32_t value);
   public:
 
+  // bool used_normal_skill_this_turn = 17;
+  void clear_used_normal_skill_this_turn();
+  bool used_normal_skill_this_turn() const;
+  void set_used_normal_skill_this_turn(bool value);
+  private:
+  bool _internal_used_normal_skill_this_turn() const;
+  void _internal_set_used_normal_skill_this_turn(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.BattlePawnDelta)
  private:
   class _Internal;
@@ -2272,6 +2293,7 @@ class BattlePawnDelta final :
     int facing_direction_;
     int32_t shield_current_;
     int32_t shield_max_;
+    bool used_normal_skill_this_turn_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3975,6 +3997,26 @@ BattlePawnInfo::auras() const {
   return _impl_.auras_;
 }
 
+// bool used_normal_skill_this_turn = 25;
+inline void BattlePawnInfo::clear_used_normal_skill_this_turn() {
+  _impl_.used_normal_skill_this_turn_ = false;
+}
+inline bool BattlePawnInfo::_internal_used_normal_skill_this_turn() const {
+  return _impl_.used_normal_skill_this_turn_;
+}
+inline bool BattlePawnInfo::used_normal_skill_this_turn() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.used_normal_skill_this_turn)
+  return _internal_used_normal_skill_this_turn();
+}
+inline void BattlePawnInfo::_internal_set_used_normal_skill_this_turn(bool value) {
+  
+  _impl_.used_normal_skill_this_turn_ = value;
+}
+inline void BattlePawnInfo::set_used_normal_skill_this_turn(bool value) {
+  _internal_set_used_normal_skill_this_turn(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.used_normal_skill_this_turn)
+}
+
 // -------------------------------------------------------------------
 
 // BattlePawnDelta
@@ -4357,6 +4399,26 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAuraSt
 BattlePawnDelta::auras() const {
   // @@protoc_insertion_point(field_list:Protocol.BattlePawnDelta.auras)
   return _impl_.auras_;
+}
+
+// bool used_normal_skill_this_turn = 17;
+inline void BattlePawnDelta::clear_used_normal_skill_this_turn() {
+  _impl_.used_normal_skill_this_turn_ = false;
+}
+inline bool BattlePawnDelta::_internal_used_normal_skill_this_turn() const {
+  return _impl_.used_normal_skill_this_turn_;
+}
+inline bool BattlePawnDelta::used_normal_skill_this_turn() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnDelta.used_normal_skill_this_turn)
+  return _internal_used_normal_skill_this_turn();
+}
+inline void BattlePawnDelta::_internal_set_used_normal_skill_this_turn(bool value) {
+  
+  _impl_.used_normal_skill_this_turn_ = value;
+}
+inline void BattlePawnDelta::set_used_normal_skill_this_turn(bool value) {
+  _internal_set_used_normal_skill_this_turn(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.used_normal_skill_this_turn)
 }
 
 // -------------------------------------------------------------------
