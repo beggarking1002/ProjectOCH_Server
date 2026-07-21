@@ -171,14 +171,20 @@ inline bool BattleMoveResult_Parse(
 }
 enum BattleFacingDirection : int {
   BATTLE_FACING_DIRECTION_NONE = 0,
-  BATTLE_FACING_DIRECTION_LEFT = 1,
-  BATTLE_FACING_DIRECTION_RIGHT = 2,
+  BATTLE_FACING_DIRECTION_Q_POS = 1,
+  BATTLE_FACING_DIRECTION_Q_POS_R_NEG = 2,
+  BATTLE_FACING_DIRECTION_R_NEG = 3,
+  BATTLE_FACING_DIRECTION_Q_NEG = 4,
+  BATTLE_FACING_DIRECTION_Q_NEG_R_POS = 5,
+  BATTLE_FACING_DIRECTION_R_POS = 6,
+  BATTLE_FACING_DIRECTION_RIGHT = 1,
+  BATTLE_FACING_DIRECTION_LEFT = 4,
   BattleFacingDirection_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   BattleFacingDirection_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool BattleFacingDirection_IsValid(int value);
 constexpr BattleFacingDirection BattleFacingDirection_MIN = BATTLE_FACING_DIRECTION_NONE;
-constexpr BattleFacingDirection BattleFacingDirection_MAX = BATTLE_FACING_DIRECTION_RIGHT;
+constexpr BattleFacingDirection BattleFacingDirection_MAX = BATTLE_FACING_DIRECTION_R_POS;
 constexpr int BattleFacingDirection_ARRAYSIZE = BattleFacingDirection_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattleFacingDirection_descriptor();

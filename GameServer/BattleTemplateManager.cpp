@@ -359,6 +359,7 @@ bool BattleTemplateManager::LoadPawnTemplate(const string& path)
 		pawnTemplate.baseDefense = ToInt(Cell(rows[i], header, "BaseDefense"));
 		pawnTemplate.baseFocus = ToInt(Cell(rows[i], header, "BaseFocus"));
 		pawnTemplate.baseWill = ToInt(Cell(rows[i], header, "BaseWill"));
+		pawnTemplate.counterSkillSlot = ToInt(Cell(rows[i], header, "CounterSkillSlot"));
 
 		_pawnClassTemplates[pawnTemplate.pawnClass] = pawnTemplate;
 	}
@@ -391,6 +392,8 @@ bool BattleTemplateManager::LoadBattleSkill(const string& path)
 		}
 
 		skill.skillCategory = Cell(rows[i], header, "SkillCategory");
+		skill.combatType = Cell(rows[i], header, "CombatType");
+		skill.damageType = Cell(rows[i], header, "DamageType");
 		skill.actionSlot = ToInt(Cell(rows[i], header, "ActionSlot"));
 		skill.apCost = ToInt(Cell(rows[i], header, "ApCost"));
 		skill.rangeMin = ToInt(Cell(rows[i], header, "RangeMin"));

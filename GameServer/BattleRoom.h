@@ -28,6 +28,8 @@ private:
 	{
 		Protocol::BattleTileType baseTileType = Protocol::BATTLE_TILE_TYPE_NORMAL;
 		Protocol::BattleTileOverlayType overlayType = Protocol::BATTLE_TILE_OVERLAY_TYPE_NONE;
+		string equipmentKey;
+		uint64 equipmentOwnerPawnId = 0;
 	};
 
 	struct BattleState
@@ -84,6 +86,9 @@ private:
 	Protocol::BattleTileType GetBaseTileType(const BattleState& battle, const Protocol::AxialCoord& axial) const;
 	Protocol::BattleTileOverlayType GetTileOverlayType(const BattleState& battle, const Protocol::AxialCoord& axial) const;
 	void SetTileOverlayType(BattleState& battle, const Protocol::AxialCoord& axial, Protocol::BattleTileOverlayType overlayType);
+	string GetTileEquipmentKey(const BattleState& battle, const Protocol::AxialCoord& axial) const;
+	uint64 GetTileEquipmentOwnerPawnId(const BattleState& battle, const Protocol::AxialCoord& axial) const;
+	void SetTileEquipment(BattleState& battle, const Protocol::AxialCoord& axial, const string& equipmentKey, uint64 ownerPawnId);
 	void AppendBattleTileStates(const BattleState& battle, google::protobuf::RepeatedPtrField<Protocol::BattleTileInfo>* dst) const;
 
 	void FillEnterBattlePacket(const BattleState& battle, uint64 viewerOwnerId, Protocol::S_ENTER_BATTLE& pkt);
@@ -93,6 +98,7 @@ private:
 	BattlePawn* FindPawn(BattleState& battle, uint64 pawnId);
 	BattlePawn* FindAlivePawnAt(BattleState& battle, const Protocol::AxialCoord& axial);
 	BattlePawn* FindAdjacentAliveAlly(BattleState& battle, const BattlePawn& source, uint64 excludedPawnId);
+	BattlePawn* FindSingleTargetInterceptor(BattleState& battle, const BattlePawn& protectedPawn);
 	bool IsOccupied(const BattleState& battle, const Protocol::AxialCoord& coord, uint64 exceptPawnId);
 	bool IsBattleTileInBounds(const Protocol::AxialCoord& coord) const;
 	bool IsBattleWalkable(const BattleState& battle, const Protocol::AxialCoord& coord) const;
@@ -112,8 +118,12 @@ private:
 	void ExecuteBattleStartEffects(BattleState& battle);
 	void AdvanceOwnerTurnEffects(BattlePawn& pawn);
 	void ApplyDamage(BattlePawn& target, int32 damage);
+	bool RollEvade(const BattlePawn& attacker, BattlePawn& defender);
 	void UpdateFacingByMove(BattlePawn& pawn, const Protocol::AxialCoord& start, const Protocol::AxialCoord& target);
 	bool IsBackAttack(const BattlePawn& attacker, const BattlePawn& defender);
+	bool TryExecuteCounterattack(BattleState& battle, BattlePawn& defender, BattlePawn& attacker,
+		vector<Protocol::BattleActionLog>& logs, vector<Protocol::BattleTileInfo>& tileDeltas,
+		vector<const BattlePawn*>& extraChangedPawns, vector<BattlePawn*>& deathCandidates, int32 counterChainDepth = 0);
 	void AddActionLog(google::protobuf::RepeatedPtrField<Protocol::BattleActionLog>* logs,
 		uint64 attackerPawnId, uint64 defenderPawnId, int32 skillSlot, const string& actionType,
 		int32 damage, const BattlePawn& defender, bool isCounter = false);

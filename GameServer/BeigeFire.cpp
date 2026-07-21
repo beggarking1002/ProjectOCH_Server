@@ -37,18 +37,6 @@ vector<Protocol::AxialCoord> BeigeFire::ResolveTargetArea(const string& shape, c
 		{ 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, 0 }, { -1, 1 }, { 0, 1 }
 	};
 
-	if (shape == "RADIUS_1")
-	{
-		for (const auto& direction : kDirections)
-		{
-			Protocol::AxialCoord neighbor;
-			neighbor.set_q(target.q() + direction[0]);
-			neighbor.set_r(target.r() + direction[1]);
-			area.push_back(neighbor);
-		}
-		return area;
-	}
-
 	if (shape != "LINE_3" || directionTarget == nullptr)
 		return area;
 

@@ -1,6 +1,8 @@
 #pragma once
 #include "BattleTemplateManager.h"
 
+class BattlePawn;
+
 struct BattleBarrierState
 {
 	uint64 barrierId = 0;
@@ -14,6 +16,8 @@ struct BattleStatusState
 {
 	int32 stacks = 0;
 	int32 remainingOwnerTurns = -1;
+	int32 chargesPerOwnerTurn = 0;
+	string consumeOn;
 };
 
 struct BattleAuraState
@@ -30,11 +34,13 @@ struct BattleEffectPawnContext
 	Protocol::PawnClass pawnClass = Protocol::PAWN_CLASS_NONE;
 	Protocol::AxialCoord* axial = nullptr;
 	int32* hp = nullptr;
+	int32* maxHp = nullptr;
 	int32* armor = nullptr;
 	unordered_map<Protocol::BattleResourceType, int32>* resources = nullptr;
 	unordered_map<Protocol::BattleResourceType, int32>* maxResources = nullptr;
 	vector<BattleBarrierState>* barriers = nullptr;
 	unordered_map<string, BattleStatusState>* statuses = nullptr;
+	unordered_map<string, int32>* statBonuses = nullptr;
 	unordered_map<string, BattleAuraState>* auras = nullptr;
 };
 
@@ -45,16 +51,26 @@ struct BattleEffectExecutionRequest
 	int32 skillSlot = 0;
 	string actionType;
 	bool isBackAttack = false;
+	bool isGuarded = false;
+	bool isCounter = false;
 	double damageMultiplier = 1.0;
 	int32 auraRadiusBonus = 0;
 	bool hasTargetPawn = false;
+	bool isEvaded = false;
+	bool isAreaDamage = false;
+	double targetDamageMultiplier = 1.0;
 	const Protocol::AxialCoord* targetAxial = nullptr;
 	function<Protocol::BattleTileType(const Protocol::AxialCoord&)> getBaseTileType;
 	function<Protocol::BattleTileOverlayType(const Protocol::AxialCoord&)> getTileOverlayType;
 	function<void(const Protocol::AxialCoord&, Protocol::BattleTileOverlayType)> setTileOverlayType;
+	function<string(const Protocol::AxialCoord&)> getTileEquipmentKey;
+	function<uint64(const Protocol::AxialCoord&)> getTileEquipmentOwnerPawnId;
+	function<void(const Protocol::AxialCoord&, const string&, uint64)> setTileEquipment;
 	function<bool(const Protocol::AxialCoord&)> isTileValid;
 	BattleEffectPawnContext caster;
 	BattleEffectPawnContext target;
+	BattlePawn* casterPawn = nullptr;
+	BattlePawn* targetPawn = nullptr;
 	uint64* barrierIdGenerator = nullptr;
 	vector<Protocol::BattleActionLog>* logs = nullptr;
 };
@@ -84,6 +100,7 @@ public:
 private:
 	void ExecuteDealDamage(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
 		BattleEffectExecutionResult& result);
+	void ExecuteRestoreHp(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteModifyResource(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteSetResourceMax(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteApplyBarrier(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
@@ -92,9 +109,16 @@ private:
 	void ExecuteChangeTileOverlay(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
 		BattleEffectExecutionResult& result);
 	void ExecuteTeleportToOverlay(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
+	void ExecuteDropEquipment(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
+		BattleEffectExecutionResult& result);
+	void ExecutePickupEquipment(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
+		BattleEffectExecutionResult& result);
+	void ExecuteSwapPosition(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
+	void ExecuteAddStatFromStat(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 
-	int32 CalculateValue(const BattleEffectTemplate& effect, const BattlePawnClassTemplate& casterTemplate);
-	int32 GetStatValue(const BattlePawnClassTemplate& pawnTemplate, const string& statKey) const;
+	int32 CalculateValue(const BattleEffectTemplate& effect, const BattlePawnClassTemplate& casterTemplate,
+		const BattleEffectPawnContext& caster);
+	int32 GetStatValue(const BattlePawnClassTemplate& pawnTemplate, const BattleEffectPawnContext* pawn, const string& statKey) const;
 	int32 ApplyDamage(BattleEffectPawnContext target, int32 damage);
 	BattleEffectPawnContext SelectTarget(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request) const;
 	bool IsConditionMet(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request) const;

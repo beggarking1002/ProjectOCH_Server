@@ -57,6 +57,8 @@ message BattleTileInfo
 	AxialCoord axial = 1;
 	BattleTileType tile_type = 2;
 	BattleTileOverlayType overlay_type = 3;
+	string equipment_key = 4;
+	uint64 equipment_owner_pawn_id = 5;
 }
 
 message BattlePawnInfo
@@ -110,6 +112,7 @@ message BattlePawnDelta
 
 message BattleActionLog
 {
+	reserved 14;
 	uint64 attacker_pawn_id = 1;
 	uint64 defender_pawn_id = 2;
 	int32 skill_slot = 3;

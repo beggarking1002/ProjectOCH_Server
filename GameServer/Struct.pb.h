@@ -1432,10 +1432,26 @@ class BattleTileInfo final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kEquipmentKeyFieldNumber = 4,
     kAxialFieldNumber = 1,
     kTileTypeFieldNumber = 2,
     kOverlayTypeFieldNumber = 3,
+    kEquipmentOwnerPawnIdFieldNumber = 5,
   };
+  // string equipment_key = 4;
+  void clear_equipment_key();
+  const std::string& equipment_key() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_equipment_key(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_equipment_key();
+  PROTOBUF_NODISCARD std::string* release_equipment_key();
+  void set_allocated_equipment_key(std::string* equipment_key);
+  private:
+  const std::string& _internal_equipment_key() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_equipment_key(const std::string& value);
+  std::string* _internal_mutable_equipment_key();
+  public:
+
   // .Protocol.AxialCoord axial = 1;
   bool has_axial() const;
   private:
@@ -1472,6 +1488,15 @@ class BattleTileInfo final :
   void _internal_set_overlay_type(::Protocol::BattleTileOverlayType value);
   public:
 
+  // uint64 equipment_owner_pawn_id = 5;
+  void clear_equipment_owner_pawn_id();
+  uint64_t equipment_owner_pawn_id() const;
+  void set_equipment_owner_pawn_id(uint64_t value);
+  private:
+  uint64_t _internal_equipment_owner_pawn_id() const;
+  void _internal_set_equipment_owner_pawn_id(uint64_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.BattleTileInfo)
  private:
   class _Internal;
@@ -1480,9 +1505,11 @@ class BattleTileInfo final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr equipment_key_;
     ::Protocol::AxialCoord* axial_;
     int tile_type_;
     int overlay_type_;
+    uint64_t equipment_owner_pawn_id_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3282,6 +3309,76 @@ inline void BattleTileInfo::_internal_set_overlay_type(::Protocol::BattleTileOve
 inline void BattleTileInfo::set_overlay_type(::Protocol::BattleTileOverlayType value) {
   _internal_set_overlay_type(value);
   // @@protoc_insertion_point(field_set:Protocol.BattleTileInfo.overlay_type)
+}
+
+// string equipment_key = 4;
+inline void BattleTileInfo::clear_equipment_key() {
+  _impl_.equipment_key_.ClearToEmpty();
+}
+inline const std::string& BattleTileInfo::equipment_key() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleTileInfo.equipment_key)
+  return _internal_equipment_key();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void BattleTileInfo::set_equipment_key(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.equipment_key_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.BattleTileInfo.equipment_key)
+}
+inline std::string* BattleTileInfo::mutable_equipment_key() {
+  std::string* _s = _internal_mutable_equipment_key();
+  // @@protoc_insertion_point(field_mutable:Protocol.BattleTileInfo.equipment_key)
+  return _s;
+}
+inline const std::string& BattleTileInfo::_internal_equipment_key() const {
+  return _impl_.equipment_key_.Get();
+}
+inline void BattleTileInfo::_internal_set_equipment_key(const std::string& value) {
+  
+  _impl_.equipment_key_.Set(value, GetArenaForAllocation());
+}
+inline std::string* BattleTileInfo::_internal_mutable_equipment_key() {
+  
+  return _impl_.equipment_key_.Mutable(GetArenaForAllocation());
+}
+inline std::string* BattleTileInfo::release_equipment_key() {
+  // @@protoc_insertion_point(field_release:Protocol.BattleTileInfo.equipment_key)
+  return _impl_.equipment_key_.Release();
+}
+inline void BattleTileInfo::set_allocated_equipment_key(std::string* equipment_key) {
+  if (equipment_key != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.equipment_key_.SetAllocated(equipment_key, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.equipment_key_.IsDefault()) {
+    _impl_.equipment_key_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.BattleTileInfo.equipment_key)
+}
+
+// uint64 equipment_owner_pawn_id = 5;
+inline void BattleTileInfo::clear_equipment_owner_pawn_id() {
+  _impl_.equipment_owner_pawn_id_ = uint64_t{0u};
+}
+inline uint64_t BattleTileInfo::_internal_equipment_owner_pawn_id() const {
+  return _impl_.equipment_owner_pawn_id_;
+}
+inline uint64_t BattleTileInfo::equipment_owner_pawn_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleTileInfo.equipment_owner_pawn_id)
+  return _internal_equipment_owner_pawn_id();
+}
+inline void BattleTileInfo::_internal_set_equipment_owner_pawn_id(uint64_t value) {
+  
+  _impl_.equipment_owner_pawn_id_ = value;
+}
+inline void BattleTileInfo::set_equipment_owner_pawn_id(uint64_t value) {
+  _internal_set_equipment_owner_pawn_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleTileInfo.equipment_owner_pawn_id)
 }
 
 // -------------------------------------------------------------------

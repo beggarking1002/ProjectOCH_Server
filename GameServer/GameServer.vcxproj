@@ -153,6 +153,8 @@
 	<ClCompile Include="Beige.cpp" />
 	<ClCompile Include="BeigeFire.cpp" />
 	<ClCompile Include="BeigeIce.cpp" />
+	<ClCompile Include="Suen.cpp" />
+	<ClCompile Include="SuenAxe.cpp" />
 	<ClCompile Include="BattlePawn.cpp" />
 	<ClCompile Include="BattleSkillExecutionService.cpp" />
 	<ClCompile Include="BattleSkillResolver.cpp" />
@@ -193,6 +195,8 @@
 	<ClInclude Include="Beige.h" />
 	<ClInclude Include="BeigeFire.h" />
 	<ClInclude Include="BeigeIce.h" />
+	<ClInclude Include="Suen.h" />
+	<ClInclude Include="SuenAxe.h" />
 	<ClInclude Include="BattlePawn.h" />
 	<ClInclude Include="BattleSkillExecutionService.h" />
 	<ClInclude Include="BattleSkillResolver.h" />

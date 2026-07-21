@@ -57,6 +57,12 @@ double BattleSkillResolver::GetDamageMultiplier(const BattlePawn& pawn, const st
 }
 
 double BattleSkillResolver::GetStatModifierMultiplier(const BattlePawn& pawn, const string& statKey) const
+
+{
+	return GetStatModifierMultiplier(pawn, statKey, "");
+}
+
+double BattleSkillResolver::GetStatModifierMultiplier(const BattlePawn& pawn, const string& statKey, const string& damageScope) const
 {
 	double multiplier = 1.0;
 	const vector<BattleSkillTemplate>* skills = GBattleTemplates.GetSkills(pawn.pawnClass);
@@ -83,6 +89,9 @@ double BattleSkillResolver::GetStatModifierMultiplier(const BattlePawn& pawn, co
 			{
 				continue;
 			}
+			auto damageScopeIt = effect.params.find("damage_scope");
+			if (damageScopeIt != effect.params.end() && damageScopeIt->second != damageScope)
+				continue;
 
 			try
 			{
@@ -99,6 +108,40 @@ double BattleSkillResolver::GetStatModifierMultiplier(const BattlePawn& pawn, co
 	}
 
 	return max(0.0, multiplier);
+}
+
+double BattleSkillResolver::GetStatModifierAdditiveRatio(const BattlePawn& pawn, const string& statKey) const
+{
+	double ratio = 0.0;
+	const vector<BattleSkillTemplate>* skills = GBattleTemplates.GetSkills(pawn.pawnClass);
+	if (skills == nullptr)
+		return ratio;
+
+	for (const BattleSkillTemplate& skill : *skills)
+	{
+		const vector<BattleEffectTemplate>* effects = GBattleTemplates.GetEffects(skill.effectGroupKey);
+		if (effects == nullptr)
+			continue;
+
+		for (const BattleEffectTemplate& effect : *effects)
+		{
+			if (effect.effectKey != "APPLY_STAT_MODIFIER")
+				continue;
+			auto statKeyIt = effect.params.find("stat_key");
+			auto statusKeyIt = effect.params.find("status_key");
+			auto modifierTypeIt = effect.params.find("modifier_type");
+			auto valueIt = effect.params.find("value");
+			if (statKeyIt == effect.params.end() || statusKeyIt == effect.params.end() || modifierTypeIt == effect.params.end() ||
+				valueIt == effect.params.end() || statKeyIt->second != statKey || modifierTypeIt->second != "ADD_RATIO" ||
+				IsStatusActive(pawn, statusKeyIt->second) == false)
+			{
+				continue;
+			}
+			try { ratio += stod(valueIt->second); }
+			catch (...) { }
+		}
+	}
+	return ratio;
 }
 
 int32 BattleSkillResolver::GetExtraTargets(const BattlePawn& pawn, const string& targetSkillKey, const string& modifierType) const

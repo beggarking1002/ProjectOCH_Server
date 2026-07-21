@@ -10,6 +10,13 @@ public:
 	virtual const char* GetBehaviorKey() const { return "DEFAULT"; }
 	virtual vector<Protocol::AxialCoord> ResolveTargetArea(const string& shape, const Protocol::AxialCoord& target,
 		const Protocol::AxialCoord* directionTarget = nullptr) const;
+	virtual bool CanInterceptSingleTargetAttack() const { return false; }
+	virtual bool TryConsumeGuaranteedEvade() { return false; }
+	virtual bool CanDropEquipment(const string& equipmentKey) const { return false; }
+	virtual bool CanPickupEquipment(const string& equipmentKey, uint64 equipmentOwnerPawnId) const { return false; }
+	virtual bool CanActivateSkill(int32 skillSlot, string& reason) const { return true; }
+	virtual void OnEquipmentPickedUp(const string& equipmentKey) { }
+	virtual bool ApplyStatFromStat(const string& sourceStat, const string& targetStat, int32 value) { return false; }
 
 	int32 GetShieldCurrent() const
 	{
@@ -42,12 +49,13 @@ public:
 	bool usedSubActionThisTurn = false;
 	bool usedUltimate = false;
 	bool isDead = false;
-	Protocol::BattleFacingDirection facingDirection = Protocol::BATTLE_FACING_DIRECTION_RIGHT;
+	Protocol::BattleFacingDirection facingDirection = Protocol::BATTLE_FACING_DIRECTION_Q_POS;
 	Protocol::BattlePawnRole role = Protocol::BATTLE_PAWN_ROLE_NONE;
 	unordered_map<Protocol::BattleResourceType, int32> resources;
 	unordered_map<Protocol::BattleResourceType, int32> maxResources;
 	vector<BattleBarrierState> barriers;
 	unordered_map<string, BattleStatusState> statuses;
+	unordered_map<string, int32> statBonuses;
 	unordered_map<string, BattleAuraState> auras;
 };
 

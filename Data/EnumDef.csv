@@ -15,12 +15,18 @@ SkillCategory,PASSIVE,직접 시전하지 않는 상시/조건 발동 스킬
 SkillCategory,CAST,버튼 입력으로 1회 시전되는 스킬
 SkillCategory,TOGGLE,켜기/끄기 상태를 가지는 지속형 스킬
 SkillCategory,REACTION,직접 입력 없이 특정 전투 이벤트에 반응하는 스킬
+SkillCombatType,NONE,전투 판정 없음
+SkillCombatType,MELEE,근접 전투 스킬
+SkillCombatType,RANGED,원거리 전투 스킬
+SkillCombatType,SUPPORT,지원/유틸리티 스킬
 TargetType,SELF,자기 자신 대상
 TargetType,ENEMY_SINGLE,적 단일 대상
 TargetType,ALLY_SINGLE,아군 단일 대상
 TargetType,TILE_OR_ENEMY,타일 또는 적 대상
 TargetType,SELF_TOGGLE,자기 자신 On/Off 토글
 TargetType,EMPTY_TILE,비어 있는 타일 대상
+TargetType,ALLY_OR_SELF,인접 아군 또는 자기 자신 대상
+TargetType,PICKUP_TILE,드롭된 장비가 있는 타일 대상
 ScalingStat,NONE,스탯 계수 없음
 ScalingStat,STR,힘 계수
 ScalingStat,CON,체력/내구 계수
@@ -46,6 +52,7 @@ EffectTrigger,ON_DAMAGE_DEALT,공격자가 실제 피해를 입혔을 때
 EffectTrigger,ON_DAMAGE_RECEIVED,피격자가 실제 피해를 받았을 때
 EffectTrigger,ON_EMPTY_TILE_CAST,빈 타일에 스킬을 사용했을 때
 EffectTrigger,ON_BARRIER_BREAK,방어막 파괴 시
+EffectTrigger,ON_KILL_DEALT,공격자가 대상 처치 시
 EffectTrigger,WHILE_EMPOWERED,강화 상태 중 적용
 EffectTarget,SELF,자기 자신
 EffectTarget,CASTER,시전자
@@ -66,6 +73,11 @@ EffectKey,APPLY_STAT_MODIFIER,스탯/전투 수치 보정 적용
 EffectKey,TOGGLE_AURA,오라 토글
 EffectKey,ADD_SKILL_MODIFIER,지속 중 특정 스킬의 실행 규칙 보정
 EffectKey,TELEPORT_TO_OVERLAY,지정 오버레이 타일로 이동
+EffectKey,ADD_STAT_FROM_STAT,한 스탯 값을 다른 스탯에 가산
+EffectKey,RESTORE_HP,체력 회복
+EffectKey,DROP_EQUIPMENT,장비를 선택 타일에 드롭
+EffectKey,PICKUP_EQUIPMENT,인접 타일의 드롭 장비를 회수
+EffectKey,SWAP_POSITION,대상 아군과 위치 교환
 ResourceKey,COLD,냉기 자원
 ResourceKey,HEAT,열기 자원
 StatusKey,FROSTBITE,동상 상태
@@ -75,14 +87,32 @@ StatusKey,BEIGE_ICE_THAWING_POTION_DAMAGE_DOWN,해동 포션 공격력 감소
 StatusKey,BEIGE_FIRE_AMBITIOUS_IGNORE_HEAT_BACKLASH,야망가 열기 역류 면역
 StatusKey,BEIGE_FIRE_AMBITIOUS_EMPOWERED,야망가 강화
 StatusKey,BEIGE_FIRE_COOLING_POTION_DAMAGE_DOWN,냉각 포션 공격력 감소
+StatusKey,SUEN_AXE_AXE_OFF,도끼를 던져 검만 든 상태
+StatusKey,SUEN_AXE_AXE_OFF_EVASION,AxeOff 회피율 증가
+StatusKey,SUEN_AXE_SPIT_ACCURACY_DOWN,침 뱉기 명중률 감소
+StatusKey,SUEN_AXE_LONE_GROWING_MAN_ACTIVE,혼자 크는 남자 활성화
+StatusKey,SUEN_AXE_LAST_MAN_FIRST_HIT_EVADE,최후의 생존자 턴당 첫 피격 회피
+StatusKey,SUEN_AXE_LAST_MAN_EVASION,최후의 생존자 회피율 증가
+StatusKey,SUEN_AXE_LAST_MAN_DAMAGE_REDUCTION,최후의 생존자 광역/도트 피해 감소
+StatusKey,SUEN_AXE_LAST_MAN_TAUNT,최후의 생존자 도발
+DamageType,NONE,피해 없음
+DamageType,PHYSICAL,물리 피해
 DamageType,MAGIC,마법 피해
+DamageType,TRUE,고정 피해
 TileType,NORMAL,일반 지형
 TileType,WATER,물 지형
 TileOverlayType,NONE,오버레이 없음
 TileOverlayType,ICE,빙판 오버레이
 TileOverlayType,FIRE,화염 오버레이
 StatKey,DAMAGE_DEALT,주는 피해
+StatKey,DEX,민첩
+StatKey,HIT_RATE,명중률
+StatKey,EVADE_RATE,회피율
+StatKey,DAMAGE_TAKEN,받는 피해
 ModifierType,ADD_RATIO,비율 가산
+ModifierType,MULTIPLY,곱셈
+EquipmentKey,AXE,도끼 장비
+BonusStatKey,BONUS_STR,추가 근력
 SkillModifierType,DAMAGE_MULTIPLIER,스킬 최종 피해 배율
 SkillModifierType,EXTRA_TARGET_COUNT,추가 대상 수
 SkillModifierType,TARGET_SHAPE_OVERRIDE,스킬 대상 범위 모양 변경

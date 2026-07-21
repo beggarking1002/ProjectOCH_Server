@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "BattleEffectExecutor.h"
+#include "BattlePawn.h"
 
 #include <cmath>
 
@@ -56,6 +57,8 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 	{
 		if (matchesScope(effect) == false || effect.trigger != trigger || IsConditionMet(effect, request) == false)
 			continue;
+		if (request.isEvaded && (effect.effectTarget == "TARGET" || effect.effectTarget == "TARGET_ENEMY"))
+			continue;
 
 		if (effect.exclusiveGroup.empty() == false)
 		{
@@ -66,6 +69,8 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 
 		if (effect.effectKey == "DEAL_DAMAGE")
 			ExecuteDealDamage(effect, request, result);
+		else if (effect.effectKey == "RESTORE_HP")
+			ExecuteRestoreHp(effect, request);
 		else if (effect.effectKey == "MODIFY_RESOURCE")
 			ExecuteModifyResource(effect, request);
 		else if (effect.effectKey == "SET_RESOURCE_MAX")
@@ -82,6 +87,14 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 			ExecuteChangeTileOverlay(effect, request, result);
 		else if (effect.effectKey == "TELEPORT_TO_OVERLAY")
 			ExecuteTeleportToOverlay(effect, request);
+		else if (effect.effectKey == "DROP_EQUIPMENT")
+			ExecuteDropEquipment(effect, request, result);
+		else if (effect.effectKey == "PICKUP_EQUIPMENT")
+			ExecutePickupEquipment(effect, request, result);
+		else if (effect.effectKey == "SWAP_POSITION")
+			ExecuteSwapPosition(effect, request);
+		else if (effect.effectKey == "ADD_STAT_FROM_STAT")
+			ExecuteAddStatFromStat(effect, request);
 	}
 
 	return result;
@@ -117,6 +130,8 @@ void BattleEffectExecutor::AdvanceOwnerTurn(BattleEffectPawnContext pawn)
 
 	for (auto& item : *pawn.statuses)
 	{
+		if (item.second.chargesPerOwnerTurn > 0)
+			item.second.stacks = item.second.chargesPerOwnerTurn;
 		if (item.second.remainingOwnerTurns > 0)
 			item.second.remainingOwnerTurns--;
 	}
@@ -151,11 +166,13 @@ void BattleEffectExecutor::ExecuteDealDamage(const BattleEffectTemplate& effect,
 	if (target.hp == nullptr || target.armor == nullptr)
 		return;
 
-	const int32 damage = static_cast<int32>(floor(static_cast<double>(CalculateValue(effect, *request.casterTemplate)) *
-		max(0.0, request.damageMultiplier)));
-	const int32 appliedDamage = ApplyDamage(target, damage);
+	const bool canEvade = effect.effectTarget == "TARGET" || effect.effectTarget == "TARGET_ENEMY";
+	const bool isEvaded = canEvade && request.isEvaded;
+	const int32 damage = static_cast<int32>(floor(static_cast<double>(CalculateValue(effect, *request.casterTemplate, request.caster)) *
+		max(0.0, request.damageMultiplier) * max(0.0, request.targetDamageMultiplier)));
+	const int32 appliedDamage = isEvaded ? 0 : ApplyDamage(target, damage);
 	result.totalDamage += appliedDamage;
-	result.dealtDamage = true;
+	result.dealtDamage = result.dealtDamage || isEvaded == false;
 
 	if (request.logs != nullptr)
 	{
@@ -166,15 +183,34 @@ void BattleEffectExecutor::ExecuteDealDamage(const BattleEffectTemplate& effect,
 		actionLog.set_action_type(request.actionType);
 		actionLog.set_damage(appliedDamage);
 		actionLog.set_is_critical(false);
-		actionLog.set_is_evaded(false);
-		actionLog.set_is_guarded(false);
+		actionLog.set_is_evaded(isEvaded);
+		actionLog.set_is_guarded(request.isGuarded);
 		actionLog.set_is_perfect_guarded(false);
-		actionLog.set_is_counter(false);
+		actionLog.set_is_counter(request.isCounter);
 		actionLog.set_is_back_attack(request.isBackAttack);
 		actionLog.set_hp_after(target.hp != nullptr ? *target.hp : 0);
 		actionLog.set_armor_after(target.armor != nullptr ? *target.armor : 0);
 		request.logs->push_back(actionLog);
 	}
+}
+
+void BattleEffectExecutor::ExecuteRestoreHp(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
+{
+	BattleEffectPawnContext target = SelectTarget(effect, request);
+	if (target.hp == nullptr || target.maxHp == nullptr)
+		return;
+
+	const int32 value = max(0, CalculateValue(effect, *request.casterTemplate, request.caster));
+	if (value <= 0)
+		return;
+
+	const int32 beforeHp = *target.hp;
+	*target.hp = min(*target.maxHp, *target.hp + value);
+	cout << "BATTLE_HP_RESTORE"
+		<< " pawn_id=" << target.pawnId
+		<< " amount=" << (*target.hp - beforeHp)
+		<< " hp=" << *target.hp
+		<< endl;
 }
 
 void BattleEffectExecutor::ExecuteModifyResource(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
@@ -250,7 +286,7 @@ void BattleEffectExecutor::ExecuteApplyBarrier(const BattleEffectTemplate& effec
 	if (target.barriers == nullptr)
 		return;
 
-	const int32 value = CalculateValue(effect, *request.casterTemplate);
+	const int32 value = CalculateValue(effect, *request.casterTemplate, request.caster);
 	const int32 durationTurns = GetIntParam(effect, "duration_turns", 0);
 	if (value <= 0 || durationTurns <= 0)
 		return;
@@ -290,6 +326,13 @@ void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect
 	const int32 durationTurns = GetIntParam(effect, "duration_turns", -1);
 	if (durationTurns > 0)
 		status.remainingOwnerTurns = max(status.remainingOwnerTurns, durationTurns);
+	const int32 chargesPerOwnerTurn = GetIntParam(effect, "charges_per_owner_turn", 0);
+	if (chargesPerOwnerTurn > 0)
+	{
+		status.chargesPerOwnerTurn = chargesPerOwnerTurn;
+		status.stacks = chargesPerOwnerTurn;
+		status.consumeOn = GetParam(effect, "consume_on");
+	}
 
 	cout << "BATTLE_STATUS_APPLY"
 		<< " pawn_id=" << target.pawnId
@@ -406,33 +449,123 @@ void BattleEffectExecutor::ExecuteTeleportToOverlay(const BattleEffectTemplate& 
 		<< endl;
 }
 
-int32 BattleEffectExecutor::CalculateValue(const BattleEffectTemplate& effect, const BattlePawnClassTemplate& casterTemplate)
+void BattleEffectExecutor::ExecuteDropEquipment(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
+	BattleEffectExecutionResult& result)
+{
+	if (request.targetAxial == nullptr || request.setTileEquipment == nullptr || request.getBaseTileType == nullptr ||
+		request.getTileOverlayType == nullptr)
+	{
+		return;
+	}
+	const string equipmentKey = GetParam(effect, "equipment_key");
+	if (equipmentKey.empty() || request.casterPawn == nullptr || request.casterPawn->CanDropEquipment(equipmentKey) == false)
+		return;
+
+	request.setTileEquipment(*request.targetAxial, equipmentKey, request.caster.pawnId);
+	Protocol::BattleTileInfo delta;
+	delta.mutable_axial()->CopyFrom(*request.targetAxial);
+	delta.set_tile_type(request.getBaseTileType(*request.targetAxial));
+	delta.set_overlay_type(request.getTileOverlayType(*request.targetAxial));
+	delta.set_equipment_key(equipmentKey);
+	delta.set_equipment_owner_pawn_id(request.caster.pawnId);
+	result.tileDeltas.push_back(delta);
+	cout << "BATTLE_EQUIPMENT_DROP pawn_id=" << request.caster.pawnId << " equipment_key=" << equipmentKey
+		<< " q=" << request.targetAxial->q() << " r=" << request.targetAxial->r() << endl;
+}
+
+void BattleEffectExecutor::ExecutePickupEquipment(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
+	BattleEffectExecutionResult& result)
+{
+	if (request.targetAxial == nullptr || request.getTileEquipmentKey == nullptr || request.getTileEquipmentOwnerPawnId == nullptr ||
+		request.setTileEquipment == nullptr || request.getBaseTileType == nullptr || request.getTileOverlayType == nullptr)
+	{
+		return;
+	}
+	const string equipmentKey = GetParam(effect, "equipment_key");
+	if (equipmentKey.empty() || request.casterPawn == nullptr || request.getTileEquipmentKey(*request.targetAxial) != equipmentKey ||
+		request.casterPawn->CanPickupEquipment(equipmentKey, request.getTileEquipmentOwnerPawnId(*request.targetAxial)) == false)
+	{
+		return;
+	}
+
+	request.setTileEquipment(*request.targetAxial, "", 0);
+	request.casterPawn->OnEquipmentPickedUp(equipmentKey);
+
+	Protocol::BattleTileInfo delta;
+	delta.mutable_axial()->CopyFrom(*request.targetAxial);
+	delta.set_tile_type(request.getBaseTileType(*request.targetAxial));
+	delta.set_overlay_type(request.getTileOverlayType(*request.targetAxial));
+	result.tileDeltas.push_back(delta);
+	cout << "BATTLE_EQUIPMENT_PICKUP pawn_id=" << request.caster.pawnId << " equipment_key=" << equipmentKey
+		<< " q=" << request.targetAxial->q() << " r=" << request.targetAxial->r() << endl;
+}
+
+void BattleEffectExecutor::ExecuteSwapPosition(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
+{
+	if (request.caster.axial == nullptr || request.target.axial == nullptr || request.hasTargetPawn == false)
+		return;
+	if (request.caster.pawnId == request.target.pawnId)
+		return;
+	Protocol::AxialCoord originalCasterAxial = *request.caster.axial;
+	request.caster.axial->CopyFrom(*request.target.axial);
+	request.target.axial->CopyFrom(originalCasterAxial);
+	cout << "BATTLE_POSITION_SWAP caster_pawn_id=" << request.caster.pawnId
+		<< " target_pawn_id=" << request.target.pawnId << endl;
+}
+
+void BattleEffectExecutor::ExecuteAddStatFromStat(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
+{
+	BattleEffectPawnContext target = SelectTarget(effect, request);
+	if (target.statBonuses == nullptr || request.casterTemplate == nullptr)
+		return;
+	const string sourceStat = GetParam(effect, "source_stat");
+	const string targetStat = GetParam(effect, "target_stat");
+	if (sourceStat.empty() || targetStat.empty())
+		return;
+	const int32 sourceValue = GetStatValue(*request.casterTemplate, &request.caster, sourceStat);
+	BattlePawn* targetPawn = (effect.effectTarget == "CASTER" || effect.effectTarget == "SELF") ? request.casterPawn : request.targetPawn;
+	if (targetPawn == nullptr || targetPawn->ApplyStatFromStat(ToUpperString(sourceStat), ToUpperString(targetStat), sourceValue) == false)
+		return;
+	cout << "BATTLE_STAT_ADD_FROM_STAT pawn_id=" << target.pawnId << " source_stat=" << sourceStat
+		<< " target_stat=" << targetStat << " amount=" << sourceValue << endl;
+}
+
+int32 BattleEffectExecutor::CalculateValue(const BattleEffectTemplate& effect, const BattlePawnClassTemplate& casterTemplate,
+	const BattleEffectPawnContext& caster)
 {
 	const int32 baseValue = GetIntParam(effect, "base_value", 0);
 	const string scalingStat = GetParam(effect, "scaling_stat");
 	const double coefficient = GetDoubleParam(effect, "coefficient", 0.0);
-	const int32 scalingValue = GetStatValue(casterTemplate, scalingStat);
+	const int32 scalingValue = GetStatValue(casterTemplate, &caster, scalingStat);
 	return baseValue + static_cast<int32>(floor(static_cast<double>(scalingValue) * coefficient));
 }
 
-int32 BattleEffectExecutor::GetStatValue(const BattlePawnClassTemplate& pawnTemplate, const string& statKey) const
+int32 BattleEffectExecutor::GetStatValue(const BattlePawnClassTemplate& pawnTemplate, const BattleEffectPawnContext* pawn,
+	const string& statKey) const
 {
 	const string normalized = ToUpperString(statKey);
+	int32 baseValue = 0;
 	if (normalized == "STR")
-		return pawnTemplate.baseStr;
-	if (normalized == "CON")
-		return pawnTemplate.baseCon;
-	if (normalized == "DEX")
-		return pawnTemplate.baseDex;
-	if (normalized == "SPELL")
-		return pawnTemplate.baseSpell;
-	if (normalized == "DEFENSE")
-		return pawnTemplate.baseDefense;
-	if (normalized == "FOCUS")
-		return pawnTemplate.baseFocus;
-	if (normalized == "WILL")
-		return pawnTemplate.baseWill;
-	return 0;
+		baseValue = pawnTemplate.baseStr;
+	else if (normalized == "CON")
+		baseValue = pawnTemplate.baseCon;
+	else if (normalized == "DEX")
+		baseValue = pawnTemplate.baseDex;
+	else if (normalized == "SPELL")
+		baseValue = pawnTemplate.baseSpell;
+	else if (normalized == "DEFENSE")
+		baseValue = pawnTemplate.baseDefense;
+	else if (normalized == "FOCUS")
+		baseValue = pawnTemplate.baseFocus;
+	else if (normalized == "WILL")
+		baseValue = pawnTemplate.baseWill;
+	if (pawn != nullptr && pawn->statBonuses != nullptr)
+	{
+		auto bonusIt = pawn->statBonuses->find(normalized);
+		if (bonusIt != pawn->statBonuses->end())
+			baseValue += bonusIt->second;
+	}
+	return baseValue;
 }
 
 int32 BattleEffectExecutor::ApplyDamage(BattleEffectPawnContext target, int32 damage)
