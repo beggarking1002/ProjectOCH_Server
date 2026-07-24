@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BattlePawn.h"
+#include "BattleSpatialService.h"
 
 struct BattleZocProfile
 {
@@ -20,6 +20,7 @@ struct BattleZocProfile
 class BattleZocService
 {
 public:
+	explicit BattleZocService(const BattleSpatialService& spatialService) : _spatialService(spatialService) { }
 	BattleZocProfile GetProfile(const BattlePawn& pawn) const;
 	bool IsInsideZone(const BattlePawn& zocOwner, const BattleZocProfile& profile,
 		const Protocol::AxialCoord& axial) const;
@@ -29,6 +30,5 @@ public:
 
 private:
 	bool HasMeleeReactionSkill(const BattlePawn& pawn) const;
-	int32 AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs) const;
-	int32 FindClosestDirectionIndex(const Protocol::AxialCoord& source, const Protocol::AxialCoord& target) const;
+	const BattleSpatialService& _spatialService;
 };

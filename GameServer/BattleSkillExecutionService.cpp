@@ -40,6 +40,7 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 	effectRequest.getTileEquipmentOwnerPawnId = request.getTileEquipmentOwnerPawnId;
 	effectRequest.setTileEquipment = request.setTileEquipment;
 	effectRequest.isTileValid = request.isTileValid;
+	effectRequest.tryPushTarget = request.tryPushTarget;
 	effectRequest.logs = &result.logs;
 	effectRequest.caster = MakeEffectContext(caster);
 	effectRequest.target = MakeEffectContext(target != nullptr ? *target : caster);
@@ -49,6 +50,19 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 
 	BattleEffectExecutor executor;
 	BattleEffectExecutionResult effectResult = executor.ExecuteOnCast(effectRequest);
+	if (request.findAlliedPawns)
+	{
+		for (BattlePawn* ally : request.findAlliedPawns(caster))
+		{
+			if (ally == nullptr)
+				continue;
+			effectRequest.target = MakeEffectContext(*ally);
+			effectRequest.targetPawn = ally;
+			effectRequest.hasTargetPawn = true;
+			AppendEffectResult(effectResult, executor.ExecuteTrigger(effectRequest, "ON_CAST", BattleEffectTargetScope::TeamTargetOnly));
+			result.extraChangedPawns.push_back(ally);
+		}
+	}
 	auto executeOnKill = [&executor, &effectRequest, &effectResult, this](BattlePawn* defeatedPawn)
 		{
 			if (defeatedPawn == nullptr || defeatedPawn->hp > 0)
@@ -129,6 +143,7 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 
 	result.appliedDamage = effectResult.totalDamage;
 	result.tileDeltas = move(effectResult.tileDeltas);
+	result.extraChangedPawns.insert(result.extraChangedPawns.end(), effectResult.changedPawns.begin(), effectResult.changedPawns.end());
 	return result;
 }
 
@@ -159,4 +174,6 @@ void BattleSkillExecutionService::AppendEffectResult(BattleEffectExecutionResult
 	destination.dealtDamage = destination.dealtDamage || additional.dealtDamage;
 	for (const Protocol::BattleTileInfo& tileDelta : additional.tileDeltas)
 		destination.tileDeltas.push_back(tileDelta);
+	for (const BattlePawn* changedPawn : additional.changedPawns)
+		destination.changedPawns.push_back(changedPawn);
 }

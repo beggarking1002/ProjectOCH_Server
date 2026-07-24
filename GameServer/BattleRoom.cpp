@@ -9,52 +9,6 @@
 #include "Room.h"
 #include <random>
 
-namespace
-{
-	constexpr int32 kAxialDirectionCount = 6;
-	constexpr int32 kAxialDirections[kAxialDirectionCount][2] =
-	{
-		{ 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, 0 }, { -1, 1 }, { 0, 1 }
-	};
-
-	Protocol::BattleFacingDirection FacingFromDirectionIndex(int32 index)
-	{
-		return static_cast<Protocol::BattleFacingDirection>(index + 1);
-	}
-
-	int32 FacingToDirectionIndex(Protocol::BattleFacingDirection facing)
-	{
-		const int32 index = static_cast<int32>(facing) - 1;
-		return index >= 0 && index < kAxialDirectionCount ? index : -1;
-	}
-
-	int32 FindClosestDirectionIndex(const Protocol::AxialCoord& source, const Protocol::AxialCoord& target)
-	{
-		const int32 q = target.q() - source.q();
-		const int32 r = target.r() - source.r();
-		const int32 s = -q - r;
-		if (q == 0 && r == 0)
-			return -1;
-
-		int32 bestDirection = 0;
-		int32 bestDotProduct = numeric_limits<int32>::lowest();
-		for (int32 index = 0; index < kAxialDirectionCount; index++)
-		{
-			const int32 directionQ = kAxialDirections[index][0];
-			const int32 directionR = kAxialDirections[index][1];
-			const int32 directionS = -directionQ - directionR;
-			const int32 dotProduct = q * directionQ + r * directionR + s * directionS;
-			if (dotProduct > bestDotProduct)
-			{
-				bestDotProduct = dotProduct;
-				bestDirection = index;
-			}
-		}
-
-		return bestDirection;
-	}
-}
-
 BattleRoomRef GBattleRoom = make_shared<BattleRoom>();
 
 BattleRoom::BattleRoom()
@@ -280,7 +234,7 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 		return;
 	}
 
-	if (AxialDistance(start, pkt.target()) > pawn->moveRange)
+	if (_spatialService.AxialDistance(start, pkt.target()) > _movementService.GetMoveRange(*pawn))
 	{
 		SendBattleMoveResult(session, false, battle.battleId, pawn->pawnId, start, start, battle.currentTurnPawnId,
 			Protocol::BATTLE_MOVE_RESULT_OUT_OF_RANGE, "out of range", pawn);
@@ -295,7 +249,7 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 	}
 
 	pawn->axial.CopyFrom(pkt.target());
-	UpdateFacingByMove(*pawn, start, pawn->axial);
+	_spatialService.UpdateFacingByMove(*pawn, start, pawn->axial);
 	pawn->MarkMoved();
 
 	vector<Protocol::BattleActionLog> zocLogs;
@@ -498,7 +452,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	}
 
 	const Protocol::AxialCoord targetAxial = pkt.target_axial();
-	if (IsBattleTileInBounds(targetAxial) == false)
+	if (_spatialService.IsInBounds(targetAxial) == false)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), 0,
 			targetAxial, 0, 0, 0, battle.currentTurnPawnId, "target tile is out of bounds", caster);
@@ -567,7 +521,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		return;
 	}
 
-	const int32 targetDistance = AxialDistance(caster->axial, targetAxial);
+	const int32 targetDistance = _spatialService.AxialDistance(caster->axial, targetAxial);
 	if (targetDistance < skillSpec.rangeMin || targetDistance > skillSpec.rangeMax)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target != nullptr ? target->pawnId : 0,
@@ -600,14 +554,14 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		}
 
 		const Protocol::AxialCoord& lineDirectionAxial = pkt.line_direction_axial();
-		if (IsBattleTileInBounds(lineDirectionAxial) == false)
+		if (_spatialService.IsInBounds(lineDirectionAxial) == false)
 		{
 			SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), 0,
 				targetAxial, 0, 0, 0, battle.currentTurnPawnId, "line direction tile is out of bounds", caster);
 			return;
 		}
 
-		if (AxialDistance(targetAxial, lineDirectionAxial) != 1)
+		if (_spatialService.AxialDistance(targetAxial, lineDirectionAxial) != 1)
 		{
 			SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), 0,
 				targetAxial, 0, 0, 0, battle.currentTurnPawnId, "line direction tile must be adjacent to the start tile", caster);
@@ -620,7 +574,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	caster->MarkSkillSlotUsed(pkt.skill_slot());
 
 	const Protocol::AxialCoord* executionTargetAxial = wasIntercepted ? &target->axial : &targetAxial;
-	const bool isBackAttack = target != nullptr && IsBackAttack(*caster, *target);
+	const bool isBackAttack = target != nullptr && _spatialService.IsBackAttack(*caster, *target);
 
 	vector<Protocol::BattleActionLog> logs;
 	vector<Protocol::BattleTileInfo> tileDeltas;
@@ -654,6 +608,14 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 			{
 				return FindAdjacentAliveAlly(battle, source, excludedPawnId);
 			};
+		actionRequest.findAlliedPawns = [this, &battle](const BattlePawn& source)
+			{
+				return FindAlliedPawns(battle, source);
+			};
+		actionRequest.tryPushTarget = [this, &battle](BattlePawn& attacker, BattlePawn& target)
+			{
+				return ResolvePush(battle, attacker, target);
+			};
 		actionRequest.getBaseTileType = [this, &battle](const Protocol::AxialCoord& axial)
 			{
 				return GetBaseTileType(battle, axial);
@@ -680,7 +642,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 			};
 		actionRequest.isTileValid = [this](const Protocol::AxialCoord& axial)
 			{
-				return IsBattleTileInBounds(axial);
+				return _spatialService.IsInBounds(axial);
 			};
 		actionRequest.barrierIdGenerator = &_barrierIdGenerator;
 
@@ -727,7 +689,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 			return log.is_evaded();
 		});
 	if (primarySkillIsMelee && target != nullptr && target->ownerId != caster->ownerId && IsAlive(*caster) && IsAlive(*target) &&
-		AxialDistance(caster->axial, target->axial) == 1 && (wasEvaded || target->hp == targetHpBeforeAction))
+		_spatialService.AxialDistance(caster->axial, target->axial) == 1 && (wasEvaded || target->hp == targetHpBeforeAction))
 	{
 		TryExecuteCounterattack(battle, *target, *caster, logs, tileDeltas, extraChangedPawns, deathCandidates);
 	}
@@ -1185,7 +1147,7 @@ void BattleRoom::InitializeBattleTiles(BattleState& battle)
 		for (int32 r = -kBattleMapRadius; r <= kBattleMapRadius; r++)
 		{
 			const Protocol::AxialCoord axial = MakeAxial(q, r);
-			if (IsBattleTileInBounds(axial) == false)
+			if (_spatialService.IsInBounds(axial) == false)
 				continue;
 
 			battle.tileStates.emplace(MakeTileKey(axial), BattleTileState());
@@ -1299,7 +1261,7 @@ void BattleRoom::CopyBattlePawn(const BattlePawn& src, Protocol::BattlePawnInfo*
 	dst->mutable_axial()->CopyFrom(src.axial);
 	dst->set_hp(src.hp);
 	dst->set_max_hp(src.maxHp);
-	dst->set_move_range(src.moveRange);
+	dst->set_move_range(_movementService.GetMoveRange(src));
 	dst->set_armor(src.armor);
 	dst->set_max_armor(src.maxArmor);
 	dst->set_current_ap(src.currentAp);
@@ -1354,9 +1316,11 @@ void BattleRoom::CopyBattlePawn(const BattlePawn& src, Protocol::BattlePawnInfo*
 void BattleRoom::CopyBattlePawnDelta(const BattlePawn& src, Protocol::BattlePawnDelta* dst)
 {
 	dst->set_pawn_id(src.pawnId);
+	dst->mutable_axial()->CopyFrom(src.axial);
 	dst->set_hp(src.hp);
 	dst->set_armor(src.armor);
 	dst->set_current_ap(src.currentAp);
+	dst->set_move_range(_movementService.GetMoveRange(src));
 	dst->set_can_move(CanMove(src));
 	dst->set_used_normal_skill_this_turn(src.usedNormalSkillThisTurn);
 	dst->set_is_action_blocked(src.isActionBlockedThisTurn);
@@ -1445,7 +1409,7 @@ BattlePawn* BattleRoom::FindSingleTargetInterceptor(BattleState& battle, const B
 			for (const BattlePawnRef& candidate : pawns)
 			{
 				if (candidate == nullptr || candidate->pawnId == protectedPawn.pawnId || IsAlive(*candidate) == false ||
-					candidate->ownerId != protectedPawn.ownerId || AxialDistance(candidate->axial, protectedPawn.axial) != 1)
+					candidate->ownerId != protectedPawn.ownerId || _spatialService.AxialDistance(candidate->axial, protectedPawn.axial) != 1)
 				{
 					continue;
 				}
@@ -1467,7 +1431,7 @@ BattlePawn* BattleRoom::FindAdjacentAliveAlly(BattleState& battle, const BattleP
 			for (const BattlePawnRef& pawn : pawns)
 			{
 				if (pawn != nullptr && pawn->pawnId != excludedPawnId && pawn->ownerId == source.ownerId &&
-					IsAlive(*pawn) && AxialDistance(source.axial, pawn->axial) == 1)
+					IsAlive(*pawn) && _spatialService.AxialDistance(source.axial, pawn->axial) == 1)
 				{
 					candidates.push_back(pawn.get());
 				}
@@ -1484,6 +1448,43 @@ BattlePawn* BattleRoom::FindAdjacentAliveAlly(BattleState& battle, const BattleP
 			return lhs->pawnId < rhs->pawnId;
 		});
 	return candidates.front();
+}
+
+vector<BattlePawn*> BattleRoom::FindAlliedPawns(BattleState& battle, const BattlePawn& source)
+{
+	vector<BattlePawn*> allies;
+	auto collect = [this, &allies, &source](const vector<BattlePawnRef>& pawns)
+		{
+			for (const BattlePawnRef& pawn : pawns)
+			{
+				if (pawn != nullptr && pawn->ownerId == source.ownerId && IsAlive(*pawn))
+					allies.push_back(pawn.get());
+			}
+		};
+
+	collect(battle.alliedPawns);
+	collect(battle.enemyPawns);
+	sort(allies.begin(), allies.end(), [](const BattlePawn* lhs, const BattlePawn* rhs)
+		{
+			return lhs->pawnId < rhs->pawnId;
+		});
+	return allies;
+}
+
+BattlePushResult BattleRoom::ResolvePush(BattleState& battle, BattlePawn& attacker, BattlePawn& target)
+{
+	BattleDisplacementRequest request;
+	request.attacker = &attacker;
+	request.target = &target;
+	request.isWalkable = [this, &battle](const Protocol::AxialCoord& axial)
+		{
+			return IsBattleWalkable(battle, axial);
+		};
+	request.findAlivePawnAt = [this, &battle](const Protocol::AxialCoord& axial)
+		{
+			return FindAlivePawnAt(battle, axial);
+		};
+	return _displacementService.TryPush(request);
 }
 
 bool BattleRoom::IsOccupied(const BattleState& battle, const Protocol::AxialCoord& coord, uint64 exceptPawnId)
@@ -1508,31 +1509,14 @@ bool BattleRoom::IsOccupied(const BattleState& battle, const Protocol::AxialCoor
 	return false;
 }
 
-bool BattleRoom::IsBattleTileInBounds(const Protocol::AxialCoord& coord) const
-{
-	constexpr int32 kBattleMapRadius = 6;
-	const int32 q = coord.q();
-	const int32 r = coord.r();
-	const int32 s = -q - r;
-	return abs(q) <= kBattleMapRadius && abs(r) <= kBattleMapRadius && abs(s) <= kBattleMapRadius;
-}
-
 bool BattleRoom::IsBattleWalkable(const BattleState& battle, const Protocol::AxialCoord& coord) const
 {
-	if (IsBattleTileInBounds(coord) == false)
+	if (_spatialService.IsInBounds(coord) == false)
 		return false;
 
 	const Protocol::BattleTileType baseTileType = GetBaseTileType(battle, coord);
 	const Protocol::BattleTileOverlayType overlayType = GetTileOverlayType(battle, coord);
 	return baseTileType != Protocol::BATTLE_TILE_TYPE_WATER || overlayType == Protocol::BATTLE_TILE_OVERLAY_TYPE_ICE;
-}
-
-int32 BattleRoom::AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs) const
-{
-	const int32 dq = lhs.q() - rhs.q();
-	const int32 dr = lhs.r() - rhs.r();
-	const int32 ds = -dq - dr;
-	return (abs(dq) + abs(dr) + abs(ds)) / 2;
 }
 
 uint64 BattleRoom::GetNextAlliedTurnPawnId(const BattleState& battle, uint64 currentPawnId)
@@ -1554,69 +1538,22 @@ uint64 BattleRoom::GetNextAlliedTurnPawnId(const BattleState& battle, uint64 cur
 
 void BattleRoom::BuildTurnQueue(BattleState& battle)
 {
-	battle.turnQueue.clear();
+	battle.turnQueue = _turnService.BuildQueue(battle.alliedPawns, battle.enemyPawns, battle.isPvp);
 	battle.turnQueueIndex = 0;
-
-	for (const BattlePawnRef& pawn : battle.alliedPawns)
-	{
-		if (pawn != nullptr && IsAlive(*pawn))
-			battle.turnQueue.push_back(pawn->pawnId);
-	}
-
-	if (battle.isPvp)
-	{
-		for (const BattlePawnRef& pawn : battle.enemyPawns)
-		{
-			if (pawn != nullptr && IsAlive(*pawn))
-				battle.turnQueue.push_back(pawn->pawnId);
-		}
-	}
-
-	if (battle.turnQueue.empty())
-	{
-		battle.currentTurnPawnId = 0;
-		return;
-	}
-
-	static random_device rd;
-	static mt19937 rng(rd());
-	shuffle(battle.turnQueue.begin(), battle.turnQueue.end(), rng);
-	battle.currentTurnPawnId = battle.turnQueue.front();
+	battle.currentTurnPawnId = battle.turnQueue.empty() ? 0 : battle.turnQueue.front();
 }
 
 uint64 BattleRoom::AdvanceTurn(BattleState& battle)
 {
-	if (battle.turnQueue.empty())
-		BuildTurnQueue(battle);
-
-	if (battle.turnQueue.empty())
-		return 0;
-
-	auto currentIt = find(battle.turnQueue.begin(), battle.turnQueue.end(), battle.currentTurnPawnId);
-	if (currentIt == battle.turnQueue.end())
-	{
-		BuildTurnQueue(battle);
-	}
-	else
-	{
-		battle.turnQueueIndex = static_cast<size_t>(distance(battle.turnQueue.begin(), currentIt)) + 1;
-		if (battle.turnQueueIndex >= battle.turnQueue.size())
-			BuildTurnQueue(battle);
-		else
-			battle.currentTurnPawnId = battle.turnQueue[battle.turnQueueIndex];
-	}
-
-	BattlePawn* queuedPawn = FindPawn(battle, battle.currentTurnPawnId);
-	while (queuedPawn != nullptr && IsAlive(*queuedPawn) == false)
-	{
-		battle.turnQueueIndex++;
-		if (battle.turnQueueIndex >= battle.turnQueue.size())
-			BuildTurnQueue(battle);
-		else
-			battle.currentTurnPawnId = battle.turnQueue[battle.turnQueueIndex];
-
-		queuedPawn = FindPawn(battle, battle.currentTurnPawnId);
-	}
+	battle.currentTurnPawnId = _turnService.Advance(battle.turnQueue, battle.turnQueueIndex, battle.currentTurnPawnId,
+		[this, &battle](uint64 pawnId)
+		{
+			return FindPawn(battle, pawnId);
+		},
+		[this, &battle]()
+		{
+			return _turnService.BuildQueue(battle.alliedPawns, battle.enemyPawns, battle.isPvp);
+		});
 
 	if (BattlePawn* nextPawn = FindPawn(battle, battle.currentTurnPawnId))
 		StartTurn(battle, *nextPawn);
@@ -1899,7 +1836,7 @@ void BattleRoom::ExecuteAuraTurnStartEffects(BattleState& battle, BattlePawn& pa
 
 		for (const BattlePawnRef& candidate : battle.alliedPawns)
 		{
-			if (candidate != nullptr && candidate->ownerId != pawn.ownerId && IsAlive(*candidate) && AxialDistance(pawn.axial, candidate->axial) <= aura.radius)
+			if (candidate != nullptr && candidate->ownerId != pawn.ownerId && IsAlive(*candidate) && _spatialService.AxialDistance(pawn.axial, candidate->axial) <= aura.radius)
 			{
 				request.target = makeContext(*candidate);
 				request.targetPawn = candidate.get();
@@ -1910,7 +1847,7 @@ void BattleRoom::ExecuteAuraTurnStartEffects(BattleState& battle, BattlePawn& pa
 
 		for (const BattlePawnRef& candidate : battle.enemyPawns)
 		{
-			if (candidate != nullptr && candidate->ownerId != pawn.ownerId && IsAlive(*candidate) && AxialDistance(pawn.axial, candidate->axial) <= aura.radius)
+			if (candidate != nullptr && candidate->ownerId != pawn.ownerId && IsAlive(*candidate) && _spatialService.AxialDistance(pawn.axial, candidate->axial) <= aura.radius)
 			{
 				request.target = makeContext(*candidate);
 				request.targetPawn = candidate.get();
@@ -2019,40 +1956,6 @@ bool BattleRoom::RollEvade(const BattlePawn& attacker, BattlePawn& defender)
 	return evaded;
 }
 
-void BattleRoom::UpdateFacingByMove(BattlePawn& pawn, const Protocol::AxialCoord& start, const Protocol::AxialCoord& target)
-{
-	const int32 distance = AxialDistance(start, target);
-	if (distance <= 0)
-		return;
-
-	for (int32 index = 0; index < kAxialDirectionCount; index++)
-	{
-		Protocol::AxialCoord next;
-		next.set_q(start.q() + kAxialDirections[index][0]);
-		next.set_r(start.r() + kAxialDirections[index][1]);
-		if (AxialDistance(next, target) == distance - 1)
-		{
-			pawn.facingDirection = FacingFromDirectionIndex(index);
-			return;
-		}
-	}
-}
-
-bool BattleRoom::IsBackAttack(const BattlePawn& attacker, const BattlePawn& defender)
-{
-	const int32 facingIndex = FacingToDirectionIndex(defender.facingDirection);
-	if (facingIndex < 0)
-		return false;
-
-	const int32 attackerDirection = FindClosestDirectionIndex(defender.axial, attacker.axial);
-	if (attackerDirection < 0)
-		return false;
-
-	const int32 rearDirection = (facingIndex + 3) % kAxialDirectionCount;
-	return attackerDirection == rearDirection || attackerDirection == (rearDirection + 1) % kAxialDirectionCount ||
-		attackerDirection == (rearDirection + kAxialDirectionCount - 1) % kAxialDirectionCount;
-}
-
 bool BattleRoom::TryExecuteZocAttack(BattleState& battle, BattlePawn& zocOwner, BattlePawn& movingPawn,
 	vector<Protocol::BattleActionLog>& logs, vector<Protocol::BattleTileInfo>& tileDeltas,
 	vector<const BattlePawn*>& extraChangedPawns, vector<BattlePawn*>& deathCandidates)
@@ -2095,6 +1998,14 @@ bool BattleRoom::TryExecuteZocAttack(BattleState& battle, BattlePawn& zocOwner, 
 		{
 			return FindAdjacentAliveAlly(battle, source, excludedPawnId);
 		};
+	request.findAlliedPawns = [this, &battle](const BattlePawn& source)
+		{
+			return FindAlliedPawns(battle, source);
+		};
+	request.tryPushTarget = [this, &battle](BattlePawn& attacker, BattlePawn& target)
+		{
+			return ResolvePush(battle, attacker, target);
+		};
 	request.getBaseTileType = [this, &battle](const Protocol::AxialCoord& axial)
 		{
 			return GetBaseTileType(battle, axial);
@@ -2121,7 +2032,7 @@ bool BattleRoom::TryExecuteZocAttack(BattleState& battle, BattlePawn& zocOwner, 
 		};
 	request.isTileValid = [this](const Protocol::AxialCoord& axial)
 		{
-			return IsBattleTileInBounds(axial);
+			return _spatialService.IsInBounds(axial);
 		};
 	request.barrierIdGenerator = &_barrierIdGenerator;
 
@@ -2202,7 +2113,7 @@ bool BattleRoom::TryExecuteCounterattack(BattleState& battle, BattlePawn& defend
 	const BattleSkillTemplate* counterSkill = GBattleTemplates.GetSkillByActionSlot(defender.pawnClass, defenderTemplate->counterSkillSlot);
 	if (counterSkill == nullptr || counterSkill->skillCategory != "CAST" || counterSkill->combatType != "MELEE" ||
 		counterSkill->targetType != "ENEMY_SINGLE" || IsAlive(defender) == false || IsAlive(attacker) == false ||
-		AxialDistance(defender.axial, attacker.axial) != 1)
+		_spatialService.AxialDistance(defender.axial, attacker.axial) != 1)
 	{
 		return false;
 	}
@@ -2220,7 +2131,7 @@ bool BattleRoom::TryExecuteCounterattack(BattleState& battle, BattlePawn& defend
 	request.caster = &defender;
 	request.target = &attacker;
 	request.skillSlot = defenderTemplate->counterSkillSlot;
-	request.isBackAttack = IsBackAttack(defender, attacker);
+	request.isBackAttack = _spatialService.IsBackAttack(defender, attacker);
 	request.isCounter = true;
 	request.actionType = "counter";
 	request.targetAxial = &attacker.axial;
@@ -2235,6 +2146,14 @@ bool BattleRoom::TryExecuteCounterattack(BattleState& battle, BattlePawn& defend
 	request.findAdjacentAliveAlly = [this, &battle](const BattlePawn& source, uint64 excludedPawnId)
 		{
 			return FindAdjacentAliveAlly(battle, source, excludedPawnId);
+		};
+	request.findAlliedPawns = [this, &battle](const BattlePawn& source)
+		{
+			return FindAlliedPawns(battle, source);
+		};
+	request.tryPushTarget = [this, &battle](BattlePawn& attacker, BattlePawn& target)
+		{
+			return ResolvePush(battle, attacker, target);
 		};
 	request.getBaseTileType = [this, &battle](const Protocol::AxialCoord& axial)
 		{
@@ -2262,7 +2181,7 @@ bool BattleRoom::TryExecuteCounterattack(BattleState& battle, BattlePawn& defend
 		};
 	request.isTileValid = [this](const Protocol::AxialCoord& axial)
 		{
-			return IsBattleTileInBounds(axial);
+			return _spatialService.IsInBounds(axial);
 		};
 	request.barrierIdGenerator = &_barrierIdGenerator;
 
@@ -2288,7 +2207,7 @@ bool BattleRoom::TryExecuteCounterattack(BattleState& battle, BattlePawn& defend
 	extraChangedPawns.insert(extraChangedPawns.end(), result.extraChangedPawns.begin(), result.extraChangedPawns.end());
 	deathCandidates.insert(deathCandidates.end(), result.deathCandidates.begin(), result.deathCandidates.end());
 
-	if (IsAlive(defender) && IsAlive(attacker) && AxialDistance(defender.axial, attacker.axial) == 1 &&
+	if (IsAlive(defender) && IsAlive(attacker) && _spatialService.AxialDistance(defender.axial, attacker.axial) == 1 &&
 		(counterWasEvaded || attacker.hp == attackerHpBeforeCounter))
 	{
 		TryExecuteCounterattack(battle, attacker, defender, logs, tileDeltas, extraChangedPawns, deathCandidates,

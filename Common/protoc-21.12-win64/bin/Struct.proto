@@ -114,7 +114,9 @@ message BattlePawnDelta
 	bool used_normal_skill_this_turn = 17;
 	bool is_action_blocked = 18;
 	int32 zoc_reactions_used_this_turn = 19;
-}
+	int32 move_range = 20;
+	AxialCoord axial = 21;
+  }
 
 message BattleActionLog
 {

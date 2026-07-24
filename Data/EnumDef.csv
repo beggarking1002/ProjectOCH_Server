@@ -3,6 +3,7 @@ string,string,string
 PawnRole,TANKER,장갑 회복/전방 유지 역할군
 PawnRole,MELEE,근접 공격 역할군
 PawnRole,RANGED,원거리/주문 공격 역할군
+PawnRole,SPEAR,전방 2칸 ZOC를 사용하는 창병 역할군
 PawnClass,PAWN_CLASS_BEIGE_ICE,베이지 얼음
 PawnClass,PAWN_CLASS_BEIGE_FIRE,베이지 불
 PawnClass,PAWN_CLASS_SUEN_AXE_SWORD,수엔 도끼/검
@@ -23,6 +24,11 @@ TargetType,SELF,자기 자신 대상
 TargetType,ENEMY_SINGLE,적 단일 대상
 TargetType,ALLY_SINGLE,아군 단일 대상
 TargetType,TILE_OR_ENEMY,타일 또는 적 대상
+TargetType,ALL_ALLIES,시전자와 같은 편 전체 대상
+TargetShape,LINE_2,지정 방향 일렬 2칸
+EffectKey,PUSH_TARGET,피격 대상을 공격 반대 방향으로 1칸 밀어냄
+EffectTarget,ALL_ALLIES,시전자와 같은 편 전체
+ResourceType,MORALE,의지력 기반 사기 자원
 TargetType,SELF_TOGGLE,자기 자신 On/Off 토글
 TargetType,EMPTY_TILE,비어 있는 타일 대상
 TargetType,ALLY_OR_SELF,인접 아군 또는 자기 자신 대상

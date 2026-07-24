@@ -2099,6 +2099,7 @@ class BattlePawnDelta final :
     kBarriersFieldNumber = 12,
     kStatusesFieldNumber = 13,
     kAurasFieldNumber = 16,
+    kAxialFieldNumber = 21,
     kPawnIdFieldNumber = 1,
     kHpFieldNumber = 2,
     kArmorFieldNumber = 3,
@@ -2113,6 +2114,7 @@ class BattlePawnDelta final :
     kUsedNormalSkillThisTurnFieldNumber = 17,
     kIsActionBlockedFieldNumber = 18,
     kZocReactionsUsedThisTurnFieldNumber = 19,
+    kMoveRangeFieldNumber = 20,
   };
   // repeated .Protocol.BattleResourceState resources = 11;
   int resources_size() const;
@@ -2185,6 +2187,24 @@ class BattlePawnDelta final :
   ::Protocol::BattleAuraState* add_auras();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAuraState >&
       auras() const;
+
+  // .Protocol.AxialCoord axial = 21;
+  bool has_axial() const;
+  private:
+  bool _internal_has_axial() const;
+  public:
+  void clear_axial();
+  const ::Protocol::AxialCoord& axial() const;
+  PROTOBUF_NODISCARD ::Protocol::AxialCoord* release_axial();
+  ::Protocol::AxialCoord* mutable_axial();
+  void set_allocated_axial(::Protocol::AxialCoord* axial);
+  private:
+  const ::Protocol::AxialCoord& _internal_axial() const;
+  ::Protocol::AxialCoord* _internal_mutable_axial();
+  public:
+  void unsafe_arena_set_allocated_axial(
+      ::Protocol::AxialCoord* axial);
+  ::Protocol::AxialCoord* unsafe_arena_release_axial();
 
   // uint64 pawn_id = 1;
   void clear_pawn_id();
@@ -2312,6 +2332,15 @@ class BattlePawnDelta final :
   void _internal_set_zoc_reactions_used_this_turn(int32_t value);
   public:
 
+  // int32 move_range = 20;
+  void clear_move_range();
+  int32_t move_range() const;
+  void set_move_range(int32_t value);
+  private:
+  int32_t _internal_move_range() const;
+  void _internal_set_move_range(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.BattlePawnDelta)
  private:
   class _Internal;
@@ -2324,6 +2353,7 @@ class BattlePawnDelta final :
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleBarrierState > barriers_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleStatusState > statuses_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleAuraState > auras_;
+    ::Protocol::AxialCoord* axial_;
     uint64_t pawn_id_;
     int32_t hp_;
     int32_t armor_;
@@ -2338,6 +2368,7 @@ class BattlePawnDelta final :
     bool used_normal_skill_this_turn_;
     bool is_action_blocked_;
     int32_t zoc_reactions_used_this_turn_;
+    int32_t move_range_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -4543,6 +4574,116 @@ inline void BattlePawnDelta::_internal_set_zoc_reactions_used_this_turn(int32_t 
 inline void BattlePawnDelta::set_zoc_reactions_used_this_turn(int32_t value) {
   _internal_set_zoc_reactions_used_this_turn(value);
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.zoc_reactions_used_this_turn)
+}
+
+// int32 move_range = 20;
+inline void BattlePawnDelta::clear_move_range() {
+  _impl_.move_range_ = 0;
+}
+inline int32_t BattlePawnDelta::_internal_move_range() const {
+  return _impl_.move_range_;
+}
+inline int32_t BattlePawnDelta::move_range() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnDelta.move_range)
+  return _internal_move_range();
+}
+inline void BattlePawnDelta::_internal_set_move_range(int32_t value) {
+  
+  _impl_.move_range_ = value;
+}
+inline void BattlePawnDelta::set_move_range(int32_t value) {
+  _internal_set_move_range(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.move_range)
+}
+
+// .Protocol.AxialCoord axial = 21;
+inline bool BattlePawnDelta::_internal_has_axial() const {
+  return this != internal_default_instance() && _impl_.axial_ != nullptr;
+}
+inline bool BattlePawnDelta::has_axial() const {
+  return _internal_has_axial();
+}
+inline void BattlePawnDelta::clear_axial() {
+  if (GetArenaForAllocation() == nullptr && _impl_.axial_ != nullptr) {
+    delete _impl_.axial_;
+  }
+  _impl_.axial_ = nullptr;
+}
+inline const ::Protocol::AxialCoord& BattlePawnDelta::_internal_axial() const {
+  const ::Protocol::AxialCoord* p = _impl_.axial_;
+  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::AxialCoord&>(
+      ::Protocol::_AxialCoord_default_instance_);
+}
+inline const ::Protocol::AxialCoord& BattlePawnDelta::axial() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnDelta.axial)
+  return _internal_axial();
+}
+inline void BattlePawnDelta::unsafe_arena_set_allocated_axial(
+    ::Protocol::AxialCoord* axial) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.axial_);
+  }
+  _impl_.axial_ = axial;
+  if (axial) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.BattlePawnDelta.axial)
+}
+inline ::Protocol::AxialCoord* BattlePawnDelta::release_axial() {
+  
+  ::Protocol::AxialCoord* temp = _impl_.axial_;
+  _impl_.axial_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::Protocol::AxialCoord* BattlePawnDelta::unsafe_arena_release_axial() {
+  // @@protoc_insertion_point(field_release:Protocol.BattlePawnDelta.axial)
+  
+  ::Protocol::AxialCoord* temp = _impl_.axial_;
+  _impl_.axial_ = nullptr;
+  return temp;
+}
+inline ::Protocol::AxialCoord* BattlePawnDelta::_internal_mutable_axial() {
+  
+  if (_impl_.axial_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Protocol::AxialCoord>(GetArenaForAllocation());
+    _impl_.axial_ = p;
+  }
+  return _impl_.axial_;
+}
+inline ::Protocol::AxialCoord* BattlePawnDelta::mutable_axial() {
+  ::Protocol::AxialCoord* _msg = _internal_mutable_axial();
+  // @@protoc_insertion_point(field_mutable:Protocol.BattlePawnDelta.axial)
+  return _msg;
+}
+inline void BattlePawnDelta::set_allocated_axial(::Protocol::AxialCoord* axial) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.axial_;
+  }
+  if (axial) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(axial);
+    if (message_arena != submessage_arena) {
+      axial = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, axial, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.axial_ = axial;
+  // @@protoc_insertion_point(field_set_allocated:Protocol.BattlePawnDelta.axial)
 }
 
 // -------------------------------------------------------------------

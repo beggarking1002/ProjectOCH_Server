@@ -2,6 +2,7 @@
 #include "BattlePawn.h"
 #include "BeigeFire.h"
 #include "BeigeIce.h"
+#include "AlenSpear.h"
 #include "SuenAxe.h"
 
 bool BattlePawn::IsNormalSkillSlot(int32 skillSlot)
@@ -166,6 +167,9 @@ BattlePawnRef CreateBattlePawn(Protocol::PawnClass pawnClass)
 
 	if (pawnClass == Protocol::PAWN_CLASS_SUEN_AXE_SWORD)
 		return make_shared<SuenAxe>();
+
+	if (pawnClass == Protocol::PAWN_CLASS_ALEN_SPEAR)
+		return make_shared<AlenSpear>();
 
 	return make_shared<BattlePawn>();
 }

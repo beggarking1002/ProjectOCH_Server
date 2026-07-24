@@ -159,6 +159,12 @@
 	<ClCompile Include="BattleSkillExecutionService.cpp" />
 	<ClCompile Include="BattleSkillResolver.cpp" />
 	<ClCompile Include="BattleZocService.cpp" />
+	<ClCompile Include="BattleSpatialService.cpp" />
+	<ClCompile Include="BattleDisplacementService.cpp" />
+	<ClCompile Include="BattleTurnService.cpp" />
+	<ClCompile Include="BattleMovementService.cpp" />
+	<ClCompile Include="Alen.cpp" />
+	<ClCompile Include="AlenSpear.cpp" />
     <ClCompile Include="BattleTemplateManager.cpp" />
     <ClCompile Include="BattleRoom.cpp" />
     <ClCompile Include="Creature.cpp" />
@@ -192,7 +198,9 @@
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BattleEffectExecutor.h" />
+	<ClInclude Include="BattleEffectExecutor.h" />
+	<ClInclude Include="Alen.h" />
+	<ClInclude Include="AlenSpear.h" />
 	<ClInclude Include="Beige.h" />
 	<ClInclude Include="BeigeFire.h" />
 	<ClInclude Include="BeigeIce.h" />
@@ -202,6 +210,10 @@
 	<ClInclude Include="BattleSkillExecutionService.h" />
 	<ClInclude Include="BattleSkillResolver.h" />
 	<ClInclude Include="BattleZocService.h" />
+	<ClInclude Include="BattleSpatialService.h" />
+	<ClInclude Include="BattleDisplacementService.h" />
+	<ClInclude Include="BattleTurnService.h" />
+	<ClInclude Include="BattleMovementService.h" />
 	<ClInclude Include="BattleRules.h" />
     <ClInclude Include="BattleTemplateManager.h" />
     <ClInclude Include="BattleRoom.h" />

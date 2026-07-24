@@ -4,6 +4,7 @@
 #include "BattleRules.h"
 
 #include <cmath>
+#include <random>
 #include <sstream>
 
 namespace
@@ -37,11 +38,13 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 	auto matchesScope = [scope](const BattleEffectTemplate& effect)
 		{
 			const bool casterEffect = effect.effectTarget == "CASTER" || effect.effectTarget == "SELF";
+			if (scope == BattleEffectTargetScope::TeamTargetOnly)
+				return effect.effectTarget == "ALL_ALLIES";
 			if (scope == BattleEffectTargetScope::CasterOnly)
 				return casterEffect;
 			if (scope == BattleEffectTargetScope::TargetOnly)
-				return casterEffect == false;
-			return true;
+				return casterEffect == false && effect.effectTarget != "ALL_ALLIES";
+			return effect.effectTarget != "ALL_ALLIES";
 		};
 
 	unordered_map<string, int32> stopPriorities;
@@ -87,6 +90,8 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 			ExecuteApplyStatus(effect, request);
 		else if (effect.effectKey == "APPLY_DIZZY")
 			ExecuteApplyDizzy(effect, request);
+		else if (effect.effectKey == "PUSH_TARGET")
+			ExecutePushTarget(effect, request, result);
 		else if (effect.effectKey == "APPLY_STAT_MODIFIER")
 			ExecuteApplyStatus(effect, request);
 		else if (effect.effectKey == "TOGGLE_AURA")
@@ -235,17 +240,6 @@ void BattleEffectExecutor::ExecuteModifyResource(const BattleEffectTemplate& eff
 		return;
 
 	int32 amount = GetIntParam(effect, "amount", 0);
-	const string operation = ToUpperString(GetParam(effect, "operation"));
-	if (operation == "MULTIPLY")
-	{
-		const double multiplier = GetDoubleParam(effect, "multiplier", 1.0);
-		const int32 currentValue = (*target.resources)[resourceType];
-		amount = static_cast<int32>(floor(static_cast<double>(currentValue) * multiplier)) - currentValue;
-	}
-
-	int32& value = (*target.resources)[resourceType];
-	value += amount;
-
 	int32 maxValue = 0;
 	if (target.maxResources != nullptr)
 	{
@@ -253,6 +247,33 @@ void BattleEffectExecutor::ExecuteModifyResource(const BattleEffectTemplate& eff
 		if (maxIt != target.maxResources->end())
 			maxValue = maxIt->second;
 	}
+	const string operation = ToUpperString(GetParam(effect, "operation"));
+	if (operation == "MULTIPLY")
+	{
+		const double multiplier = GetDoubleParam(effect, "multiplier", 1.0);
+		const int32 currentValue = (*target.resources)[resourceType];
+		amount = static_cast<int32>(floor(static_cast<double>(currentValue) * multiplier)) - currentValue;
+	}
+	else if (operation == "ADD_MAX_RATIO")
+	{
+		amount = static_cast<int32>(floor(static_cast<double>(maxValue) * GetDoubleParam(effect, "ratio", 0.0)));
+	}
+
+	// Resource-loss modifiers are status-driven so passives such as Alen's
+	// Carbas family will work for every resource-changing effect, not only a
+	// hard-coded skill path.
+	if (amount < 0 && target.statuses != nullptr)
+	{
+		for (const auto& item : *target.statuses)
+		{
+			const BattleStatusState& status = item.second;
+			if (status.remainingOwnerTurns != 0 && status.resourceType == resourceType)
+				amount = static_cast<int32>(ceil(static_cast<double>(amount) * status.negativeResourceAmountMultiplier));
+		}
+	}
+
+	int32& value = (*target.resources)[resourceType];
+	value += amount;
 
 	if (maxValue > 0)
 		value = min(max(value, 0), maxValue);
@@ -343,6 +364,20 @@ void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect
 		status.stacks = chargesPerOwnerTurn;
 		status.consumeOn = GetParam(effect, "consume_on");
 	}
+	if (effect.effectKey == "APPLY_STAT_MODIFIER")
+	{
+		status.statKey = GetParam(effect, "stat_key");
+		status.modifierType = GetParam(effect, "modifier_type");
+		status.modifierValue = GetDoubleParam(effect, "value", 0.0);
+		status.damageScope = GetParam(effect, "damage_scope");
+	}
+	const string resourceKey = GetParam(effect, "resource_key");
+	Protocol::BattleResourceType resourceType = Protocol::BATTLE_RESOURCE_TYPE_NONE;
+	if (resourceKey.empty() == false && GBattleTemplates.TryParseBattleResourceType(resourceKey, resourceType))
+	{
+		status.resourceType = resourceType;
+		status.negativeResourceAmountMultiplier = GetDoubleParam(effect, "negative_amount_multiplier", 1.0);
+	}
 
 	cout << "BATTLE_STATUS_APPLY"
 		<< " pawn_id=" << target.pawnId
@@ -355,6 +390,11 @@ void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect
 void BattleEffectExecutor::ExecuteApplyDizzy(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
 {
 	BattleEffectPawnContext target = SelectTarget(effect, request);
+	ApplyDizzyStacks(target, max(1, GetIntParam(effect, "stack_delta", 1)));
+}
+
+void BattleEffectExecutor::ApplyDizzyStacks(BattleEffectPawnContext target, int32 stackDelta) const
+{
 	if (target.statuses == nullptr)
 		return;
 
@@ -362,7 +402,7 @@ void BattleEffectExecutor::ExecuteApplyDizzy(const BattleEffectTemplate& effect,
 	if (target.statuses->find(BattleRules::DizzyResolvedStatusKey) != target.statuses->end())
 		return;
 
-	const int32 stackDelta = max(1, GetIntParam(effect, "stack_delta", 1));
+	stackDelta = max(1, stackDelta);
 	BattleStatusState& dizzy = (*target.statuses)[BattleRules::DizzyStatusKey];
 	dizzy.stacks = min(BattleRules::DizzyMaxStacks, dizzy.stacks + stackDelta);
 
@@ -394,6 +434,86 @@ void BattleEffectExecutor::ExecuteApplyDizzy(const BattleEffectTemplate& effect,
 		<< " resisted=" << resisted
 		<< " result=" << (resisted ? "RESIST" : "STUN")
 		<< endl;
+}
+
+void BattleEffectExecutor::ExecutePushTarget(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
+	BattleEffectExecutionResult& result)
+{
+	if (request.casterPawn == nullptr || request.targetPawn == nullptr || request.tryPushTarget == nullptr)
+		return;
+
+	const BattlePawnClassTemplate* targetTemplate = GBattleTemplates.GetPawnClassTemplate(request.targetPawn->pawnClass);
+	if (targetTemplate == nullptr)
+		return;
+
+	const int32 attackerStrength = GetStatValue(*request.casterTemplate, &request.caster, "STR");
+	const int32 defenderStrength = GetStatValue(*targetTemplate, &request.target, "STR");
+	const int32 defenderWill = GetStatValue(*targetTemplate, &request.target, "WILL");
+	int32 defenderMorale = 0;
+	int32 defenderMaxMorale = 0;
+	if (request.target.resources != nullptr)
+	{
+		auto moraleIt = request.target.resources->find(Protocol::BATTLE_RESOURCE_TYPE_MORALE);
+		if (moraleIt != request.target.resources->end())
+			defenderMorale = moraleIt->second;
+	}
+	if (request.target.maxResources != nullptr)
+	{
+		auto maxMoraleIt = request.target.maxResources->find(Protocol::BATTLE_RESOURCE_TYPE_MORALE);
+		if (maxMoraleIt != request.target.maxResources->end())
+			defenderMaxMorale = maxMoraleIt->second;
+	}
+	const double moraleRatio = defenderMaxMorale > 0 ? static_cast<double>(defenderMorale) / defenderMaxMorale : 0.0;
+	const double willResistance = static_cast<double>(defenderWill) * moraleRatio * GetDoubleParam(effect, "morale_will_multiplier", 0.5);
+	const double chance = clamp(GetDoubleParam(effect, "base_chance", 50.0) +
+		(static_cast<double>(attackerStrength - defenderStrength) - willResistance) * GetDoubleParam(effect, "str_delta_multiplier", 5.0), 0.0, 100.0);
+	static random_device rd;
+	static mt19937 generator(rd());
+	uniform_real_distribution<double> distribution(0.0, 100.0);
+	const bool passed = distribution(generator) < chance;
+
+	cout << "BATTLE_PUSH_CHECK"
+		<< " attacker_pawn_id=" << request.casterPawn->pawnId
+		<< " defender_pawn_id=" << request.targetPawn->pawnId
+		<< " chance=" << chance
+		<< " passed=" << passed
+		<< endl;
+
+	if (passed == false)
+		return;
+
+	const BattlePushResult pushResult = request.tryPushTarget(*request.casterPawn, *request.targetPawn);
+	if (pushResult.pushed)
+		return;
+
+	// A blocked push leaves the attacker unaffected.  Terrain applies dizzy to
+	// the pushed target; a blocking unit applies it to both collided units.
+	if (pushResult.blockedByObstacle || pushResult.collisionPawn != nullptr)
+	{
+		const int32 dizzyStacks = max(1, GetIntParam(effect, "collision_dizzy_stacks", 1));
+		ApplyDizzyStacks(request.target, dizzyStacks);
+
+		if (pushResult.collisionPawn != nullptr)
+		{
+			BattleEffectPawnContext collision;
+			collision.pawnId = pushResult.collisionPawn->pawnId;
+			collision.ownerId = pushResult.collisionPawn->ownerId;
+			collision.pawnClass = pushResult.collisionPawn->pawnClass;
+			collision.axial = &pushResult.collisionPawn->axial;
+			collision.hp = &pushResult.collisionPawn->hp;
+			collision.maxHp = &pushResult.collisionPawn->maxHp;
+			collision.armor = &pushResult.collisionPawn->armor;
+			collision.resources = &pushResult.collisionPawn->resources;
+			collision.maxResources = &pushResult.collisionPawn->maxResources;
+			collision.barriers = &pushResult.collisionPawn->barriers;
+			collision.statuses = &pushResult.collisionPawn->statuses;
+			collision.statBonuses = &pushResult.collisionPawn->statBonuses;
+			collision.auras = &pushResult.collisionPawn->auras;
+			collision.zocModifiers = &pushResult.collisionPawn->zocModifiers;
+			ApplyDizzyStacks(collision, dizzyStacks);
+			result.changedPawns.push_back(pushResult.collisionPawn);
+		}
+	}
 }
 
 void BattleEffectExecutor::ExecuteToggleAura(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)

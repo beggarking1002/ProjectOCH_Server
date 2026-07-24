@@ -4,6 +4,10 @@
 #include "BattlePawn.h"
 #include "BattleSkillResolver.h"
 #include "BattleSkillExecutionService.h"
+#include "BattleMovementService.h"
+#include "BattleSpatialService.h"
+#include "BattleDisplacementService.h"
+#include "BattleTurnService.h"
 #include "BattleZocService.h"
 
 using BattleRoomRef = shared_ptr<class BattleRoom>;
@@ -98,11 +102,10 @@ private:
 	BattlePawn* FindPawn(BattleState& battle, uint64 pawnId);
 	BattlePawn* FindAlivePawnAt(BattleState& battle, const Protocol::AxialCoord& axial);
 	BattlePawn* FindAdjacentAliveAlly(BattleState& battle, const BattlePawn& source, uint64 excludedPawnId);
+	vector<BattlePawn*> FindAlliedPawns(BattleState& battle, const BattlePawn& source);
 	BattlePawn* FindSingleTargetInterceptor(BattleState& battle, const BattlePawn& protectedPawn);
 	bool IsOccupied(const BattleState& battle, const Protocol::AxialCoord& coord, uint64 exceptPawnId);
-	bool IsBattleTileInBounds(const Protocol::AxialCoord& coord) const;
 	bool IsBattleWalkable(const BattleState& battle, const Protocol::AxialCoord& coord) const;
-	int32 AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs) const;
 	uint64 GetNextAlliedTurnPawnId(const BattleState& battle, uint64 currentPawnId);
 	void BuildTurnQueue(BattleState& battle);
 	uint64 AdvanceTurn(BattleState& battle);
@@ -119,8 +122,7 @@ private:
 	void AdvanceOwnerTurnEffects(BattlePawn& pawn);
 	void ApplyDamage(BattlePawn& target, int32 damage);
 	bool RollEvade(const BattlePawn& attacker, BattlePawn& defender);
-	void UpdateFacingByMove(BattlePawn& pawn, const Protocol::AxialCoord& start, const Protocol::AxialCoord& target);
-	bool IsBackAttack(const BattlePawn& attacker, const BattlePawn& defender);
+	BattlePushResult ResolvePush(BattleState& battle, BattlePawn& attacker, BattlePawn& target);
 	bool TryExecuteZocAttack(BattleState& battle, BattlePawn& zocOwner, BattlePawn& movingPawn,
 		vector<Protocol::BattleActionLog>& logs, vector<Protocol::BattleTileInfo>& tileDeltas,
 		vector<const BattlePawn*>& extraChangedPawns, vector<BattlePawn*>& deathCandidates);
@@ -158,9 +160,13 @@ private:
 	uint64 _battleIdGenerator = 1;
 	uint64 _battlePawnIdGenerator = 1;
 	uint64 _barrierIdGenerator = 1;
+	BattleSpatialService _spatialService;
+	BattleDisplacementService _displacementService{ _spatialService };
+	BattleTurnService _turnService;
 	BattleSkillResolver _skillResolver;
+	BattleMovementService _movementService{ _skillResolver };
 	BattleSkillExecutionService _skillExecutionService{ _skillResolver };
-	BattleZocService _zocService;
+	BattleZocService _zocService{ _spatialService };
 	unordered_map<uint64, BattleState> _battles;
 	unordered_map<uint64, uint64> _battleByOwnerId;
 };

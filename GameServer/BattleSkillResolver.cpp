@@ -65,46 +65,17 @@ double BattleSkillResolver::GetStatModifierMultiplier(const BattlePawn& pawn, co
 double BattleSkillResolver::GetStatModifierMultiplier(const BattlePawn& pawn, const string& statKey, const string& damageScope) const
 {
 	double multiplier = 1.0;
-	const vector<BattleSkillTemplate>* skills = GBattleTemplates.GetSkills(pawn.pawnClass);
-	if (skills == nullptr)
-		return multiplier;
-
-	for (const BattleSkillTemplate& skill : *skills)
+	for (const auto& item : pawn.statuses)
 	{
-		const vector<BattleEffectTemplate>* effects = GBattleTemplates.GetEffects(skill.effectGroupKey);
-		if (effects == nullptr)
+		const BattleStatusState& status = item.second;
+		if (status.remainingOwnerTurns == 0 || status.statKey != statKey)
 			continue;
-
-		for (const BattleEffectTemplate& effect : *effects)
-		{
-			if (effect.effectKey != "APPLY_STAT_MODIFIER")
-				continue;
-
-			auto statKeyIt = effect.params.find("stat_key");
-			auto statusKeyIt = effect.params.find("status_key");
-			auto modifierTypeIt = effect.params.find("modifier_type");
-			auto valueIt = effect.params.find("value");
-			if (statKeyIt == effect.params.end() || statusKeyIt == effect.params.end() || modifierTypeIt == effect.params.end() ||
-				valueIt == effect.params.end() || statKeyIt->second != statKey || IsStatusActive(pawn, statusKeyIt->second) == false)
-			{
-				continue;
-			}
-			auto damageScopeIt = effect.params.find("damage_scope");
-			if (damageScopeIt != effect.params.end() && damageScopeIt->second != damageScope)
-				continue;
-
-			try
-			{
-				const double value = stod(valueIt->second);
-				if (modifierTypeIt->second == "ADD_RATIO")
-					multiplier += value;
-				else if (modifierTypeIt->second == "MULTIPLY")
-					multiplier *= value;
-			}
-			catch (...)
-			{
-			}
-		}
+		if (status.damageScope.empty() == false && status.damageScope != damageScope)
+			continue;
+		if (status.modifierType == "ADD_RATIO")
+			multiplier += status.modifierValue;
+		else if (status.modifierType == "MULTIPLY")
+			multiplier *= status.modifierValue;
 	}
 
 	return max(0.0, multiplier);
@@ -113,33 +84,11 @@ double BattleSkillResolver::GetStatModifierMultiplier(const BattlePawn& pawn, co
 double BattleSkillResolver::GetStatModifierAdditiveRatio(const BattlePawn& pawn, const string& statKey) const
 {
 	double ratio = 0.0;
-	const vector<BattleSkillTemplate>* skills = GBattleTemplates.GetSkills(pawn.pawnClass);
-	if (skills == nullptr)
-		return ratio;
-
-	for (const BattleSkillTemplate& skill : *skills)
+	for (const auto& item : pawn.statuses)
 	{
-		const vector<BattleEffectTemplate>* effects = GBattleTemplates.GetEffects(skill.effectGroupKey);
-		if (effects == nullptr)
-			continue;
-
-		for (const BattleEffectTemplate& effect : *effects)
-		{
-			if (effect.effectKey != "APPLY_STAT_MODIFIER")
-				continue;
-			auto statKeyIt = effect.params.find("stat_key");
-			auto statusKeyIt = effect.params.find("status_key");
-			auto modifierTypeIt = effect.params.find("modifier_type");
-			auto valueIt = effect.params.find("value");
-			if (statKeyIt == effect.params.end() || statusKeyIt == effect.params.end() || modifierTypeIt == effect.params.end() ||
-				valueIt == effect.params.end() || statKeyIt->second != statKey || modifierTypeIt->second != "ADD_RATIO" ||
-				IsStatusActive(pawn, statusKeyIt->second) == false)
-			{
-				continue;
-			}
-			try { ratio += stod(valueIt->second); }
-			catch (...) { }
-		}
+		const BattleStatusState& status = item.second;
+		if (status.remainingOwnerTurns != 0 && status.statKey == statKey && status.modifierType == "ADD_RATIO")
+			ratio += status.modifierValue;
 	}
 	return ratio;
 }

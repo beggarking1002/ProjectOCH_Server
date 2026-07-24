@@ -1,5 +1,6 @@
 #pragma once
 #include "BattleTemplateManager.h"
+#include "BattleDisplacementService.h"
 
 class BattlePawn;
 
@@ -18,6 +19,12 @@ struct BattleStatusState
 	int32 remainingOwnerTurns = -1;
 	int32 chargesPerOwnerTurn = 0;
 	string consumeOn;
+	string statKey;
+	string modifierType;
+	double modifierValue = 0.0;
+	string damageScope;
+	Protocol::BattleResourceType resourceType = Protocol::BATTLE_RESOURCE_TYPE_NONE;
+	double negativeResourceAmountMultiplier = 1.0;
 };
 
 struct BattleAuraState
@@ -78,6 +85,7 @@ struct BattleEffectExecutionRequest
 	function<uint64(const Protocol::AxialCoord&)> getTileEquipmentOwnerPawnId;
 	function<void(const Protocol::AxialCoord&, const string&, uint64)> setTileEquipment;
 	function<bool(const Protocol::AxialCoord&)> isTileValid;
+	function<BattlePushResult(BattlePawn&, BattlePawn&)> tryPushTarget;
 	BattleEffectPawnContext caster;
 	BattleEffectPawnContext target;
 	BattlePawn* casterPawn = nullptr;
@@ -91,6 +99,7 @@ struct BattleEffectExecutionResult
 	int32 totalDamage = 0;
 	bool dealtDamage = false;
 	vector<Protocol::BattleTileInfo> tileDeltas;
+	vector<const BattlePawn*> changedPawns;
 };
 
 enum class BattleEffectTargetScope
@@ -98,6 +107,7 @@ enum class BattleEffectTargetScope
 	All,
 	CasterOnly,
 	TargetOnly,
+	TeamTargetOnly,
 };
 
 class BattleEffectExecutor
@@ -117,6 +127,8 @@ private:
 	void ExecuteApplyBarrier(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteApplyStatus(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteApplyDizzy(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
+	void ExecutePushTarget(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
+		BattleEffectExecutionResult& result);
 	void ExecuteToggleAura(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteChangeTileOverlay(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
 		BattleEffectExecutionResult& result);
@@ -139,4 +151,5 @@ private:
 	int32 GetIntParam(const BattleEffectTemplate& effect, const string& key, int32 fallback = 0) const;
 	double GetDoubleParam(const BattleEffectTemplate& effect, const string& key, double fallback = 0.0) const;
 	bool RollDizzyResistance(const BattleEffectPawnContext& target) const;
+	void ApplyDizzyStacks(BattleEffectPawnContext target, int32 stackDelta) const;
 };

@@ -186,6 +186,7 @@ PROTOBUF_CONSTEXPR BattlePawnDelta::BattlePawnDelta(
   , /*decltype(_impl_.barriers_)*/{}
   , /*decltype(_impl_.statuses_)*/{}
   , /*decltype(_impl_.auras_)*/{}
+  , /*decltype(_impl_.axial_)*/nullptr
   , /*decltype(_impl_.pawn_id_)*/uint64_t{0u}
   , /*decltype(_impl_.hp_)*/0
   , /*decltype(_impl_.armor_)*/0
@@ -200,6 +201,7 @@ PROTOBUF_CONSTEXPR BattlePawnDelta::BattlePawnDelta(
   , /*decltype(_impl_.used_normal_skill_this_turn_)*/false
   , /*decltype(_impl_.is_action_blocked_)*/false
   , /*decltype(_impl_.zoc_reactions_used_this_turn_)*/0
+  , /*decltype(_impl_.move_range_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct BattlePawnDeltaDefaultTypeInternal {
   PROTOBUF_CONSTEXPR BattlePawnDeltaDefaultTypeInternal()
@@ -370,6 +372,8 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.used_normal_skill_this_turn_),
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.is_action_blocked_),
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.zoc_reactions_used_this_turn_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.move_range_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.axial_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -401,7 +405,7 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 63, -1, -1, sizeof(::Protocol::BattleTileInfo)},
   { 74, -1, -1, sizeof(::Protocol::BattlePawnInfo)},
   { 105, -1, -1, sizeof(::Protocol::BattlePawnDelta)},
-  { 129, -1, -1, sizeof(::Protocol::BattleActionLog)},
+  { 131, -1, -1, sizeof(::Protocol::BattleActionLog)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -460,7 +464,7 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "tleAuraState\022#\n\033used_normal_skill_this_t"
   "urn\030\031 \001(\010\022\031\n\021is_action_blocked\030\032 \001(\010\022$\n\034"
   "zoc_reactions_used_this_turn\030\033 \001(\005J\004\010\016\020\017"
-  "J\004\010\017\020\020\"\274\004\n\017BattlePawnDelta\022\017\n\007pawn_id\030\001 "
+  "J\004\010\017\020\020\"\365\004\n\017BattlePawnDelta\022\017\n\007pawn_id\030\001 "
   "\001(\004\022\n\n\002hp\030\002 \001(\005\022\r\n\005armor\030\003 \001(\005\022\022\n\ncurren"
   "t_ap\030\004 \001(\005\022\020\n\010can_move\030\005 \001(\010\022!\n\031used_sub"
   "_action_this_turn\030\006 \001(\010\022\025\n\rused_ultimate"
@@ -474,22 +478,23 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "\030\020 \003(\0132\031.Protocol.BattleAuraState\022#\n\033use"
   "d_normal_skill_this_turn\030\021 \001(\010\022\031\n\021is_act"
   "ion_blocked\030\022 \001(\010\022$\n\034zoc_reactions_used_"
-  "this_turn\030\023 \001(\005J\004\010\n\020\013\"\257\002\n\017BattleActionLo"
-  "g\022\030\n\020attacker_pawn_id\030\001 \001(\004\022\030\n\020defender_"
-  "pawn_id\030\002 \001(\004\022\022\n\nskill_slot\030\003 \001(\005\022\023\n\013act"
-  "ion_type\030\004 \001(\t\022\016\n\006damage\030\005 \001(\005\022\023\n\013is_cri"
-  "tical\030\006 \001(\010\022\021\n\tis_evaded\030\007 \001(\010\022\022\n\nis_gua"
-  "rded\030\010 \001(\010\022\032\n\022is_perfect_guarded\030\t \001(\010\022\022"
-  "\n\nis_counter\030\n \001(\010\022\020\n\010hp_after\030\013 \001(\005\022\023\n\013"
-  "armor_after\030\014 \001(\005\022\026\n\016is_back_attack\030\r \001("
-  "\010J\004\010\016\020\017b\006proto3"
+  "this_turn\030\023 \001(\005\022\022\n\nmove_range\030\024 \001(\005\022#\n\005a"
+  "xial\030\025 \001(\0132\024.Protocol.AxialCoordJ\004\010\n\020\013\"\257"
+  "\002\n\017BattleActionLog\022\030\n\020attacker_pawn_id\030\001"
+  " \001(\004\022\030\n\020defender_pawn_id\030\002 \001(\004\022\022\n\nskill_"
+  "slot\030\003 \001(\005\022\023\n\013action_type\030\004 \001(\t\022\016\n\006damag"
+  "e\030\005 \001(\005\022\023\n\013is_critical\030\006 \001(\010\022\021\n\tis_evade"
+  "d\030\007 \001(\010\022\022\n\nis_guarded\030\010 \001(\010\022\032\n\022is_perfec"
+  "t_guarded\030\t \001(\010\022\022\n\nis_counter\030\n \001(\010\022\020\n\010h"
+  "p_after\030\013 \001(\005\022\023\n\013armor_after\030\014 \001(\005\022\026\n\016is"
+  "_back_attack\030\r \001(\010J\004\010\016\020\017b\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_Struct_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Struct_2eproto = {
-    false, false, 2535, descriptor_table_protodef_Struct_2eproto,
+    false, false, 2592, descriptor_table_protodef_Struct_2eproto,
     "Struct.proto",
     &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 11,
     schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
@@ -3423,8 +3428,13 @@ void BattlePawnInfo::InternalSwap(BattlePawnInfo* other) {
 
 class BattlePawnDelta::_Internal {
  public:
+  static const ::Protocol::AxialCoord& axial(const BattlePawnDelta* msg);
 };
 
+const ::Protocol::AxialCoord&
+BattlePawnDelta::_Internal::axial(const BattlePawnDelta* msg) {
+  return *msg->_impl_.axial_;
+}
 BattlePawnDelta::BattlePawnDelta(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -3439,6 +3449,7 @@ BattlePawnDelta::BattlePawnDelta(const BattlePawnDelta& from)
     , decltype(_impl_.barriers_){from._impl_.barriers_}
     , decltype(_impl_.statuses_){from._impl_.statuses_}
     , decltype(_impl_.auras_){from._impl_.auras_}
+    , decltype(_impl_.axial_){nullptr}
     , decltype(_impl_.pawn_id_){}
     , decltype(_impl_.hp_){}
     , decltype(_impl_.armor_){}
@@ -3453,12 +3464,16 @@ BattlePawnDelta::BattlePawnDelta(const BattlePawnDelta& from)
     , decltype(_impl_.used_normal_skill_this_turn_){}
     , decltype(_impl_.is_action_blocked_){}
     , decltype(_impl_.zoc_reactions_used_this_turn_){}
+    , decltype(_impl_.move_range_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_axial()) {
+    _this->_impl_.axial_ = new ::Protocol::AxialCoord(*from._impl_.axial_);
+  }
   ::memcpy(&_impl_.pawn_id_, &from._impl_.pawn_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.zoc_reactions_used_this_turn_) -
-    reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.zoc_reactions_used_this_turn_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.move_range_) -
+    reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.move_range_));
   // @@protoc_insertion_point(copy_constructor:Protocol.BattlePawnDelta)
 }
 
@@ -3471,6 +3486,7 @@ inline void BattlePawnDelta::SharedCtor(
     , decltype(_impl_.barriers_){arena}
     , decltype(_impl_.statuses_){arena}
     , decltype(_impl_.auras_){arena}
+    , decltype(_impl_.axial_){nullptr}
     , decltype(_impl_.pawn_id_){uint64_t{0u}}
     , decltype(_impl_.hp_){0}
     , decltype(_impl_.armor_){0}
@@ -3485,6 +3501,7 @@ inline void BattlePawnDelta::SharedCtor(
     , decltype(_impl_.used_normal_skill_this_turn_){false}
     , decltype(_impl_.is_action_blocked_){false}
     , decltype(_impl_.zoc_reactions_used_this_turn_){0}
+    , decltype(_impl_.move_range_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -3504,6 +3521,7 @@ inline void BattlePawnDelta::SharedDtor() {
   _impl_.barriers_.~RepeatedPtrField();
   _impl_.statuses_.~RepeatedPtrField();
   _impl_.auras_.~RepeatedPtrField();
+  if (this != internal_default_instance()) delete _impl_.axial_;
 }
 
 void BattlePawnDelta::SetCachedSize(int size) const {
@@ -3520,9 +3538,13 @@ void BattlePawnDelta::Clear() {
   _impl_.barriers_.Clear();
   _impl_.statuses_.Clear();
   _impl_.auras_.Clear();
+  if (GetArenaForAllocation() == nullptr && _impl_.axial_ != nullptr) {
+    delete _impl_.axial_;
+  }
+  _impl_.axial_ = nullptr;
   ::memset(&_impl_.pawn_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.zoc_reactions_used_this_turn_) -
-      reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.zoc_reactions_used_this_turn_));
+      reinterpret_cast<char*>(&_impl_.move_range_) -
+      reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.move_range_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -3697,6 +3719,22 @@ const char* BattlePawnDelta::_InternalParse(const char* ptr, ::_pbi::ParseContex
         } else
           goto handle_unusual;
         continue;
+      // int32 move_range = 20;
+      case 20:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 160)) {
+          _impl_.move_range_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .Protocol.AxialCoord axial = 21;
+      case 21:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 170)) {
+          ptr = ctx->ParseMessage(_internal_mutable_axial(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -3843,6 +3881,19 @@ uint8_t* BattlePawnDelta::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(19, this->_internal_zoc_reactions_used_this_turn(), target);
   }
 
+  // int32 move_range = 20;
+  if (this->_internal_move_range() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(20, this->_internal_move_range(), target);
+  }
+
+  // .Protocol.AxialCoord axial = 21;
+  if (this->_internal_has_axial()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(21, _Internal::axial(this),
+        _Internal::axial(this).GetCachedSize(), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3885,6 +3936,13 @@ size_t BattlePawnDelta::ByteSizeLong() const {
   for (const auto& msg : this->_impl_.auras_) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // .Protocol.AxialCoord axial = 21;
+  if (this->_internal_has_axial()) {
+    total_size += 2 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.axial_);
   }
 
   // uint64 pawn_id = 1;
@@ -3960,6 +4018,13 @@ size_t BattlePawnDelta::ByteSizeLong() const {
         this->_internal_zoc_reactions_used_this_turn());
   }
 
+  // int32 move_range = 20;
+  if (this->_internal_move_range() != 0) {
+    total_size += 2 +
+      ::_pbi::WireFormatLite::Int32Size(
+        this->_internal_move_range());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -3982,6 +4047,10 @@ void BattlePawnDelta::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const 
   _this->_impl_.barriers_.MergeFrom(from._impl_.barriers_);
   _this->_impl_.statuses_.MergeFrom(from._impl_.statuses_);
   _this->_impl_.auras_.MergeFrom(from._impl_.auras_);
+  if (from._internal_has_axial()) {
+    _this->_internal_mutable_axial()->::Protocol::AxialCoord::MergeFrom(
+        from._internal_axial());
+  }
   if (from._internal_pawn_id() != 0) {
     _this->_internal_set_pawn_id(from._internal_pawn_id());
   }
@@ -4024,6 +4093,9 @@ void BattlePawnDelta::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const 
   if (from._internal_zoc_reactions_used_this_turn() != 0) {
     _this->_internal_set_zoc_reactions_used_this_turn(from._internal_zoc_reactions_used_this_turn());
   }
+  if (from._internal_move_range() != 0) {
+    _this->_internal_set_move_range(from._internal_move_range());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -4046,11 +4118,11 @@ void BattlePawnDelta::InternalSwap(BattlePawnDelta* other) {
   _impl_.statuses_.InternalSwap(&other->_impl_.statuses_);
   _impl_.auras_.InternalSwap(&other->_impl_.auras_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(BattlePawnDelta, _impl_.zoc_reactions_used_this_turn_)
-      + sizeof(BattlePawnDelta::_impl_.zoc_reactions_used_this_turn_)
-      - PROTOBUF_FIELD_OFFSET(BattlePawnDelta, _impl_.pawn_id_)>(
-          reinterpret_cast<char*>(&_impl_.pawn_id_),
-          reinterpret_cast<char*>(&other->_impl_.pawn_id_));
+      PROTOBUF_FIELD_OFFSET(BattlePawnDelta, _impl_.move_range_)
+      + sizeof(BattlePawnDelta::_impl_.move_range_)
+      - PROTOBUF_FIELD_OFFSET(BattlePawnDelta, _impl_.axial_)>(
+          reinterpret_cast<char*>(&_impl_.axial_),
+          reinterpret_cast<char*>(&other->_impl_.axial_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata BattlePawnDelta::GetMetadata() const {

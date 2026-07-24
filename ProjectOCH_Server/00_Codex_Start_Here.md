@@ -1,6 +1,6 @@
 # ProjectOCH Server - Start Here
 
-Updated: 2026-07-20.
+Updated: 2026-07-25.
 
 ## Workspace
 
@@ -22,7 +22,8 @@ Read these first:
 2. [[06_Battle_System_v0_1]]
 3. [[08_Battle_Data_Tables]]
 4. [[07_Battle_Invite_Flow]]
-5. [[04_Packet_Protocol_Generation]]
+5. [[10_Battle_Architecture_Rules]]
+6. [[04_Packet_Protocol_Generation]]
 
 ## Build Verification
 
@@ -41,4 +42,4 @@ The GameServer pre-build step regenerates protobuf and packet helper output, inc
 
 ## Documentation Rule
 
-When battle behavior changes, update [[06_Battle_System_v0_1]], [[08_Battle_Data_Tables]], and the newest implementation-status note. Update [[04_Packet_Protocol_Generation]] when protobuf contracts or generated packet flow changes.
+When battle behavior changes, update [[06_Battle_System_v0_1]], [[08_Battle_Data_Tables]], and the newest implementation-status note. Apply [[10_Battle_Architecture_Rules]] before placing new logic. Update [[04_Packet_Protocol_Generation]] when protobuf contracts or generated packet flow changes.

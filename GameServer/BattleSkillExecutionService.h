@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BattleSkillResolver.h"
+#include "BattleDisplacementService.h"
 
 struct BattleSkillActionRequest
 {
@@ -19,6 +20,7 @@ struct BattleSkillActionRequest
 	const Protocol::AxialCoord* areaDirectionAxial = nullptr;
 	function<BattlePawn*(const Protocol::AxialCoord&)> findAlivePawnAt;
 	function<BattlePawn*(const BattlePawn&, uint64)> findAdjacentAliveAlly;
+	function<vector<BattlePawn*>(const BattlePawn&)> findAlliedPawns;
 	function<Protocol::BattleTileType(const Protocol::AxialCoord&)> getBaseTileType;
 	function<Protocol::BattleTileOverlayType(const Protocol::AxialCoord&)> getTileOverlayType;
 	function<void(const Protocol::AxialCoord&, Protocol::BattleTileOverlayType)> setTileOverlayType;
@@ -26,6 +28,7 @@ struct BattleSkillActionRequest
 	function<uint64(const Protocol::AxialCoord&)> getTileEquipmentOwnerPawnId;
 	function<void(const Protocol::AxialCoord&, const string&, uint64)> setTileEquipment;
 	function<bool(const Protocol::AxialCoord&)> isTileValid;
+	function<BattlePushResult(BattlePawn&, BattlePawn&)> tryPushTarget;
 	uint64* barrierIdGenerator = nullptr;
 };
 

@@ -1,0 +1,32 @@
+#pragma once
+
+#include "BattleSpatialService.h"
+
+class BattlePawn;
+
+struct BattlePushResult
+{
+	bool pushed = false;
+	bool blockedByObstacle = false;
+	BattlePawn* collisionPawn = nullptr;
+};
+
+struct BattleDisplacementRequest
+{
+	BattlePawn* attacker = nullptr;
+	BattlePawn* target = nullptr;
+	function<bool(const Protocol::AxialCoord&)> isWalkable;
+	function<BattlePawn*(const Protocol::AxialCoord&)> findAlivePawnAt;
+};
+
+// Resolves forced movement without owning a battle room.  The room supplies
+// board queries while this service owns direction and collision decisions.
+class BattleDisplacementService
+{
+public:
+	explicit BattleDisplacementService(const BattleSpatialService& spatialService) : _spatialService(spatialService) { }
+	BattlePushResult TryPush(const BattleDisplacementRequest& request) const;
+
+private:
+	const BattleSpatialService& _spatialService;
+};
