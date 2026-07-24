@@ -2125,13 +2125,8 @@ bool BattleRoom::TryExecuteZocAttack(BattleState& battle, BattlePawn& zocOwner, 
 		};
 	request.barrierIdGenerator = &_barrierIdGenerator;
 
-	const int32 movingPawnHpBeforeAttack = movingPawn.hp;
 	zocOwner.MarkZocReactionUsed();
 	BattleSkillActionResult result = _skillExecutionService.Execute(request);
-	const bool zocAttackWasEvaded = any_of(result.logs.begin(), result.logs.end(), [](const Protocol::BattleActionLog& log)
-		{
-			return log.is_evaded();
-		});
 	logs.insert(logs.end(), result.logs.begin(), result.logs.end());
 	tileDeltas.insert(tileDeltas.end(), result.tileDeltas.begin(), result.tileDeltas.end());
 	extraChangedPawns.push_back(&zocOwner);
@@ -2139,11 +2134,8 @@ bool BattleRoom::TryExecuteZocAttack(BattleState& battle, BattlePawn& zocOwner, 
 	extraChangedPawns.insert(extraChangedPawns.end(), result.extraChangedPawns.begin(), result.extraChangedPawns.end());
 	deathCandidates.insert(deathCandidates.end(), result.deathCandidates.begin(), result.deathCandidates.end());
 
-	if (IsAlive(zocOwner) && IsAlive(movingPawn) && AxialDistance(zocOwner.axial, movingPawn.axial) == 1 &&
-		(zocAttackWasEvaded || movingPawn.hp == movingPawnHpBeforeAttack))
-	{
-		TryExecuteCounterattack(battle, movingPawn, zocOwner, logs, tileDeltas, extraChangedPawns, deathCandidates);
-	}
+	// ZOC is a one-way opportunity attack.  A class perk may opt into a counter
+	// response later, but the shared ZOC rule must not start a counter exchange.
 
 	return true;
 }
