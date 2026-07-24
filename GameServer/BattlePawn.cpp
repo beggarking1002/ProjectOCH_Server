@@ -30,7 +30,7 @@ bool BattlePawn::ApplyStatFromStat(const string& sourceStat, const string& targe
 
 bool BattlePawn::CanMove() const
 {
-	return isDead == false && hp > 0 && hasMovedThisTurn == false;
+	return isDead == false && hp > 0 && isActionBlockedThisTurn == false && hasMovedThisTurn == false;
 }
 
 void BattlePawn::MarkMoved()
@@ -38,8 +38,23 @@ void BattlePawn::MarkMoved()
 	hasMovedThisTurn = true;
 }
 
+bool BattlePawn::CanUseZocReaction(int32 reactionLimitPerTurn) const
+{
+	return isDead == false && hp > 0 && zocReactionsUsedThisTurn < reactionLimitPerTurn;
+}
+
+void BattlePawn::MarkZocReactionUsed()
+{
+	zocReactionsUsedThisTurn++;
+}
+
 bool BattlePawn::CanUseSkillSlot(int32 skillSlot, string& reason) const
 {
+	if (isActionBlockedThisTurn)
+	{
+		reason = "pawn is stunned";
+		return false;
+	}
 	if (IsNormalSkillSlot(skillSlot) && usedNormalSkillThisTurn)
 	{
 		reason = "normal skill already used this turn";
@@ -77,17 +92,21 @@ void BattlePawn::ResetTurnActionUsage()
 	// action rule is the per-slot usage state below: one normal skill per turn.
 	currentAp = 2;
 	hasMovedThisTurn = false;
+	zocReactionsUsedThisTurn = 0;
 	usedNormalSkillThisTurn = false;
 	usedSubActionThisTurn = false;
+	isActionBlockedThisTurn = false;
 }
 
 void BattlePawn::InitializeBattleActionUsage()
 {
 	currentAp = 0;
 	hasMovedThisTurn = false;
+	zocReactionsUsedThisTurn = 0;
 	usedNormalSkillThisTurn = false;
 	usedSubActionThisTurn = false;
 	usedUltimate = false;
+	isActionBlockedThisTurn = false;
 }
 
 void BattlePawn::MarkDefeated()
@@ -95,6 +114,7 @@ void BattlePawn::MarkDefeated()
 	hp = 0;
 	currentAp = 0;
 	hasMovedThisTurn = true;
+	isActionBlockedThisTurn = true;
 	isDead = true;
 }
 

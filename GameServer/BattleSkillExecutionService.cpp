@@ -12,7 +12,10 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 	const bool directEnemyTarget = target != nullptr && target->ownerId != caster.ownerId &&
 		(request.skill->targetType == "ENEMY_SINGLE" || request.skill->targetType == "TILE_OR_ENEMY");
 	if (target != nullptr)
+	{
+		result.affectedTargets.push_back(target);
 		result.deathCandidates.push_back(target);
+	}
 
 	BattleEffectExecutionRequest effectRequest;
 	effectRequest.skill = request.skill;
@@ -113,6 +116,7 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 
 			if (areaTarget != nullptr)
 			{
+				result.affectedTargets.push_back(areaTarget);
 				executeOnKill(areaTarget);
 				result.extraChangedPawns.push_back(areaTarget);
 				result.deathCandidates.push_back(areaTarget);
@@ -144,6 +148,7 @@ BattleEffectPawnContext BattleSkillExecutionService::MakeEffectContext(BattlePaw
 	context.statuses = &pawn.statuses;
 	context.statBonuses = &pawn.statBonuses;
 	context.auras = &pawn.auras;
+	context.zocModifiers = &pawn.zocModifiers;
 	return context;
 }
 

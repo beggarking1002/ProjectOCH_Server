@@ -63,6 +63,17 @@ struct BattleMapTileTemplate
 	Protocol::BattleTileType tileType = Protocol::BATTLE_TILE_TYPE_NORMAL;
 };
 
+struct BattleZocTemplate
+{
+	Protocol::PawnClass pawnClass = Protocol::PAWN_CLASS_NONE;
+	bool enabled = false;
+	int32 range = 1;
+	int32 frontArcWidth = 3;
+	int32 reactionLimitPerTurn = 1;
+	int32 reactionSkillSlot = 2;
+	unordered_set<string> triggers;
+};
+
 class BattleTemplateManager
 {
 public:
@@ -74,6 +85,7 @@ public:
 	const BattleSkillTemplate* GetSkillByKey(const string& skillKey);
 	const vector<BattleEffectTemplate>* GetEffects(const string& effectGroupKey);
 	const vector<BattleMapTileTemplate>* GetBattleMapTiles(const string& mapId);
+	const BattleZocTemplate* GetZocTemplate(Protocol::PawnClass pawnClass);
 	bool TryParseBattleResourceType(const string& key, Protocol::BattleResourceType& resourceType) const;
 	bool TryParseBattleTileType(const string& key, Protocol::BattleTileType& tileType) const;
 	bool TryParseBattleTileOverlayType(const string& key, Protocol::BattleTileOverlayType& overlayType) const;
@@ -85,6 +97,7 @@ private:
 	bool LoadBattleSkillEffect(const string& path);
 	bool LoadBattleSkillEffectParam(const string& path);
 	bool LoadBattleMapTile(const string& path);
+	bool LoadBattleZoc(const string& path);
 	bool ValidateTemplates();
 
 	string ResolveDataPath(const string& fileName);
@@ -97,6 +110,7 @@ private:
 	unordered_map<string, vector<BattleSkillTemplate>> _skillsByClassKey;
 	unordered_map<string, vector<BattleEffectTemplate>> _effectsByGroupKey;
 	unordered_map<string, vector<BattleMapTileTemplate>> _battleMapTilesByMapId;
+	unordered_map<Protocol::PawnClass, BattleZocTemplate> _zocTemplates;
 	vector<BattleEffectParamTemplate> _effectParams;
 };
 

@@ -27,6 +27,16 @@ struct BattleAuraState
 	int32 radius = 0;
 };
 
+struct BattleZocModifierState
+{
+	string sourceStatusKey;
+	bool enableZoc = false;
+	int32 rangeDelta = 0;
+	int32 reactionLimitDelta = 0;
+	int32 reactionSkillSlotOverride = 0;
+	unordered_set<string> addTriggers;
+};
+
 struct BattleEffectPawnContext
 {
 	uint64 pawnId = 0;
@@ -42,6 +52,7 @@ struct BattleEffectPawnContext
 	unordered_map<string, BattleStatusState>* statuses = nullptr;
 	unordered_map<string, int32>* statBonuses = nullptr;
 	unordered_map<string, BattleAuraState>* auras = nullptr;
+	vector<BattleZocModifierState>* zocModifiers = nullptr;
 };
 
 struct BattleEffectExecutionRequest
@@ -105,6 +116,7 @@ private:
 	void ExecuteSetResourceMax(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteApplyBarrier(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteApplyStatus(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
+	void ExecuteApplyDizzy(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteToggleAura(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteChangeTileOverlay(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
 		BattleEffectExecutionResult& result);
@@ -115,6 +127,7 @@ private:
 		BattleEffectExecutionResult& result);
 	void ExecuteSwapPosition(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteAddStatFromStat(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
+	void ExecuteApplyZocModifier(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 
 	int32 CalculateValue(const BattleEffectTemplate& effect, const BattlePawnClassTemplate& casterTemplate,
 		const BattleEffectPawnContext& caster);
@@ -125,4 +138,5 @@ private:
 	string GetParam(const BattleEffectTemplate& effect, const string& key, const string& fallback = "") const;
 	int32 GetIntParam(const BattleEffectTemplate& effect, const string& key, int32 fallback = 0) const;
 	double GetDoubleParam(const BattleEffectTemplate& effect, const string& key, double fallback = 0.0) const;
+	bool RollDizzyResistance(const BattleEffectPawnContext& target) const;
 };

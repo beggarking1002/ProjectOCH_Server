@@ -88,6 +88,8 @@ message BattlePawnInfo
 	int32 shield_max = 23;
 	repeated BattleAuraState auras = 24;
 	bool used_normal_skill_this_turn = 25;
+	bool is_action_blocked = 26;
+	int32 zoc_reactions_used_this_turn = 27;
 }
 
 message BattlePawnDelta
@@ -110,6 +112,8 @@ message BattlePawnDelta
 	int32 shield_max = 15;
 	repeated BattleAuraState auras = 16;
 	bool used_normal_skill_this_turn = 17;
+	bool is_action_blocked = 18;
+	int32 zoc_reactions_used_this_turn = 19;
 }
 
 message BattleActionLog

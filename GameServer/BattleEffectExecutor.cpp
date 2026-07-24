@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "BattleEffectExecutor.h"
 #include "BattlePawn.h"
+#include "BattleRules.h"
 
 #include <cmath>
+#include <sstream>
 
 namespace
 {
@@ -83,6 +85,8 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 			ExecuteApplyBarrier(effect, request);
 		else if (effect.effectKey == "APPLY_STATUS")
 			ExecuteApplyStatus(effect, request);
+		else if (effect.effectKey == "APPLY_DIZZY")
+			ExecuteApplyDizzy(effect, request);
 		else if (effect.effectKey == "APPLY_STAT_MODIFIER")
 			ExecuteApplyStatus(effect, request);
 		else if (effect.effectKey == "TOGGLE_AURA")
@@ -99,6 +103,8 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 			ExecuteSwapPosition(effect, request);
 		else if (effect.effectKey == "ADD_STAT_FROM_STAT")
 			ExecuteAddStatFromStat(effect, request);
+		else if (effect.effectKey == "APPLY_ZOC_MODIFIER")
+			ExecuteApplyZocModifier(effect, request);
 	}
 
 	return result;
@@ -346,6 +352,50 @@ void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect
 		<< endl;
 }
 
+void BattleEffectExecutor::ExecuteApplyDizzy(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
+{
+	BattleEffectPawnContext target = SelectTarget(effect, request);
+	if (target.statuses == nullptr)
+		return;
+
+	// A completed dizzy cycle cannot be built again before the target's next own turn.
+	if (target.statuses->find(BattleRules::DizzyResolvedStatusKey) != target.statuses->end())
+		return;
+
+	const int32 stackDelta = max(1, GetIntParam(effect, "stack_delta", 1));
+	BattleStatusState& dizzy = (*target.statuses)[BattleRules::DizzyStatusKey];
+	dizzy.stacks = min(BattleRules::DizzyMaxStacks, dizzy.stacks + stackDelta);
+
+	cout << "BATTLE_DIZZY_APPLY"
+		<< " pawn_id=" << target.pawnId
+		<< " stack_delta=" << stackDelta
+		<< " stacks=" << dizzy.stacks
+		<< endl;
+
+	if (dizzy.stacks < BattleRules::DizzyMaxStacks)
+		return;
+
+	// The completed stack remains visible until the target's next own turn.
+	dizzy.remainingOwnerTurns = 1;
+	BattleStatusState& resolved = (*target.statuses)[BattleRules::DizzyResolvedStatusKey];
+	resolved.stacks = 1;
+	resolved.remainingOwnerTurns = 1;
+
+	const bool resisted = RollDizzyResistance(target);
+	if (resisted == false)
+	{
+		BattleStatusState& stun = (*target.statuses)[BattleRules::StunStatusKey];
+		stun.stacks = 1;
+		stun.remainingOwnerTurns = 1;
+	}
+
+	cout << "BATTLE_DIZZY_RESOLVE"
+		<< " pawn_id=" << target.pawnId
+		<< " resisted=" << resisted
+		<< " result=" << (resisted ? "RESIST" : "STUN")
+		<< endl;
+}
+
 void BattleEffectExecutor::ExecuteToggleAura(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
 {
 	if (request.skill == nullptr || request.caster.auras == nullptr)
@@ -534,6 +584,55 @@ void BattleEffectExecutor::ExecuteAddStatFromStat(const BattleEffectTemplate& ef
 		<< " target_stat=" << targetStat << " amount=" << sourceValue << endl;
 }
 
+void BattleEffectExecutor::ExecuteApplyZocModifier(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
+{
+	BattleEffectPawnContext target = SelectTarget(effect, request);
+	if (target.zocModifiers == nullptr)
+		return;
+
+	BattleZocModifierState modifier;
+	modifier.sourceStatusKey = GetParam(effect, "status_key");
+	modifier.enableZoc = ToUpperString(GetParam(effect, "enable_zoc")) == "TRUE";
+	modifier.rangeDelta = GetIntParam(effect, "range_delta", 0);
+	modifier.reactionLimitDelta = GetIntParam(effect, "reaction_limit_delta", 0);
+	modifier.reactionSkillSlotOverride = GetIntParam(effect, "reaction_skill_slot", 0);
+
+	stringstream triggerStream(GetParam(effect, "add_triggers"));
+	string trigger;
+	while (getline(triggerStream, trigger, '|'))
+	{
+		trigger = ToUpperString(trigger);
+		if (trigger.empty() == false)
+			modifier.addTriggers.insert(trigger);
+	}
+
+	if (modifier.sourceStatusKey.empty() == false)
+	{
+		if (target.statuses == nullptr)
+			return;
+		BattleStatusState& status = (*target.statuses)[modifier.sourceStatusKey];
+		const int32 durationTurns = GetIntParam(effect, "duration_turns", -1);
+		if (durationTurns > 0)
+			status.remainingOwnerTurns = max(status.remainingOwnerTurns, durationTurns);
+		status.stacks = max(1, status.stacks);
+	}
+
+	auto existing = find_if(target.zocModifiers->begin(), target.zocModifiers->end(), [&modifier](const BattleZocModifierState& item)
+		{
+			return item.sourceStatusKey == modifier.sourceStatusKey;
+		});
+	if (existing != target.zocModifiers->end())
+		*existing = move(modifier);
+	else
+		target.zocModifiers->push_back(move(modifier));
+
+	cout << "BATTLE_ZOC_MODIFIER_APPLY pawn_id=" << target.pawnId
+		<< " status_key=" << GetParam(effect, "status_key")
+		<< " range_delta=" << GetIntParam(effect, "range_delta", 0)
+		<< " reaction_limit_delta=" << GetIntParam(effect, "reaction_limit_delta", 0)
+		<< endl;
+}
+
 int32 BattleEffectExecutor::CalculateValue(const BattleEffectTemplate& effect, const BattlePawnClassTemplate& casterTemplate,
 	const BattleEffectPawnContext& caster)
 {
@@ -700,4 +799,41 @@ double BattleEffectExecutor::GetDoubleParam(const BattleEffectTemplate& effect, 
 	{
 		return fallback;
 	}
+}
+
+bool BattleEffectExecutor::RollDizzyResistance(const BattleEffectPawnContext& target) const
+{
+	const BattlePawnClassTemplate* targetTemplate = GBattleTemplates.GetPawnClassTemplate(target.pawnClass);
+	if (targetTemplate == nullptr)
+		return false;
+
+	const int32 will = GetStatValue(*targetTemplate, &target, "WILL");
+	double moraleRatio = 0.0;
+	if (target.resources != nullptr && target.maxResources != nullptr)
+	{
+		auto moraleIt = target.resources->find(Protocol::BATTLE_RESOURCE_TYPE_MORALE);
+		auto maxMoraleIt = target.maxResources->find(Protocol::BATTLE_RESOURCE_TYPE_MORALE);
+		if (moraleIt != target.resources->end() && maxMoraleIt != target.maxResources->end() && maxMoraleIt->second > 0)
+			moraleRatio = static_cast<double>(moraleIt->second) / static_cast<double>(maxMoraleIt->second);
+	}
+
+	const int32 resistPercent = clamp(static_cast<int32>(floor(
+		BattleRules::DizzyResistBasePercent +
+		static_cast<double>(will) * BattleRules::DizzyResistWillMultiplier +
+		moraleRatio * BattleRules::DizzyResistMoraleRatioMultiplier)), 0, 100);
+
+	static random_device randomDevice;
+	static mt19937 randomGenerator(randomDevice());
+	uniform_int_distribution<int32> distribution(1, 100);
+	const int32 roll = distribution(randomGenerator);
+	const bool resisted = roll <= resistPercent;
+
+	cout << "BATTLE_DIZZY_RESIST"
+		<< " pawn_id=" << target.pawnId
+		<< " will=" << will
+		<< " morale_ratio=" << moraleRatio
+		<< " resist_percent=" << resistPercent
+		<< " roll=" << roll
+		<< endl;
+	return resisted;
 }

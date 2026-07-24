@@ -168,6 +168,8 @@ PROTOBUF_CONSTEXPR BattlePawnInfo::BattlePawnInfo(
   , /*decltype(_impl_.shield_current_)*/0
   , /*decltype(_impl_.shield_max_)*/0
   , /*decltype(_impl_.used_normal_skill_this_turn_)*/false
+  , /*decltype(_impl_.is_action_blocked_)*/false
+  , /*decltype(_impl_.zoc_reactions_used_this_turn_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct BattlePawnInfoDefaultTypeInternal {
   PROTOBUF_CONSTEXPR BattlePawnInfoDefaultTypeInternal()
@@ -196,6 +198,8 @@ PROTOBUF_CONSTEXPR BattlePawnDelta::BattlePawnDelta(
   , /*decltype(_impl_.shield_current_)*/0
   , /*decltype(_impl_.shield_max_)*/0
   , /*decltype(_impl_.used_normal_skill_this_turn_)*/false
+  , /*decltype(_impl_.is_action_blocked_)*/false
+  , /*decltype(_impl_.zoc_reactions_used_this_turn_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct BattlePawnDeltaDefaultTypeInternal {
   PROTOBUF_CONSTEXPR BattlePawnDeltaDefaultTypeInternal()
@@ -340,6 +344,8 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.shield_max_),
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.auras_),
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.used_normal_skill_this_turn_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.is_action_blocked_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnInfo, _impl_.zoc_reactions_used_this_turn_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -362,6 +368,8 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.shield_max_),
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.auras_),
   PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.used_normal_skill_this_turn_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.is_action_blocked_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattlePawnDelta, _impl_.zoc_reactions_used_this_turn_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::BattleActionLog, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -392,8 +400,8 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 55, -1, -1, sizeof(::Protocol::BattleAuraState)},
   { 63, -1, -1, sizeof(::Protocol::BattleTileInfo)},
   { 74, -1, -1, sizeof(::Protocol::BattlePawnInfo)},
-  { 103, -1, -1, sizeof(::Protocol::BattlePawnDelta)},
-  { 125, -1, -1, sizeof(::Protocol::BattleActionLog)},
+  { 105, -1, -1, sizeof(::Protocol::BattlePawnDelta)},
+  { 129, -1, -1, sizeof(::Protocol::BattleActionLog)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -432,7 +440,7 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "+\n\ttile_type\030\002 \001(\0162\030.Protocol.BattleTile"
   "Type\0225\n\014overlay_type\030\003 \001(\0162\037.Protocol.Ba"
   "ttleTileOverlayType\022\025\n\requipment_key\030\004 \001"
-  "(\t\022\037\n\027equipment_owner_pawn_id\030\005 \001(\004\"\277\005\n\016"
+  "(\t\022\037\n\027equipment_owner_pawn_id\030\005 \001(\004\"\200\006\n\016"
   "BattlePawnInfo\022\017\n\007pawn_id\030\001 \001(\004\022\020\n\010owner"
   "_id\030\002 \001(\004\022\'\n\npawn_class\030\003 \001(\0162\023.Protocol"
   ".PawnClass\022#\n\005axial\030\004 \001(\0132\024.Protocol.Axi"
@@ -450,35 +458,38 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "sState\022\026\n\016shield_current\030\026 \001(\005\022\022\n\nshield"
   "_max\030\027 \001(\005\022(\n\005auras\030\030 \003(\0132\031.Protocol.Bat"
   "tleAuraState\022#\n\033used_normal_skill_this_t"
-  "urn\030\031 \001(\010J\004\010\016\020\017J\004\010\017\020\020\"\373\003\n\017BattlePawnDelt"
-  "a\022\017\n\007pawn_id\030\001 \001(\004\022\n\n\002hp\030\002 \001(\005\022\r\n\005armor\030"
-  "\003 \001(\005\022\022\n\ncurrent_ap\030\004 \001(\005\022\020\n\010can_move\030\005 "
-  "\001(\010\022!\n\031used_sub_action_this_turn\030\006 \001(\010\022\025"
-  "\n\rused_ultimate\030\007 \001(\010\022\017\n\007is_dead\030\010 \001(\010\0229"
-  "\n\020facing_direction\030\t \001(\0162\037.Protocol.Batt"
-  "leFacingDirection\0220\n\tresources\030\013 \003(\0132\035.P"
-  "rotocol.BattleResourceState\022.\n\010barriers\030"
-  "\014 \003(\0132\034.Protocol.BattleBarrierState\022-\n\010s"
-  "tatuses\030\r \003(\0132\033.Protocol.BattleStatusSta"
-  "te\022\026\n\016shield_current\030\016 \001(\005\022\022\n\nshield_max"
-  "\030\017 \001(\005\022(\n\005auras\030\020 \003(\0132\031.Protocol.BattleA"
-  "uraState\022#\n\033used_normal_skill_this_turn\030"
-  "\021 \001(\010J\004\010\n\020\013\"\257\002\n\017BattleActionLog\022\030\n\020attac"
-  "ker_pawn_id\030\001 \001(\004\022\030\n\020defender_pawn_id\030\002 "
-  "\001(\004\022\022\n\nskill_slot\030\003 \001(\005\022\023\n\013action_type\030\004"
-  " \001(\t\022\016\n\006damage\030\005 \001(\005\022\023\n\013is_critical\030\006 \001("
-  "\010\022\021\n\tis_evaded\030\007 \001(\010\022\022\n\nis_guarded\030\010 \001(\010"
-  "\022\032\n\022is_perfect_guarded\030\t \001(\010\022\022\n\nis_count"
-  "er\030\n \001(\010\022\020\n\010hp_after\030\013 \001(\005\022\023\n\013armor_afte"
-  "r\030\014 \001(\005\022\026\n\016is_back_attack\030\r \001(\010J\004\010\016\020\017b\006p"
-  "roto3"
+  "urn\030\031 \001(\010\022\031\n\021is_action_blocked\030\032 \001(\010\022$\n\034"
+  "zoc_reactions_used_this_turn\030\033 \001(\005J\004\010\016\020\017"
+  "J\004\010\017\020\020\"\274\004\n\017BattlePawnDelta\022\017\n\007pawn_id\030\001 "
+  "\001(\004\022\n\n\002hp\030\002 \001(\005\022\r\n\005armor\030\003 \001(\005\022\022\n\ncurren"
+  "t_ap\030\004 \001(\005\022\020\n\010can_move\030\005 \001(\010\022!\n\031used_sub"
+  "_action_this_turn\030\006 \001(\010\022\025\n\rused_ultimate"
+  "\030\007 \001(\010\022\017\n\007is_dead\030\010 \001(\010\0229\n\020facing_direct"
+  "ion\030\t \001(\0162\037.Protocol.BattleFacingDirecti"
+  "on\0220\n\tresources\030\013 \003(\0132\035.Protocol.BattleR"
+  "esourceState\022.\n\010barriers\030\014 \003(\0132\034.Protoco"
+  "l.BattleBarrierState\022-\n\010statuses\030\r \003(\0132\033"
+  ".Protocol.BattleStatusState\022\026\n\016shield_cu"
+  "rrent\030\016 \001(\005\022\022\n\nshield_max\030\017 \001(\005\022(\n\005auras"
+  "\030\020 \003(\0132\031.Protocol.BattleAuraState\022#\n\033use"
+  "d_normal_skill_this_turn\030\021 \001(\010\022\031\n\021is_act"
+  "ion_blocked\030\022 \001(\010\022$\n\034zoc_reactions_used_"
+  "this_turn\030\023 \001(\005J\004\010\n\020\013\"\257\002\n\017BattleActionLo"
+  "g\022\030\n\020attacker_pawn_id\030\001 \001(\004\022\030\n\020defender_"
+  "pawn_id\030\002 \001(\004\022\022\n\nskill_slot\030\003 \001(\005\022\023\n\013act"
+  "ion_type\030\004 \001(\t\022\016\n\006damage\030\005 \001(\005\022\023\n\013is_cri"
+  "tical\030\006 \001(\010\022\021\n\tis_evaded\030\007 \001(\010\022\022\n\nis_gua"
+  "rded\030\010 \001(\010\022\032\n\022is_perfect_guarded\030\t \001(\010\022\022"
+  "\n\nis_counter\030\n \001(\010\022\020\n\010hp_after\030\013 \001(\005\022\023\n\013"
+  "armor_after\030\014 \001(\005\022\026\n\016is_back_attack\030\r \001("
+  "\010J\004\010\016\020\017b\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_Struct_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Struct_2eproto = {
-    false, false, 2405, descriptor_table_protodef_Struct_2eproto,
+    false, false, 2535, descriptor_table_protodef_Struct_2eproto,
     "Struct.proto",
     &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 11,
     schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
@@ -2617,6 +2628,8 @@ BattlePawnInfo::BattlePawnInfo(const BattlePawnInfo& from)
     , decltype(_impl_.shield_current_){}
     , decltype(_impl_.shield_max_){}
     , decltype(_impl_.used_normal_skill_this_turn_){}
+    , decltype(_impl_.is_action_blocked_){}
+    , decltype(_impl_.zoc_reactions_used_this_turn_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -2624,8 +2637,8 @@ BattlePawnInfo::BattlePawnInfo(const BattlePawnInfo& from)
     _this->_impl_.axial_ = new ::Protocol::AxialCoord(*from._impl_.axial_);
   }
   ::memcpy(&_impl_.pawn_id_, &from._impl_.pawn_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.used_normal_skill_this_turn_) -
-    reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.used_normal_skill_this_turn_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.zoc_reactions_used_this_turn_) -
+    reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.zoc_reactions_used_this_turn_));
   // @@protoc_insertion_point(copy_constructor:Protocol.BattlePawnInfo)
 }
 
@@ -2657,6 +2670,8 @@ inline void BattlePawnInfo::SharedCtor(
     , decltype(_impl_.shield_current_){0}
     , decltype(_impl_.shield_max_){0}
     , decltype(_impl_.used_normal_skill_this_turn_){false}
+    , decltype(_impl_.is_action_blocked_){false}
+    , decltype(_impl_.zoc_reactions_used_this_turn_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -2698,8 +2713,8 @@ void BattlePawnInfo::Clear() {
   }
   _impl_.axial_ = nullptr;
   ::memset(&_impl_.pawn_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.used_normal_skill_this_turn_) -
-      reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.used_normal_skill_this_turn_));
+      reinterpret_cast<char*>(&_impl_.zoc_reactions_used_this_turn_) -
+      reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.zoc_reactions_used_this_turn_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2916,6 +2931,22 @@ const char* BattlePawnInfo::_InternalParse(const char* ptr, ::_pbi::ParseContext
         } else
           goto handle_unusual;
         continue;
+      // bool is_action_blocked = 26;
+      case 26:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 208)) {
+          _impl_.is_action_blocked_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 zoc_reactions_used_this_turn = 27;
+      case 27:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 216)) {
+          _impl_.zoc_reactions_used_this_turn_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -3095,6 +3126,18 @@ uint8_t* BattlePawnInfo::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteBoolToArray(25, this->_internal_used_normal_skill_this_turn(), target);
   }
 
+  // bool is_action_blocked = 26;
+  if (this->_internal_is_action_blocked() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(26, this->_internal_is_action_blocked(), target);
+  }
+
+  // int32 zoc_reactions_used_this_turn = 27;
+  if (this->_internal_zoc_reactions_used_this_turn() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(27, this->_internal_zoc_reactions_used_this_turn(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3243,6 +3286,18 @@ size_t BattlePawnInfo::ByteSizeLong() const {
     total_size += 2 + 1;
   }
 
+  // bool is_action_blocked = 26;
+  if (this->_internal_is_action_blocked() != 0) {
+    total_size += 2 + 1;
+  }
+
+  // int32 zoc_reactions_used_this_turn = 27;
+  if (this->_internal_zoc_reactions_used_this_turn() != 0) {
+    total_size += 2 +
+      ::_pbi::WireFormatLite::Int32Size(
+        this->_internal_zoc_reactions_used_this_turn());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -3323,6 +3378,12 @@ void BattlePawnInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const :
   if (from._internal_used_normal_skill_this_turn() != 0) {
     _this->_internal_set_used_normal_skill_this_turn(from._internal_used_normal_skill_this_turn());
   }
+  if (from._internal_is_action_blocked() != 0) {
+    _this->_internal_set_is_action_blocked(from._internal_is_action_blocked());
+  }
+  if (from._internal_zoc_reactions_used_this_turn() != 0) {
+    _this->_internal_set_zoc_reactions_used_this_turn(from._internal_zoc_reactions_used_this_turn());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -3345,8 +3406,8 @@ void BattlePawnInfo::InternalSwap(BattlePawnInfo* other) {
   _impl_.statuses_.InternalSwap(&other->_impl_.statuses_);
   _impl_.auras_.InternalSwap(&other->_impl_.auras_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(BattlePawnInfo, _impl_.used_normal_skill_this_turn_)
-      + sizeof(BattlePawnInfo::_impl_.used_normal_skill_this_turn_)
+      PROTOBUF_FIELD_OFFSET(BattlePawnInfo, _impl_.zoc_reactions_used_this_turn_)
+      + sizeof(BattlePawnInfo::_impl_.zoc_reactions_used_this_turn_)
       - PROTOBUF_FIELD_OFFSET(BattlePawnInfo, _impl_.axial_)>(
           reinterpret_cast<char*>(&_impl_.axial_),
           reinterpret_cast<char*>(&other->_impl_.axial_));
@@ -3390,12 +3451,14 @@ BattlePawnDelta::BattlePawnDelta(const BattlePawnDelta& from)
     , decltype(_impl_.shield_current_){}
     , decltype(_impl_.shield_max_){}
     , decltype(_impl_.used_normal_skill_this_turn_){}
+    , decltype(_impl_.is_action_blocked_){}
+    , decltype(_impl_.zoc_reactions_used_this_turn_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&_impl_.pawn_id_, &from._impl_.pawn_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.used_normal_skill_this_turn_) -
-    reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.used_normal_skill_this_turn_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.zoc_reactions_used_this_turn_) -
+    reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.zoc_reactions_used_this_turn_));
   // @@protoc_insertion_point(copy_constructor:Protocol.BattlePawnDelta)
 }
 
@@ -3420,6 +3483,8 @@ inline void BattlePawnDelta::SharedCtor(
     , decltype(_impl_.shield_current_){0}
     , decltype(_impl_.shield_max_){0}
     , decltype(_impl_.used_normal_skill_this_turn_){false}
+    , decltype(_impl_.is_action_blocked_){false}
+    , decltype(_impl_.zoc_reactions_used_this_turn_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -3456,8 +3521,8 @@ void BattlePawnDelta::Clear() {
   _impl_.statuses_.Clear();
   _impl_.auras_.Clear();
   ::memset(&_impl_.pawn_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.used_normal_skill_this_turn_) -
-      reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.used_normal_skill_this_turn_));
+      reinterpret_cast<char*>(&_impl_.zoc_reactions_used_this_turn_) -
+      reinterpret_cast<char*>(&_impl_.pawn_id_)) + sizeof(_impl_.zoc_reactions_used_this_turn_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -3616,6 +3681,22 @@ const char* BattlePawnDelta::_InternalParse(const char* ptr, ::_pbi::ParseContex
         } else
           goto handle_unusual;
         continue;
+      // bool is_action_blocked = 18;
+      case 18:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 144)) {
+          _impl_.is_action_blocked_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 zoc_reactions_used_this_turn = 19;
+      case 19:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 152)) {
+          _impl_.zoc_reactions_used_this_turn_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -3750,6 +3831,18 @@ uint8_t* BattlePawnDelta::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteBoolToArray(17, this->_internal_used_normal_skill_this_turn(), target);
   }
 
+  // bool is_action_blocked = 18;
+  if (this->_internal_is_action_blocked() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(18, this->_internal_is_action_blocked(), target);
+  }
+
+  // int32 zoc_reactions_used_this_turn = 19;
+  if (this->_internal_zoc_reactions_used_this_turn() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(19, this->_internal_zoc_reactions_used_this_turn(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3855,6 +3948,18 @@ size_t BattlePawnDelta::ByteSizeLong() const {
     total_size += 2 + 1;
   }
 
+  // bool is_action_blocked = 18;
+  if (this->_internal_is_action_blocked() != 0) {
+    total_size += 2 + 1;
+  }
+
+  // int32 zoc_reactions_used_this_turn = 19;
+  if (this->_internal_zoc_reactions_used_this_turn() != 0) {
+    total_size += 2 +
+      ::_pbi::WireFormatLite::Int32Size(
+        this->_internal_zoc_reactions_used_this_turn());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -3913,6 +4018,12 @@ void BattlePawnDelta::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const 
   if (from._internal_used_normal_skill_this_turn() != 0) {
     _this->_internal_set_used_normal_skill_this_turn(from._internal_used_normal_skill_this_turn());
   }
+  if (from._internal_is_action_blocked() != 0) {
+    _this->_internal_set_is_action_blocked(from._internal_is_action_blocked());
+  }
+  if (from._internal_zoc_reactions_used_this_turn() != 0) {
+    _this->_internal_set_zoc_reactions_used_this_turn(from._internal_zoc_reactions_used_this_turn());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -3935,8 +4046,8 @@ void BattlePawnDelta::InternalSwap(BattlePawnDelta* other) {
   _impl_.statuses_.InternalSwap(&other->_impl_.statuses_);
   _impl_.auras_.InternalSwap(&other->_impl_.auras_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(BattlePawnDelta, _impl_.used_normal_skill_this_turn_)
-      + sizeof(BattlePawnDelta::_impl_.used_normal_skill_this_turn_)
+      PROTOBUF_FIELD_OFFSET(BattlePawnDelta, _impl_.zoc_reactions_used_this_turn_)
+      + sizeof(BattlePawnDelta::_impl_.zoc_reactions_used_this_turn_)
       - PROTOBUF_FIELD_OFFSET(BattlePawnDelta, _impl_.pawn_id_)>(
           reinterpret_cast<char*>(&_impl_.pawn_id_),
           reinterpret_cast<char*>(&other->_impl_.pawn_id_));

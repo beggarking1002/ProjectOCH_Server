@@ -23,6 +23,8 @@ public:
 
 	bool CanMove() const;
 	void MarkMoved();
+	bool CanUseZocReaction(int32 reactionLimitPerTurn) const;
+	void MarkZocReactionUsed();
 	bool CanUseSkillSlot(int32 skillSlot, string& reason) const;
 	void MarkSkillSlotUsed(int32 skillSlot);
 	void ResetTurnActionUsage();
@@ -43,9 +45,11 @@ public:
 	int32 maxArmor = 0;
 	int32 currentAp = 0;
 	bool hasMovedThisTurn = false;
+	int32 zocReactionsUsedThisTurn = 0;
 	bool usedNormalSkillThisTurn = false;
 	bool usedSubActionThisTurn = false;
 	bool usedUltimate = false;
+	bool isActionBlockedThisTurn = false;
 	bool isDead = false;
 	Protocol::BattleFacingDirection facingDirection = Protocol::BATTLE_FACING_DIRECTION_Q_POS;
 	Protocol::BattlePawnRole role = Protocol::BATTLE_PAWN_ROLE_NONE;
@@ -55,6 +59,7 @@ public:
 	unordered_map<string, BattleStatusState> statuses;
 	unordered_map<string, int32> statBonuses;
 	unordered_map<string, BattleAuraState> auras;
+	vector<BattleZocModifierState> zocModifiers;
 };
 
 using BattlePawnRef = shared_ptr<BattlePawn>;

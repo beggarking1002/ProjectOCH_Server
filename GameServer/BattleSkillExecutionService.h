@@ -35,6 +35,7 @@ struct BattleSkillActionResult
 	vector<Protocol::BattleActionLog> logs;
 	vector<Protocol::BattleTileInfo> tileDeltas;
 	vector<const BattlePawn*> extraChangedPawns;
+	vector<BattlePawn*> affectedTargets;
 	vector<BattlePawn*> deathCandidates;
 };
 

@@ -206,12 +206,13 @@ enum BattlePawnRole : int {
   BATTLE_PAWN_ROLE_TANKER = 1,
   BATTLE_PAWN_ROLE_MELEE = 2,
   BATTLE_PAWN_ROLE_RANGED = 3,
+  BATTLE_PAWN_ROLE_SPEAR = 4,
   BattlePawnRole_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   BattlePawnRole_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool BattlePawnRole_IsValid(int value);
 constexpr BattlePawnRole BattlePawnRole_MIN = BATTLE_PAWN_ROLE_NONE;
-constexpr BattlePawnRole BattlePawnRole_MAX = BATTLE_PAWN_ROLE_RANGED;
+constexpr BattlePawnRole BattlePawnRole_MAX = BATTLE_PAWN_ROLE_SPEAR;
 constexpr int BattlePawnRole_ARRAYSIZE = BattlePawnRole_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattlePawnRole_descriptor();
@@ -232,12 +233,13 @@ enum BattleResourceType : int {
   BATTLE_RESOURCE_TYPE_NONE = 0,
   BATTLE_RESOURCE_TYPE_COLD = 1,
   BATTLE_RESOURCE_TYPE_HEAT = 2,
+  BATTLE_RESOURCE_TYPE_MORALE = 3,
   BattleResourceType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   BattleResourceType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool BattleResourceType_IsValid(int value);
 constexpr BattleResourceType BattleResourceType_MIN = BATTLE_RESOURCE_TYPE_NONE;
-constexpr BattleResourceType BattleResourceType_MAX = BATTLE_RESOURCE_TYPE_HEAT;
+constexpr BattleResourceType BattleResourceType_MAX = BATTLE_RESOURCE_TYPE_MORALE;
 constexpr int BattleResourceType_ARRAYSIZE = BattleResourceType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* BattleResourceType_descriptor();

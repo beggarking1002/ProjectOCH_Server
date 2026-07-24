@@ -62,23 +62,25 @@ const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "NG_DIRECTION_Q_NEG_R_POS\020\005\022!\n\035BATTLE_FAC"
   "ING_DIRECTION_R_POS\020\006\022!\n\035BATTLE_FACING_D"
   "IRECTION_RIGHT\020\001\022 \n\034BATTLE_FACING_DIRECT"
-  "ION_LEFT\020\004\032\002\020\001*\201\001\n\016BattlePawnRole\022\031\n\025BAT"
+  "ION_LEFT\020\004\032\002\020\001*\235\001\n\016BattlePawnRole\022\031\n\025BAT"
   "TLE_PAWN_ROLE_NONE\020\000\022\033\n\027BATTLE_PAWN_ROLE"
   "_TANKER\020\001\022\032\n\026BATTLE_PAWN_ROLE_MELEE\020\002\022\033\n"
-  "\027BATTLE_PAWN_ROLE_RANGED\020\003*q\n\022BattleReso"
-  "urceType\022\035\n\031BATTLE_RESOURCE_TYPE_NONE\020\000\022"
-  "\035\n\031BATTLE_RESOURCE_TYPE_COLD\020\001\022\035\n\031BATTLE"
-  "_RESOURCE_TYPE_HEAT\020\002*d\n\016BattleTileType\022"
-  "\031\n\025BATTLE_TILE_TYPE_NONE\020\000\022\033\n\027BATTLE_TIL"
-  "E_TYPE_NORMAL\020\001\022\032\n\026BATTLE_TILE_TYPE_WATE"
-  "R\020\002*\177\n\025BattleTileOverlayType\022!\n\035BATTLE_T"
-  "ILE_OVERLAY_TYPE_NONE\020\000\022 \n\034BATTLE_TILE_O"
-  "VERLAY_TYPE_ICE\020\001\022!\n\035BATTLE_TILE_OVERLAY"
-  "_TYPE_FIRE\020\002b\006proto3"
+  "\027BATTLE_PAWN_ROLE_RANGED\020\003\022\032\n\026BATTLE_PAW"
+  "N_ROLE_SPEAR\020\004*\222\001\n\022BattleResourceType\022\035\n"
+  "\031BATTLE_RESOURCE_TYPE_NONE\020\000\022\035\n\031BATTLE_R"
+  "ESOURCE_TYPE_COLD\020\001\022\035\n\031BATTLE_RESOURCE_T"
+  "YPE_HEAT\020\002\022\037\n\033BATTLE_RESOURCE_TYPE_MORAL"
+  "E\020\003*d\n\016BattleTileType\022\031\n\025BATTLE_TILE_TYP"
+  "E_NONE\020\000\022\033\n\027BATTLE_TILE_TYPE_NORMAL\020\001\022\032\n"
+  "\026BATTLE_TILE_TYPE_WATER\020\002*\177\n\025BattleTileO"
+  "verlayType\022!\n\035BATTLE_TILE_OVERLAY_TYPE_N"
+  "ONE\020\000\022 \n\034BATTLE_TILE_OVERLAY_TYPE_ICE\020\001\022"
+  "!\n\035BATTLE_TILE_OVERLAY_TYPE_FIRE\020\002b\006prot"
+  "o3"
   ;
 static ::_pbi::once_flag descriptor_table_Enum_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Enum_2eproto = {
-    false, false, 1820, descriptor_table_protodef_Enum_2eproto,
+    false, false, 1882, descriptor_table_protodef_Enum_2eproto,
     "Enum.proto",
     &descriptor_table_Enum_2eproto_once, nullptr, 0, 0,
     schemas, file_default_instances, TableStruct_Enum_2eproto::offsets,
@@ -199,6 +201,7 @@ bool BattlePawnRole_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -214,6 +217,7 @@ bool BattleResourceType_IsValid(int value) {
     case 0:
     case 1:
     case 2:
+    case 3:
       return true;
     default:
       return false;

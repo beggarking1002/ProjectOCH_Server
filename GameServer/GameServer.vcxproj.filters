@@ -4,6 +4,7 @@
     <ClCompile Include="BattleEffectExecutor.cpp" />
     <ClCompile Include="BattleSkillExecutionService.cpp" />
     <ClCompile Include="BattleSkillResolver.cpp" />
+    <ClCompile Include="BattleZocService.cpp" />
     <ClCompile Include="BattleTemplateManager.cpp" />
     <ClCompile Include="BattleRoom.cpp" />
     <ClCompile Include="Creature.cpp" />
@@ -46,6 +47,8 @@
     <ClInclude Include="BattleEffectExecutor.h" />
     <ClInclude Include="BattleSkillExecutionService.h" />
     <ClInclude Include="BattleSkillResolver.h" />
+    <ClInclude Include="BattleZocService.h" />
+	<ClInclude Include="BattleRules.h" />
     <ClInclude Include="BattleTemplateManager.h" />
     <ClInclude Include="BattleRoom.h" />
     <ClInclude Include="Creature.h" />

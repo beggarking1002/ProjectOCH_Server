@@ -4,6 +4,7 @@
 #include "BattlePawn.h"
 #include "BattleSkillResolver.h"
 #include "BattleSkillExecutionService.h"
+#include "BattleZocService.h"
 
 using BattleRoomRef = shared_ptr<class BattleRoom>;
 
@@ -120,6 +121,13 @@ private:
 	bool RollEvade(const BattlePawn& attacker, BattlePawn& defender);
 	void UpdateFacingByMove(BattlePawn& pawn, const Protocol::AxialCoord& start, const Protocol::AxialCoord& target);
 	bool IsBackAttack(const BattlePawn& attacker, const BattlePawn& defender);
+	bool TryExecuteZocAttack(BattleState& battle, BattlePawn& zocOwner, BattlePawn& movingPawn,
+		vector<Protocol::BattleActionLog>& logs, vector<Protocol::BattleTileInfo>& tileDeltas,
+		vector<const BattlePawn*>& extraChangedPawns, vector<BattlePawn*>& deathCandidates);
+	void TryExecuteAllyAttackZocReactions(BattleState& battle, BattlePawn& attacker,
+		const vector<BattlePawn*>& attackedPawns, vector<Protocol::BattleActionLog>& logs,
+		vector<Protocol::BattleTileInfo>& tileDeltas, vector<const BattlePawn*>& extraChangedPawns,
+		vector<BattlePawn*>& deathCandidates);
 	bool TryExecuteCounterattack(BattleState& battle, BattlePawn& defender, BattlePawn& attacker,
 		vector<Protocol::BattleActionLog>& logs, vector<Protocol::BattleTileInfo>& tileDeltas,
 		vector<const BattlePawn*>& extraChangedPawns, vector<BattlePawn*>& deathCandidates, int32 counterChainDepth = 0);
@@ -130,7 +138,8 @@ private:
 	void SendEnterBattle(GameSessionRef session, Protocol::S_ENTER_BATTLE& pkt);
 	void SendBattleMoveResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
 		const Protocol::AxialCoord& start, const Protocol::AxialCoord& target, uint64 nextTurnPawnId,
-		Protocol::BattleMoveResult result, const string& reason, const BattlePawn* pawn = nullptr);
+		Protocol::BattleMoveResult result, const string& reason, const BattlePawn* pawn = nullptr,
+		const vector<Protocol::BattleActionLog>& logs = {}, const vector<const BattlePawn*>& extraPawns = {});
 	void SendBattleSkillResult(GameSessionRef session, bool success, uint64 battleId, uint64 casterPawnId,
 		int32 skillSlot, uint64 targetPawnId, const Protocol::AxialCoord& targetAxial,
 	int32 damage, int32 targetHp, int32 targetArmor, uint64 nextTurnPawnId, const string& reason,
@@ -151,6 +160,7 @@ private:
 	uint64 _barrierIdGenerator = 1;
 	BattleSkillResolver _skillResolver;
 	BattleSkillExecutionService _skillExecutionService{ _skillResolver };
+	BattleZocService _zocService;
 	unordered_map<uint64, BattleState> _battles;
 	unordered_map<uint64, uint64> _battleByOwnerId;
 };

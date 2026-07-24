@@ -1661,6 +1661,8 @@ class BattlePawnInfo final :
     kShieldCurrentFieldNumber = 22,
     kShieldMaxFieldNumber = 23,
     kUsedNormalSkillThisTurnFieldNumber = 25,
+    kIsActionBlockedFieldNumber = 26,
+    kZocReactionsUsedThisTurnFieldNumber = 27,
   };
   // repeated .Protocol.BattleResourceState resources = 19;
   int resources_size() const;
@@ -1914,6 +1916,24 @@ class BattlePawnInfo final :
   void _internal_set_used_normal_skill_this_turn(bool value);
   public:
 
+  // bool is_action_blocked = 26;
+  void clear_is_action_blocked();
+  bool is_action_blocked() const;
+  void set_is_action_blocked(bool value);
+  private:
+  bool _internal_is_action_blocked() const;
+  void _internal_set_is_action_blocked(bool value);
+  public:
+
+  // int32 zoc_reactions_used_this_turn = 27;
+  void clear_zoc_reactions_used_this_turn();
+  int32_t zoc_reactions_used_this_turn() const;
+  void set_zoc_reactions_used_this_turn(int32_t value);
+  private:
+  int32_t _internal_zoc_reactions_used_this_turn() const;
+  void _internal_set_zoc_reactions_used_this_turn(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.BattlePawnInfo)
  private:
   class _Internal;
@@ -1945,6 +1965,8 @@ class BattlePawnInfo final :
     int32_t shield_current_;
     int32_t shield_max_;
     bool used_normal_skill_this_turn_;
+    bool is_action_blocked_;
+    int32_t zoc_reactions_used_this_turn_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2089,6 +2111,8 @@ class BattlePawnDelta final :
     kShieldCurrentFieldNumber = 14,
     kShieldMaxFieldNumber = 15,
     kUsedNormalSkillThisTurnFieldNumber = 17,
+    kIsActionBlockedFieldNumber = 18,
+    kZocReactionsUsedThisTurnFieldNumber = 19,
   };
   // repeated .Protocol.BattleResourceState resources = 11;
   int resources_size() const;
@@ -2270,6 +2294,24 @@ class BattlePawnDelta final :
   void _internal_set_used_normal_skill_this_turn(bool value);
   public:
 
+  // bool is_action_blocked = 18;
+  void clear_is_action_blocked();
+  bool is_action_blocked() const;
+  void set_is_action_blocked(bool value);
+  private:
+  bool _internal_is_action_blocked() const;
+  void _internal_set_is_action_blocked(bool value);
+  public:
+
+  // int32 zoc_reactions_used_this_turn = 19;
+  void clear_zoc_reactions_used_this_turn();
+  int32_t zoc_reactions_used_this_turn() const;
+  void set_zoc_reactions_used_this_turn(int32_t value);
+  private:
+  int32_t _internal_zoc_reactions_used_this_turn() const;
+  void _internal_set_zoc_reactions_used_this_turn(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.BattlePawnDelta)
  private:
   class _Internal;
@@ -2294,6 +2336,8 @@ class BattlePawnDelta final :
     int32_t shield_current_;
     int32_t shield_max_;
     bool used_normal_skill_this_turn_;
+    bool is_action_blocked_;
+    int32_t zoc_reactions_used_this_turn_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -4017,6 +4061,46 @@ inline void BattlePawnInfo::set_used_normal_skill_this_turn(bool value) {
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.used_normal_skill_this_turn)
 }
 
+// bool is_action_blocked = 26;
+inline void BattlePawnInfo::clear_is_action_blocked() {
+  _impl_.is_action_blocked_ = false;
+}
+inline bool BattlePawnInfo::_internal_is_action_blocked() const {
+  return _impl_.is_action_blocked_;
+}
+inline bool BattlePawnInfo::is_action_blocked() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.is_action_blocked)
+  return _internal_is_action_blocked();
+}
+inline void BattlePawnInfo::_internal_set_is_action_blocked(bool value) {
+  
+  _impl_.is_action_blocked_ = value;
+}
+inline void BattlePawnInfo::set_is_action_blocked(bool value) {
+  _internal_set_is_action_blocked(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.is_action_blocked)
+}
+
+// int32 zoc_reactions_used_this_turn = 27;
+inline void BattlePawnInfo::clear_zoc_reactions_used_this_turn() {
+  _impl_.zoc_reactions_used_this_turn_ = 0;
+}
+inline int32_t BattlePawnInfo::_internal_zoc_reactions_used_this_turn() const {
+  return _impl_.zoc_reactions_used_this_turn_;
+}
+inline int32_t BattlePawnInfo::zoc_reactions_used_this_turn() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.zoc_reactions_used_this_turn)
+  return _internal_zoc_reactions_used_this_turn();
+}
+inline void BattlePawnInfo::_internal_set_zoc_reactions_used_this_turn(int32_t value) {
+  
+  _impl_.zoc_reactions_used_this_turn_ = value;
+}
+inline void BattlePawnInfo::set_zoc_reactions_used_this_turn(int32_t value) {
+  _internal_set_zoc_reactions_used_this_turn(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.zoc_reactions_used_this_turn)
+}
+
 // -------------------------------------------------------------------
 
 // BattlePawnDelta
@@ -4419,6 +4503,46 @@ inline void BattlePawnDelta::_internal_set_used_normal_skill_this_turn(bool valu
 inline void BattlePawnDelta::set_used_normal_skill_this_turn(bool value) {
   _internal_set_used_normal_skill_this_turn(value);
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.used_normal_skill_this_turn)
+}
+
+// bool is_action_blocked = 18;
+inline void BattlePawnDelta::clear_is_action_blocked() {
+  _impl_.is_action_blocked_ = false;
+}
+inline bool BattlePawnDelta::_internal_is_action_blocked() const {
+  return _impl_.is_action_blocked_;
+}
+inline bool BattlePawnDelta::is_action_blocked() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnDelta.is_action_blocked)
+  return _internal_is_action_blocked();
+}
+inline void BattlePawnDelta::_internal_set_is_action_blocked(bool value) {
+  
+  _impl_.is_action_blocked_ = value;
+}
+inline void BattlePawnDelta::set_is_action_blocked(bool value) {
+  _internal_set_is_action_blocked(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.is_action_blocked)
+}
+
+// int32 zoc_reactions_used_this_turn = 19;
+inline void BattlePawnDelta::clear_zoc_reactions_used_this_turn() {
+  _impl_.zoc_reactions_used_this_turn_ = 0;
+}
+inline int32_t BattlePawnDelta::_internal_zoc_reactions_used_this_turn() const {
+  return _impl_.zoc_reactions_used_this_turn_;
+}
+inline int32_t BattlePawnDelta::zoc_reactions_used_this_turn() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattlePawnDelta.zoc_reactions_used_this_turn)
+  return _internal_zoc_reactions_used_this_turn();
+}
+inline void BattlePawnDelta::_internal_set_zoc_reactions_used_this_turn(int32_t value) {
+  
+  _impl_.zoc_reactions_used_this_turn_ = value;
+}
+inline void BattlePawnDelta::set_zoc_reactions_used_this_turn(int32_t value) {
+  _internal_set_zoc_reactions_used_this_turn(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.zoc_reactions_used_this_turn)
 }
 
 // -------------------------------------------------------------------

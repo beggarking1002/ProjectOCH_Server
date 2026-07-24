@@ -2,6 +2,8 @@
 #include "BattleTemplateManager.h"
 #include "BattleCoordinate.h"
 
+#include <sstream>
+
 #include <algorithm>
 #include <cmath>
 #include <cctype>
@@ -173,6 +175,7 @@ bool BattleTemplateManager::Load()
 		LoadBattleSkillEffect(ResolveDataPath("BattleSkillEffect.csv")) &&
 		LoadBattleSkillEffectParam(ResolveDataPath("BattleSkillEffectParam.csv")) &&
 		LoadBattleMapTile(ResolveDataPath("BattleMapTile.csv")) &&
+		LoadBattleZoc(ResolveDataPath("BattleZoc.csv")) &&
 		ValidateTemplates();
 
 	_loaded = success;
@@ -269,6 +272,15 @@ const vector<BattleMapTileTemplate>* BattleTemplateManager::GetBattleMapTiles(co
 
 	auto it = _battleMapTilesByMapId.find(mapId);
 	return it != _battleMapTilesByMapId.end() ? &it->second : nullptr;
+}
+
+const BattleZocTemplate* BattleTemplateManager::GetZocTemplate(Protocol::PawnClass pawnClass)
+{
+	if (Load() == false)
+		return nullptr;
+
+	auto it = _zocTemplates.find(pawnClass);
+	return it != _zocTemplates.end() ? &it->second : nullptr;
 }
 
 bool BattleTemplateManager::TryParseBattleResourceType(const string& key, Protocol::BattleResourceType& resourceType) const
@@ -526,6 +538,53 @@ bool BattleTemplateManager::LoadBattleMapTile(const string& path)
 		}
 
 		_battleMapTilesByMapId[tile.mapId].push_back(tile);
+	}
+
+	return true;
+}
+
+bool BattleTemplateManager::LoadBattleZoc(const string& path)
+{
+	vector<vector<string>> rows;
+	if (ReadCsv(path, rows) == false || rows.size() < 2)
+	{
+		cout << "[BattleTemplateManager] Failed to read BattleZoc: " << path << endl;
+		return false;
+	}
+
+	const unordered_map<string, size_t> header = BuildHeader(rows[0]);
+	for (size_t i = 2; i < rows.size(); ++i)
+	{
+		const string classKey = Cell(rows[i], header, "ClassKey");
+		if (classKey.empty())
+			continue;
+
+		auto classIt = _classKeyToPawnClass.find(classKey);
+		if (classIt == _classKeyToPawnClass.end())
+		{
+			cout << "[BattleTemplateManager] BattleZoc has unknown ClassKey: " << classKey << endl;
+			return false;
+		}
+
+		BattleZocTemplate profile;
+		profile.pawnClass = classIt->second;
+		profile.enabled = ToBool(Cell(rows[i], header, "Enabled"));
+		profile.range = max(0, ToInt(Cell(rows[i], header, "Range")));
+		profile.frontArcWidth = clamp(ToInt(Cell(rows[i], header, "FrontArcWidth")), 1, 6);
+		profile.reactionLimitPerTurn = max(0, ToInt(Cell(rows[i], header, "ReactionLimitPerTurn")));
+		profile.reactionSkillSlot = max(1, ToInt(Cell(rows[i], header, "ReactionSkillSlot")));
+
+		string triggerList = Cell(rows[i], header, "Triggers");
+		stringstream triggerStream(triggerList);
+		string trigger;
+		while (getline(triggerStream, trigger, '|'))
+		{
+			trigger = Trim(trigger);
+			if (trigger.empty() == false)
+				profile.triggers.insert(trigger);
+		}
+
+		_zocTemplates[profile.pawnClass] = move(profile);
 	}
 
 	return true;
