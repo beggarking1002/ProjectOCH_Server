@@ -316,21 +316,21 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 	battle.stateVersion++;
 
 	SendBattleMoveResult(session, true, battle.battleId, pawn->pawnId, start, pawn->axial, battle.currentTurnPawnId,
-		Protocol::BATTLE_MOVE_RESULT_OK, "", pawn, zocLogs, zocChangedPawns);
+		Protocol::BATTLE_MOVE_RESULT_OK, "", pawn, zocLogs, zocChangedPawns, zocDeaths.empty() == false);
 	if (battle.isPvp)
 	{
 		GameSessionRef ownerSession = battle.ownerSession.lock();
 		if (ownerSession != nullptr && ownerSession != session)
 		{
 			SendBattleMoveResult(ownerSession, true, battle.battleId, pawn->pawnId, start, pawn->axial, battle.currentTurnPawnId,
-				Protocol::BATTLE_MOVE_RESULT_OK, "", pawn, zocLogs, zocChangedPawns);
+				Protocol::BATTLE_MOVE_RESULT_OK, "", pawn, zocLogs, zocChangedPawns, zocDeaths.empty() == false);
 		}
 
 		GameSessionRef opponentSession = battle.opponentSession.lock();
 		if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
 		{
 			SendBattleMoveResult(opponentSession, true, battle.battleId, pawn->pawnId, start, pawn->axial, battle.currentTurnPawnId,
-				Protocol::BATTLE_MOVE_RESULT_OK, "", pawn, zocLogs, zocChangedPawns);
+				Protocol::BATTLE_MOVE_RESULT_OK, "", pawn, zocLogs, zocChangedPawns, zocDeaths.empty() == false);
 		}
 	}
 
@@ -782,21 +782,21 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	}
 
 	SendBattleSkillResult(session, true, battle.battleId, caster->pawnId, pkt.skill_slot(), resolvedTargetPawnId,
-		targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas, extraChangedPawns);
+		targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas, extraChangedPawns, deadPawns.empty() == false);
 	if (battle.isPvp)
 	{
 		GameSessionRef ownerSession = battle.ownerSession.lock();
 		if (ownerSession != nullptr && ownerSession != session)
 		{
 			SendBattleSkillResult(ownerSession, true, battle.battleId, caster->pawnId, pkt.skill_slot(), resolvedTargetPawnId,
-				targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas, extraChangedPawns);
+				targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas, extraChangedPawns, deadPawns.empty() == false);
 		}
 
 		GameSessionRef opponentSession = battle.opponentSession.lock();
 		if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
 		{
 			SendBattleSkillResult(opponentSession, true, battle.battleId, caster->pawnId, pkt.skill_slot(), resolvedTargetPawnId,
-				targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas, extraChangedPawns);
+				targetAxial, appliedDamage, resolvedTargetHp, resolvedTargetArmor, battle.currentTurnPawnId, "", caster, target, logs, tileDeltas, extraChangedPawns, deadPawns.empty() == false);
 		}
 	}
 
@@ -868,7 +868,9 @@ void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_
 	}
 
 	ExecutePassiveTrigger(*pawn, "ON_OWNER_TURN_END");
+	const vector<uint64> turnQueueBeforeAdvance = battle.turnQueue;
 	AdvanceTurn(battle);
+	const bool turnQueueResynced = turnQueueBeforeAdvance != battle.turnQueue || battle.turnStartDeaths.empty() == false;
 	battle.stateVersion++;
 	BattlePawn* nextPawn = FindPawn(battle, battle.currentTurnPawnId);
 	vector<const BattlePawn*> extraPawns;
@@ -881,18 +883,18 @@ void BattleRoom::HandleBattleEndTurn(GameSessionRef session, Protocol::C_BATTLE_
 	}
 
 	SendBattleEndTurnResult(session, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn,
-		{}, extraPawns, battle.turnStartLogs);
+		{}, extraPawns, battle.turnStartLogs, turnQueueResynced);
 	if (battle.isPvp)
 	{
 		GameSessionRef ownerSession = battle.ownerSession.lock();
 		if (ownerSession != nullptr && ownerSession != session)
 			SendBattleEndTurnResult(ownerSession, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn,
-				{}, extraPawns, battle.turnStartLogs);
+				{}, extraPawns, battle.turnStartLogs, turnQueueResynced);
 
 		GameSessionRef opponentSession = battle.opponentSession.lock();
 		if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
 			SendBattleEndTurnResult(opponentSession, true, battle.battleId, pawn->pawnId, battle.currentTurnPawnId, "", pawn, nextPawn,
-				{}, extraPawns, battle.turnStartLogs);
+				{}, extraPawns, battle.turnStartLogs, turnQueueResynced);
 
 		for (const auto& death : battle.turnStartDeaths)
 		{
@@ -1262,12 +1264,57 @@ void BattleRoom::AppendBattleTileStates(const BattleState& battle, google::proto
 	}
 }
 
+vector<uint64> BattleRoom::BuildUpcomingTurnPawnIds(const BattleState& battle, size_t count) const
+{
+	vector<uint64> upcoming;
+	if (battle.currentTurnPawnId == 0 || battle.turnQueue.empty() || count == 0)
+		return upcoming;
+
+	auto currentIt = find(battle.turnQueue.begin(), battle.turnQueue.end(), battle.currentTurnPawnId);
+	if (currentIt == battle.turnQueue.end())
+		return upcoming;
+
+	const size_t startIndex = static_cast<size_t>(distance(battle.turnQueue.begin(), currentIt));
+	for (size_t offset = 0; upcoming.size() < count && offset < battle.turnQueue.size() * count; ++offset)
+	{
+		const uint64 pawnId = battle.turnQueue[(startIndex + offset) % battle.turnQueue.size()];
+		for (const BattlePawnRef& pawn : battle.alliedPawns)
+		{
+			if (pawn != nullptr && pawn->pawnId == pawnId && pawn->isDead == false && pawn->hp > 0)
+			{
+				upcoming.push_back(pawnId);
+				break;
+			}
+		}
+		if (upcoming.size() > 0 && upcoming.back() == pawnId)
+			continue;
+		for (const BattlePawnRef& pawn : battle.enemyPawns)
+		{
+			if (pawn != nullptr && pawn->pawnId == pawnId && pawn->isDead == false && pawn->hp > 0)
+			{
+				upcoming.push_back(pawnId);
+				break;
+			}
+		}
+	}
+	return upcoming;
+}
+
+void BattleRoom::AppendUpcomingTurnPawnIds(const BattleState& battle, google::protobuf::RepeatedField<uint64>* dst) const
+{
+	if (dst == nullptr)
+		return;
+	for (uint64 pawnId : BuildUpcomingTurnPawnIds(battle))
+		dst->Add(pawnId);
+}
+
 void BattleRoom::FillEnterBattlePacket(const BattleState& battle, uint64 viewerOwnerId, Protocol::S_ENTER_BATTLE& pkt)
 {
 	pkt.set_battle_id(battle.battleId);
 	pkt.set_map_id(battle.mapId);
 	pkt.set_current_turn_pawn_id(battle.currentTurnPawnId);
 	pkt.set_battle_state_version(battle.stateVersion);
+	AppendUpcomingTurnPawnIds(battle, pkt.mutable_upcoming_turn_pawn_ids());
 	AppendBattleTileStates(battle, pkt.mutable_tiles());
 
 	const vector<BattlePawnRef>* alliedPawns = &battle.alliedPawns;
@@ -2353,7 +2400,7 @@ void BattleRoom::SendEnterBattle(GameSessionRef session, Protocol::S_ENTER_BATTL
 void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
 	const Protocol::AxialCoord& start, const Protocol::AxialCoord& target, uint64 nextTurnPawnId,
 	Protocol::BattleMoveResult result, const string& reason, const BattlePawn* pawn,
-	const vector<Protocol::BattleActionLog>& logs, const vector<const BattlePawn*>& extraPawns)
+	const vector<Protocol::BattleActionLog>& logs, const vector<const BattlePawn*>& extraPawns, bool turnQueueResynced)
 {
 	const auto battleIt = _battles.find(battleId);
 	const uint64 stateVersion = battleIt != _battles.end() ? battleIt->second.stateVersion : 0;
@@ -2387,6 +2434,11 @@ void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint
 	movePkt.set_remaining_ap(pawn != nullptr ? pawn->currentAp : 0);
 	movePkt.set_can_move(pawn != nullptr ? CanMove(*pawn) : false);
 	movePkt.set_battle_state_version(stateVersion);
+	if (turnQueueResynced && battleIt != _battles.end())
+	{
+		movePkt.set_turn_queue_resynced(true);
+		AppendUpcomingTurnPawnIds(battleIt->second, movePkt.mutable_upcoming_turn_pawn_ids());
+	}
 	unordered_set<uint64> deltaPawnIds;
 	auto addPawnDelta = [this, &movePkt, &deltaPawnIds](const BattlePawn* source)
 		{
@@ -2407,7 +2459,7 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 	int32 skillSlot, uint64 targetPawnId, const Protocol::AxialCoord& targetAxial,
 	int32 damage, int32 targetHp, int32 targetArmor, uint64 nextTurnPawnId, const string& reason,
 	const BattlePawn* caster, const BattlePawn* target, const vector<Protocol::BattleActionLog>& logs,
-	const vector<Protocol::BattleTileInfo>& tileDeltas, const vector<const BattlePawn*>& extraPawns)
+	const vector<Protocol::BattleTileInfo>& tileDeltas, const vector<const BattlePawn*>& extraPawns, bool turnQueueResynced)
 {
 	const auto battleIt = _battles.find(battleId);
 	const uint64 stateVersion = battleIt != _battles.end() ? battleIt->second.stateVersion : 0;
@@ -2449,6 +2501,11 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 	skillPkt.set_used_ultimate(caster != nullptr ? caster->usedUltimate : false);
 	skillPkt.set_target_armor(targetArmor);
 	skillPkt.set_battle_state_version(stateVersion);
+	if (turnQueueResynced && battleIt != _battles.end())
+	{
+		skillPkt.set_turn_queue_resynced(true);
+		AppendUpcomingTurnPawnIds(battleIt->second, skillPkt.mutable_upcoming_turn_pawn_ids());
+	}
 	unordered_set<uint64> deltaPawnIds;
 	auto addPawnDelta = [this, &skillPkt, &deltaPawnIds](const BattlePawn* source)
 		{
@@ -2471,7 +2528,7 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
 	uint64 nextTurnPawnId, const string& reason, const BattlePawn* pawn, const BattlePawn* nextPawn,
 	const vector<Protocol::BattleTileInfo>& tileDeltas, const vector<const BattlePawn*>& extraPawns,
-	const vector<Protocol::BattleActionLog>& logs)
+	const vector<Protocol::BattleActionLog>& logs, bool turnQueueResynced)
 {
 	const BattlePawn* responsePawn = nextPawn != nullptr ? nextPawn : pawn;
 	const auto battleIt = _battles.find(battleId);
@@ -2502,6 +2559,18 @@ void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, u
 	endTurnPkt.set_used_sub_action_this_turn(responsePawn != nullptr ? responsePawn->usedSubActionThisTurn : false);
 	endTurnPkt.set_used_ultimate(responsePawn != nullptr ? responsePawn->usedUltimate : false);
 	endTurnPkt.set_battle_state_version(stateVersion);
+	if (success && battleIt != _battles.end())
+	{
+		const vector<uint64> upcoming = BuildUpcomingTurnPawnIds(battleIt->second);
+		if (upcoming.empty() == false)
+			endTurnPkt.set_entering_turn_pawn_id(upcoming.back());
+		if (turnQueueResynced)
+		{
+			endTurnPkt.set_turn_queue_resynced(true);
+			for (uint64 upcomingPawnId : upcoming)
+				endTurnPkt.add_upcoming_turn_pawn_ids(upcomingPawnId);
+		}
+	}
 	unordered_set<uint64> deltaPawnIds;
 	auto addPawnDelta = [this, &endTurnPkt, &deltaPawnIds](const BattlePawn* source)
 		{

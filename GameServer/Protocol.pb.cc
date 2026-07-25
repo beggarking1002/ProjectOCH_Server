@@ -193,6 +193,8 @@ PROTOBUF_CONSTEXPR S_ENTER_BATTLE::S_ENTER_BATTLE(
     /*decltype(_impl_.allied_pawns_)*/{}
   , /*decltype(_impl_.enemy_pawns_)*/{}
   , /*decltype(_impl_.tiles_)*/{}
+  , /*decltype(_impl_.upcoming_turn_pawn_ids_)*/{}
+  , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
   , /*decltype(_impl_.map_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.reason_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.battle_id_)*/uint64_t{0u}
@@ -228,15 +230,18 @@ PROTOBUF_CONSTEXPR S_BATTLE_MOVE::S_BATTLE_MOVE(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.pawn_deltas_)*/{}
   , /*decltype(_impl_.logs_)*/{}
+  , /*decltype(_impl_.upcoming_turn_pawn_ids_)*/{}
+  , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
   , /*decltype(_impl_.reason_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.start_)*/nullptr
   , /*decltype(_impl_.target_)*/nullptr
   , /*decltype(_impl_.battle_id_)*/uint64_t{0u}
   , /*decltype(_impl_.pawn_id_)*/uint64_t{0u}
   , /*decltype(_impl_.next_turn_pawn_id_)*/uint64_t{0u}
+  , /*decltype(_impl_.result_)*/0
   , /*decltype(_impl_.success_)*/false
   , /*decltype(_impl_.can_move_)*/false
-  , /*decltype(_impl_.result_)*/0
+  , /*decltype(_impl_.turn_queue_resynced_)*/false
   , /*decltype(_impl_.battle_state_version_)*/uint64_t{0u}
   , /*decltype(_impl_.remaining_ap_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
@@ -272,6 +277,8 @@ PROTOBUF_CONSTEXPR S_BATTLE_SKILL::S_BATTLE_SKILL(
     /*decltype(_impl_.pawn_deltas_)*/{}
   , /*decltype(_impl_.logs_)*/{}
   , /*decltype(_impl_.tile_deltas_)*/{}
+  , /*decltype(_impl_.upcoming_turn_pawn_ids_)*/{}
+  , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
   , /*decltype(_impl_.reason_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.target_axial_)*/nullptr
   , /*decltype(_impl_.battle_id_)*/uint64_t{0u}
@@ -288,6 +295,7 @@ PROTOBUF_CONSTEXPR S_BATTLE_SKILL::S_BATTLE_SKILL(
   , /*decltype(_impl_.remaining_ap_)*/0
   , /*decltype(_impl_.target_armor_)*/0
   , /*decltype(_impl_.battle_state_version_)*/uint64_t{0u}
+  , /*decltype(_impl_.turn_queue_resynced_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct S_BATTLE_SKILLDefaultTypeInternal {
   PROTOBUF_CONSTEXPR S_BATTLE_SKILLDefaultTypeInternal()
@@ -317,6 +325,8 @@ PROTOBUF_CONSTEXPR S_BATTLE_END_TURN::S_BATTLE_END_TURN(
     /*decltype(_impl_.pawn_deltas_)*/{}
   , /*decltype(_impl_.logs_)*/{}
   , /*decltype(_impl_.tile_deltas_)*/{}
+  , /*decltype(_impl_.upcoming_turn_pawn_ids_)*/{}
+  , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
   , /*decltype(_impl_.reason_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.battle_id_)*/uint64_t{0u}
   , /*decltype(_impl_.pawn_id_)*/uint64_t{0u}
@@ -327,6 +337,8 @@ PROTOBUF_CONSTEXPR S_BATTLE_END_TURN::S_BATTLE_END_TURN(
   , /*decltype(_impl_.used_sub_action_this_turn_)*/false
   , /*decltype(_impl_.used_ultimate_)*/false
   , /*decltype(_impl_.battle_state_version_)*/uint64_t{0u}
+  , /*decltype(_impl_.entering_turn_pawn_id_)*/uint64_t{0u}
+  , /*decltype(_impl_.turn_queue_resynced_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct S_BATTLE_END_TURNDefaultTypeInternal {
   PROTOBUF_CONSTEXPR S_BATTLE_END_TURNDefaultTypeInternal()
@@ -579,6 +591,7 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   PROTOBUF_FIELD_OFFSET(::Protocol::S_ENTER_BATTLE, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_ENTER_BATTLE, _impl_.battle_state_version_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_ENTER_BATTLE, _impl_.tiles_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_ENTER_BATTLE, _impl_.upcoming_turn_pawn_ids_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::C_BATTLE_MOVE, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -607,6 +620,8 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_MOVE, _impl_.pawn_deltas_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_MOVE, _impl_.logs_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_MOVE, _impl_.battle_state_version_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_MOVE, _impl_.turn_queue_resynced_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_MOVE, _impl_.upcoming_turn_pawn_ids_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::C_BATTLE_SKILL, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -644,6 +659,8 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_SKILL, _impl_.logs_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_SKILL, _impl_.battle_state_version_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_SKILL, _impl_.tile_deltas_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_SKILL, _impl_.turn_queue_resynced_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_SKILL, _impl_.upcoming_turn_pawn_ids_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::C_BATTLE_END_TURN, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -671,6 +688,9 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_END_TURN, _impl_.logs_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_END_TURN, _impl_.battle_state_version_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_END_TURN, _impl_.tile_deltas_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_END_TURN, _impl_.entering_turn_pawn_id_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_END_TURN, _impl_.turn_queue_resynced_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_END_TURN, _impl_.upcoming_turn_pawn_ids_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::C_BATTLE_INVITE, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -762,21 +782,21 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 78, -1, -1, sizeof(::Protocol::S_CHAT)},
   { 86, -1, -1, sizeof(::Protocol::C_ENTER_BATTLE)},
   { 92, -1, -1, sizeof(::Protocol::S_ENTER_BATTLE)},
-  { 107, -1, -1, sizeof(::Protocol::C_BATTLE_MOVE)},
-  { 116, -1, -1, sizeof(::Protocol::S_BATTLE_MOVE)},
-  { 135, -1, -1, sizeof(::Protocol::C_BATTLE_SKILL)},
-  { 147, -1, -1, sizeof(::Protocol::S_BATTLE_SKILL)},
-  { 172, -1, -1, sizeof(::Protocol::C_BATTLE_END_TURN)},
-  { 180, -1, -1, sizeof(::Protocol::S_BATTLE_END_TURN)},
-  { 199, -1, -1, sizeof(::Protocol::C_BATTLE_INVITE)},
-  { 206, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_REQUEST)},
-  { 216, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_RECEIVED)},
-  { 223, -1, -1, sizeof(::Protocol::C_BATTLE_INVITE_RESPONSE)},
-  { 231, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_RESULT)},
-  { 241, -1, -1, sizeof(::Protocol::S_BATTLE_PAWN_DEAD)},
-  { 250, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT)},
-  { 258, -1, -1, sizeof(::Protocol::C_BATTLE_RESULT_ACK)},
-  { 265, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT_ACK)},
+  { 108, -1, -1, sizeof(::Protocol::C_BATTLE_MOVE)},
+  { 117, -1, -1, sizeof(::Protocol::S_BATTLE_MOVE)},
+  { 138, -1, -1, sizeof(::Protocol::C_BATTLE_SKILL)},
+  { 150, -1, -1, sizeof(::Protocol::S_BATTLE_SKILL)},
+  { 177, -1, -1, sizeof(::Protocol::C_BATTLE_END_TURN)},
+  { 185, -1, -1, sizeof(::Protocol::S_BATTLE_END_TURN)},
+  { 207, -1, -1, sizeof(::Protocol::C_BATTLE_INVITE)},
+  { 214, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_REQUEST)},
+  { 224, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_RECEIVED)},
+  { 231, -1, -1, sizeof(::Protocol::C_BATTLE_INVITE_RESPONSE)},
+  { 239, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_RESULT)},
+  { 249, -1, -1, sizeof(::Protocol::S_BATTLE_PAWN_DEAD)},
+  { 258, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT)},
+  { 266, -1, -1, sizeof(::Protocol::C_BATTLE_RESULT_ACK)},
+  { 273, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT_ACK)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -826,72 +846,78 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "(\0132\023.Protocol.Vec2Fixed\022\023\n\013duration_ms\030\004"
   " \001(\r\"\025\n\006C_CHAT\022\013\n\003msg\030\001 \001(\t\"\'\n\006S_CHAT\022\020\n"
   "\010playerId\030\001 \001(\004\022\013\n\003msg\030\002 \001(\t\"\020\n\016C_ENTER_"
-  "BATTLE\"\230\002\n\016S_ENTER_BATTLE\022\017\n\007success\030\001 \001"
+  "BATTLE\"\270\002\n\016S_ENTER_BATTLE\022\017\n\007success\030\001 \001"
   "(\010\022\021\n\tbattle_id\030\002 \001(\004\022\016\n\006map_id\030\003 \001(\t\022.\n"
   "\014allied_pawns\030\004 \003(\0132\030.Protocol.BattlePaw"
   "nInfo\022-\n\013enemy_pawns\030\005 \003(\0132\030.Protocol.Ba"
   "ttlePawnInfo\022\034\n\024current_turn_pawn_id\030\006 \001"
   "(\004\022\016\n\006reason\030\007 \001(\t\022\034\n\024battle_state_versi"
   "on\030\010 \001(\004\022\'\n\005tiles\030\t \003(\0132\030.Protocol.Battl"
-  "eTileInfo\"Y\n\rC_BATTLE_MOVE\022\021\n\tbattle_id\030"
-  "\001 \001(\004\022\017\n\007pawn_id\030\002 \001(\004\022$\n\006target\030\003 \001(\0132\024"
-  ".Protocol.AxialCoord\"\205\003\n\rS_BATTLE_MOVE\022\017"
-  "\n\007success\030\001 \001(\010\022\021\n\tbattle_id\030\002 \001(\004\022\017\n\007pa"
-  "wn_id\030\003 \001(\004\022#\n\005start\030\004 \001(\0132\024.Protocol.Ax"
-  "ialCoord\022$\n\006target\030\005 \001(\0132\024.Protocol.Axia"
-  "lCoord\022\031\n\021next_turn_pawn_id\030\006 \001(\004\022*\n\006res"
-  "ult\030\007 \001(\0162\032.Protocol.BattleMoveResult\022\016\n"
-  "\006reason\030\010 \001(\t\022\024\n\014remaining_ap\030\t \001(\005\022\020\n\010c"
-  "an_move\030\n \001(\010\022.\n\013pawn_deltas\030\013 \003(\0132\031.Pro"
-  "tocol.BattlePawnDelta\022\'\n\004logs\030\014 \003(\0132\031.Pr"
-  "otocol.BattleActionLog\022\034\n\024battle_state_v"
-  "ersion\030\r \001(\004\"\307\001\n\016C_BATTLE_SKILL\022\021\n\tbattl"
-  "e_id\030\001 \001(\004\022\026\n\016caster_pawn_id\030\002 \001(\004\022\022\n\nsk"
-  "ill_slot\030\003 \001(\005\022\026\n\016target_pawn_id\030\004 \001(\004\022*"
-  "\n\014target_axial\030\005 \001(\0132\024.Protocol.AxialCoo"
-  "rd\0222\n\024line_direction_axial\030\006 \001(\0132\024.Proto"
-  "col.AxialCoord\"\220\004\n\016S_BATTLE_SKILL\022\017\n\007suc"
-  "cess\030\001 \001(\010\022\021\n\tbattle_id\030\002 \001(\004\022\026\n\016caster_"
-  "pawn_id\030\003 \001(\004\022\022\n\nskill_slot\030\004 \001(\005\022\026\n\016tar"
-  "get_pawn_id\030\005 \001(\004\022*\n\014target_axial\030\006 \001(\0132"
-  "\024.Protocol.AxialCoord\022\016\n\006damage\030\007 \001(\005\022\021\n"
-  "\ttarget_hp\030\010 \001(\005\022\031\n\021next_turn_pawn_id\030\t "
-  "\001(\004\022\016\n\006reason\030\n \001(\t\022\024\n\014remaining_ap\030\013 \001("
-  "\005\022\020\n\010can_move\030\014 \001(\010\022!\n\031used_sub_action_t"
-  "his_turn\030\r \001(\010\022\025\n\rused_ultimate\030\016 \001(\010\022\024\n"
-  "\014target_armor\030\017 \001(\005\022.\n\013pawn_deltas\030\020 \003(\013"
-  "2\031.Protocol.BattlePawnDelta\022\'\n\004logs\030\021 \003("
-  "\0132\031.Protocol.BattleActionLog\022\034\n\024battle_s"
-  "tate_version\030\022 \001(\004\022-\n\013tile_deltas\030\023 \003(\0132"
-  "\030.Protocol.BattleTileInfo\"7\n\021C_BATTLE_EN"
-  "D_TURN\022\021\n\tbattle_id\030\001 \001(\004\022\017\n\007pawn_id\030\002 \001"
-  "(\004\"\373\002\n\021S_BATTLE_END_TURN\022\017\n\007success\030\001 \001("
-  "\010\022\021\n\tbattle_id\030\002 \001(\004\022\017\n\007pawn_id\030\003 \001(\004\022\031\n"
-  "\021next_turn_pawn_id\030\004 \001(\004\022\016\n\006reason\030\005 \001(\t"
-  "\022\024\n\014remaining_ap\030\006 \001(\005\022\020\n\010can_move\030\007 \001(\010"
-  "\022!\n\031used_sub_action_this_turn\030\010 \001(\010\022\025\n\ru"
-  "sed_ultimate\030\t \001(\010\022.\n\013pawn_deltas\030\n \003(\0132"
-  "\031.Protocol.BattlePawnDelta\022\'\n\004logs\030\013 \003(\013"
-  "2\031.Protocol.BattleActionLog\022\034\n\024battle_st"
-  "ate_version\030\014 \001(\004\022-\n\013tile_deltas\030\r \003(\0132\030"
-  ".Protocol.BattleTileInfo\"+\n\017C_BATTLE_INV"
-  "ITE\022\030\n\020target_player_id\030\001 \001(\004\"q\n\027S_BATTL"
-  "E_INVITE_REQUEST\022\017\n\007success\030\001 \001(\010\022\033\n\023req"
-  "uester_player_id\030\002 \001(\004\022\030\n\020target_player_"
-  "id\030\003 \001(\004\022\016\n\006reason\030\004 \001(\t\"7\n\030S_BATTLE_INV"
-  "ITE_RECEIVED\022\033\n\023requester_player_id\030\001 \001("
-  "\004\"G\n\030C_BATTLE_INVITE_RESPONSE\022\033\n\023request"
-  "er_player_id\030\001 \001(\004\022\016\n\006accept\030\002 \001(\010\"q\n\026S_"
-  "BATTLE_INVITE_RESULT\022\020\n\010accepted\030\001 \001(\010\022\033"
-  "\n\023requester_player_id\030\002 \001(\004\022\030\n\020target_pl"
-  "ayer_id\030\003 \001(\004\022\016\n\006reason\030\004 \001(\t\"P\n\022S_BATTL"
-  "E_PAWN_DEAD\022\021\n\tbattle_id\030\001 \001(\004\022\017\n\007pawn_i"
-  "d\030\002 \001(\004\022\026\n\016killer_pawn_id\030\003 \001(\004\"5\n\017S_BAT"
-  "TLE_RESULT\022\021\n\tbattle_id\030\001 \001(\004\022\017\n\007victory"
-  "\030\002 \001(\010\"(\n\023C_BATTLE_RESULT_ACK\022\021\n\tbattle_"
-  "id\030\001 \001(\004\"I\n\023S_BATTLE_RESULT_ACK\022\017\n\007succe"
-  "ss\030\001 \001(\010\022\021\n\tbattle_id\030\002 \001(\004\022\016\n\006reason\030\003 "
-  "\001(\tb\006proto3"
+  "eTileInfo\022\036\n\026upcoming_turn_pawn_ids\030\n \003("
+  "\004\"Y\n\rC_BATTLE_MOVE\022\021\n\tbattle_id\030\001 \001(\004\022\017\n"
+  "\007pawn_id\030\002 \001(\004\022$\n\006target\030\003 \001(\0132\024.Protoco"
+  "l.AxialCoord\"\302\003\n\rS_BATTLE_MOVE\022\017\n\007succes"
+  "s\030\001 \001(\010\022\021\n\tbattle_id\030\002 \001(\004\022\017\n\007pawn_id\030\003 "
+  "\001(\004\022#\n\005start\030\004 \001(\0132\024.Protocol.AxialCoord"
+  "\022$\n\006target\030\005 \001(\0132\024.Protocol.AxialCoord\022\031"
+  "\n\021next_turn_pawn_id\030\006 \001(\004\022*\n\006result\030\007 \001("
+  "\0162\032.Protocol.BattleMoveResult\022\016\n\006reason\030"
+  "\010 \001(\t\022\024\n\014remaining_ap\030\t \001(\005\022\020\n\010can_move\030"
+  "\n \001(\010\022.\n\013pawn_deltas\030\013 \003(\0132\031.Protocol.Ba"
+  "ttlePawnDelta\022\'\n\004logs\030\014 \003(\0132\031.Protocol.B"
+  "attleActionLog\022\034\n\024battle_state_version\030\r"
+  " \001(\004\022\033\n\023turn_queue_resynced\030\016 \001(\010\022\036\n\026upc"
+  "oming_turn_pawn_ids\030\017 \003(\004\"\307\001\n\016C_BATTLE_S"
+  "KILL\022\021\n\tbattle_id\030\001 \001(\004\022\026\n\016caster_pawn_i"
+  "d\030\002 \001(\004\022\022\n\nskill_slot\030\003 \001(\005\022\026\n\016target_pa"
+  "wn_id\030\004 \001(\004\022*\n\014target_axial\030\005 \001(\0132\024.Prot"
+  "ocol.AxialCoord\0222\n\024line_direction_axial\030"
+  "\006 \001(\0132\024.Protocol.AxialCoord\"\315\004\n\016S_BATTLE"
+  "_SKILL\022\017\n\007success\030\001 \001(\010\022\021\n\tbattle_id\030\002 \001"
+  "(\004\022\026\n\016caster_pawn_id\030\003 \001(\004\022\022\n\nskill_slot"
+  "\030\004 \001(\005\022\026\n\016target_pawn_id\030\005 \001(\004\022*\n\014target"
+  "_axial\030\006 \001(\0132\024.Protocol.AxialCoord\022\016\n\006da"
+  "mage\030\007 \001(\005\022\021\n\ttarget_hp\030\010 \001(\005\022\031\n\021next_tu"
+  "rn_pawn_id\030\t \001(\004\022\016\n\006reason\030\n \001(\t\022\024\n\014rema"
+  "ining_ap\030\013 \001(\005\022\020\n\010can_move\030\014 \001(\010\022!\n\031used"
+  "_sub_action_this_turn\030\r \001(\010\022\025\n\rused_ulti"
+  "mate\030\016 \001(\010\022\024\n\014target_armor\030\017 \001(\005\022.\n\013pawn"
+  "_deltas\030\020 \003(\0132\031.Protocol.BattlePawnDelta"
+  "\022\'\n\004logs\030\021 \003(\0132\031.Protocol.BattleActionLo"
+  "g\022\034\n\024battle_state_version\030\022 \001(\004\022-\n\013tile_"
+  "deltas\030\023 \003(\0132\030.Protocol.BattleTileInfo\022\033"
+  "\n\023turn_queue_resynced\030\024 \001(\010\022\036\n\026upcoming_"
+  "turn_pawn_ids\030\025 \003(\004\"7\n\021C_BATTLE_END_TURN"
+  "\022\021\n\tbattle_id\030\001 \001(\004\022\017\n\007pawn_id\030\002 \001(\004\"\327\003\n"
+  "\021S_BATTLE_END_TURN\022\017\n\007success\030\001 \001(\010\022\021\n\tb"
+  "attle_id\030\002 \001(\004\022\017\n\007pawn_id\030\003 \001(\004\022\031\n\021next_"
+  "turn_pawn_id\030\004 \001(\004\022\016\n\006reason\030\005 \001(\t\022\024\n\014re"
+  "maining_ap\030\006 \001(\005\022\020\n\010can_move\030\007 \001(\010\022!\n\031us"
+  "ed_sub_action_this_turn\030\010 \001(\010\022\025\n\rused_ul"
+  "timate\030\t \001(\010\022.\n\013pawn_deltas\030\n \003(\0132\031.Prot"
+  "ocol.BattlePawnDelta\022\'\n\004logs\030\013 \003(\0132\031.Pro"
+  "tocol.BattleActionLog\022\034\n\024battle_state_ve"
+  "rsion\030\014 \001(\004\022-\n\013tile_deltas\030\r \003(\0132\030.Proto"
+  "col.BattleTileInfo\022\035\n\025entering_turn_pawn"
+  "_id\030\016 \001(\004\022\033\n\023turn_queue_resynced\030\017 \001(\010\022\036"
+  "\n\026upcoming_turn_pawn_ids\030\020 \003(\004\"+\n\017C_BATT"
+  "LE_INVITE\022\030\n\020target_player_id\030\001 \001(\004\"q\n\027S"
+  "_BATTLE_INVITE_REQUEST\022\017\n\007success\030\001 \001(\010\022"
+  "\033\n\023requester_player_id\030\002 \001(\004\022\030\n\020target_p"
+  "layer_id\030\003 \001(\004\022\016\n\006reason\030\004 \001(\t\"7\n\030S_BATT"
+  "LE_INVITE_RECEIVED\022\033\n\023requester_player_i"
+  "d\030\001 \001(\004\"G\n\030C_BATTLE_INVITE_RESPONSE\022\033\n\023r"
+  "equester_player_id\030\001 \001(\004\022\016\n\006accept\030\002 \001(\010"
+  "\"q\n\026S_BATTLE_INVITE_RESULT\022\020\n\010accepted\030\001"
+  " \001(\010\022\033\n\023requester_player_id\030\002 \001(\004\022\030\n\020tar"
+  "get_player_id\030\003 \001(\004\022\016\n\006reason\030\004 \001(\t\"P\n\022S"
+  "_BATTLE_PAWN_DEAD\022\021\n\tbattle_id\030\001 \001(\004\022\017\n\007"
+  "pawn_id\030\002 \001(\004\022\026\n\016killer_pawn_id\030\003 \001(\004\"5\n"
+  "\017S_BATTLE_RESULT\022\021\n\tbattle_id\030\001 \001(\004\022\017\n\007v"
+  "ictory\030\002 \001(\010\"(\n\023C_BATTLE_RESULT_ACK\022\021\n\tb"
+  "attle_id\030\001 \001(\004\"I\n\023S_BATTLE_RESULT_ACK\022\017\n"
+  "\007success\030\001 \001(\010\022\021\n\tbattle_id\030\002 \001(\004\022\016\n\006rea"
+  "son\030\003 \001(\tb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -899,7 +925,7 @@ static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_de
 };
 static ::_pbi::once_flag descriptor_table_Protocol_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Protocol_2eproto = {
-    false, false, 3171, descriptor_table_protodef_Protocol_2eproto,
+    false, false, 3417, descriptor_table_protodef_Protocol_2eproto,
     "Protocol.proto",
     &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 29,
     schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
@@ -3006,6 +3032,8 @@ S_ENTER_BATTLE::S_ENTER_BATTLE(const S_ENTER_BATTLE& from)
       decltype(_impl_.allied_pawns_){from._impl_.allied_pawns_}
     , decltype(_impl_.enemy_pawns_){from._impl_.enemy_pawns_}
     , decltype(_impl_.tiles_){from._impl_.tiles_}
+    , decltype(_impl_.upcoming_turn_pawn_ids_){from._impl_.upcoming_turn_pawn_ids_}
+    , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
     , decltype(_impl_.map_id_){}
     , decltype(_impl_.reason_){}
     , decltype(_impl_.battle_id_){}
@@ -3045,6 +3073,8 @@ inline void S_ENTER_BATTLE::SharedCtor(
       decltype(_impl_.allied_pawns_){arena}
     , decltype(_impl_.enemy_pawns_){arena}
     , decltype(_impl_.tiles_){arena}
+    , decltype(_impl_.upcoming_turn_pawn_ids_){arena}
+    , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
     , decltype(_impl_.map_id_){}
     , decltype(_impl_.reason_){}
     , decltype(_impl_.battle_id_){uint64_t{0u}}
@@ -3077,6 +3107,7 @@ inline void S_ENTER_BATTLE::SharedDtor() {
   _impl_.allied_pawns_.~RepeatedPtrField();
   _impl_.enemy_pawns_.~RepeatedPtrField();
   _impl_.tiles_.~RepeatedPtrField();
+  _impl_.upcoming_turn_pawn_ids_.~RepeatedField();
   _impl_.map_id_.Destroy();
   _impl_.reason_.Destroy();
 }
@@ -3094,6 +3125,7 @@ void S_ENTER_BATTLE::Clear() {
   _impl_.allied_pawns_.Clear();
   _impl_.enemy_pawns_.Clear();
   _impl_.tiles_.Clear();
+  _impl_.upcoming_turn_pawn_ids_.Clear();
   _impl_.map_id_.ClearToEmpty();
   _impl_.reason_.ClearToEmpty();
   ::memset(&_impl_.battle_id_, 0, static_cast<size_t>(
@@ -3199,6 +3231,17 @@ const char* S_ENTER_BATTLE::_InternalParse(const char* ptr, ::_pbi::ParseContext
         } else
           goto handle_unusual;
         continue;
+      // repeated uint64 upcoming_turn_pawn_ids = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 82)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedUInt64Parser(_internal_mutable_upcoming_turn_pawn_ids(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<uint8_t>(tag) == 80) {
+          _internal_add_upcoming_turn_pawn_ids(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -3296,6 +3339,15 @@ uint8_t* S_ENTER_BATTLE::_InternalSerialize(
         InternalWriteMessage(9, repfield, repfield.GetCachedSize(), target, stream);
   }
 
+  // repeated uint64 upcoming_turn_pawn_ids = 10;
+  {
+    int byte_size = _impl_._upcoming_turn_pawn_ids_cached_byte_size_.load(std::memory_order_relaxed);
+    if (byte_size > 0) {
+      target = stream->WriteUInt64Packed(
+          10, _internal_upcoming_turn_pawn_ids(), byte_size, target);
+    }
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3331,6 +3383,20 @@ size_t S_ENTER_BATTLE::ByteSizeLong() const {
   for (const auto& msg : this->_impl_.tiles_) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // repeated uint64 upcoming_turn_pawn_ids = 10;
+  {
+    size_t data_size = ::_pbi::WireFormatLite::
+      UInt64Size(this->_impl_.upcoming_turn_pawn_ids_);
+    if (data_size > 0) {
+      total_size += 1 +
+        ::_pbi::WireFormatLite::Int32Size(static_cast<int32_t>(data_size));
+    }
+    int cached_size = ::_pbi::ToCachedSize(data_size);
+    _impl_._upcoming_turn_pawn_ids_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
   }
 
   // string map_id = 3;
@@ -3388,6 +3454,7 @@ void S_ENTER_BATTLE::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const :
   _this->_impl_.allied_pawns_.MergeFrom(from._impl_.allied_pawns_);
   _this->_impl_.enemy_pawns_.MergeFrom(from._impl_.enemy_pawns_);
   _this->_impl_.tiles_.MergeFrom(from._impl_.tiles_);
+  _this->_impl_.upcoming_turn_pawn_ids_.MergeFrom(from._impl_.upcoming_turn_pawn_ids_);
   if (!from._internal_map_id().empty()) {
     _this->_internal_set_map_id(from._internal_map_id());
   }
@@ -3428,6 +3495,7 @@ void S_ENTER_BATTLE::InternalSwap(S_ENTER_BATTLE* other) {
   _impl_.allied_pawns_.InternalSwap(&other->_impl_.allied_pawns_);
   _impl_.enemy_pawns_.InternalSwap(&other->_impl_.enemy_pawns_);
   _impl_.tiles_.InternalSwap(&other->_impl_.tiles_);
+  _impl_.upcoming_turn_pawn_ids_.InternalSwap(&other->_impl_.upcoming_turn_pawn_ids_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.map_id_, lhs_arena,
       &other->_impl_.map_id_, rhs_arena
@@ -3754,15 +3822,18 @@ S_BATTLE_MOVE::S_BATTLE_MOVE(const S_BATTLE_MOVE& from)
   new (&_impl_) Impl_{
       decltype(_impl_.pawn_deltas_){from._impl_.pawn_deltas_}
     , decltype(_impl_.logs_){from._impl_.logs_}
+    , decltype(_impl_.upcoming_turn_pawn_ids_){from._impl_.upcoming_turn_pawn_ids_}
+    , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
     , decltype(_impl_.reason_){}
     , decltype(_impl_.start_){nullptr}
     , decltype(_impl_.target_){nullptr}
     , decltype(_impl_.battle_id_){}
     , decltype(_impl_.pawn_id_){}
     , decltype(_impl_.next_turn_pawn_id_){}
+    , decltype(_impl_.result_){}
     , decltype(_impl_.success_){}
     , decltype(_impl_.can_move_){}
-    , decltype(_impl_.result_){}
+    , decltype(_impl_.turn_queue_resynced_){}
     , decltype(_impl_.battle_state_version_){}
     , decltype(_impl_.remaining_ap_){}
     , /*decltype(_impl_._cached_size_)*/{}};
@@ -3795,15 +3866,18 @@ inline void S_BATTLE_MOVE::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_.pawn_deltas_){arena}
     , decltype(_impl_.logs_){arena}
+    , decltype(_impl_.upcoming_turn_pawn_ids_){arena}
+    , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
     , decltype(_impl_.reason_){}
     , decltype(_impl_.start_){nullptr}
     , decltype(_impl_.target_){nullptr}
     , decltype(_impl_.battle_id_){uint64_t{0u}}
     , decltype(_impl_.pawn_id_){uint64_t{0u}}
     , decltype(_impl_.next_turn_pawn_id_){uint64_t{0u}}
+    , decltype(_impl_.result_){0}
     , decltype(_impl_.success_){false}
     , decltype(_impl_.can_move_){false}
-    , decltype(_impl_.result_){0}
+    , decltype(_impl_.turn_queue_resynced_){false}
     , decltype(_impl_.battle_state_version_){uint64_t{0u}}
     , decltype(_impl_.remaining_ap_){0}
     , /*decltype(_impl_._cached_size_)*/{}
@@ -3827,6 +3901,7 @@ inline void S_BATTLE_MOVE::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.pawn_deltas_.~RepeatedPtrField();
   _impl_.logs_.~RepeatedPtrField();
+  _impl_.upcoming_turn_pawn_ids_.~RepeatedField();
   _impl_.reason_.Destroy();
   if (this != internal_default_instance()) delete _impl_.start_;
   if (this != internal_default_instance()) delete _impl_.target_;
@@ -3844,6 +3919,7 @@ void S_BATTLE_MOVE::Clear() {
 
   _impl_.pawn_deltas_.Clear();
   _impl_.logs_.Clear();
+  _impl_.upcoming_turn_pawn_ids_.Clear();
   _impl_.reason_.ClearToEmpty();
   if (GetArenaForAllocation() == nullptr && _impl_.start_ != nullptr) {
     delete _impl_.start_;
@@ -3982,6 +4058,25 @@ const char* S_BATTLE_MOVE::_InternalParse(const char* ptr, ::_pbi::ParseContext*
         } else
           goto handle_unusual;
         continue;
+      // bool turn_queue_resynced = 14;
+      case 14:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 112)) {
+          _impl_.turn_queue_resynced_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated uint64 upcoming_turn_pawn_ids = 15;
+      case 15:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 122)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedUInt64Parser(_internal_mutable_upcoming_turn_pawn_ids(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<uint8_t>(tag) == 120) {
+          _internal_add_upcoming_turn_pawn_ids(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -4100,6 +4195,21 @@ uint8_t* S_BATTLE_MOVE::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(13, this->_internal_battle_state_version(), target);
   }
 
+  // bool turn_queue_resynced = 14;
+  if (this->_internal_turn_queue_resynced() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(14, this->_internal_turn_queue_resynced(), target);
+  }
+
+  // repeated uint64 upcoming_turn_pawn_ids = 15;
+  {
+    int byte_size = _impl_._upcoming_turn_pawn_ids_cached_byte_size_.load(std::memory_order_relaxed);
+    if (byte_size > 0) {
+      target = stream->WriteUInt64Packed(
+          15, _internal_upcoming_turn_pawn_ids(), byte_size, target);
+    }
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -4128,6 +4238,20 @@ size_t S_BATTLE_MOVE::ByteSizeLong() const {
   for (const auto& msg : this->_impl_.logs_) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // repeated uint64 upcoming_turn_pawn_ids = 15;
+  {
+    size_t data_size = ::_pbi::WireFormatLite::
+      UInt64Size(this->_impl_.upcoming_turn_pawn_ids_);
+    if (data_size > 0) {
+      total_size += 1 +
+        ::_pbi::WireFormatLite::Int32Size(static_cast<int32_t>(data_size));
+    }
+    int cached_size = ::_pbi::ToCachedSize(data_size);
+    _impl_._upcoming_turn_pawn_ids_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
   }
 
   // string reason = 8;
@@ -4166,6 +4290,12 @@ size_t S_BATTLE_MOVE::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_next_turn_pawn_id());
   }
 
+  // .Protocol.BattleMoveResult result = 7;
+  if (this->_internal_result() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_result());
+  }
+
   // bool success = 1;
   if (this->_internal_success() != 0) {
     total_size += 1 + 1;
@@ -4176,10 +4306,9 @@ size_t S_BATTLE_MOVE::ByteSizeLong() const {
     total_size += 1 + 1;
   }
 
-  // .Protocol.BattleMoveResult result = 7;
-  if (this->_internal_result() != 0) {
-    total_size += 1 +
-      ::_pbi::WireFormatLite::EnumSize(this->_internal_result());
+  // bool turn_queue_resynced = 14;
+  if (this->_internal_turn_queue_resynced() != 0) {
+    total_size += 1 + 1;
   }
 
   // uint64 battle_state_version = 13;
@@ -4212,6 +4341,7 @@ void S_BATTLE_MOVE::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
 
   _this->_impl_.pawn_deltas_.MergeFrom(from._impl_.pawn_deltas_);
   _this->_impl_.logs_.MergeFrom(from._impl_.logs_);
+  _this->_impl_.upcoming_turn_pawn_ids_.MergeFrom(from._impl_.upcoming_turn_pawn_ids_);
   if (!from._internal_reason().empty()) {
     _this->_internal_set_reason(from._internal_reason());
   }
@@ -4232,14 +4362,17 @@ void S_BATTLE_MOVE::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
   if (from._internal_next_turn_pawn_id() != 0) {
     _this->_internal_set_next_turn_pawn_id(from._internal_next_turn_pawn_id());
   }
+  if (from._internal_result() != 0) {
+    _this->_internal_set_result(from._internal_result());
+  }
   if (from._internal_success() != 0) {
     _this->_internal_set_success(from._internal_success());
   }
   if (from._internal_can_move() != 0) {
     _this->_internal_set_can_move(from._internal_can_move());
   }
-  if (from._internal_result() != 0) {
-    _this->_internal_set_result(from._internal_result());
+  if (from._internal_turn_queue_resynced() != 0) {
+    _this->_internal_set_turn_queue_resynced(from._internal_turn_queue_resynced());
   }
   if (from._internal_battle_state_version() != 0) {
     _this->_internal_set_battle_state_version(from._internal_battle_state_version());
@@ -4268,6 +4401,7 @@ void S_BATTLE_MOVE::InternalSwap(S_BATTLE_MOVE* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.pawn_deltas_.InternalSwap(&other->_impl_.pawn_deltas_);
   _impl_.logs_.InternalSwap(&other->_impl_.logs_);
+  _impl_.upcoming_turn_pawn_ids_.InternalSwap(&other->_impl_.upcoming_turn_pawn_ids_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.reason_, lhs_arena,
       &other->_impl_.reason_, rhs_arena
@@ -4678,6 +4812,8 @@ S_BATTLE_SKILL::S_BATTLE_SKILL(const S_BATTLE_SKILL& from)
       decltype(_impl_.pawn_deltas_){from._impl_.pawn_deltas_}
     , decltype(_impl_.logs_){from._impl_.logs_}
     , decltype(_impl_.tile_deltas_){from._impl_.tile_deltas_}
+    , decltype(_impl_.upcoming_turn_pawn_ids_){from._impl_.upcoming_turn_pawn_ids_}
+    , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
     , decltype(_impl_.reason_){}
     , decltype(_impl_.target_axial_){nullptr}
     , decltype(_impl_.battle_id_){}
@@ -4694,6 +4830,7 @@ S_BATTLE_SKILL::S_BATTLE_SKILL(const S_BATTLE_SKILL& from)
     , decltype(_impl_.remaining_ap_){}
     , decltype(_impl_.target_armor_){}
     , decltype(_impl_.battle_state_version_){}
+    , decltype(_impl_.turn_queue_resynced_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -4709,8 +4846,8 @@ S_BATTLE_SKILL::S_BATTLE_SKILL(const S_BATTLE_SKILL& from)
     _this->_impl_.target_axial_ = new ::Protocol::AxialCoord(*from._impl_.target_axial_);
   }
   ::memcpy(&_impl_.battle_id_, &from._impl_.battle_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.battle_state_version_) -
-    reinterpret_cast<char*>(&_impl_.battle_id_)) + sizeof(_impl_.battle_state_version_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.turn_queue_resynced_) -
+    reinterpret_cast<char*>(&_impl_.battle_id_)) + sizeof(_impl_.turn_queue_resynced_));
   // @@protoc_insertion_point(copy_constructor:Protocol.S_BATTLE_SKILL)
 }
 
@@ -4722,6 +4859,8 @@ inline void S_BATTLE_SKILL::SharedCtor(
       decltype(_impl_.pawn_deltas_){arena}
     , decltype(_impl_.logs_){arena}
     , decltype(_impl_.tile_deltas_){arena}
+    , decltype(_impl_.upcoming_turn_pawn_ids_){arena}
+    , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
     , decltype(_impl_.reason_){}
     , decltype(_impl_.target_axial_){nullptr}
     , decltype(_impl_.battle_id_){uint64_t{0u}}
@@ -4738,6 +4877,7 @@ inline void S_BATTLE_SKILL::SharedCtor(
     , decltype(_impl_.remaining_ap_){0}
     , decltype(_impl_.target_armor_){0}
     , decltype(_impl_.battle_state_version_){uint64_t{0u}}
+    , decltype(_impl_.turn_queue_resynced_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.reason_.InitDefault();
@@ -4760,6 +4900,7 @@ inline void S_BATTLE_SKILL::SharedDtor() {
   _impl_.pawn_deltas_.~RepeatedPtrField();
   _impl_.logs_.~RepeatedPtrField();
   _impl_.tile_deltas_.~RepeatedPtrField();
+  _impl_.upcoming_turn_pawn_ids_.~RepeatedField();
   _impl_.reason_.Destroy();
   if (this != internal_default_instance()) delete _impl_.target_axial_;
 }
@@ -4777,14 +4918,15 @@ void S_BATTLE_SKILL::Clear() {
   _impl_.pawn_deltas_.Clear();
   _impl_.logs_.Clear();
   _impl_.tile_deltas_.Clear();
+  _impl_.upcoming_turn_pawn_ids_.Clear();
   _impl_.reason_.ClearToEmpty();
   if (GetArenaForAllocation() == nullptr && _impl_.target_axial_ != nullptr) {
     delete _impl_.target_axial_;
   }
   _impl_.target_axial_ = nullptr;
   ::memset(&_impl_.battle_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.battle_state_version_) -
-      reinterpret_cast<char*>(&_impl_.battle_id_)) + sizeof(_impl_.battle_state_version_));
+      reinterpret_cast<char*>(&_impl_.turn_queue_resynced_) -
+      reinterpret_cast<char*>(&_impl_.battle_id_)) + sizeof(_impl_.turn_queue_resynced_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -4963,6 +5105,25 @@ const char* S_BATTLE_SKILL::_InternalParse(const char* ptr, ::_pbi::ParseContext
         } else
           goto handle_unusual;
         continue;
+      // bool turn_queue_resynced = 20;
+      case 20:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 160)) {
+          _impl_.turn_queue_resynced_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated uint64 upcoming_turn_pawn_ids = 21;
+      case 21:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 170)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedUInt64Parser(_internal_mutable_upcoming_turn_pawn_ids(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<uint8_t>(tag) == 168) {
+          _internal_add_upcoming_turn_pawn_ids(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -5117,6 +5278,21 @@ uint8_t* S_BATTLE_SKILL::_InternalSerialize(
         InternalWriteMessage(19, repfield, repfield.GetCachedSize(), target, stream);
   }
 
+  // bool turn_queue_resynced = 20;
+  if (this->_internal_turn_queue_resynced() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(20, this->_internal_turn_queue_resynced(), target);
+  }
+
+  // repeated uint64 upcoming_turn_pawn_ids = 21;
+  {
+    int byte_size = _impl_._upcoming_turn_pawn_ids_cached_byte_size_.load(std::memory_order_relaxed);
+    if (byte_size > 0) {
+      target = stream->WriteUInt64Packed(
+          21, _internal_upcoming_turn_pawn_ids(), byte_size, target);
+    }
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -5152,6 +5328,20 @@ size_t S_BATTLE_SKILL::ByteSizeLong() const {
   for (const auto& msg : this->_impl_.tile_deltas_) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // repeated uint64 upcoming_turn_pawn_ids = 21;
+  {
+    size_t data_size = ::_pbi::WireFormatLite::
+      UInt64Size(this->_impl_.upcoming_turn_pawn_ids_);
+    if (data_size > 0) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(static_cast<int32_t>(data_size));
+    }
+    int cached_size = ::_pbi::ToCachedSize(data_size);
+    _impl_._upcoming_turn_pawn_ids_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
   }
 
   // string reason = 10;
@@ -5240,6 +5430,11 @@ size_t S_BATTLE_SKILL::ByteSizeLong() const {
         this->_internal_battle_state_version());
   }
 
+  // bool turn_queue_resynced = 20;
+  if (this->_internal_turn_queue_resynced() != 0) {
+    total_size += 2 + 1;
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -5261,6 +5456,7 @@ void S_BATTLE_SKILL::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const :
   _this->_impl_.pawn_deltas_.MergeFrom(from._impl_.pawn_deltas_);
   _this->_impl_.logs_.MergeFrom(from._impl_.logs_);
   _this->_impl_.tile_deltas_.MergeFrom(from._impl_.tile_deltas_);
+  _this->_impl_.upcoming_turn_pawn_ids_.MergeFrom(from._impl_.upcoming_turn_pawn_ids_);
   if (!from._internal_reason().empty()) {
     _this->_internal_set_reason(from._internal_reason());
   }
@@ -5310,6 +5506,9 @@ void S_BATTLE_SKILL::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const :
   if (from._internal_battle_state_version() != 0) {
     _this->_internal_set_battle_state_version(from._internal_battle_state_version());
   }
+  if (from._internal_turn_queue_resynced() != 0) {
+    _this->_internal_set_turn_queue_resynced(from._internal_turn_queue_resynced());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -5332,13 +5531,14 @@ void S_BATTLE_SKILL::InternalSwap(S_BATTLE_SKILL* other) {
   _impl_.pawn_deltas_.InternalSwap(&other->_impl_.pawn_deltas_);
   _impl_.logs_.InternalSwap(&other->_impl_.logs_);
   _impl_.tile_deltas_.InternalSwap(&other->_impl_.tile_deltas_);
+  _impl_.upcoming_turn_pawn_ids_.InternalSwap(&other->_impl_.upcoming_turn_pawn_ids_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.reason_, lhs_arena,
       &other->_impl_.reason_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(S_BATTLE_SKILL, _impl_.battle_state_version_)
-      + sizeof(S_BATTLE_SKILL::_impl_.battle_state_version_)
+      PROTOBUF_FIELD_OFFSET(S_BATTLE_SKILL, _impl_.turn_queue_resynced_)
+      + sizeof(S_BATTLE_SKILL::_impl_.turn_queue_resynced_)
       - PROTOBUF_FIELD_OFFSET(S_BATTLE_SKILL, _impl_.target_axial_)>(
           reinterpret_cast<char*>(&_impl_.target_axial_),
           reinterpret_cast<char*>(&other->_impl_.target_axial_));
@@ -5589,6 +5789,8 @@ S_BATTLE_END_TURN::S_BATTLE_END_TURN(const S_BATTLE_END_TURN& from)
       decltype(_impl_.pawn_deltas_){from._impl_.pawn_deltas_}
     , decltype(_impl_.logs_){from._impl_.logs_}
     , decltype(_impl_.tile_deltas_){from._impl_.tile_deltas_}
+    , decltype(_impl_.upcoming_turn_pawn_ids_){from._impl_.upcoming_turn_pawn_ids_}
+    , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
     , decltype(_impl_.reason_){}
     , decltype(_impl_.battle_id_){}
     , decltype(_impl_.pawn_id_){}
@@ -5599,6 +5801,8 @@ S_BATTLE_END_TURN::S_BATTLE_END_TURN(const S_BATTLE_END_TURN& from)
     , decltype(_impl_.used_sub_action_this_turn_){}
     , decltype(_impl_.used_ultimate_){}
     , decltype(_impl_.battle_state_version_){}
+    , decltype(_impl_.entering_turn_pawn_id_){}
+    , decltype(_impl_.turn_queue_resynced_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -5611,8 +5815,8 @@ S_BATTLE_END_TURN::S_BATTLE_END_TURN(const S_BATTLE_END_TURN& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.battle_id_, &from._impl_.battle_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.battle_state_version_) -
-    reinterpret_cast<char*>(&_impl_.battle_id_)) + sizeof(_impl_.battle_state_version_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.turn_queue_resynced_) -
+    reinterpret_cast<char*>(&_impl_.battle_id_)) + sizeof(_impl_.turn_queue_resynced_));
   // @@protoc_insertion_point(copy_constructor:Protocol.S_BATTLE_END_TURN)
 }
 
@@ -5624,6 +5828,8 @@ inline void S_BATTLE_END_TURN::SharedCtor(
       decltype(_impl_.pawn_deltas_){arena}
     , decltype(_impl_.logs_){arena}
     , decltype(_impl_.tile_deltas_){arena}
+    , decltype(_impl_.upcoming_turn_pawn_ids_){arena}
+    , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
     , decltype(_impl_.reason_){}
     , decltype(_impl_.battle_id_){uint64_t{0u}}
     , decltype(_impl_.pawn_id_){uint64_t{0u}}
@@ -5634,6 +5840,8 @@ inline void S_BATTLE_END_TURN::SharedCtor(
     , decltype(_impl_.used_sub_action_this_turn_){false}
     , decltype(_impl_.used_ultimate_){false}
     , decltype(_impl_.battle_state_version_){uint64_t{0u}}
+    , decltype(_impl_.entering_turn_pawn_id_){uint64_t{0u}}
+    , decltype(_impl_.turn_queue_resynced_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.reason_.InitDefault();
@@ -5656,6 +5864,7 @@ inline void S_BATTLE_END_TURN::SharedDtor() {
   _impl_.pawn_deltas_.~RepeatedPtrField();
   _impl_.logs_.~RepeatedPtrField();
   _impl_.tile_deltas_.~RepeatedPtrField();
+  _impl_.upcoming_turn_pawn_ids_.~RepeatedField();
   _impl_.reason_.Destroy();
 }
 
@@ -5672,10 +5881,11 @@ void S_BATTLE_END_TURN::Clear() {
   _impl_.pawn_deltas_.Clear();
   _impl_.logs_.Clear();
   _impl_.tile_deltas_.Clear();
+  _impl_.upcoming_turn_pawn_ids_.Clear();
   _impl_.reason_.ClearToEmpty();
   ::memset(&_impl_.battle_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.battle_state_version_) -
-      reinterpret_cast<char*>(&_impl_.battle_id_)) + sizeof(_impl_.battle_state_version_));
+      reinterpret_cast<char*>(&_impl_.turn_queue_resynced_) -
+      reinterpret_cast<char*>(&_impl_.battle_id_)) + sizeof(_impl_.turn_queue_resynced_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -5806,6 +6016,33 @@ const char* S_BATTLE_END_TURN::_InternalParse(const char* ptr, ::_pbi::ParseCont
         } else
           goto handle_unusual;
         continue;
+      // uint64 entering_turn_pawn_id = 14;
+      case 14:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 112)) {
+          _impl_.entering_turn_pawn_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool turn_queue_resynced = 15;
+      case 15:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 120)) {
+          _impl_.turn_queue_resynced_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated uint64 upcoming_turn_pawn_ids = 16;
+      case 16:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 130)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedUInt64Parser(_internal_mutable_upcoming_turn_pawn_ids(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<uint8_t>(tag) == 128) {
+          _internal_add_upcoming_turn_pawn_ids(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -5923,6 +6160,27 @@ uint8_t* S_BATTLE_END_TURN::_InternalSerialize(
         InternalWriteMessage(13, repfield, repfield.GetCachedSize(), target, stream);
   }
 
+  // uint64 entering_turn_pawn_id = 14;
+  if (this->_internal_entering_turn_pawn_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(14, this->_internal_entering_turn_pawn_id(), target);
+  }
+
+  // bool turn_queue_resynced = 15;
+  if (this->_internal_turn_queue_resynced() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(15, this->_internal_turn_queue_resynced(), target);
+  }
+
+  // repeated uint64 upcoming_turn_pawn_ids = 16;
+  {
+    int byte_size = _impl_._upcoming_turn_pawn_ids_cached_byte_size_.load(std::memory_order_relaxed);
+    if (byte_size > 0) {
+      target = stream->WriteUInt64Packed(
+          16, _internal_upcoming_turn_pawn_ids(), byte_size, target);
+    }
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -5958,6 +6216,20 @@ size_t S_BATTLE_END_TURN::ByteSizeLong() const {
   for (const auto& msg : this->_impl_.tile_deltas_) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // repeated uint64 upcoming_turn_pawn_ids = 16;
+  {
+    size_t data_size = ::_pbi::WireFormatLite::
+      UInt64Size(this->_impl_.upcoming_turn_pawn_ids_);
+    if (data_size > 0) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(static_cast<int32_t>(data_size));
+    }
+    int cached_size = ::_pbi::ToCachedSize(data_size);
+    _impl_._upcoming_turn_pawn_ids_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
   }
 
   // string reason = 5;
@@ -6012,6 +6284,16 @@ size_t S_BATTLE_END_TURN::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_battle_state_version());
   }
 
+  // uint64 entering_turn_pawn_id = 14;
+  if (this->_internal_entering_turn_pawn_id() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_entering_turn_pawn_id());
+  }
+
+  // bool turn_queue_resynced = 15;
+  if (this->_internal_turn_queue_resynced() != 0) {
+    total_size += 1 + 1;
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -6033,6 +6315,7 @@ void S_BATTLE_END_TURN::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, cons
   _this->_impl_.pawn_deltas_.MergeFrom(from._impl_.pawn_deltas_);
   _this->_impl_.logs_.MergeFrom(from._impl_.logs_);
   _this->_impl_.tile_deltas_.MergeFrom(from._impl_.tile_deltas_);
+  _this->_impl_.upcoming_turn_pawn_ids_.MergeFrom(from._impl_.upcoming_turn_pawn_ids_);
   if (!from._internal_reason().empty()) {
     _this->_internal_set_reason(from._internal_reason());
   }
@@ -6063,6 +6346,12 @@ void S_BATTLE_END_TURN::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, cons
   if (from._internal_battle_state_version() != 0) {
     _this->_internal_set_battle_state_version(from._internal_battle_state_version());
   }
+  if (from._internal_entering_turn_pawn_id() != 0) {
+    _this->_internal_set_entering_turn_pawn_id(from._internal_entering_turn_pawn_id());
+  }
+  if (from._internal_turn_queue_resynced() != 0) {
+    _this->_internal_set_turn_queue_resynced(from._internal_turn_queue_resynced());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -6085,13 +6374,14 @@ void S_BATTLE_END_TURN::InternalSwap(S_BATTLE_END_TURN* other) {
   _impl_.pawn_deltas_.InternalSwap(&other->_impl_.pawn_deltas_);
   _impl_.logs_.InternalSwap(&other->_impl_.logs_);
   _impl_.tile_deltas_.InternalSwap(&other->_impl_.tile_deltas_);
+  _impl_.upcoming_turn_pawn_ids_.InternalSwap(&other->_impl_.upcoming_turn_pawn_ids_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.reason_, lhs_arena,
       &other->_impl_.reason_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(S_BATTLE_END_TURN, _impl_.battle_state_version_)
-      + sizeof(S_BATTLE_END_TURN::_impl_.battle_state_version_)
+      PROTOBUF_FIELD_OFFSET(S_BATTLE_END_TURN, _impl_.turn_queue_resynced_)
+      + sizeof(S_BATTLE_END_TURN::_impl_.turn_queue_resynced_)
       - PROTOBUF_FIELD_OFFSET(S_BATTLE_END_TURN, _impl_.battle_id_)>(
           reinterpret_cast<char*>(&_impl_.battle_id_),
           reinterpret_cast<char*>(&other->_impl_.battle_id_));

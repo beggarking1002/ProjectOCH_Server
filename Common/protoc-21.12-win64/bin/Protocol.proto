@@ -85,8 +85,9 @@ message S_ENTER_BATTLE
 
 	uint64 current_turn_pawn_id = 6;
 	string reason = 7;
-	uint64 battle_state_version = 8;
-	repeated BattleTileInfo tiles = 9;
+  uint64 battle_state_version = 8;
+  repeated BattleTileInfo tiles = 9;
+  repeated uint64 upcoming_turn_pawn_ids = 10;
 }
 
 message C_BATTLE_MOVE
@@ -112,7 +113,9 @@ message S_BATTLE_MOVE
 	bool can_move = 10;
 	repeated BattlePawnDelta pawn_deltas = 11;
 	repeated BattleActionLog logs = 12;
-	uint64 battle_state_version = 13;
+  uint64 battle_state_version = 13;
+  bool turn_queue_resynced = 14;
+  repeated uint64 upcoming_turn_pawn_ids = 15;
 }
 
 message C_BATTLE_SKILL {
@@ -143,7 +146,9 @@ message S_BATTLE_SKILL {
 	repeated BattlePawnDelta pawn_deltas = 16;
 	repeated BattleActionLog logs = 17;
 	uint64 battle_state_version = 18;
-	repeated BattleTileInfo tile_deltas = 19;
+  repeated BattleTileInfo tile_deltas = 19;
+  bool turn_queue_resynced = 20;
+  repeated uint64 upcoming_turn_pawn_ids = 21;
 }
 
 message C_BATTLE_END_TURN {
@@ -164,7 +169,10 @@ message S_BATTLE_END_TURN {
 	repeated BattlePawnDelta pawn_deltas = 10;
 	repeated BattleActionLog logs = 11;
 	uint64 battle_state_version = 12;
-	repeated BattleTileInfo tile_deltas = 13;
+  repeated BattleTileInfo tile_deltas = 13;
+  uint64 entering_turn_pawn_id = 14;
+  bool turn_queue_resynced = 15;
+  repeated uint64 upcoming_turn_pawn_ids = 16;
 }
 
 message C_BATTLE_INVITE {

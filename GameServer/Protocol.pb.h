@@ -2223,6 +2223,7 @@ class S_ENTER_BATTLE final :
     kAlliedPawnsFieldNumber = 4,
     kEnemyPawnsFieldNumber = 5,
     kTilesFieldNumber = 9,
+    kUpcomingTurnPawnIdsFieldNumber = 10,
     kMapIdFieldNumber = 3,
     kReasonFieldNumber = 7,
     kBattleIdFieldNumber = 2,
@@ -2283,6 +2284,28 @@ class S_ENTER_BATTLE final :
   ::Protocol::BattleTileInfo* add_tiles();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >&
       tiles() const;
+
+  // repeated uint64 upcoming_turn_pawn_ids = 10;
+  int upcoming_turn_pawn_ids_size() const;
+  private:
+  int _internal_upcoming_turn_pawn_ids_size() const;
+  public:
+  void clear_upcoming_turn_pawn_ids();
+  private:
+  uint64_t _internal_upcoming_turn_pawn_ids(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+      _internal_upcoming_turn_pawn_ids() const;
+  void _internal_add_upcoming_turn_pawn_ids(uint64_t value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+      _internal_mutable_upcoming_turn_pawn_ids();
+  public:
+  uint64_t upcoming_turn_pawn_ids(int index) const;
+  void set_upcoming_turn_pawn_ids(int index, uint64_t value);
+  void add_upcoming_turn_pawn_ids(uint64_t value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+      upcoming_turn_pawn_ids() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+      mutable_upcoming_turn_pawn_ids();
 
   // string map_id = 3;
   void clear_map_id();
@@ -2359,6 +2382,8 @@ class S_ENTER_BATTLE final :
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnInfo > allied_pawns_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnInfo > enemy_pawns_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo > tiles_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t > upcoming_turn_pawn_ids_;
+    mutable std::atomic<int> _upcoming_turn_pawn_ids_cached_byte_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr map_id_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
     uint64_t battle_id_;
@@ -2674,15 +2699,17 @@ class S_BATTLE_MOVE final :
   enum : int {
     kPawnDeltasFieldNumber = 11,
     kLogsFieldNumber = 12,
+    kUpcomingTurnPawnIdsFieldNumber = 15,
     kReasonFieldNumber = 8,
     kStartFieldNumber = 4,
     kTargetFieldNumber = 5,
     kBattleIdFieldNumber = 2,
     kPawnIdFieldNumber = 3,
     kNextTurnPawnIdFieldNumber = 6,
+    kResultFieldNumber = 7,
     kSuccessFieldNumber = 1,
     kCanMoveFieldNumber = 10,
-    kResultFieldNumber = 7,
+    kTurnQueueResyncedFieldNumber = 14,
     kBattleStateVersionFieldNumber = 13,
     kRemainingApFieldNumber = 9,
   };
@@ -2721,6 +2748,28 @@ class S_BATTLE_MOVE final :
   ::Protocol::BattleActionLog* add_logs();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog >&
       logs() const;
+
+  // repeated uint64 upcoming_turn_pawn_ids = 15;
+  int upcoming_turn_pawn_ids_size() const;
+  private:
+  int _internal_upcoming_turn_pawn_ids_size() const;
+  public:
+  void clear_upcoming_turn_pawn_ids();
+  private:
+  uint64_t _internal_upcoming_turn_pawn_ids(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+      _internal_upcoming_turn_pawn_ids() const;
+  void _internal_add_upcoming_turn_pawn_ids(uint64_t value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+      _internal_mutable_upcoming_turn_pawn_ids();
+  public:
+  uint64_t upcoming_turn_pawn_ids(int index) const;
+  void set_upcoming_turn_pawn_ids(int index, uint64_t value);
+  void add_upcoming_turn_pawn_ids(uint64_t value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+      upcoming_turn_pawn_ids() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+      mutable_upcoming_turn_pawn_ids();
 
   // string reason = 8;
   void clear_reason();
@@ -2799,6 +2848,15 @@ class S_BATTLE_MOVE final :
   void _internal_set_next_turn_pawn_id(uint64_t value);
   public:
 
+  // .Protocol.BattleMoveResult result = 7;
+  void clear_result();
+  ::Protocol::BattleMoveResult result() const;
+  void set_result(::Protocol::BattleMoveResult value);
+  private:
+  ::Protocol::BattleMoveResult _internal_result() const;
+  void _internal_set_result(::Protocol::BattleMoveResult value);
+  public:
+
   // bool success = 1;
   void clear_success();
   bool success() const;
@@ -2817,13 +2875,13 @@ class S_BATTLE_MOVE final :
   void _internal_set_can_move(bool value);
   public:
 
-  // .Protocol.BattleMoveResult result = 7;
-  void clear_result();
-  ::Protocol::BattleMoveResult result() const;
-  void set_result(::Protocol::BattleMoveResult value);
+  // bool turn_queue_resynced = 14;
+  void clear_turn_queue_resynced();
+  bool turn_queue_resynced() const;
+  void set_turn_queue_resynced(bool value);
   private:
-  ::Protocol::BattleMoveResult _internal_result() const;
-  void _internal_set_result(::Protocol::BattleMoveResult value);
+  bool _internal_turn_queue_resynced() const;
+  void _internal_set_turn_queue_resynced(bool value);
   public:
 
   // uint64 battle_state_version = 13;
@@ -2854,15 +2912,18 @@ class S_BATTLE_MOVE final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta > pawn_deltas_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog > logs_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t > upcoming_turn_pawn_ids_;
+    mutable std::atomic<int> _upcoming_turn_pawn_ids_cached_byte_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
     ::Protocol::AxialCoord* start_;
     ::Protocol::AxialCoord* target_;
     uint64_t battle_id_;
     uint64_t pawn_id_;
     uint64_t next_turn_pawn_id_;
+    int result_;
     bool success_;
     bool can_move_;
-    int result_;
+    bool turn_queue_resynced_;
     uint64_t battle_state_version_;
     int32_t remaining_ap_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -3217,6 +3278,7 @@ class S_BATTLE_SKILL final :
     kPawnDeltasFieldNumber = 16,
     kLogsFieldNumber = 17,
     kTileDeltasFieldNumber = 19,
+    kUpcomingTurnPawnIdsFieldNumber = 21,
     kReasonFieldNumber = 10,
     kTargetAxialFieldNumber = 6,
     kBattleIdFieldNumber = 2,
@@ -3233,6 +3295,7 @@ class S_BATTLE_SKILL final :
     kRemainingApFieldNumber = 11,
     kTargetArmorFieldNumber = 15,
     kBattleStateVersionFieldNumber = 18,
+    kTurnQueueResyncedFieldNumber = 20,
   };
   // repeated .Protocol.BattlePawnDelta pawn_deltas = 16;
   int pawn_deltas_size() const;
@@ -3287,6 +3350,28 @@ class S_BATTLE_SKILL final :
   ::Protocol::BattleTileInfo* add_tile_deltas();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >&
       tile_deltas() const;
+
+  // repeated uint64 upcoming_turn_pawn_ids = 21;
+  int upcoming_turn_pawn_ids_size() const;
+  private:
+  int _internal_upcoming_turn_pawn_ids_size() const;
+  public:
+  void clear_upcoming_turn_pawn_ids();
+  private:
+  uint64_t _internal_upcoming_turn_pawn_ids(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+      _internal_upcoming_turn_pawn_ids() const;
+  void _internal_add_upcoming_turn_pawn_ids(uint64_t value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+      _internal_mutable_upcoming_turn_pawn_ids();
+  public:
+  uint64_t upcoming_turn_pawn_ids(int index) const;
+  void set_upcoming_turn_pawn_ids(int index, uint64_t value);
+  void add_upcoming_turn_pawn_ids(uint64_t value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+      upcoming_turn_pawn_ids() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+      mutable_upcoming_turn_pawn_ids();
 
   // string reason = 10;
   void clear_reason();
@@ -3446,6 +3531,15 @@ class S_BATTLE_SKILL final :
   void _internal_set_battle_state_version(uint64_t value);
   public:
 
+  // bool turn_queue_resynced = 20;
+  void clear_turn_queue_resynced();
+  bool turn_queue_resynced() const;
+  void set_turn_queue_resynced(bool value);
+  private:
+  bool _internal_turn_queue_resynced() const;
+  void _internal_set_turn_queue_resynced(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_BATTLE_SKILL)
  private:
   class _Internal;
@@ -3457,6 +3551,8 @@ class S_BATTLE_SKILL final :
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta > pawn_deltas_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog > logs_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo > tile_deltas_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t > upcoming_turn_pawn_ids_;
+    mutable std::atomic<int> _upcoming_turn_pawn_ids_cached_byte_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
     ::Protocol::AxialCoord* target_axial_;
     uint64_t battle_id_;
@@ -3473,6 +3569,7 @@ class S_BATTLE_SKILL final :
     int32_t remaining_ap_;
     int32_t target_armor_;
     uint64_t battle_state_version_;
+    bool turn_queue_resynced_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3763,6 +3860,7 @@ class S_BATTLE_END_TURN final :
     kPawnDeltasFieldNumber = 10,
     kLogsFieldNumber = 11,
     kTileDeltasFieldNumber = 13,
+    kUpcomingTurnPawnIdsFieldNumber = 16,
     kReasonFieldNumber = 5,
     kBattleIdFieldNumber = 2,
     kPawnIdFieldNumber = 3,
@@ -3773,6 +3871,8 @@ class S_BATTLE_END_TURN final :
     kUsedSubActionThisTurnFieldNumber = 8,
     kUsedUltimateFieldNumber = 9,
     kBattleStateVersionFieldNumber = 12,
+    kEnteringTurnPawnIdFieldNumber = 14,
+    kTurnQueueResyncedFieldNumber = 15,
   };
   // repeated .Protocol.BattlePawnDelta pawn_deltas = 10;
   int pawn_deltas_size() const;
@@ -3827,6 +3927,28 @@ class S_BATTLE_END_TURN final :
   ::Protocol::BattleTileInfo* add_tile_deltas();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo >&
       tile_deltas() const;
+
+  // repeated uint64 upcoming_turn_pawn_ids = 16;
+  int upcoming_turn_pawn_ids_size() const;
+  private:
+  int _internal_upcoming_turn_pawn_ids_size() const;
+  public:
+  void clear_upcoming_turn_pawn_ids();
+  private:
+  uint64_t _internal_upcoming_turn_pawn_ids(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+      _internal_upcoming_turn_pawn_ids() const;
+  void _internal_add_upcoming_turn_pawn_ids(uint64_t value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+      _internal_mutable_upcoming_turn_pawn_ids();
+  public:
+  uint64_t upcoming_turn_pawn_ids(int index) const;
+  void set_upcoming_turn_pawn_ids(int index, uint64_t value);
+  void add_upcoming_turn_pawn_ids(uint64_t value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+      upcoming_turn_pawn_ids() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+      mutable_upcoming_turn_pawn_ids();
 
   // string reason = 5;
   void clear_reason();
@@ -3923,6 +4045,24 @@ class S_BATTLE_END_TURN final :
   void _internal_set_battle_state_version(uint64_t value);
   public:
 
+  // uint64 entering_turn_pawn_id = 14;
+  void clear_entering_turn_pawn_id();
+  uint64_t entering_turn_pawn_id() const;
+  void set_entering_turn_pawn_id(uint64_t value);
+  private:
+  uint64_t _internal_entering_turn_pawn_id() const;
+  void _internal_set_entering_turn_pawn_id(uint64_t value);
+  public:
+
+  // bool turn_queue_resynced = 15;
+  void clear_turn_queue_resynced();
+  bool turn_queue_resynced() const;
+  void set_turn_queue_resynced(bool value);
+  private:
+  bool _internal_turn_queue_resynced() const;
+  void _internal_set_turn_queue_resynced(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_BATTLE_END_TURN)
  private:
   class _Internal;
@@ -3934,6 +4074,8 @@ class S_BATTLE_END_TURN final :
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattlePawnDelta > pawn_deltas_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog > logs_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileInfo > tile_deltas_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t > upcoming_turn_pawn_ids_;
+    mutable std::atomic<int> _upcoming_turn_pawn_ids_cached_byte_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
     uint64_t battle_id_;
     uint64_t pawn_id_;
@@ -3944,6 +4086,8 @@ class S_BATTLE_END_TURN final :
     bool used_sub_action_this_turn_;
     bool used_ultimate_;
     uint64_t battle_state_version_;
+    uint64_t entering_turn_pawn_id_;
+    bool turn_queue_resynced_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -6426,6 +6570,53 @@ S_ENTER_BATTLE::tiles() const {
   return _impl_.tiles_;
 }
 
+// repeated uint64 upcoming_turn_pawn_ids = 10;
+inline int S_ENTER_BATTLE::_internal_upcoming_turn_pawn_ids_size() const {
+  return _impl_.upcoming_turn_pawn_ids_.size();
+}
+inline int S_ENTER_BATTLE::upcoming_turn_pawn_ids_size() const {
+  return _internal_upcoming_turn_pawn_ids_size();
+}
+inline void S_ENTER_BATTLE::clear_upcoming_turn_pawn_ids() {
+  _impl_.upcoming_turn_pawn_ids_.Clear();
+}
+inline uint64_t S_ENTER_BATTLE::_internal_upcoming_turn_pawn_ids(int index) const {
+  return _impl_.upcoming_turn_pawn_ids_.Get(index);
+}
+inline uint64_t S_ENTER_BATTLE::upcoming_turn_pawn_ids(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_BATTLE.upcoming_turn_pawn_ids)
+  return _internal_upcoming_turn_pawn_ids(index);
+}
+inline void S_ENTER_BATTLE::set_upcoming_turn_pawn_ids(int index, uint64_t value) {
+  _impl_.upcoming_turn_pawn_ids_.Set(index, value);
+  // @@protoc_insertion_point(field_set:Protocol.S_ENTER_BATTLE.upcoming_turn_pawn_ids)
+}
+inline void S_ENTER_BATTLE::_internal_add_upcoming_turn_pawn_ids(uint64_t value) {
+  _impl_.upcoming_turn_pawn_ids_.Add(value);
+}
+inline void S_ENTER_BATTLE::add_upcoming_turn_pawn_ids(uint64_t value) {
+  _internal_add_upcoming_turn_pawn_ids(value);
+  // @@protoc_insertion_point(field_add:Protocol.S_ENTER_BATTLE.upcoming_turn_pawn_ids)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+S_ENTER_BATTLE::_internal_upcoming_turn_pawn_ids() const {
+  return _impl_.upcoming_turn_pawn_ids_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+S_ENTER_BATTLE::upcoming_turn_pawn_ids() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_ENTER_BATTLE.upcoming_turn_pawn_ids)
+  return _internal_upcoming_turn_pawn_ids();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+S_ENTER_BATTLE::_internal_mutable_upcoming_turn_pawn_ids() {
+  return &_impl_.upcoming_turn_pawn_ids_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+S_ENTER_BATTLE::mutable_upcoming_turn_pawn_ids() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_ENTER_BATTLE.upcoming_turn_pawn_ids)
+  return _internal_mutable_upcoming_turn_pawn_ids();
+}
+
 // -------------------------------------------------------------------
 
 // C_BATTLE_MOVE
@@ -7011,6 +7202,73 @@ inline void S_BATTLE_MOVE::_internal_set_battle_state_version(uint64_t value) {
 inline void S_BATTLE_MOVE::set_battle_state_version(uint64_t value) {
   _internal_set_battle_state_version(value);
   // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_MOVE.battle_state_version)
+}
+
+// bool turn_queue_resynced = 14;
+inline void S_BATTLE_MOVE::clear_turn_queue_resynced() {
+  _impl_.turn_queue_resynced_ = false;
+}
+inline bool S_BATTLE_MOVE::_internal_turn_queue_resynced() const {
+  return _impl_.turn_queue_resynced_;
+}
+inline bool S_BATTLE_MOVE::turn_queue_resynced() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_MOVE.turn_queue_resynced)
+  return _internal_turn_queue_resynced();
+}
+inline void S_BATTLE_MOVE::_internal_set_turn_queue_resynced(bool value) {
+  
+  _impl_.turn_queue_resynced_ = value;
+}
+inline void S_BATTLE_MOVE::set_turn_queue_resynced(bool value) {
+  _internal_set_turn_queue_resynced(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_MOVE.turn_queue_resynced)
+}
+
+// repeated uint64 upcoming_turn_pawn_ids = 15;
+inline int S_BATTLE_MOVE::_internal_upcoming_turn_pawn_ids_size() const {
+  return _impl_.upcoming_turn_pawn_ids_.size();
+}
+inline int S_BATTLE_MOVE::upcoming_turn_pawn_ids_size() const {
+  return _internal_upcoming_turn_pawn_ids_size();
+}
+inline void S_BATTLE_MOVE::clear_upcoming_turn_pawn_ids() {
+  _impl_.upcoming_turn_pawn_ids_.Clear();
+}
+inline uint64_t S_BATTLE_MOVE::_internal_upcoming_turn_pawn_ids(int index) const {
+  return _impl_.upcoming_turn_pawn_ids_.Get(index);
+}
+inline uint64_t S_BATTLE_MOVE::upcoming_turn_pawn_ids(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_MOVE.upcoming_turn_pawn_ids)
+  return _internal_upcoming_turn_pawn_ids(index);
+}
+inline void S_BATTLE_MOVE::set_upcoming_turn_pawn_ids(int index, uint64_t value) {
+  _impl_.upcoming_turn_pawn_ids_.Set(index, value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_MOVE.upcoming_turn_pawn_ids)
+}
+inline void S_BATTLE_MOVE::_internal_add_upcoming_turn_pawn_ids(uint64_t value) {
+  _impl_.upcoming_turn_pawn_ids_.Add(value);
+}
+inline void S_BATTLE_MOVE::add_upcoming_turn_pawn_ids(uint64_t value) {
+  _internal_add_upcoming_turn_pawn_ids(value);
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_MOVE.upcoming_turn_pawn_ids)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+S_BATTLE_MOVE::_internal_upcoming_turn_pawn_ids() const {
+  return _impl_.upcoming_turn_pawn_ids_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+S_BATTLE_MOVE::upcoming_turn_pawn_ids() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_MOVE.upcoming_turn_pawn_ids)
+  return _internal_upcoming_turn_pawn_ids();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+S_BATTLE_MOVE::_internal_mutable_upcoming_turn_pawn_ids() {
+  return &_impl_.upcoming_turn_pawn_ids_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+S_BATTLE_MOVE::mutable_upcoming_turn_pawn_ids() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_MOVE.upcoming_turn_pawn_ids)
+  return _internal_mutable_upcoming_turn_pawn_ids();
 }
 
 // -------------------------------------------------------------------
@@ -7797,6 +8055,73 @@ S_BATTLE_SKILL::tile_deltas() const {
   return _impl_.tile_deltas_;
 }
 
+// bool turn_queue_resynced = 20;
+inline void S_BATTLE_SKILL::clear_turn_queue_resynced() {
+  _impl_.turn_queue_resynced_ = false;
+}
+inline bool S_BATTLE_SKILL::_internal_turn_queue_resynced() const {
+  return _impl_.turn_queue_resynced_;
+}
+inline bool S_BATTLE_SKILL::turn_queue_resynced() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_SKILL.turn_queue_resynced)
+  return _internal_turn_queue_resynced();
+}
+inline void S_BATTLE_SKILL::_internal_set_turn_queue_resynced(bool value) {
+  
+  _impl_.turn_queue_resynced_ = value;
+}
+inline void S_BATTLE_SKILL::set_turn_queue_resynced(bool value) {
+  _internal_set_turn_queue_resynced(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_SKILL.turn_queue_resynced)
+}
+
+// repeated uint64 upcoming_turn_pawn_ids = 21;
+inline int S_BATTLE_SKILL::_internal_upcoming_turn_pawn_ids_size() const {
+  return _impl_.upcoming_turn_pawn_ids_.size();
+}
+inline int S_BATTLE_SKILL::upcoming_turn_pawn_ids_size() const {
+  return _internal_upcoming_turn_pawn_ids_size();
+}
+inline void S_BATTLE_SKILL::clear_upcoming_turn_pawn_ids() {
+  _impl_.upcoming_turn_pawn_ids_.Clear();
+}
+inline uint64_t S_BATTLE_SKILL::_internal_upcoming_turn_pawn_ids(int index) const {
+  return _impl_.upcoming_turn_pawn_ids_.Get(index);
+}
+inline uint64_t S_BATTLE_SKILL::upcoming_turn_pawn_ids(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_SKILL.upcoming_turn_pawn_ids)
+  return _internal_upcoming_turn_pawn_ids(index);
+}
+inline void S_BATTLE_SKILL::set_upcoming_turn_pawn_ids(int index, uint64_t value) {
+  _impl_.upcoming_turn_pawn_ids_.Set(index, value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_SKILL.upcoming_turn_pawn_ids)
+}
+inline void S_BATTLE_SKILL::_internal_add_upcoming_turn_pawn_ids(uint64_t value) {
+  _impl_.upcoming_turn_pawn_ids_.Add(value);
+}
+inline void S_BATTLE_SKILL::add_upcoming_turn_pawn_ids(uint64_t value) {
+  _internal_add_upcoming_turn_pawn_ids(value);
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_SKILL.upcoming_turn_pawn_ids)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+S_BATTLE_SKILL::_internal_upcoming_turn_pawn_ids() const {
+  return _impl_.upcoming_turn_pawn_ids_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+S_BATTLE_SKILL::upcoming_turn_pawn_ids() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_SKILL.upcoming_turn_pawn_ids)
+  return _internal_upcoming_turn_pawn_ids();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+S_BATTLE_SKILL::_internal_mutable_upcoming_turn_pawn_ids() {
+  return &_impl_.upcoming_turn_pawn_ids_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+S_BATTLE_SKILL::mutable_upcoming_turn_pawn_ids() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_SKILL.upcoming_turn_pawn_ids)
+  return _internal_mutable_upcoming_turn_pawn_ids();
+}
+
 // -------------------------------------------------------------------
 
 // C_BATTLE_END_TURN
@@ -8184,6 +8509,93 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleTileIn
 S_BATTLE_END_TURN::tile_deltas() const {
   // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_END_TURN.tile_deltas)
   return _impl_.tile_deltas_;
+}
+
+// uint64 entering_turn_pawn_id = 14;
+inline void S_BATTLE_END_TURN::clear_entering_turn_pawn_id() {
+  _impl_.entering_turn_pawn_id_ = uint64_t{0u};
+}
+inline uint64_t S_BATTLE_END_TURN::_internal_entering_turn_pawn_id() const {
+  return _impl_.entering_turn_pawn_id_;
+}
+inline uint64_t S_BATTLE_END_TURN::entering_turn_pawn_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_END_TURN.entering_turn_pawn_id)
+  return _internal_entering_turn_pawn_id();
+}
+inline void S_BATTLE_END_TURN::_internal_set_entering_turn_pawn_id(uint64_t value) {
+  
+  _impl_.entering_turn_pawn_id_ = value;
+}
+inline void S_BATTLE_END_TURN::set_entering_turn_pawn_id(uint64_t value) {
+  _internal_set_entering_turn_pawn_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_END_TURN.entering_turn_pawn_id)
+}
+
+// bool turn_queue_resynced = 15;
+inline void S_BATTLE_END_TURN::clear_turn_queue_resynced() {
+  _impl_.turn_queue_resynced_ = false;
+}
+inline bool S_BATTLE_END_TURN::_internal_turn_queue_resynced() const {
+  return _impl_.turn_queue_resynced_;
+}
+inline bool S_BATTLE_END_TURN::turn_queue_resynced() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_END_TURN.turn_queue_resynced)
+  return _internal_turn_queue_resynced();
+}
+inline void S_BATTLE_END_TURN::_internal_set_turn_queue_resynced(bool value) {
+  
+  _impl_.turn_queue_resynced_ = value;
+}
+inline void S_BATTLE_END_TURN::set_turn_queue_resynced(bool value) {
+  _internal_set_turn_queue_resynced(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_END_TURN.turn_queue_resynced)
+}
+
+// repeated uint64 upcoming_turn_pawn_ids = 16;
+inline int S_BATTLE_END_TURN::_internal_upcoming_turn_pawn_ids_size() const {
+  return _impl_.upcoming_turn_pawn_ids_.size();
+}
+inline int S_BATTLE_END_TURN::upcoming_turn_pawn_ids_size() const {
+  return _internal_upcoming_turn_pawn_ids_size();
+}
+inline void S_BATTLE_END_TURN::clear_upcoming_turn_pawn_ids() {
+  _impl_.upcoming_turn_pawn_ids_.Clear();
+}
+inline uint64_t S_BATTLE_END_TURN::_internal_upcoming_turn_pawn_ids(int index) const {
+  return _impl_.upcoming_turn_pawn_ids_.Get(index);
+}
+inline uint64_t S_BATTLE_END_TURN::upcoming_turn_pawn_ids(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_END_TURN.upcoming_turn_pawn_ids)
+  return _internal_upcoming_turn_pawn_ids(index);
+}
+inline void S_BATTLE_END_TURN::set_upcoming_turn_pawn_ids(int index, uint64_t value) {
+  _impl_.upcoming_turn_pawn_ids_.Set(index, value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_END_TURN.upcoming_turn_pawn_ids)
+}
+inline void S_BATTLE_END_TURN::_internal_add_upcoming_turn_pawn_ids(uint64_t value) {
+  _impl_.upcoming_turn_pawn_ids_.Add(value);
+}
+inline void S_BATTLE_END_TURN::add_upcoming_turn_pawn_ids(uint64_t value) {
+  _internal_add_upcoming_turn_pawn_ids(value);
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_END_TURN.upcoming_turn_pawn_ids)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+S_BATTLE_END_TURN::_internal_upcoming_turn_pawn_ids() const {
+  return _impl_.upcoming_turn_pawn_ids_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
+S_BATTLE_END_TURN::upcoming_turn_pawn_ids() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_END_TURN.upcoming_turn_pawn_ids)
+  return _internal_upcoming_turn_pawn_ids();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+S_BATTLE_END_TURN::_internal_mutable_upcoming_turn_pawn_ids() {
+  return &_impl_.upcoming_turn_pawn_ids_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
+S_BATTLE_END_TURN::mutable_upcoming_turn_pawn_ids() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_END_TURN.upcoming_turn_pawn_ids)
+  return _internal_mutable_upcoming_turn_pawn_ids();
 }
 
 // -------------------------------------------------------------------

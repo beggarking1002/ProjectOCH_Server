@@ -94,6 +94,8 @@ private:
 	uint64 GetTileEquipmentOwnerPawnId(const BattleState& battle, const Protocol::AxialCoord& axial) const;
 	void SetTileEquipment(BattleState& battle, const Protocol::AxialCoord& axial, const string& equipmentKey, uint64 ownerPawnId);
 	void AppendBattleTileStates(const BattleState& battle, google::protobuf::RepeatedPtrField<Protocol::BattleTileInfo>* dst) const;
+	vector<uint64> BuildUpcomingTurnPawnIds(const BattleState& battle, size_t count = 8) const;
+	void AppendUpcomingTurnPawnIds(const BattleState& battle, google::protobuf::RepeatedField<uint64>* dst) const;
 
 	void FillEnterBattlePacket(const BattleState& battle, uint64 viewerOwnerId, Protocol::S_ENTER_BATTLE& pkt);
 	void CopyBattlePawn(const BattlePawn& src, Protocol::BattlePawnInfo* dst);
@@ -142,17 +144,17 @@ private:
 	void SendBattleMoveResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
 		const Protocol::AxialCoord& start, const Protocol::AxialCoord& target, uint64 nextTurnPawnId,
 		Protocol::BattleMoveResult result, const string& reason, const BattlePawn* pawn = nullptr,
-		const vector<Protocol::BattleActionLog>& logs = {}, const vector<const BattlePawn*>& extraPawns = {});
+		const vector<Protocol::BattleActionLog>& logs = {}, const vector<const BattlePawn*>& extraPawns = {}, bool turnQueueResynced = false);
 	void SendBattleSkillResult(GameSessionRef session, bool success, uint64 battleId, uint64 casterPawnId,
 		int32 skillSlot, uint64 targetPawnId, const Protocol::AxialCoord& targetAxial,
 	int32 damage, int32 targetHp, int32 targetArmor, uint64 nextTurnPawnId, const string& reason,
 		const BattlePawn* caster = nullptr, const BattlePawn* target = nullptr,
 		const vector<Protocol::BattleActionLog>& logs = {}, const vector<Protocol::BattleTileInfo>& tileDeltas = {},
-		const vector<const BattlePawn*>& extraPawns = {});
+		const vector<const BattlePawn*>& extraPawns = {}, bool turnQueueResynced = false);
 	void SendBattleEndTurnResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
 		uint64 nextTurnPawnId, const string& reason, const BattlePawn* pawn = nullptr, const BattlePawn* nextPawn = nullptr,
 		const vector<Protocol::BattleTileInfo>& tileDeltas = {}, const vector<const BattlePawn*>& extraPawns = {},
-		const vector<Protocol::BattleActionLog>& logs = {});
+		const vector<Protocol::BattleActionLog>& logs = {}, bool turnQueueResynced = false);
 	void SendBattlePawnDead(GameSessionRef session, uint64 battleId, uint64 pawnId, uint64 killerPawnId);
 	void SendBattleResult(GameSessionRef session, const BattleState& battle, uint64 viewerOwnerId);
 	void SendBattleResultAck(GameSessionRef session, bool success, uint64 battleId, const string& reason);
