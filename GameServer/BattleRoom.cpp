@@ -306,6 +306,7 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 			<< " action_type=" << actionLog.action_type()
 			<< " skill_slot=" << actionLog.skill_slot()
 			<< " damage=" << actionLog.damage()
+			<< " critical=" << actionLog.is_critical()
 			<< " evaded=" << actionLog.is_evaded()
 			<< " counter=" << actionLog.is_counter()
 			<< " defender_hp_after=" << actionLog.hp_after()
@@ -424,7 +425,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 
 	SkillSpec skillSpec;
 	string skillError;
-	if (TryGetSkillSpec(caster->pawnClass, pkt.skill_slot(), skillSpec, skillError) == false)
+	if (TryGetSkillSpec(*caster, pkt.skill_slot(), skillSpec, skillError) == false)
 	{
 		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), pkt.target_pawn_id(),
 			requestedTargetAxial, 0, 0, 0, battle.currentTurnPawnId, skillError, caster);
@@ -485,10 +486,11 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		return;
 	}
 
-	if (emptyTileTarget && target != nullptr)
+	if (emptyTileTarget && (target != nullptr || GetTileEquipmentKey(battle, targetAxial).empty() == false))
 	{
-		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
-			targetAxial, 0, target->hp, target->armor, battle.currentTurnPawnId, "target tile is occupied", caster, target);
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target != nullptr ? target->pawnId : 0,
+			targetAxial, 0, target != nullptr ? target->hp : 0, target != nullptr ? target->armor : 0, battle.currentTurnPawnId,
+			"target tile is occupied", caster, target);
 		return;
 	}
 	if (pickupTileTarget && caster->CanPickupEquipment(GetTileEquipmentKey(battle, targetAxial),
@@ -595,9 +597,13 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		actionRequest.isBackAttack = isBackAttack;
 		actionRequest.isGuarded = wasIntercepted;
 		actionRequest.targetAxial = executionTargetAxial;
-		actionRequest.shouldEvadeTarget = [this](const BattlePawn& attacker, BattlePawn& defender)
+		actionRequest.shouldEvadeTarget = [this](const BattlePawn& attacker, BattlePawn& defender, const BattleSkillTemplate& skill)
 			{
-				return RollEvade(attacker, defender);
+				return RollEvade(attacker, defender, skill);
+			};
+		actionRequest.shouldCriticalTarget = [this](const BattlePawn& attacker, const BattleSkillTemplate& skill)
+			{
+				return RollCritical(attacker, skill);
 			};
 		actionRequest.areaDirectionAxial = areaDirectionAxial;
 		actionRequest.findAlivePawnAt = [this, &battle](const Protocol::AxialCoord& axial)
@@ -615,6 +621,21 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		actionRequest.tryPushTarget = [this, &battle](BattlePawn& attacker, BattlePawn& target)
 			{
 				return ResolvePush(battle, attacker, target);
+			};
+		actionRequest.tryRetreatCaster = [this, &battle](BattlePawn& casterPawn, BattlePawn& targetPawn)
+			{
+				BattleDisplacementRequest request;
+				request.attacker = &casterPawn;
+				request.target = &targetPawn;
+				request.isWalkable = [this, &battle](const Protocol::AxialCoord& axial)
+					{
+						return IsBattleWalkable(battle, axial);
+					};
+				request.findAlivePawnAt = [this, &battle](const Protocol::AxialCoord& axial)
+					{
+						return FindAlivePawnAt(battle, axial);
+					};
+				return _displacementService.TryRetreatFromTarget(request);
 			};
 		actionRequest.getBaseTileType = [this, &battle](const Protocol::AxialCoord& axial)
 			{
@@ -683,11 +704,27 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		}
 	}
 
+	if (caster->BlocksMoveAfterSkill(pkt.skill_slot()))
+		caster->MarkMoved();
+
 	const bool primarySkillIsMelee = skillSpec.skillTemplate != nullptr && skillSpec.skillTemplate->combatType == "MELEE";
 	const bool wasEvaded = any_of(logs.begin(), logs.end(), [](const Protocol::BattleActionLog& log)
 		{
 			return log.is_evaded();
 		});
+	unordered_set<uint64> hitDefenderIds;
+	for (const Protocol::BattleActionLog& log : logs)
+	{
+		if (log.attacker_pawn_id() != caster->pawnId || log.is_evaded() || log.defender_pawn_id() == caster->pawnId)
+			continue;
+		if (BattlePawn* defender = FindPawn(battle, log.defender_pawn_id()))
+		{
+			defender->OnSuccessfulHitReceived(*caster);
+			if (hitDefenderIds.insert(defender->pawnId).second)
+				extraChangedPawns.push_back(defender);
+			extraChangedPawns.push_back(caster);
+		}
+	}
 	if (primarySkillIsMelee && target != nullptr && target->ownerId != caster->ownerId && IsAlive(*caster) && IsAlive(*target) &&
 		_spatialService.AxialDistance(caster->axial, target->axial) == 1 && (wasEvaded || target->hp == targetHpBeforeAction))
 	{
@@ -733,6 +770,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 			<< " skill_slot=" << actionLog.skill_slot()
 			<< " action_type=" << actionLog.action_type()
 			<< " damage=" << actionLog.damage()
+			<< " critical=" << actionLog.is_critical()
 			<< " evaded=" << actionLog.is_evaded()
 			<< " guarded=" << actionLog.is_guarded()
 			<< " perfect_guarded=" << actionLog.is_perfect_guarded()
@@ -1516,7 +1554,8 @@ bool BattleRoom::IsBattleWalkable(const BattleState& battle, const Protocol::Axi
 
 	const Protocol::BattleTileType baseTileType = GetBaseTileType(battle, coord);
 	const Protocol::BattleTileOverlayType overlayType = GetTileOverlayType(battle, coord);
-	return baseTileType != Protocol::BATTLE_TILE_TYPE_WATER || overlayType == Protocol::BATTLE_TILE_OVERLAY_TYPE_ICE;
+	return (baseTileType != Protocol::BATTLE_TILE_TYPE_WATER || overlayType == Protocol::BATTLE_TILE_OVERLAY_TYPE_ICE) &&
+		GetTileEquipmentKey(battle, coord) != "PARVIS";
 }
 
 uint64 BattleRoom::GetNextAlliedTurnPawnId(const BattleState& battle, uint64 currentPawnId)
@@ -1561,10 +1600,11 @@ uint64 BattleRoom::AdvanceTurn(BattleState& battle)
 	return battle.currentTurnPawnId;
 }
 
-bool BattleRoom::TryGetSkillSpec(Protocol::PawnClass pawnClass, int32 skillSlot, SkillSpec& spec, string& reason)
+bool BattleRoom::TryGetSkillSpec(const BattlePawn& pawn, int32 skillSlot, SkillSpec& spec, string& reason)
 {
-	const BattleSkillTemplate* skill = GBattleTemplates.GetSkillByActionSlot(pawnClass, skillSlot);
-	const BattlePawnClassTemplate* pawnTemplate = GBattleTemplates.GetPawnClassTemplate(pawnClass);
+	const string overrideKey = pawn.ResolveSkillKey(skillSlot);
+	const BattleSkillTemplate* skill = overrideKey.empty() ? GBattleTemplates.GetSkillByActionSlot(pawn.pawnClass, skillSlot) : GBattleTemplates.GetSkillByKey(overrideKey);
+	const BattlePawnClassTemplate* pawnTemplate = GBattleTemplates.GetPawnClassTemplate(pawn.pawnClass);
 	if (skill != nullptr && pawnTemplate != nullptr)
 	{
 		if (skill->skillCategory == "PASSIVE" || skill->skillCategory == "REACTION")
@@ -1600,7 +1640,7 @@ bool BattleRoom::TryGetSkillSpec(Protocol::PawnClass pawnClass, int32 skillSlot,
 			return true;
 		};
 
-	switch (pawnClass)
+	switch (pawn.pawnClass)
 	{
 	case Protocol::PAWN_CLASS_BEIGE_FIRE:
 		switch (skillSlot)
@@ -1710,7 +1750,8 @@ void BattleRoom::StartTurn(BattleState& battle, BattlePawn& pawn)
 	const bool isStunnedThisTurn = stunIt != pawn.statuses.end() && stunIt->second.remainingOwnerTurns != 0;
 
 	// Expire duration effects before AP and player input are made available for this turn.
-	AdvanceOwnerTurnEffects(pawn);
+	if (AdvanceOwnerTurnEffects(pawn))
+		battle.turnStartChangedPawnIds.push_back(pawn.pawnId);
 	_skillResolver.RefreshAuraRadii(pawn);
 
 	pawn.ResetTurnActionUsage();
@@ -1749,7 +1790,7 @@ void BattleRoom::ExecuteBattleStartEffects(BattleState& battle)
 	}
 }
 
-void BattleRoom::ExecutePassiveTrigger(BattlePawn& pawn, const string& trigger)
+void BattleRoom::ExecutePassiveTrigger(BattlePawn& pawn, const string& trigger, BattlePawn* effectTarget)
 {
 	const BattleSkillTemplate* passiveSkill = GBattleTemplates.GetSkillByActionSlot(pawn.pawnClass, 1);
 	const BattlePawnClassTemplate* pawnTemplate = GBattleTemplates.GetPawnClassTemplate(pawn.pawnClass);
@@ -1776,8 +1817,25 @@ void BattleRoom::ExecutePassiveTrigger(BattlePawn& pawn, const string& trigger)
 	request.caster.auras = &pawn.auras;
 	request.caster.zocModifiers = &pawn.zocModifiers;
 	request.target = request.caster;
+	if (effectTarget != nullptr)
+	{
+		request.target.pawnId = effectTarget->pawnId;
+		request.target.ownerId = effectTarget->ownerId;
+		request.target.pawnClass = effectTarget->pawnClass;
+		request.target.axial = &effectTarget->axial;
+		request.target.hp = &effectTarget->hp;
+		request.target.maxHp = &effectTarget->maxHp;
+		request.target.armor = &effectTarget->armor;
+		request.target.resources = &effectTarget->resources;
+		request.target.maxResources = &effectTarget->maxResources;
+		request.target.barriers = &effectTarget->barriers;
+		request.target.statuses = &effectTarget->statuses;
+		request.target.statBonuses = &effectTarget->statBonuses;
+		request.target.auras = &effectTarget->auras;
+		request.target.zocModifiers = &effectTarget->zocModifiers;
+	}
 	request.casterPawn = &pawn;
-	request.targetPawn = &pawn;
+	request.targetPawn = effectTarget != nullptr ? effectTarget : &pawn;
 	request.barrierIdGenerator = &_barrierIdGenerator;
 
 	BattleEffectExecutor executor;
@@ -1869,7 +1927,7 @@ void BattleRoom::ExecuteAuraTurnStartEffects(BattleState& battle, BattlePawn& pa
 	}
 }
 
-void BattleRoom::AdvanceOwnerTurnEffects(BattlePawn& pawn)
+bool BattleRoom::AdvanceOwnerTurnEffects(BattlePawn& pawn)
 {
 	BattleEffectPawnContext context;
 	context.pawnId = pawn.pawnId;
@@ -1886,7 +1944,7 @@ void BattleRoom::AdvanceOwnerTurnEffects(BattlePawn& pawn)
 	context.statBonuses = &pawn.statBonuses;
 
 	BattleEffectExecutor executor;
-	executor.AdvanceOwnerTurn(context);
+	return executor.AdvanceOwnerTurn(context);
 }
 
 void BattleRoom::ApplyDamage(BattlePawn& target, int32 damage)
@@ -1922,10 +1980,12 @@ void BattleRoom::ApplyDamage(BattlePawn& target, int32 damage)
 		target.hp = max(0, target.hp - hpDamage);
 }
 
-bool BattleRoom::RollEvade(const BattlePawn& attacker, BattlePawn& defender)
+bool BattleRoom::RollEvade(const BattlePawn& attacker, BattlePawn& defender, const BattleSkillTemplate& skill)
 {
 	const BattlePawnClassTemplate* defenderTemplate = GBattleTemplates.GetPawnClassTemplate(defender.pawnClass);
 	if (defenderTemplate == nullptr)
+		return false;
+	if (attacker.IsGuaranteedHit(skill))
 		return false;
 
 	if (defender.TryConsumeGuaranteedEvade())
@@ -1933,11 +1993,21 @@ bool BattleRoom::RollEvade(const BattlePawn& attacker, BattlePawn& defender)
 
 	const auto dexBonusIt = defender.statBonuses.find("DEX");
 	const int32 baseDex = defenderTemplate->baseDex + (dexBonusIt != defender.statBonuses.end() ? dexBonusIt->second : 0);
-	const double evadeRatio = static_cast<double>(clamp(baseDex + static_cast<int32>(round(
-		_skillResolver.GetStatModifierAdditiveRatio(defender, "EVADE_RATE") * 100.0)), 0, 100)) / 100.0;
-	const double hitRatio = static_cast<double>(clamp(100 + static_cast<int32>(round(
-		_skillResolver.GetStatModifierAdditiveRatio(attacker, "HIT_RATE") * 100.0)), 0, 100)) / 100.0;
-	const int32 finalHitPercent = static_cast<int32>(round(hitRatio * (1.0 - evadeRatio) * 100.0));
+	const double evadeRatio = static_cast<double>(max(0, baseDex + static_cast<int32>(round(
+		_skillResolver.GetStatModifierAdditiveRatio(defender, "EVADE_RATE") * 100.0)))) / 100.0;
+	const BattlePawnClassTemplate* attackerTemplate = GBattleTemplates.GetPawnClassTemplate(attacker.pawnClass);
+	const auto focusBonusIt = attacker.statBonuses.find("FOCUS");
+	const int32 baseFocus = attackerTemplate != nullptr ? attackerTemplate->baseFocus +
+		(focusBonusIt != attacker.statBonuses.end() ? focusBonusIt->second : 0) : 0;
+	const int32 hitRating = static_cast<int32>(round(
+		GBattleTemplates.GetConfigDouble("HIT_BASE_PERCENT", 100.0) +
+		baseFocus * GBattleTemplates.GetConfigDouble("FOCUS_HIT_PERCENT_PER_POINT", 1.0) +
+		_skillResolver.GetStatModifierAdditiveRatio(attacker, "HIT_RATE") * 100.0 +
+		attacker.GetHitRateBonus(skill)));
+	const int32 finalHitPercent = clamp(static_cast<int32>(round(
+		clamp(hitRating,
+			GBattleTemplates.GetConfigInt("HIT_RATING_MIN", 0),
+			GBattleTemplates.GetConfigInt("HIT_RATING_MAX", 150)) * (1.0 - evadeRatio))), 0, 100);
 	if (finalHitPercent >= 100)
 		return false;
 
@@ -1954,6 +2024,32 @@ bool BattleRoom::RollEvade(const BattlePawn& attacker, BattlePawn& defender)
 	}
 
 	return evaded;
+}
+
+bool BattleRoom::RollCritical(const BattlePawn& attacker, const BattleSkillTemplate& skill)
+{
+	if (attacker.IsGuaranteedCritical(skill))
+		return true;
+
+	const BattlePawnClassTemplate* attackerTemplate = GBattleTemplates.GetPawnClassTemplate(attacker.pawnClass);
+	if (attackerTemplate == nullptr)
+		return false;
+
+	const auto focusBonusIt = attacker.statBonuses.find("FOCUS");
+	const int32 focus = attackerTemplate->baseFocus + (focusBonusIt != attacker.statBonuses.end() ? focusBonusIt->second : 0);
+	const int32 criticalChance = clamp(static_cast<int32>(round(
+		focus * GBattleTemplates.GetConfigDouble("FOCUS_CRIT_PERCENT_PER_POINT", 1.5) +
+		_skillResolver.GetStatModifierAdditiveRatio(attacker, "CRIT_RATE") * 100.0)),
+		GBattleTemplates.GetConfigInt("CRIT_CHANCE_MIN", 0),
+		GBattleTemplates.GetConfigInt("CRIT_CHANCE_MAX", 100));
+	if (criticalChance <= 0)
+		return false;
+	if (criticalChance >= 100)
+		return true;
+
+	static thread_local mt19937 rng{ random_device{}() };
+	uniform_int_distribution<int32> roll(1, 100);
+	return roll(rng) <= criticalChance;
 }
 
 bool BattleRoom::TryExecuteZocAttack(BattleState& battle, BattlePawn& zocOwner, BattlePawn& movingPawn,
@@ -1986,9 +2082,13 @@ bool BattleRoom::TryExecuteZocAttack(BattleState& battle, BattlePawn& zocOwner, 
 	request.skillSlot = zocProfile.reactionSkillSlot;
 	request.actionType = "zoc";
 	request.targetAxial = &movingPawn.axial;
-	request.shouldEvadeTarget = [this](const BattlePawn& attacker, BattlePawn& defender)
+	request.shouldEvadeTarget = [this](const BattlePawn& attacker, BattlePawn& defender, const BattleSkillTemplate& skill)
 		{
-			return RollEvade(attacker, defender);
+			return RollEvade(attacker, defender, skill);
+		};
+	request.shouldCriticalTarget = [this](const BattlePawn& attacker, const BattleSkillTemplate& skill)
+		{
+			return RollCritical(attacker, skill);
 		};
 	request.findAlivePawnAt = [this, &battle](const Protocol::AxialCoord& axial)
 		{
@@ -2135,9 +2235,13 @@ bool BattleRoom::TryExecuteCounterattack(BattleState& battle, BattlePawn& defend
 	request.isCounter = true;
 	request.actionType = "counter";
 	request.targetAxial = &attacker.axial;
-	request.shouldEvadeTarget = [this](const BattlePawn& attacker, BattlePawn& target)
+	request.shouldEvadeTarget = [this](const BattlePawn& attacker, BattlePawn& target, const BattleSkillTemplate& skill)
 		{
-			return RollEvade(attacker, target);
+			return RollEvade(attacker, target, skill);
+		};
+	request.shouldCriticalTarget = [this](const BattlePawn& attacker, const BattleSkillTemplate& skill)
+		{
+			return RollCritical(attacker, skill);
 		};
 	request.findAlivePawnAt = [this, &battle](const Protocol::AxialCoord& axial)
 		{

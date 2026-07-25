@@ -1,0 +1,10 @@
+ConfigKey,Value,Description
+string,double,string
+HIT_BASE_PERCENT,100,Base hit rating before Focus and hit-rate modifiers
+FOCUS_HIT_PERCENT_PER_POINT,1,Additional hit rating per BaseFocus point
+HIT_RATING_MIN,0,Minimum hit rating before evade calculation
+HIT_RATING_MAX,150,Maximum hit rating before evade calculation
+FOCUS_CRIT_PERCENT_PER_POINT,1.5,Critical chance per BaseFocus point
+CRIT_CHANCE_MIN,0,Minimum critical chance
+CRIT_CHANCE_MAX,100,Maximum critical chance
+CRIT_DAMAGE_MULTIPLIER,1.5,Final damage multiplier on a critical hit

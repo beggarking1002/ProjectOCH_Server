@@ -23,7 +23,8 @@ Read these first:
 3. [[08_Battle_Data_Tables]]
 4. [[07_Battle_Invite_Flow]]
 5. [[10_Battle_Architecture_Rules]]
-6. [[04_Packet_Protocol_Generation]]
+6. [[11_Zillian_Longbow_Implementation]]
+7. [[04_Packet_Protocol_Generation]]
 
 ## Build Verification
 

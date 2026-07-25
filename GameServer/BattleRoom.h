@@ -109,19 +109,20 @@ private:
 	uint64 GetNextAlliedTurnPawnId(const BattleState& battle, uint64 currentPawnId);
 	void BuildTurnQueue(BattleState& battle);
 	uint64 AdvanceTurn(BattleState& battle);
-	bool TryGetSkillSpec(Protocol::PawnClass pawnClass, int32 skillSlot, SkillSpec& spec, string& reason);
+	bool TryGetSkillSpec(const BattlePawn& pawn, int32 skillSlot, SkillSpec& spec, string& reason);
 	bool CanMove(const BattlePawn& pawn);
 	bool CanRecoverArmor(const BattlePawn& pawn);
 	bool IsAlive(const BattlePawn& pawn);
 	bool HasAlivePawn(const vector<BattlePawnRef>& pawns);
 	bool TryFinishBattle(BattleState& battle, uint64 fallbackWinnerOwnerId);
 	void StartTurn(BattleState& battle, BattlePawn& pawn);
-	void ExecutePassiveTrigger(BattlePawn& pawn, const string& trigger);
+	void ExecutePassiveTrigger(BattlePawn& pawn, const string& trigger, BattlePawn* effectTarget = nullptr);
 	void ExecuteAuraTurnStartEffects(BattleState& battle, BattlePawn& pawn);
 	void ExecuteBattleStartEffects(BattleState& battle);
-	void AdvanceOwnerTurnEffects(BattlePawn& pawn);
+	bool AdvanceOwnerTurnEffects(BattlePawn& pawn);
 	void ApplyDamage(BattlePawn& target, int32 damage);
-	bool RollEvade(const BattlePawn& attacker, BattlePawn& defender);
+	bool RollEvade(const BattlePawn& attacker, BattlePawn& defender, const BattleSkillTemplate& skill);
+	bool RollCritical(const BattlePawn& attacker, const BattleSkillTemplate& skill);
 	BattlePushResult ResolvePush(BattleState& battle, BattlePawn& attacker, BattlePawn& target);
 	bool TryExecuteZocAttack(BattleState& battle, BattlePawn& zocOwner, BattlePawn& movingPawn,
 		vector<Protocol::BattleActionLog>& logs, vector<Protocol::BattleTileInfo>& tileDeltas,

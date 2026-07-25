@@ -28,7 +28,13 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 	effectRequest.damageMultiplier = _skillResolver.GetDamageMultiplier(caster, request.skill->skillKey);
 	effectRequest.auraRadiusBonus = _skillResolver.GetAuraRadiusBonus(caster, request.skill->skillKey);
 	effectRequest.hasTargetPawn = target != nullptr;
-	effectRequest.isEvaded = directEnemyTarget && request.shouldEvadeTarget && request.shouldEvadeTarget(caster, *target);
+	const bool requiresHitCheck = directEnemyTarget || caster.RequiresHitCheck(*request.skill);
+	effectRequest.isEvaded = requiresHitCheck &&
+		request.shouldEvadeTarget && request.shouldEvadeTarget(caster, *target, *request.skill);
+	effectRequest.isCritical = effectRequest.isEvaded == false && target != nullptr &&
+		request.shouldCriticalTarget && request.shouldCriticalTarget(caster, *request.skill);
+	if (effectRequest.isCritical)
+		effectRequest.damageMultiplier *= GBattleTemplates.GetConfigDouble("CRIT_DAMAGE_MULTIPLIER", 1.5);
 	effectRequest.isAreaDamage = request.skill->targetShape.empty() == false;
 	effectRequest.targetDamageMultiplier = target != nullptr ? _skillResolver.GetStatModifierMultiplier(*target, "DAMAGE_TAKEN",
 		effectRequest.isAreaDamage ? "AREA_AND_DOT" : "") : 1.0;
@@ -41,6 +47,7 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 	effectRequest.setTileEquipment = request.setTileEquipment;
 	effectRequest.isTileValid = request.isTileValid;
 	effectRequest.tryPushTarget = request.tryPushTarget;
+	effectRequest.tryRetreatCaster = request.tryRetreatCaster;
 	effectRequest.logs = &result.logs;
 	effectRequest.caster = MakeEffectContext(caster);
 	effectRequest.target = MakeEffectContext(target != nullptr ? *target : caster);
@@ -50,6 +57,18 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 
 	BattleEffectExecutor executor;
 	BattleEffectExecutionResult effectResult = executor.ExecuteOnCast(effectRequest);
+	if (effectRequest.isEvaded && result.logs.empty())
+	{
+		Protocol::BattleActionLog missLog;
+		missLog.set_attacker_pawn_id(caster.pawnId);
+		missLog.set_defender_pawn_id(target != nullptr ? target->pawnId : 0);
+		missLog.set_skill_slot(request.skillSlot);
+		missLog.set_action_type(effectRequest.actionType);
+		missLog.set_is_evaded(true);
+		missLog.set_hp_after(target != nullptr ? target->hp : 0);
+		missLog.set_armor_after(target != nullptr ? target->armor : 0);
+		result.logs.push_back(missLog);
+	}
 	if (request.findAlliedPawns)
 	{
 		for (BattlePawn* ally : request.findAlliedPawns(caster))
@@ -121,7 +140,12 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 			effectRequest.isBackAttack = false;
 			effectRequest.hasTargetPawn = areaTarget != nullptr;
 			effectRequest.isAreaDamage = true;
-			effectRequest.isEvaded = areaTarget != nullptr && request.shouldEvadeTarget && request.shouldEvadeTarget(caster, *areaTarget);
+			effectRequest.isEvaded = areaTarget != nullptr && request.shouldEvadeTarget && request.shouldEvadeTarget(caster, *areaTarget, *request.skill);
+			effectRequest.isCritical = effectRequest.isEvaded == false && areaTarget != nullptr &&
+				request.shouldCriticalTarget && request.shouldCriticalTarget(caster, *request.skill);
+			effectRequest.damageMultiplier = _skillResolver.GetDamageMultiplier(caster, request.skill->skillKey);
+			if (effectRequest.isCritical)
+				effectRequest.damageMultiplier *= GBattleTemplates.GetConfigDouble("CRIT_DAMAGE_MULTIPLIER", 1.5);
 			effectRequest.targetDamageMultiplier = areaTarget != nullptr ? _skillResolver.GetStatModifierMultiplier(*areaTarget, "DAMAGE_TAKEN", "AREA_AND_DOT") : 1.0;
 			if (areaTarget == nullptr)
 				AppendEffectResult(effectResult, executor.ExecuteTrigger(effectRequest, "ON_EMPTY_TILE_CAST"));

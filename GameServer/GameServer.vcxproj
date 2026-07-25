@@ -155,6 +155,7 @@
 	<ClCompile Include="BeigeIce.cpp" />
 	<ClCompile Include="Suen.cpp" />
 	<ClCompile Include="SuenAxe.cpp" />
+	<ClCompile Include="SuenParvis.cpp" />
 	<ClCompile Include="BattlePawn.cpp" />
 	<ClCompile Include="BattleSkillExecutionService.cpp" />
 	<ClCompile Include="BattleSkillResolver.cpp" />
@@ -165,6 +166,8 @@
 	<ClCompile Include="BattleMovementService.cpp" />
 	<ClCompile Include="Alen.cpp" />
 	<ClCompile Include="AlenSpear.cpp" />
+	<ClCompile Include="Zillian.cpp" />
+	<ClCompile Include="ZillianLongbow.cpp" />
     <ClCompile Include="BattleTemplateManager.cpp" />
     <ClCompile Include="BattleRoom.cpp" />
     <ClCompile Include="Creature.cpp" />
@@ -201,11 +204,14 @@
 	<ClInclude Include="BattleEffectExecutor.h" />
 	<ClInclude Include="Alen.h" />
 	<ClInclude Include="AlenSpear.h" />
+	<ClInclude Include="Zillian.h" />
+	<ClInclude Include="ZillianLongbow.h" />
 	<ClInclude Include="Beige.h" />
 	<ClInclude Include="BeigeFire.h" />
 	<ClInclude Include="BeigeIce.h" />
 	<ClInclude Include="Suen.h" />
 	<ClInclude Include="SuenAxe.h" />
+	<ClInclude Include="SuenParvis.h" />
 	<ClInclude Include="BattlePawn.h" />
 	<ClInclude Include="BattleSkillExecutionService.h" />
 	<ClInclude Include="BattleSkillResolver.h" />

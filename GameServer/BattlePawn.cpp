@@ -4,6 +4,8 @@
 #include "BeigeIce.h"
 #include "AlenSpear.h"
 #include "SuenAxe.h"
+#include "SuenParvis.h"
+#include "ZillianLongbow.h"
 
 bool BattlePawn::IsNormalSkillSlot(int32 skillSlot)
 {
@@ -28,6 +30,13 @@ bool BattlePawn::CanPickupEquipment(const string& equipmentKey, uint64 equipment
 bool BattlePawn::CanActivateSkill(int32 skillSlot, string& reason) const { return true; }
 void BattlePawn::OnEquipmentPickedUp(const string& equipmentKey) { }
 bool BattlePawn::ApplyStatFromStat(const string& sourceStat, const string& targetStat, int32 value) { return false; }
+void BattlePawn::OnSuccessfulHitReceived(BattlePawn& attacker) { }
+bool BattlePawn::RequiresHitCheck(const BattleSkillTemplate& skill) const { return false; }
+int32 BattlePawn::GetHitRateBonus(const BattleSkillTemplate& skill) const { return 0; }
+bool BattlePawn::IsGuaranteedHit(const BattleSkillTemplate& skill) const { return false; }
+bool BattlePawn::IsGuaranteedCritical(const BattleSkillTemplate& skill) const { return false; }
+string BattlePawn::ResolveSkillKey(int32 skillSlot) const { return ""; }
+bool BattlePawn::BlocksMoveAfterSkill(int32 skillSlot) const { return false; }
 
 bool BattlePawn::CanMove() const
 {
@@ -167,9 +176,14 @@ BattlePawnRef CreateBattlePawn(Protocol::PawnClass pawnClass)
 
 	if (pawnClass == Protocol::PAWN_CLASS_SUEN_AXE_SWORD)
 		return make_shared<SuenAxe>();
+	if (pawnClass == Protocol::PAWN_CLASS_SUEN_PARVIS)
+		return make_shared<SuenParvis>();
 
 	if (pawnClass == Protocol::PAWN_CLASS_ALEN_SPEAR)
 		return make_shared<AlenSpear>();
+
+	if (pawnClass == Protocol::PAWN_CLASS_ZILLIAN_LONGBOW)
+		return make_shared<ZillianLongbow>();
 
 	return make_shared<BattlePawn>();
 }

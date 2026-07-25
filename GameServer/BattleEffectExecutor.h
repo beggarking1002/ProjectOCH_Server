@@ -25,6 +25,11 @@ struct BattleStatusState
 	string damageScope;
 	Protocol::BattleResourceType resourceType = Protocol::BATTLE_RESOURCE_TYPE_NONE;
 	double negativeResourceAmountMultiplier = 1.0;
+	bool isHarmful = false;
+	bool isCleanseable = false;
+	int32 turnStartHpDamage = 0;
+	uint64 sourcePawnId = 0;
+	int32 sourceSkillSlot = 0;
 };
 
 struct BattleAuraState
@@ -75,6 +80,7 @@ struct BattleEffectExecutionRequest
 	int32 auraRadiusBonus = 0;
 	bool hasTargetPawn = false;
 	bool isEvaded = false;
+	bool isCritical = false;
 	bool isAreaDamage = false;
 	double targetDamageMultiplier = 1.0;
 	const Protocol::AxialCoord* targetAxial = nullptr;
@@ -86,6 +92,7 @@ struct BattleEffectExecutionRequest
 	function<void(const Protocol::AxialCoord&, const string&, uint64)> setTileEquipment;
 	function<bool(const Protocol::AxialCoord&)> isTileValid;
 	function<BattlePushResult(BattlePawn&, BattlePawn&)> tryPushTarget;
+	function<BattleRetreatResult(BattlePawn&, BattlePawn&)> tryRetreatCaster;
 	BattleEffectPawnContext caster;
 	BattleEffectPawnContext target;
 	BattlePawn* casterPawn = nullptr;
@@ -116,7 +123,8 @@ public:
 	BattleEffectExecutionResult ExecuteOnCast(const BattleEffectExecutionRequest& request);
 	BattleEffectExecutionResult ExecuteTrigger(const BattleEffectExecutionRequest& request, const string& trigger,
 		BattleEffectTargetScope scope = BattleEffectTargetScope::All);
-	void AdvanceOwnerTurn(BattleEffectPawnContext pawn);
+	bool AdvanceOwnerTurn(BattleEffectPawnContext pawn);
+	void ApplyDizzyToPawn(BattlePawn& target, int32 stackDelta) const;
 
 private:
 	void ExecuteDealDamage(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
@@ -127,7 +135,12 @@ private:
 	void ExecuteApplyBarrier(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteApplyStatus(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteApplyDizzy(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
+	void ExecuteApplyDot(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
+	void ExecuteCleanseHarmful(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
+	void ExecuteSacrificeHp(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecutePushTarget(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
+		BattleEffectExecutionResult& result);
+	void ExecuteRetreatCaster(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
 		BattleEffectExecutionResult& result);
 	void ExecuteToggleAura(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteChangeTileOverlay(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,

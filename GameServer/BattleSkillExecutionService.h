@@ -16,7 +16,8 @@ struct BattleSkillActionRequest
 	bool isCounter = false;
 	string actionType;
 	const Protocol::AxialCoord* targetAxial = nullptr;
-	function<bool(const BattlePawn&, BattlePawn&)> shouldEvadeTarget;
+	function<bool(const BattlePawn&, BattlePawn&, const BattleSkillTemplate&)> shouldEvadeTarget;
+	function<bool(const BattlePawn&, const BattleSkillTemplate&)> shouldCriticalTarget;
 	const Protocol::AxialCoord* areaDirectionAxial = nullptr;
 	function<BattlePawn*(const Protocol::AxialCoord&)> findAlivePawnAt;
 	function<BattlePawn*(const BattlePawn&, uint64)> findAdjacentAliveAlly;
@@ -29,6 +30,7 @@ struct BattleSkillActionRequest
 	function<void(const Protocol::AxialCoord&, const string&, uint64)> setTileEquipment;
 	function<bool(const Protocol::AxialCoord&)> isTileValid;
 	function<BattlePushResult(BattlePawn&, BattlePawn&)> tryPushTarget;
+	function<BattleRetreatResult(BattlePawn&, BattlePawn&)> tryRetreatCaster;
 	uint64* barrierIdGenerator = nullptr;
 };
 

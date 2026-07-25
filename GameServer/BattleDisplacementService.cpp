@@ -6,8 +6,7 @@ BattlePushResult BattleDisplacementService::TryPush(const BattleDisplacementRequ
 {
 	BattlePushResult result;
 	if (request.attacker == nullptr || request.target == nullptr || request.isWalkable == nullptr ||
-		request.findAlivePawnAt == nullptr || request.attacker->isDead || request.target->isDead ||
-		request.attacker->hp <= 0 || request.target->hp <= 0)
+		request.findAlivePawnAt == nullptr || request.attacker->isDead || request.attacker->hp <= 0)
 	{
 		return result;
 	}
@@ -41,5 +40,55 @@ BattlePushResult BattleDisplacementService::TryPush(const BattleDisplacementRequ
 		<< " target=(" << destination.q() << "," << destination.r() << ")"
 		<< endl;
 	result.pushed = true;
+	return result;
+}
+
+BattleRetreatResult BattleDisplacementService::TryRetreatFromTarget(const BattleDisplacementRequest& request) const
+{
+	BattleRetreatResult result;
+	if (request.attacker == nullptr || request.target == nullptr || request.isWalkable == nullptr ||
+		request.findAlivePawnAt == nullptr || request.attacker->isDead || request.target->isDead ||
+		request.attacker->hp <= 0 || request.target->hp <= 0)
+	{
+		return result;
+	}
+
+	const int32 directionIndex = _spatialService.FindClosestDirectionIndex(request.attacker->axial, request.target->axial);
+	if (directionIndex < 0)
+		return result;
+
+	Protocol::AxialCoord destination;
+	destination.set_q(request.attacker->axial.q() - BattleSpatialService::Directions[directionIndex][0]);
+	destination.set_r(request.attacker->axial.r() - BattleSpatialService::Directions[directionIndex][1]);
+	if (_spatialService.IsInBounds(destination) == false || request.isWalkable(destination) == false)
+		return result;
+
+	BattlePawn* occupant = request.findAlivePawnAt(destination);
+	if (occupant != nullptr && occupant->pawnId != request.attacker->pawnId)
+	{
+		if (occupant->ownerId != request.attacker->ownerId)
+			return result;
+
+		Protocol::AxialCoord originalCasterAxial = request.attacker->axial;
+		request.attacker->axial.CopyFrom(occupant->axial);
+		occupant->axial.CopyFrom(originalCasterAxial);
+		result.moved = true;
+		result.swappedWithAlly = true;
+		result.swappedAlly = occupant;
+	}
+	else
+	{
+		request.attacker->axial.CopyFrom(destination);
+		result.moved = true;
+	}
+
+	if (result.moved)
+	{
+		cout << "BATTLE_RETREAT_SUCCESS pawn_id=" << request.attacker->pawnId
+			<< " target_pawn_id=" << request.target->pawnId
+			<< " swapped_with_ally=" << result.swappedWithAlly
+			<< " destination=(" << request.attacker->axial.q() << "," << request.attacker->axial.r() << ")"
+			<< endl;
+	}
 	return result;
 }

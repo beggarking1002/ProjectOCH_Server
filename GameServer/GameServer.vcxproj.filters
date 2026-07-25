@@ -11,6 +11,8 @@
 	<ClCompile Include="BattleMovementService.cpp" />
 	<ClCompile Include="Alen.cpp" />
 	<ClCompile Include="AlenSpear.cpp" />
+	<ClCompile Include="Zillian.cpp" />
+	<ClCompile Include="ZillianLongbow.cpp" />
     <ClCompile Include="BattleTemplateManager.cpp" />
     <ClCompile Include="BattleRoom.cpp" />
     <ClCompile Include="Creature.cpp" />
@@ -45,6 +47,9 @@
     <ClCompile Include="SuenAxe.cpp">
       <Filter>Pawn</Filter>
     </ClCompile>
+    <ClCompile Include="SuenParvis.cpp">
+      <Filter>Pawn</Filter>
+    </ClCompile>
     <ClCompile Include="BattlePawn.cpp">
       <Filter>Pawn</Filter>
     </ClCompile>
@@ -53,6 +58,8 @@
 	<ClInclude Include="BattleEffectExecutor.h" />
 	<ClInclude Include="Alen.h" />
 	<ClInclude Include="AlenSpear.h" />
+	<ClInclude Include="Zillian.h" />
+	<ClInclude Include="ZillianLongbow.h" />
     <ClInclude Include="BattleSkillExecutionService.h" />
     <ClInclude Include="BattleSkillResolver.h" />
     <ClInclude Include="BattleZocService.h" />
@@ -92,6 +99,9 @@
       <Filter>Pawn</Filter>
     </ClInclude>
     <ClInclude Include="SuenAxe.h">
+      <Filter>Pawn</Filter>
+    </ClInclude>
+    <ClInclude Include="SuenParvis.h">
       <Filter>Pawn</Filter>
     </ClInclude>
     <ClInclude Include="BattlePawn.h">

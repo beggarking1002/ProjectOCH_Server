@@ -166,16 +166,19 @@ bool BattleTemplateManager::Load()
 	_skillsByClassKey.clear();
 	_effectsByGroupKey.clear();
 	_battleMapTilesByMapId.clear();
+	_battleConfigValues.clear();
 	_effectParams.clear();
 
 	const bool success =
 		LoadClassKey(ResolveDataPath("ClassKey.csv")) &&
 		LoadPawnTemplate(ResolveDataPath("PawnTemplate.csv")) &&
 		LoadBattleSkill(ResolveDataPath("BattleSkill.csv")) &&
+		LoadBattleSkillVariant(ResolveDataPath("BattleSkillVariant.csv")) &&
 		LoadBattleSkillEffect(ResolveDataPath("BattleSkillEffect.csv")) &&
 		LoadBattleSkillEffectParam(ResolveDataPath("BattleSkillEffectParam.csv")) &&
 		LoadBattleMapTile(ResolveDataPath("BattleMapTile.csv")) &&
 		LoadBattleZoc(ResolveDataPath("BattleZoc.csv")) &&
+		LoadBattleConfig(ResolveDataPath("BattleConfig.csv")) &&
 		ValidateTemplates();
 
 	_loaded = success;
@@ -186,9 +189,24 @@ bool BattleTemplateManager::Load()
 		<< " effect_group_count=" << _effectsByGroupKey.size()
 		<< " battle_map_count=" << _battleMapTilesByMapId.size()
 		<< " effect_params=" << _effectParams.size()
+		<< " battle_config_values=" << _battleConfigValues.size()
 		<< endl;
 
 	return success;
+}
+
+double BattleTemplateManager::GetConfigDouble(const string& configKey, double fallback)
+{
+	if (Load() == false)
+		return fallback;
+
+	auto it = _battleConfigValues.find(configKey);
+	return it != _battleConfigValues.end() ? it->second : fallback;
+}
+
+int32 BattleTemplateManager::GetConfigInt(const string& configKey, int32 fallback)
+{
+	return static_cast<int32>(round(GetConfigDouble(configKey, static_cast<double>(fallback))));
 }
 
 const BattlePawnClassTemplate* BattleTemplateManager::GetPawnClassTemplate(Protocol::PawnClass pawnClass)
@@ -406,6 +424,7 @@ bool BattleTemplateManager::LoadBattleSkill(const string& path)
 		skill.skillCategory = Cell(rows[i], header, "SkillCategory");
 		skill.combatType = Cell(rows[i], header, "CombatType");
 		skill.damageType = Cell(rows[i], header, "DamageType");
+		skill.slotVariantKey = Cell(rows[i], header, "SlotVariantKey");
 		skill.actionSlot = ToInt(Cell(rows[i], header, "ActionSlot"));
 		skill.apCost = ToInt(Cell(rows[i], header, "ApCost"));
 		skill.rangeMin = ToInt(Cell(rows[i], header, "RangeMin"));
@@ -424,6 +443,48 @@ bool BattleTemplateManager::LoadBattleSkill(const string& path)
 		skill.effectGroupKey = Cell(rows[i], header, "EffectGroupKey");
 
 		_skillsByClassKey[skill.classKey].push_back(skill);
+	}
+
+	return true;
+}
+
+bool BattleTemplateManager::LoadBattleSkillVariant(const string& path)
+{
+	vector<vector<string>> rows;
+	if (ReadCsv(path, rows) == false || rows.size() < 2)
+	{
+		cout << "[BattleTemplateManager] Failed to read BattleSkillVariant: " << path << endl;
+		return false;
+	}
+
+	const unordered_map<string, size_t> header = BuildHeader(rows[0]);
+	for (size_t i = 2; i < rows.size(); ++i)
+	{
+		const string skillKey = Cell(rows[i], header, "SkillKey");
+		const string slotVariantKey = Cell(rows[i], header, "SlotVariantKey");
+		if (skillKey.empty() || slotVariantKey.empty())
+			continue;
+
+		bool found = false;
+		for (auto& item : _skillsByClassKey)
+		{
+			for (BattleSkillTemplate& skill : item.second)
+			{
+				if (skill.skillKey != skillKey)
+					continue;
+				skill.slotVariantKey = slotVariantKey;
+				found = true;
+				break;
+			}
+			if (found)
+				break;
+		}
+
+		if (found == false)
+		{
+			cout << "[BattleTemplateManager] BattleSkillVariant has unknown SkillKey: " << skillKey << endl;
+			return false;
+		}
 	}
 
 	return true;
@@ -590,11 +651,42 @@ bool BattleTemplateManager::LoadBattleZoc(const string& path)
 	return true;
 }
 
+bool BattleTemplateManager::LoadBattleConfig(const string& path)
+{
+	vector<vector<string>> rows;
+	if (ReadCsv(path, rows) == false || rows.size() < 2)
+	{
+		cout << "[BattleTemplateManager] Failed to read BattleConfig: " << path << endl;
+		return false;
+	}
+
+	const unordered_map<string, size_t> header = BuildHeader(rows[0]);
+	for (size_t i = 2; i < rows.size(); ++i)
+	{
+		const string configKey = Cell(rows[i], header, "ConfigKey");
+		const string value = Cell(rows[i], header, "Value");
+		if (configKey.empty() || value.empty())
+			continue;
+
+		try
+		{
+			_battleConfigValues[configKey] = stod(value);
+		}
+		catch (...)
+		{
+			cout << "[BattleTemplateManager] Invalid BattleConfig value key=" << configKey << endl;
+			return false;
+		}
+	}
+
+	return true;
+}
+
 bool BattleTemplateManager::ValidateTemplates()
 {
 	for (const auto& item : _skillsByClassKey)
 	{
-		unordered_set<int32> actionSlots;
+		unordered_map<int32, unordered_set<string>> actionSlotVariants;
 		for (const BattleSkillTemplate& skill : item.second)
 		{
 			if (skill.actionSlot <= 0)
@@ -603,14 +695,16 @@ bool BattleTemplateManager::ValidateTemplates()
 				return false;
 			}
 
-			if (actionSlots.insert(skill.actionSlot).second == false)
+			auto& variants = actionSlotVariants[skill.actionSlot];
+			if (variants.empty() == false && (skill.slotVariantKey.empty() || variants.contains(skill.slotVariantKey)))
 			{
-				cout << "[BattleTemplateManager] Duplicate ActionSlot"
+				cout << "[BattleTemplateManager] Duplicate ActionSlot without a distinct SlotVariantKey"
 					<< " class_key=" << item.first
 					<< " action_slot=" << skill.actionSlot
 					<< endl;
 				return false;
 			}
+			variants.insert(skill.slotVariantKey);
 
 			if (skill.effectGroupKey.empty() == false && _effectsByGroupKey.find(skill.effectGroupKey) == _effectsByGroupKey.end())
 			{

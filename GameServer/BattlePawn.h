@@ -20,6 +20,13 @@ public:
 	virtual bool CanActivateSkill(int32 skillSlot, string& reason) const;
 	virtual void OnEquipmentPickedUp(const string& equipmentKey);
 	virtual bool ApplyStatFromStat(const string& sourceStat, const string& targetStat, int32 value);
+	virtual void OnSuccessfulHitReceived(BattlePawn& attacker);
+	virtual bool RequiresHitCheck(const BattleSkillTemplate& skill) const;
+	virtual int32 GetHitRateBonus(const BattleSkillTemplate& skill) const;
+	virtual bool IsGuaranteedHit(const BattleSkillTemplate& skill) const;
+	virtual bool IsGuaranteedCritical(const BattleSkillTemplate& skill) const;
+	virtual string ResolveSkillKey(int32 skillSlot) const;
+	virtual bool BlocksMoveAfterSkill(int32 skillSlot) const;
 
 	bool CanMove() const;
 	void MarkMoved();
