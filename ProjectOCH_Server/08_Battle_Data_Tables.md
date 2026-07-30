@@ -13,10 +13,13 @@ Updated: 2026-07-20.
 | `BattleSkill.csv` | Skill identity, action slot, AP cost, range, target type, and effect group. |
 | `BattleSkillEffect.csv` | Ordered effect instances and triggers for an effect group. |
 | `BattleSkillEffectParam.csv` | One parameter per effect instance. |
-| `BattleMapTile.csv` | Unity cell source data for base battle terrain. |
 | `EnumDef.csv` | Human-readable enum/value catalog for data authoring. It is not loaded by the C++ runtime. |
 
 The client should mirror the battle skill/effect data it needs for tooltip and range preview, but the server remains authoritative for all results.
+
+## Battle Map JSON
+
+`Data\Maps\BattleField_001.walkmap.json` is loaded directly by `BattleMapData`, separately from `BattleTemplateManager`. Its `walkable_ranges` define the valid Unity cells of the battle board; the server converts them to axial coordinates and uses the resulting tile set as the boundary for movement, targeting, displacement, and battle-tile initialization.
 
 ## Table Relationships
 

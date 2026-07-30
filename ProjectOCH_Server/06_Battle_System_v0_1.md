@@ -26,7 +26,7 @@ col = q + ((r - (r & 1)) / 2)
 row = r
 ```
 
-`BattleMapTile.csv` stores Unity `CellX, CellY`; `BattleTemplateManager` converts those cells to axial while loading. Spawn inputs use Unity cells and are also converted at battle-pawn creation. The Unity client must convert Tilemap cells before sending `C_BATTLE_MOVE` or `C_BATTLE_SKILL`, and convert received axial positions before placing pawns or overlays.
+`BattleField_001.walkmap.json` stores Unity cell ranges for valid battle tiles. `BattleMapData` loads the JSON at server startup and converts every walkable Unity cell to axial coordinates. `BattleSpatialService::IsInBounds()` then uses this server-owned axial tile set for movement, target boundaries, displacement, and tile initialization. Spawn inputs use Unity cells and are also converted at battle-pawn creation. The Unity client must convert Tilemap cells before sending `C_BATTLE_MOVE` or `C_BATTLE_SKILL`, and convert received axial positions before placing pawns or overlays.
 
 All distance, range, neighbor, Hail, and aura calculations use axial coordinates. Facing and back-attack left/right judgment converts axial coordinates back to Odd-R cells for visual left/right semantics.
 

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "01_Project_Map.md",
+                "file": "Portfolio/01_Planning_Portfolio_Draft.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "01_Project_Map"
+              "title": "01_Planning_Portfolio_Draft"
             }
           }
         ]
@@ -185,11 +185,14 @@
   },
   "active": "4f9fd69b11e7caf7",
   "lastOpenFiles": [
+    "Portfolio/02_Development_Technical_Portfolio_Draft.md",
+    "12_Project_Structure_2026-07-29.md",
+    "Portfolio/01_Planning_Portfolio_Draft.md",
+    "01_Project_Map.md",
     "05_Working_Notes.md",
     "04_Packet_Protocol_Generation.md",
     "03_GameServer_Flow.md",
     "02_ServerCore_Architecture.md",
-    "01_Project_Map.md",
     "00_Codex_Start_Here.md",
     "환영합니다!.md"
   ]

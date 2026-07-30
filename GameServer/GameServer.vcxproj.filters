@@ -2,6 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="BattleEffectExecutor.cpp" />
+	<ClCompile Include="BattleMapData.cpp" />
     <ClCompile Include="BattleSkillExecutionService.cpp" />
     <ClCompile Include="BattleSkillResolver.cpp" />
 	<ClCompile Include="BattleZocService.cpp" />
@@ -56,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
 	<ClInclude Include="BattleEffectExecutor.h" />
+	<ClInclude Include="BattleMapData.h" />
 	<ClInclude Include="Alen.h" />
 	<ClInclude Include="AlenSpear.h" />
 	<ClInclude Include="Zillian.h" />

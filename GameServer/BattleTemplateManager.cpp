@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "BattleTemplateManager.h"
-#include "BattleCoordinate.h"
 
 #include <sstream>
 
@@ -165,7 +164,6 @@ bool BattleTemplateManager::Load()
 	_pawnClassTemplates.clear();
 	_skillsByClassKey.clear();
 	_effectsByGroupKey.clear();
-	_battleMapTilesByMapId.clear();
 	_battleConfigValues.clear();
 	_effectParams.clear();
 
@@ -176,7 +174,6 @@ bool BattleTemplateManager::Load()
 		LoadBattleSkillVariant(ResolveDataPath("BattleSkillVariant.csv")) &&
 		LoadBattleSkillEffect(ResolveDataPath("BattleSkillEffect.csv")) &&
 		LoadBattleSkillEffectParam(ResolveDataPath("BattleSkillEffectParam.csv")) &&
-		LoadBattleMapTile(ResolveDataPath("BattleMapTile.csv")) &&
 		LoadBattleZoc(ResolveDataPath("BattleZoc.csv")) &&
 		LoadBattleConfig(ResolveDataPath("BattleConfig.csv")) &&
 		ValidateTemplates();
@@ -187,7 +184,6 @@ bool BattleTemplateManager::Load()
 		<< " class_keys=" << _classKeyToPawnClass.size()
 		<< " skill_class_count=" << _skillsByClassKey.size()
 		<< " effect_group_count=" << _effectsByGroupKey.size()
-		<< " battle_map_count=" << _battleMapTilesByMapId.size()
 		<< " effect_params=" << _effectParams.size()
 		<< " battle_config_values=" << _battleConfigValues.size()
 		<< endl;
@@ -281,15 +277,6 @@ const vector<BattleEffectTemplate>* BattleTemplateManager::GetEffects(const stri
 	if (it == _effectsByGroupKey.end())
 		return nullptr;
 	return &it->second;
-}
-
-const vector<BattleMapTileTemplate>* BattleTemplateManager::GetBattleMapTiles(const string& mapId)
-{
-	if (Load() == false)
-		return nullptr;
-
-	auto it = _battleMapTilesByMapId.find(mapId);
-	return it != _battleMapTilesByMapId.end() ? &it->second : nullptr;
 }
 
 const BattleZocTemplate* BattleTemplateManager::GetZocTemplate(Protocol::PawnClass pawnClass)
@@ -565,40 +552,6 @@ bool BattleTemplateManager::LoadBattleSkillEffectParam(const string& path)
 				break;
 			}
 		}
-	}
-
-	return true;
-}
-
-bool BattleTemplateManager::LoadBattleMapTile(const string& path)
-{
-	vector<vector<string>> rows;
-	if (ReadCsv(path, rows) == false || rows.size() < 2)
-	{
-		cout << "[BattleTemplateManager] Failed to read BattleMapTile: " << path << endl;
-		return false;
-	}
-
-	const unordered_map<string, size_t> header = BuildHeader(rows[0]);
-	for (size_t i = 2; i < rows.size(); i++)
-	{
-		BattleMapTileTemplate tile;
-		tile.mapId = Cell(rows[i], header, "MapId");
-		if (tile.mapId.empty())
-			continue;
-
-		const int32 cellX = ToInt(Cell(rows[i], header, "CellX"));
-		const int32 cellY = ToInt(Cell(rows[i], header, "CellY"));
-		const Protocol::AxialCoord axial = BattleCoordinate::CellToAxial(cellX, cellY);
-		tile.axialQ = axial.q();
-		tile.axialR = axial.r();
-		if (TryParseBattleTileType(Cell(rows[i], header, "TileType"), tile.tileType) == false)
-		{
-			cout << "[BattleTemplateManager] Invalid BattleTileType map_id=" << tile.mapId << endl;
-			return false;
-		}
-
-		_battleMapTilesByMapId[tile.mapId].push_back(tile);
 	}
 
 	return true;

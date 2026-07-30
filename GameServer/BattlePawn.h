@@ -29,6 +29,8 @@ public:
 	virtual bool BlocksMoveAfterSkill(int32 skillSlot) const;
 
 	bool CanMove() const;
+	// Applies a movement result that has already been validated by the board/movement services.
+	void ApplyResolvedMove(const Protocol::AxialCoord& destination, Protocol::BattleFacingDirection facing);
 	void MarkMoved();
 	bool CanUseZocReaction(int32 reactionLimitPerTurn) const;
 	void MarkZocReactionUsed();

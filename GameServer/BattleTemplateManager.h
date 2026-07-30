@@ -56,14 +56,6 @@ struct BattleEffectTemplate
 	unordered_map<string, string> params;
 };
 
-struct BattleMapTileTemplate
-{
-	string mapId;
-	int32 axialQ = 0;
-	int32 axialR = 0;
-	Protocol::BattleTileType tileType = Protocol::BATTLE_TILE_TYPE_NORMAL;
-};
-
 struct BattleZocTemplate
 {
 	Protocol::PawnClass pawnClass = Protocol::PAWN_CLASS_NONE;
@@ -85,7 +77,6 @@ public:
 	const vector<BattleSkillTemplate>* GetSkills(Protocol::PawnClass pawnClass);
 	const BattleSkillTemplate* GetSkillByKey(const string& skillKey);
 	const vector<BattleEffectTemplate>* GetEffects(const string& effectGroupKey);
-	const vector<BattleMapTileTemplate>* GetBattleMapTiles(const string& mapId);
 	const BattleZocTemplate* GetZocTemplate(Protocol::PawnClass pawnClass);
 	// Shared battle-rule tuning values. Character/skill data stays in its own tables.
 	double GetConfigDouble(const string& configKey, double fallback = 0.0);
@@ -101,7 +92,6 @@ private:
 	bool LoadBattleSkillVariant(const string& path);
 	bool LoadBattleSkillEffect(const string& path);
 	bool LoadBattleSkillEffectParam(const string& path);
-	bool LoadBattleMapTile(const string& path);
 	bool LoadBattleZoc(const string& path);
 	bool LoadBattleConfig(const string& path);
 	bool ValidateTemplates();
@@ -115,7 +105,6 @@ private:
 	unordered_map<Protocol::PawnClass, BattlePawnClassTemplate> _pawnClassTemplates;
 	unordered_map<string, vector<BattleSkillTemplate>> _skillsByClassKey;
 	unordered_map<string, vector<BattleEffectTemplate>> _effectsByGroupKey;
-	unordered_map<string, vector<BattleMapTileTemplate>> _battleMapTilesByMapId;
 	unordered_map<Protocol::PawnClass, BattleZocTemplate> _zocTemplates;
 	unordered_map<string, double> _battleConfigValues;
 	vector<BattleEffectParamTemplate> _effectParams;

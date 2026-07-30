@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "BattleSpatialService.h"
 #include "BattlePawn.h"
+#include "BattleMapData.h"
 
 const int32 BattleSpatialService::Directions[BattleSpatialService::DirectionCount][2] =
 {
@@ -23,11 +24,7 @@ namespace
 
 bool BattleSpatialService::IsInBounds(const Protocol::AxialCoord& coord) const
 {
-	constexpr int32 kBattleMapRadius = 6;
-	const int32 q = coord.q();
-	const int32 r = coord.r();
-	const int32 s = -q - r;
-	return abs(q) <= kBattleMapRadius && abs(r) <= kBattleMapRadius && abs(s) <= kBattleMapRadius;
+	return GBattleMapData.ContainsTile(coord);
 }
 
 int32 BattleSpatialService::AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs) const
@@ -63,12 +60,11 @@ int32 BattleSpatialService::FindClosestDirectionIndex(const Protocol::AxialCoord
 	return bestDirection;
 }
 
-void BattleSpatialService::UpdateFacingByMove(BattlePawn& pawn, const Protocol::AxialCoord& start,
-	const Protocol::AxialCoord& target) const
+Protocol::BattleFacingDirection BattleSpatialService::GetFacingForMove(const Protocol::AxialCoord& start,
+	const Protocol::AxialCoord& target, Protocol::BattleFacingDirection fallbackFacing) const
 {
 	const int32 directionIndex = FindClosestDirectionIndex(start, target);
-	if (directionIndex >= 0)
-		pawn.facingDirection = FacingFromDirectionIndex(directionIndex);
+	return directionIndex >= 0 ? FacingFromDirectionIndex(directionIndex) : fallbackFacing;
 }
 
 bool BattleSpatialService::IsBackAttack(const BattlePawn& attacker, const BattlePawn& defender) const

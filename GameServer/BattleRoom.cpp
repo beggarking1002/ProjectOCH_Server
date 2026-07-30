@@ -4,6 +4,7 @@
 #include "BattleEffectExecutor.h"
 #include "BattleTemplateManager.h"
 #include "BattleCoordinate.h"
+#include "BattleMapData.h"
 #include "GameSession.h"
 #include "Player.h"
 #include "Room.h"
@@ -234,10 +235,15 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 		return;
 	}
 
-	if (_spatialService.AxialDistance(start, pkt.target()) > _movementService.GetMoveRange(*pawn))
+	const bool isReachable = _movementService.IsReachable(start, pkt.target(), _movementService.GetMoveRange(*pawn),
+		[this, &battle, pawn](const Protocol::AxialCoord& axial)
+		{
+			return IsBattleWalkable(battle, axial) && IsOccupied(battle, axial, pawn->pawnId) == false;
+		});
+	if (isReachable == false)
 	{
 		SendBattleMoveResult(session, false, battle.battleId, pawn->pawnId, start, start, battle.currentTurnPawnId,
-			Protocol::BATTLE_MOVE_RESULT_OUT_OF_RANGE, "out of range", pawn);
+			Protocol::BATTLE_MOVE_RESULT_OUT_OF_RANGE, "target is unreachable", pawn);
 		return;
 	}
 
@@ -248,9 +254,8 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 		return;
 	}
 
-	pawn->axial.CopyFrom(pkt.target());
-	_spatialService.UpdateFacingByMove(*pawn, start, pawn->axial);
-	pawn->MarkMoved();
+	const Protocol::BattleFacingDirection facing = _spatialService.GetFacingForMove(start, pkt.target(), pawn->facingDirection);
+	pawn->ApplyResolvedMove(pkt.target(), facing);
 
 	vector<Protocol::BattleActionLog> zocLogs;
 	vector<Protocol::BattleTileInfo> zocTileDeltas;
@@ -1009,7 +1014,7 @@ BattleRoom::BattleState BattleRoom::CreateBattle(PlayerRef ownerPlayer)
 	battle.battleId = _battleIdGenerator++;
 	battle.ownerId = ownerId;
 	battle.isPvp = false;
-	battle.mapId = "Battle_Test_001";
+	battle.mapId = GBattleMapData.MapId();
 	InitializeBattleTiles(battle);
 
 	AddOwnedBattlePawns(battle.alliedPawns, ownerPlayer, -2, 0);
@@ -1043,7 +1048,7 @@ BattleRoom::BattleState BattleRoom::CreatePvpBattle(PlayerRef ownerPlayer, Playe
 	battle.ownerId = ownerId;
 	battle.opponentOwnerId = opponentOwnerId;
 	battle.isPvp = true;
-	battle.mapId = "Battle_PVP_001";
+	battle.mapId = GBattleMapData.MapId();
 	InitializeBattleTiles(battle);
 
 	AddOwnedBattlePawns(battle.alliedPawns, ownerPlayer, -2, 0);
@@ -1181,29 +1186,11 @@ uint64 BattleRoom::MakeTileKey(const Protocol::AxialCoord& axial) const
 void BattleRoom::InitializeBattleTiles(BattleState& battle)
 {
 	battle.tileStates.clear();
-	constexpr int32 kBattleMapRadius = 6;
-	for (int32 q = -kBattleMapRadius; q <= kBattleMapRadius; q++)
+	ASSERT_CRASH(GBattleMapData.IsLoaded());
+	ASSERT_CRASH(battle.mapId == GBattleMapData.MapId());
+	for (const Protocol::AxialCoord& axial : GBattleMapData.Tiles())
 	{
-		for (int32 r = -kBattleMapRadius; r <= kBattleMapRadius; r++)
-		{
-			const Protocol::AxialCoord axial = MakeAxial(q, r);
-			if (_spatialService.IsInBounds(axial) == false)
-				continue;
-
-			battle.tileStates.emplace(MakeTileKey(axial), BattleTileState());
-		}
-	}
-
-	const vector<BattleMapTileTemplate>* tiles = GBattleTemplates.GetBattleMapTiles(battle.mapId);
-	if (tiles == nullptr)
-		return;
-
-	for (const BattleMapTileTemplate& tile : *tiles)
-	{
-		const Protocol::AxialCoord axial = MakeAxial(tile.axialQ, tile.axialR);
-		BattleTileState& state = battle.tileStates[MakeTileKey(axial)];
-		state.baseTileType = tile.tileType;
-		state.overlayType = Protocol::BATTLE_TILE_OVERLAY_TYPE_NONE;
+		battle.tileStates.emplace(MakeTileKey(axial), BattleTileState());
 	}
 }
 

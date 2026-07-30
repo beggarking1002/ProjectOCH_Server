@@ -43,6 +43,13 @@ bool BattlePawn::CanMove() const
 	return isDead == false && hp > 0 && isActionBlockedThisTurn == false && hasMovedThisTurn == false;
 }
 
+void BattlePawn::ApplyResolvedMove(const Protocol::AxialCoord& destination, Protocol::BattleFacingDirection facing)
+{
+	axial.CopyFrom(destination);
+	facingDirection = facing;
+	MarkMoved();
+}
+
 void BattlePawn::MarkMoved()
 {
 	hasMovedThisTurn = true;

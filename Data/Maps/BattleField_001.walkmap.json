@@ -1,0 +1,155 @@
+﻿{
+    "map_id": "BattleField_001",
+    "fixed_point_scale": 100,
+    "cell_size": {
+        "x": 0.949999988079071,
+        "y": 1.0
+    },
+    "origin_world": {
+        "x": 0.0,
+        "y": 0.0
+    },
+    "bounds": {
+        "min_cell_x": -8,
+        "min_cell_y": -7,
+        "max_cell_x": 6,
+        "max_cell_y": 6,
+        "min_world_x": -712,
+        "min_world_y": -525,
+        "max_world_x": 618,
+        "max_world_y": 450
+    },
+    "walkable_ranges": [
+        {
+            "y": -7,
+            "x_min": -5,
+            "x_max": 3
+        },
+        {
+            "y": -6,
+            "x_min": -5,
+            "x_max": -3
+        },
+        {
+            "y": -6,
+            "x_min": -1,
+            "x_max": -1
+        },
+        {
+            "y": -6,
+            "x_min": 2,
+            "x_max": 2
+        },
+        {
+            "y": -6,
+            "x_min": 4,
+            "x_max": 4
+        },
+        {
+            "y": -5,
+            "x_min": -6,
+            "x_max": -4
+        },
+        {
+            "y": -5,
+            "x_min": -2,
+            "x_max": -2
+        },
+        {
+            "y": -5,
+            "x_min": 1,
+            "x_max": 2
+        },
+        {
+            "y": -5,
+            "x_min": 4,
+            "x_max": 4
+        },
+        {
+            "y": -4,
+            "x_min": -6,
+            "x_max": -1
+        },
+        {
+            "y": -4,
+            "x_min": 2,
+            "x_max": 3
+        },
+        {
+            "y": -4,
+            "x_min": 5,
+            "x_max": 5
+        },
+        {
+            "y": -3,
+            "x_min": -7,
+            "x_max": 0
+        },
+        {
+            "y": -3,
+            "x_min": 2,
+            "x_max": 5
+        },
+        {
+            "y": -2,
+            "x_min": -7,
+            "x_max": 1
+        },
+        {
+            "y": -2,
+            "x_min": 6,
+            "x_max": 6
+        },
+        {
+            "y": -1,
+            "x_min": -8,
+            "x_max": 2
+        },
+        {
+            "y": -1,
+            "x_min": 6,
+            "x_max": 6
+        },
+        {
+            "y": 0,
+            "x_min": -7,
+            "x_max": 3
+        },
+        {
+            "y": 0,
+            "x_min": 6,
+            "x_max": 6
+        },
+        {
+            "y": 1,
+            "x_min": -7,
+            "x_max": 5
+        },
+        {
+            "y": 2,
+            "x_min": -6,
+            "x_max": 5
+        },
+        {
+            "y": 3,
+            "x_min": -6,
+            "x_max": 4
+        },
+        {
+            "y": 4,
+            "x_min": -5,
+            "x_max": 4
+        },
+        {
+            "y": 5,
+            "x_min": -5,
+            "x_max": 3
+        },
+        {
+            "y": 6,
+            "x_min": -4,
+            "x_max": 3
+        }
+    ],
+    "debug_walkable_cells": []
+}

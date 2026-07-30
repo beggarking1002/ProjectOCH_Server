@@ -150,6 +150,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BattleEffectExecutor.cpp" />
+	<ClCompile Include="BattleMapData.cpp" />
 	<ClCompile Include="Beige.cpp" />
 	<ClCompile Include="BeigeFire.cpp" />
 	<ClCompile Include="BeigeIce.cpp" />
@@ -202,6 +203,7 @@
   </ItemGroup>
   <ItemGroup>
 	<ClInclude Include="BattleEffectExecutor.h" />
+	<ClInclude Include="BattleMapData.h" />
 	<ClInclude Include="Alen.h" />
 	<ClInclude Include="AlenSpear.h" />
 	<ClInclude Include="Zillian.h" />

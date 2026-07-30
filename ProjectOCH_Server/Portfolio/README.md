@@ -1,6 +1,6 @@
 # Project OCH Portfolio
 
-Project OCH의 포트폴리오 제출용 문서를 모아 둔 폴더입니다. 문서의 구현 범위는 `GameServer`, `ServerCore`, `Common` 프로토콜과 `Data/*.csv`를 기준으로 작성합니다.
+Project OCH의 포트폴리오 제출용 문서를 모아 둔 폴더입니다. 문서의 구현 범위는 `GameServer`, `ServerCore`, `Common` 프로토콜과 `Data/*.csv`를 기준으로 작성합니다. 마지막 코드 대조일은 2026-07-29입니다.
 
 ## Documents
 
@@ -18,7 +18,8 @@ Project OCH의 포트폴리오 제출용 문서를 모아 둔 폴더입니다. �
 
 ## Current Evidence
 
-- `GameServer` Debug build: warning 0, error 0
-- 서버 권한 전투, CSV 효과 실행, IOCP/JobQueue, Protobuf 생성 파이프라인
-- Beige Ice, Beige Fire, Suen Axe 전용 Pawn 클래스
-- Alen Spear/Zillian Longbow의 현재 CSV 기반 기본 스킬 행 및 이후 확장 계획
+- 마지막 문서화된 `GameServer` Debug build: warning 0, error 0 (2026-07-20 구현 현황 기준)
+- 서버 권한 전투, CSV 효과 실행, IOCP/JobQueue, Protocol Buffers 생성 파이프라인
+- 8개 Pawn 템플릿, 45개 전투 스킬 정의, 101개 효과 행, 306개 효과 파라미터 행
+- `BeigeIce`, `BeigeFire`, `SuenAxe`, `AlenSpear`, `ZillianLongbow` 전용 `BattlePawn` 구현
+- PvP 초대/수락, shared battle state, 결과 확인 후 필드 복귀 프로토콜

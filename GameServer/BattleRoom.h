@@ -167,7 +167,7 @@ private:
 	BattleDisplacementService _displacementService{ _spatialService };
 	BattleTurnService _turnService;
 	BattleSkillResolver _skillResolver;
-	BattleMovementService _movementService{ _skillResolver };
+	BattleMovementService _movementService{ _skillResolver, _spatialService };
 	BattleSkillExecutionService _skillExecutionService{ _skillResolver };
 	BattleZocService _zocService{ _spatialService };
 	unordered_map<uint64, BattleState> _battles;
