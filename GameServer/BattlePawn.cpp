@@ -3,6 +3,7 @@
 #include "BeigeFire.h"
 #include "BeigeIce.h"
 #include "AlenSpear.h"
+#include "AlenShield.h"
 #include "SuenAxe.h"
 #include "SuenParvis.h"
 #include "ZillianLongbow.h"
@@ -24,6 +25,8 @@ bool BattlePawn::IsSubActionSkillSlot(int32 skillSlot)
 
 const char* BattlePawn::GetBehaviorKey() const { return "DEFAULT"; }
 bool BattlePawn::CanInterceptSingleTargetAttack() const { return false; }
+bool BattlePawn::UsesConditionalCounterattack() const { return false; }
+bool BattlePawn::CanCounterattackOnSuccessfulHit() const { return false; }
 bool BattlePawn::TryConsumeGuaranteedEvade() { return false; }
 bool BattlePawn::CanDropEquipment(const string& equipmentKey) const { return false; }
 bool BattlePawn::CanPickupEquipment(const string& equipmentKey, uint64 equipmentOwnerPawnId) const { return false; }
@@ -145,10 +148,22 @@ int32 BattlePawn::GetShieldCurrent() const
 
 int32 BattlePawn::GetShieldMax() const
 {
-	int32 value = maxArmor;
+	int32 value = GetEffectiveMaxArmor();
 	for (const BattleBarrierState& barrier : barriers)
 		value += barrier.maxValue;
 	return value;
+}
+
+int32 BattlePawn::GetEffectiveMaxArmor() const
+{
+	int32 value = maxArmor;
+	for (const auto& item : statuses)
+	{
+		const BattleStatusState& status = item.second;
+		if (status.remainingOwnerTurns != 0)
+			value += status.flatArmorBonus;
+	}
+	return max(0, value);
 }
 
 vector<Protocol::AxialCoord> BattlePawn::ResolveTargetArea(const string& shape, const Protocol::AxialCoord& target,
@@ -188,6 +203,8 @@ BattlePawnRef CreateBattlePawn(Protocol::PawnClass pawnClass)
 
 	if (pawnClass == Protocol::PAWN_CLASS_ALEN_SPEAR)
 		return make_shared<AlenSpear>();
+	if (pawnClass == Protocol::PAWN_CLASS_ALEN_SWORD_SHIELD)
+		return make_shared<AlenShield>();
 
 	if (pawnClass == Protocol::PAWN_CLASS_ZILLIAN_LONGBOW)
 		return make_shared<ZillianLongbow>();

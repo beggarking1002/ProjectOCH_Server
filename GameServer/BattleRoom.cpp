@@ -520,6 +520,12 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 			targetAxial, 0, target->hp, target->armor, battle.currentTurnPawnId, "cannot target ally", caster, target);
 		return;
 	}
+	if (enemyTarget && target != nullptr && IsTauntTargetRequired(battle, *caster, *target))
+	{
+		SendBattleSkillResult(session, false, battle.battleId, caster->pawnId, pkt.skill_slot(), target->pawnId,
+			targetAxial, 0, target->hp, target->armor, battle.currentTurnPawnId, "taunt requires attacking Alen", caster, target);
+		return;
+	}
 
 	if (allyTarget && target != nullptr && target->ownerId != caster->ownerId)
 	{
@@ -642,6 +648,22 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 					};
 				return _displacementService.TryRetreatFromTarget(request);
 			};
+		actionRequest.tryDashCaster = [this, &battle](BattlePawn& casterPawn, BattlePawn* targetPawn,
+			const Protocol::AxialCoord& targetAxial, int32 maxDistance)
+			{
+				BattleDisplacementRequest request;
+				request.attacker = &casterPawn;
+				request.target = targetPawn;
+				request.isWalkable = [this, &battle](const Protocol::AxialCoord& axial)
+					{
+						return IsBattleWalkable(battle, axial);
+					};
+				request.findAlivePawnAt = [this, &battle](const Protocol::AxialCoord& axial)
+					{
+						return FindAlivePawnAt(battle, axial);
+					};
+				return _displacementService.TryDashTowardTarget(request, targetAxial, maxDistance);
+			};
 		actionRequest.getBaseTileType = [this, &battle](const Protocol::AxialCoord& axial)
 			{
 				return GetBaseTileType(battle, axial);
@@ -731,7 +753,14 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		}
 	}
 	if (primarySkillIsMelee && target != nullptr && target->ownerId != caster->ownerId && IsAlive(*caster) && IsAlive(*target) &&
-		_spatialService.AxialDistance(caster->axial, target->axial) == 1 && (wasEvaded || target->hp == targetHpBeforeAction))
+		target->CanCounterattackOnSuccessfulHit() && hitDefenderIds.contains(target->pawnId) &&
+		_spatialService.AxialDistance(caster->axial, target->axial) == 1)
+	{
+		TryExecuteCounterattack(battle, *target, *caster, logs, tileDeltas, extraChangedPawns, deathCandidates);
+	}
+	if (primarySkillIsMelee && target != nullptr && target->ownerId != caster->ownerId && IsAlive(*caster) && IsAlive(*target) &&
+		target->UsesConditionalCounterattack() == false && _spatialService.AxialDistance(caster->axial, target->axial) == 1 &&
+		(wasEvaded || target->hp == targetHpBeforeAction))
 	{
 		TryExecuteCounterattack(battle, *target, *caster, logs, tileDeltas, extraChangedPawns, deathCandidates);
 	}
@@ -1335,7 +1364,7 @@ void BattleRoom::CopyBattlePawn(const BattlePawn& src, Protocol::BattlePawnInfo*
 	dst->set_max_hp(src.maxHp);
 	dst->set_move_range(_movementService.GetMoveRange(src));
 	dst->set_armor(src.armor);
-	dst->set_max_armor(src.maxArmor);
+	dst->set_max_armor(src.GetEffectiveMaxArmor());
 	dst->set_current_ap(src.currentAp);
 	dst->set_can_move(CanMove(src));
 	dst->set_used_normal_skill_this_turn(src.usedNormalSkillThisTurn);
@@ -1493,6 +1522,33 @@ BattlePawn* BattleRoom::FindSingleTargetInterceptor(BattleState& battle, const B
 	if (BattlePawn* interceptor = findIn(battle.alliedPawns))
 		return interceptor;
 	return findIn(battle.enemyPawns);
+}
+
+bool BattleRoom::IsTauntTargetRequired(BattleState& battle, const BattlePawn& attacker, const BattlePawn& selectedTarget)
+{
+	static random_device randomDevice;
+	static mt19937 randomGenerator(randomDevice());
+	uniform_real_distribution<double> distribution(0.0, 1.0);
+
+	for (const auto& item : attacker.statuses)
+	{
+		const BattleStatusState& status = item.second;
+		if (status.remainingOwnerTurns == 0 || status.forcedTargetPawnId == 0 || status.forcedTargetPawnId == selectedTarget.pawnId)
+			continue;
+
+		BattlePawn* forcedTarget = FindPawn(battle, status.forcedTargetPawnId);
+		if (forcedTarget == nullptr || IsAlive(*forcedTarget) == false || forcedTarget->ownerId == attacker.ownerId)
+			continue;
+
+		const double chance = clamp(status.forcedTargetChance, 0.0, 1.0);
+		const bool required = distribution(randomGenerator) < chance;
+		cout << "BATTLE_TAUNT_CHECK attacker_pawn_id=" << attacker.pawnId
+			<< " forced_target_pawn_id=" << forcedTarget->pawnId << " chance=" << chance
+			<< " required=" << required << endl;
+		if (required)
+			return true;
+	}
+	return false;
 }
 
 BattlePawn* BattleRoom::FindAdjacentAliveAlly(BattleState& battle, const BattlePawn& source, uint64 excludedPawnId)
@@ -1798,11 +1854,12 @@ void BattleRoom::StartTurn(BattleState& battle, BattlePawn& pawn)
 		battle.turnStartChangedPawnIds.push_back(pawn.pawnId);
 	}
 
-	if (CanRecoverArmor(pawn) && pawn.armor < pawn.maxArmor)
+	const int32 effectiveMaxArmor = pawn.GetEffectiveMaxArmor();
+	if (CanRecoverArmor(pawn) && pawn.armor < effectiveMaxArmor)
 	{
-		const int32 lostArmor = pawn.maxArmor - pawn.armor;
+		const int32 lostArmor = effectiveMaxArmor - pawn.armor;
 		const int32 recoverArmor = lostArmor / 2;
-		pawn.armor = min(pawn.maxArmor, pawn.armor + recoverArmor);
+		pawn.armor = min(effectiveMaxArmor, pawn.armor + recoverArmor);
 	}
 
 	ExecutePassiveTrigger(pawn, "ON_OWNER_TURN_START");

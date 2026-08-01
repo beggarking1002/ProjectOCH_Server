@@ -30,6 +30,11 @@ struct BattleStatusState
 	int32 turnStartHpDamage = 0;
 	uint64 sourcePawnId = 0;
 	int32 sourceSkillSlot = 0;
+	int32 flatArmorBonus = 0;
+	string flatStatBonusKey;
+	int32 flatStatBonus = 0;
+	uint64 forcedTargetPawnId = 0;
+	double forcedTargetChance = 0.0;
 };
 
 struct BattleAuraState
@@ -91,8 +96,10 @@ struct BattleEffectExecutionRequest
 	function<uint64(const Protocol::AxialCoord&)> getTileEquipmentOwnerPawnId;
 	function<void(const Protocol::AxialCoord&, const string&, uint64)> setTileEquipment;
 	function<bool(const Protocol::AxialCoord&)> isTileValid;
+	function<BattlePawn*(const Protocol::AxialCoord&)> findAlivePawnAt;
 	function<BattlePushResult(BattlePawn&, BattlePawn&)> tryPushTarget;
 	function<BattleRetreatResult(BattlePawn&, BattlePawn&)> tryRetreatCaster;
+	function<BattleDashResult(BattlePawn&, BattlePawn*, const Protocol::AxialCoord&, int32)> tryDashCaster;
 	BattleEffectPawnContext caster;
 	BattleEffectPawnContext target;
 	BattlePawn* casterPawn = nullptr;
@@ -140,8 +147,14 @@ private:
 	void ExecuteSacrificeHp(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecutePushTarget(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
 		BattleEffectExecutionResult& result);
+	void ExecuteDash(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
+		BattleEffectExecutionResult& result);
 	void ExecuteRetreatCaster(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
 		BattleEffectExecutionResult& result);
+	void ExecuteToggleStance(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
+	void ExecuteApplyTaunt(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
+		BattleEffectExecutionResult& result);
+	void ExecuteConvertStatRatio(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteToggleAura(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request);
 	void ExecuteChangeTileOverlay(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
 		BattleEffectExecutionResult& result);

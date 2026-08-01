@@ -106,6 +106,7 @@ private:
 	BattlePawn* FindAdjacentAliveAlly(BattleState& battle, const BattlePawn& source, uint64 excludedPawnId);
 	vector<BattlePawn*> FindAlliedPawns(BattleState& battle, const BattlePawn& source);
 	BattlePawn* FindSingleTargetInterceptor(BattleState& battle, const BattlePawn& protectedPawn);
+	bool IsTauntTargetRequired(BattleState& battle, const BattlePawn& attacker, const BattlePawn& selectedTarget);
 	bool IsOccupied(const BattleState& battle, const Protocol::AxialCoord& coord, uint64 exceptPawnId);
 	bool IsBattleWalkable(const BattleState& battle, const Protocol::AxialCoord& coord) const;
 	uint64 GetNextAlliedTurnPawnId(const BattleState& battle, uint64 currentPawnId);

@@ -14,6 +14,8 @@ public:
 	virtual vector<Protocol::AxialCoord> ResolveTargetArea(const string& shape, const Protocol::AxialCoord& target,
 		const Protocol::AxialCoord* directionTarget = nullptr) const;
 	virtual bool CanInterceptSingleTargetAttack() const;
+	virtual bool UsesConditionalCounterattack() const;
+	virtual bool CanCounterattackOnSuccessfulHit() const;
 	virtual bool TryConsumeGuaranteedEvade();
 	virtual bool CanDropEquipment(const string& equipmentKey) const;
 	virtual bool CanPickupEquipment(const string& equipmentKey, uint64 equipmentOwnerPawnId) const;
@@ -41,6 +43,7 @@ public:
 	void MarkDefeated();
 	int32 GetShieldCurrent() const;
 	int32 GetShieldMax() const;
+	int32 GetEffectiveMaxArmor() const;
 
 public:
 	uint64 pawnId = 0;

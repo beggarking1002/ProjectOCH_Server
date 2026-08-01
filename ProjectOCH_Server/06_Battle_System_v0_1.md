@@ -1,6 +1,6 @@
 # Battle System v0.1
 
-Updated: 2026-07-20.
+Updated: 2026-08-01.
 
 ## Authority and Runtime Model
 
@@ -45,7 +45,7 @@ Damage order is barrier, armor, then HP. `shield_current` and `shield_max` expos
 
 At HP 0, a pawn remains in battle state with `is_dead=true`, is removed from the turn queue, and is sent through `S_BATTLE_PAWN_DEAD`. The client should disable or play a death state rather than immediately destroy the pawn object.
 
-Critical, evade, guard, perfect guard, and counter chains are not implemented yet.
+Critical and evade are resolved server-side. `ALEN_SHIELD` additionally supports a bounded conditional counterattack while its Carbas guard stance is active.
 
 ## Battle Tile State
 
@@ -78,6 +78,16 @@ All implemented Beige Ice rules are defined in [[08_Battle_Data_Tables]]. Summar
 - Ultimate: 3-turn HEAT-backlash immunity plus 30 percent damage modifiers for Fireball, Explosion, and Fire Wall.
 - Sub action: halves HEAT and applies a non-stacking 2-turn 10 percent outgoing-damage reduction.
 
+## Alen Shield Implementation
+
+- Passive: Carbas Will reduces MORALE loss to 30 percent.
+- Effort: adjacent STR-scaled physical sword attack.
+- Stance: toggles between Carbas Guard (counter after a successful adjacent melee hit) and Royal Guard (30 percent incoming damage reduction).
+- Responsibility: swaps with an adjacent ally, gains 3-turn interception, and gains +4 temporary armor.
+- Pride: dashes up to two tiles, pushes an enemy with collision Dizzy, advances into the pushed enemy's original tile, then taunts adjacent enemies for one owner turn. A taunted pawn has a 75 percent chance to be required to attack Alen.
+- Duel Master: self-buff that converts 50 percent of DEFENSE to STR for 4 owner turns.
+- Sub action: restores 20 percent of maximum MORALE to one allied pawn in range 3.
+
 ## Client State Contract
 
 The client must apply every `pawn_deltas` entry, not only the caster and primary target. This is required for chained shields, area Hail, aura ticks, death, statuses, barriers, resources, and auras.
@@ -93,6 +103,6 @@ Use:
 
 - Unity axial/cell conversion must be verified end-to-end for the actual battle client before trusting range preview or aura visuals.
 - No server-authoritative prop collision data yet.
-- The active PvP development roster (Beige Ice, Suen Axe, Zillian Longbow, and Alen Spear) uses battle skill data. Compatibility fallback skills remain only for classes whose design rows have not been authored.
+- The active PvP development roster uses battle skill data, including Alen Shield. Compatibility fallback skills remain only for classes whose design rows have not been authored.
 - Barrier-break Frostbite and several generic trigger types are tabled but not fully executed.
-- Critical, evade, guard, perfect guard, counter, and battle AI remain future work.
+- Perfect guard, broader counter policies, battle AI, and production-client behavior tests remain future work.

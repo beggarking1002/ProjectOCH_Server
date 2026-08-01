@@ -25,7 +25,8 @@ Read these first:
 5. [[07_Battle_Invite_Flow]]
 6. [[10_Battle_Architecture_Rules]]
 7. [[11_Zillian_Longbow_Implementation]]
-8. [[04_Packet_Protocol_Generation]]
+8. [[13_Alen_Shield_Implementation]]
+9. [[04_Packet_Protocol_Generation]]
 
 ## Build Verification
 

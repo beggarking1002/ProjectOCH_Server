@@ -92,3 +92,44 @@ BattleRetreatResult BattleDisplacementService::TryRetreatFromTarget(const Battle
 	}
 	return result;
 }
+
+BattleDashResult BattleDisplacementService::TryDashTowardTarget(const BattleDisplacementRequest& request,
+	const Protocol::AxialCoord& targetAxial, int32 maxDistance) const
+{
+	BattleDashResult result;
+	if (request.attacker == nullptr || request.isWalkable == nullptr || request.findAlivePawnAt == nullptr ||
+		request.attacker->isDead || request.attacker->hp <= 0 || maxDistance <= 0)
+	{
+		return result;
+	}
+
+	const int32 directionIndex = _spatialService.FindClosestDirectionIndex(request.attacker->axial, targetAxial);
+	const int32 targetDistance = _spatialService.AxialDistance(request.attacker->axial, targetAxial);
+	if (directionIndex < 0 || targetDistance <= 0)
+		return result;
+
+	int32 stepCount = min(maxDistance, targetDistance);
+	if (request.target != nullptr && request.target->axial.q() == targetAxial.q() && request.target->axial.r() == targetAxial.r())
+		stepCount--;
+	if (stepCount <= 0)
+		return result;
+
+	Protocol::AxialCoord destination = request.attacker->axial;
+	for (int32 step = 0; step < stepCount; ++step)
+	{
+		destination.set_q(destination.q() + BattleSpatialService::Directions[directionIndex][0]);
+		destination.set_r(destination.r() + BattleSpatialService::Directions[directionIndex][1]);
+		if (_spatialService.IsInBounds(destination) == false || request.isWalkable(destination) == false)
+			return result;
+		BattlePawn* occupant = request.findAlivePawnAt(destination);
+		if (occupant != nullptr && occupant->pawnId != request.attacker->pawnId)
+			return result;
+	}
+
+	request.attacker->axial.CopyFrom(destination);
+	cout << "BATTLE_DASH_SUCCESS pawn_id=" << request.attacker->pawnId
+		<< " target=(" << targetAxial.q() << "," << targetAxial.r() << ")"
+		<< " destination=(" << destination.q() << "," << destination.r() << ")" << endl;
+	result.moved = true;
+	return result;
+}

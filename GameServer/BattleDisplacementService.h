@@ -18,6 +18,11 @@ struct BattleRetreatResult
 	BattlePawn* swappedAlly = nullptr;
 };
 
+struct BattleDashResult
+{
+	bool moved = false;
+};
+
 struct BattleDisplacementRequest
 {
 	BattlePawn* attacker = nullptr;
@@ -34,6 +39,8 @@ public:
 	explicit BattleDisplacementService(const BattleSpatialService& spatialService) : _spatialService(spatialService) { }
 	BattlePushResult TryPush(const BattleDisplacementRequest& request) const;
 	BattleRetreatResult TryRetreatFromTarget(const BattleDisplacementRequest& request) const;
+	BattleDashResult TryDashTowardTarget(const BattleDisplacementRequest& request, const Protocol::AxialCoord& targetAxial,
+		int32 maxDistance) const;
 
 private:
 	const BattleSpatialService& _spatialService;

@@ -46,8 +46,10 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 	effectRequest.getTileEquipmentOwnerPawnId = request.getTileEquipmentOwnerPawnId;
 	effectRequest.setTileEquipment = request.setTileEquipment;
 	effectRequest.isTileValid = request.isTileValid;
+	effectRequest.findAlivePawnAt = request.findAlivePawnAt;
 	effectRequest.tryPushTarget = request.tryPushTarget;
 	effectRequest.tryRetreatCaster = request.tryRetreatCaster;
+	effectRequest.tryDashCaster = request.tryDashCaster;
 	effectRequest.logs = &result.logs;
 	effectRequest.caster = MakeEffectContext(caster);
 	effectRequest.target = MakeEffectContext(target != nullptr ? *target : caster);

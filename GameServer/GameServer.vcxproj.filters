@@ -11,6 +11,9 @@
 	<ClCompile Include="BattleTurnService.cpp" />
 	<ClCompile Include="BattleMovementService.cpp" />
 	<ClCompile Include="Alen.cpp" />
+	<ClCompile Include="AlenShield.cpp">
+	  <Filter>Pawn</Filter>
+	</ClCompile>
 	<ClCompile Include="AlenSpear.cpp" />
 	<ClCompile Include="Zillian.cpp" />
 	<ClCompile Include="ZillianLongbow.cpp" />
@@ -59,6 +62,9 @@
 	<ClInclude Include="BattleEffectExecutor.h" />
 	<ClInclude Include="BattleMapData.h" />
 	<ClInclude Include="Alen.h" />
+	<ClInclude Include="AlenShield.h">
+	  <Filter>Pawn</Filter>
+	</ClInclude>
 	<ClInclude Include="AlenSpear.h" />
 	<ClInclude Include="Zillian.h" />
 	<ClInclude Include="ZillianLongbow.h" />

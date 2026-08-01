@@ -31,6 +31,7 @@ struct BattleSkillActionRequest
 	function<bool(const Protocol::AxialCoord&)> isTileValid;
 	function<BattlePushResult(BattlePawn&, BattlePawn&)> tryPushTarget;
 	function<BattleRetreatResult(BattlePawn&, BattlePawn&)> tryRetreatCaster;
+	function<BattleDashResult(BattlePawn&, BattlePawn*, const Protocol::AxialCoord&, int32)> tryDashCaster;
 	uint64* barrierIdGenerator = nullptr;
 };
 

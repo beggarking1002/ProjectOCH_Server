@@ -62,6 +62,10 @@ Implemented primitives include:
 - `TOGGLE_AURA`
 - `CHANGE_TILE_TYPE` (runtime meaning: change overlay)
 - `ADD_SKILL_MODIFIER` (persistent modifier definition evaluated while its required status is active)
+- `TOGGLE_STANCE` (mutually exclusive persistent stance statuses)
+- `DASH` (bounded straight-line forced movement before a subsequent effect)
+- `APPLY_TAUNT` (timed forced-target status for adjacent enemies)
+- `CONVERT_STAT_RATIO` (timed source-stat to target-stat conversion)
 
 `APPLY_STAT_MODIFIER` uses a timed status as its runtime marker. For `DAMAGE_DEALT`, `ADD_RATIO=-0.1` means 10 percent lower outgoing damage. `stack_policy=REFRESH` preserves one stack and refreshes duration on recast.
 
@@ -95,6 +99,7 @@ The current PvP development roster is also data-driven for its original single-t
 - `SUEN_AXE`: five cast skills with the legacy AP costs, ranges, and 30/45/35/55/90 damage values.
 - `ZILLIAN_LONGBOW`: five cast skills with the legacy AP costs, ranges, and 20/35/45/30/80 damage values.
 - `ALEN_SPEAR`: five cast skills with the legacy AP costs, ranges, and 25/35/45/30/80 damage values.
+- `ALEN_SHIELD`: Carbas Will and Morale Boost reuse Alen's shared effect groups. Its remaining rows define sword damage, stance toggle, intercept/swap/temporary armor, dash/push/taunt, and a marked-target Duel Master modifier.
 
 `BEIGE_FIRE` uses HEAT as its resource and introduces two character-resolved target shapes: `RADIUS_1` for Explosion and `LINE_3` for Fire Wall. Its Fire Wall applies the `FIRE` overlay, and Teleport uses the reusable `TELEPORT_TO_OVERLAY` primitive with an `EMPTY_TILE` target and `RequiredOverlayType=FIRE`.
 

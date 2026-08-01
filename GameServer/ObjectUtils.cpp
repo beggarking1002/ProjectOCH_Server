@@ -20,7 +20,7 @@ PlayerRef ObjectUtils::CreatePlayer(GameSessionRef session)
 	else
 	{
 		player->AddBattlePawn(Protocol::PAWN_CLASS_ZILLIAN_LONGBOW);
-		player->AddBattlePawn(Protocol::PAWN_CLASS_ALEN_SPEAR);
+		player->AddBattlePawn(Protocol::PAWN_CLASS_ALEN_SWORD_SHIELD);
 	}
 
 	player->session = session;

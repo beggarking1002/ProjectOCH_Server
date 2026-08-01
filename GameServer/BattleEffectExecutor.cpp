@@ -2,6 +2,7 @@
 #include "BattleEffectExecutor.h"
 #include "BattlePawn.h"
 #include "BattleRules.h"
+#include "BattleSpatialService.h"
 
 #include <cmath>
 #include <random>
@@ -98,8 +99,16 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 			ExecuteSacrificeHp(effect, request);
 		else if (effect.effectKey == "PUSH_TARGET")
 			ExecutePushTarget(effect, request, result);
+		else if (effect.effectKey == "DASH")
+			ExecuteDash(effect, request, result);
 		else if (effect.effectKey == "RETREAT_CASTER")
 			ExecuteRetreatCaster(effect, request, result);
+		else if (effect.effectKey == "TOGGLE_STANCE")
+			ExecuteToggleStance(effect, request);
+		else if (effect.effectKey == "APPLY_TAUNT")
+			ExecuteApplyTaunt(effect, request, result);
+		else if (effect.effectKey == "CONVERT_STAT_RATIO")
+			ExecuteConvertStatRatio(effect, request);
 		else if (effect.effectKey == "APPLY_STAT_MODIFIER")
 			ExecuteApplyStatus(effect, request);
 		else if (effect.effectKey == "TOGGLE_AURA")
@@ -189,7 +198,13 @@ bool BattleEffectExecutor::AdvanceOwnerTurn(BattleEffectPawnContext pawn)
 	for (auto it = pawn.statuses->begin(); it != pawn.statuses->end();)
 	{
 		if (it->second.remainingOwnerTurns == 0)
+		{
+			if (pawn.armor != nullptr && it->second.flatArmorBonus != 0)
+				*pawn.armor = max(0, *pawn.armor - it->second.flatArmorBonus);
+			if (pawn.statBonuses != nullptr && it->second.flatStatBonus != 0 && it->second.flatStatBonusKey.empty() == false)
+				(*pawn.statBonuses)[it->second.flatStatBonusKey] -= it->second.flatStatBonus;
 			it = pawn.statuses->erase(it);
+		}
 		else
 			++it;
 	}
@@ -396,6 +411,7 @@ void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect
 
 	const int32 stackDelta = GetIntParam(effect, "stack_delta", 1);
 	BattleStatusState& status = (*target.statuses)[statusKey];
+	const int32 previousArmorBonus = status.flatArmorBonus;
 	const string stackPolicy = ToUpperString(GetParam(effect, "stack_policy", "ADD"));
 	if (stackPolicy == "REFRESH")
 		status.stacks = max(1, status.stacks);
@@ -417,7 +433,13 @@ void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect
 		status.modifierType = GetParam(effect, "modifier_type");
 		status.modifierValue = GetDoubleParam(effect, "value", 0.0);
 		status.damageScope = GetParam(effect, "damage_scope");
+		if (ToUpperString(status.statKey) == "DEFENSE" && ToUpperString(status.modifierType) == "ADD_FLAT")
+			status.flatArmorBonus = GetIntParam(effect, "value", 0);
 	}
+	if (target.armor != nullptr && status.flatArmorBonus != previousArmorBonus)
+		*target.armor = max(0, *target.armor + status.flatArmorBonus - previousArmorBonus);
+	status.sourcePawnId = request.caster.pawnId;
+	status.sourceSkillSlot = request.skillSlot;
 	status.isHarmful = status.isHarmful || ToUpperString(GetParam(effect, "is_harmful")) == "TRUE";
 	status.isCleanseable = status.isCleanseable || ToUpperString(GetParam(effect, "cleanseable")) == "TRUE";
 	const string resourceKey = GetParam(effect, "resource_key");
@@ -434,6 +456,106 @@ void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect
 		<< " stack_delta=" << stackDelta
 		<< " stack=" << status.stacks
 		<< endl;
+}
+
+void BattleEffectExecutor::ExecuteToggleStance(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
+{
+	if (request.caster.statuses == nullptr)
+		return;
+
+	const string primaryStance = GetParam(effect, "primary_stance_key");
+	const string secondaryStance = GetParam(effect, "secondary_stance_key");
+	if (primaryStance.empty() || secondaryStance.empty())
+		return;
+
+	auto primaryIt = request.caster.statuses->find(primaryStance);
+	if (primaryIt != request.caster.statuses->end() && primaryIt->second.remainingOwnerTurns != 0)
+	{
+		request.caster.statuses->erase(primaryIt);
+		BattleStatusState& stance = (*request.caster.statuses)[secondaryStance];
+		stance.stacks = 1;
+		stance.remainingOwnerTurns = -1;
+		stance.statKey = "DAMAGE_TAKEN";
+		stance.modifierType = "MULTIPLY";
+		stance.modifierValue = GetDoubleParam(effect, "secondary_damage_taken_multiplier", 1.0);
+		stance.sourcePawnId = request.caster.pawnId;
+		stance.sourceSkillSlot = request.skillSlot;
+		cout << "BATTLE_STANCE_TOGGLE pawn_id=" << request.caster.pawnId << " stance=" << secondaryStance << endl;
+		return;
+	}
+
+	request.caster.statuses->erase(secondaryStance);
+	BattleStatusState& stance = (*request.caster.statuses)[primaryStance];
+	stance.stacks = 1;
+	stance.remainingOwnerTurns = -1;
+	stance.sourcePawnId = request.caster.pawnId;
+	stance.sourceSkillSlot = request.skillSlot;
+	cout << "BATTLE_STANCE_TOGGLE pawn_id=" << request.caster.pawnId << " stance=" << primaryStance << endl;
+}
+
+void BattleEffectExecutor::ExecuteConvertStatRatio(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
+{
+	if (request.caster.statuses == nullptr || request.caster.statBonuses == nullptr || request.casterTemplate == nullptr)
+		return;
+
+	const string statusKey = GetParam(effect, "status_key");
+	const string sourceStat = ToUpperString(GetParam(effect, "source_stat"));
+	const string targetStat = ToUpperString(GetParam(effect, "target_stat"));
+	if (statusKey.empty() || sourceStat.empty() || targetStat.empty())
+		return;
+
+	BattleStatusState& status = (*request.caster.statuses)[statusKey];
+	if (status.flatStatBonus != 0 && status.flatStatBonusKey.empty() == false)
+		(*request.caster.statBonuses)[status.flatStatBonusKey] -= status.flatStatBonus;
+
+	const int32 sourceValue = GetStatValue(*request.casterTemplate, &request.caster, sourceStat);
+	const int32 bonus = max(0, static_cast<int32>(floor(static_cast<double>(sourceValue) * GetDoubleParam(effect, "ratio", 0.0))));
+	status.stacks = 1;
+	status.remainingOwnerTurns = max(status.remainingOwnerTurns, GetIntParam(effect, "duration_turns", -1));
+	status.flatStatBonusKey = targetStat;
+	status.flatStatBonus = bonus;
+	status.sourcePawnId = request.caster.pawnId;
+	status.sourceSkillSlot = request.skillSlot;
+	(*request.caster.statBonuses)[targetStat] += bonus;
+	cout << "BATTLE_STAT_CONVERT pawn_id=" << request.caster.pawnId << " source_stat=" << sourceStat
+		<< " target_stat=" << targetStat << " amount=" << bonus << endl;
+}
+
+void BattleEffectExecutor::ExecuteApplyTaunt(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
+	BattleEffectExecutionResult& result)
+{
+	if (request.caster.axial == nullptr || request.findAlivePawnAt == nullptr)
+		return;
+
+	const string statusKey = GetParam(effect, "status_key");
+	const int32 durationTurns = GetIntParam(effect, "duration_turns", 0);
+	if (statusKey.empty() || durationTurns <= 0)
+		return;
+
+	auto apply = [&](BattlePawn& target)
+		{
+			if (target.ownerId == request.caster.ownerId)
+				return;
+			BattleStatusState& status = target.statuses[statusKey];
+			status.stacks = 1;
+			status.remainingOwnerTurns = max(status.remainingOwnerTurns, durationTurns);
+			status.sourcePawnId = request.caster.pawnId;
+			status.sourceSkillSlot = request.skillSlot;
+			status.forcedTargetPawnId = request.caster.pawnId;
+			status.forcedTargetChance = GetDoubleParam(effect, "attack_target_chance", 1.0);
+			result.changedPawns.push_back(&target);
+			cout << "BATTLE_TAUNT_APPLY caster_pawn_id=" << request.caster.pawnId
+				<< " target_pawn_id=" << target.pawnId << endl;
+		};
+
+	for (const auto& direction : BattleSpatialService::Directions)
+	{
+		Protocol::AxialCoord axial;
+		axial.set_q(request.caster.axial->q() + direction[0]);
+		axial.set_r(request.caster.axial->r() + direction[1]);
+		if (BattlePawn* target = request.findAlivePawnAt(axial))
+			apply(*target);
+	}
 }
 
 void BattleEffectExecutor::ExecuteApplyDizzy(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
@@ -584,9 +706,20 @@ void BattleEffectExecutor::ExecutePushTarget(const BattleEffectTemplate& effect,
 	if (passed == false)
 		return;
 
+	const Protocol::AxialCoord originalTargetAxial = request.targetPawn->axial;
 	const BattlePushResult pushResult = request.tryPushTarget(*request.casterPawn, *request.targetPawn);
 	if (pushResult.pushed)
+	{
+		if (ToUpperString(GetParam(effect, "advance_caster_on_success")) == "TRUE")
+		{
+			request.casterPawn->axial.CopyFrom(originalTargetAxial);
+			result.changedPawns.push_back(request.casterPawn);
+			cout << "BATTLE_PUSH_ADVANCE_CASTER caster_pawn_id=" << request.casterPawn->pawnId
+				<< " target_pawn_id=" << request.targetPawn->pawnId
+				<< " destination=(" << originalTargetAxial.q() << "," << originalTargetAxial.r() << ")" << endl;
+		}
 		return;
+	}
 
 	// A blocked push leaves the attacker unaffected.  Terrain applies dizzy to
 	// the pushed target; a blocking unit applies it to both collided units.
@@ -616,6 +749,18 @@ void BattleEffectExecutor::ExecutePushTarget(const BattleEffectTemplate& effect,
 			result.changedPawns.push_back(pushResult.collisionPawn);
 		}
 	}
+}
+
+void BattleEffectExecutor::ExecuteDash(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
+	BattleEffectExecutionResult& result)
+{
+	if (request.casterPawn == nullptr || request.targetAxial == nullptr || request.tryDashCaster == nullptr)
+		return;
+
+	const int32 maxDistance = max(1, GetIntParam(effect, "max_distance", 1));
+	const BattleDashResult dashResult = request.tryDashCaster(*request.casterPawn, request.targetPawn, *request.targetAxial, maxDistance);
+	if (dashResult.moved)
+		result.changedPawns.push_back(request.casterPawn);
 }
 
 void BattleEffectExecutor::ExecuteRetreatCaster(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
