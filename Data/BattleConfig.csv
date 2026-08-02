@@ -8,3 +8,8 @@ FOCUS_CRIT_PERCENT_PER_POINT,1.5,Critical chance per BaseFocus point
 CRIT_CHANCE_MIN,0,Minimum critical chance
 CRIT_CHANCE_MAX,100,Maximum critical chance
 CRIT_DAMAGE_MULTIPLIER,1.5,Final damage multiplier on a critical hit
+DIZZY_STUN_BASE_PERCENT,40,Base chance for a Dizzy application to inflict Stun
+DIZZY_STUN_FOCUS_PERCENT_PER_POINT,5,Stun chance gained per source BaseFocus point
+DIZZY_STUN_WILL_PERCENT_PER_POINT,5,Stun chance lost per target BaseWill point
+DIZZY_STUN_MIN_PERCENT,5,Minimum Dizzy Stun chance
+DIZZY_STUN_MAX_PERCENT,95,Maximum Dizzy Stun chance

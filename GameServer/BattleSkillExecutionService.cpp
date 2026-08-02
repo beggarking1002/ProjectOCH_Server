@@ -36,6 +36,7 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 	if (effectRequest.isCritical)
 		effectRequest.damageMultiplier *= GBattleTemplates.GetConfigDouble("CRIT_DAMAGE_MULTIPLIER", 1.5);
 	effectRequest.isAreaDamage = request.skill->targetShape.empty() == false;
+	effectRequest.requestOptionalPositionSwap = request.requestOptionalPositionSwap;
 	effectRequest.targetDamageMultiplier = target != nullptr ? _skillResolver.GetStatModifierMultiplier(*target, "DAMAGE_TAKEN",
 		effectRequest.isAreaDamage ? "AREA_AND_DOT" : "") : 1.0;
 	effectRequest.targetAxial = request.targetAxial;
@@ -71,6 +72,12 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 		missLog.set_armor_after(target != nullptr ? target->armor : 0);
 		result.logs.push_back(missLog);
 	}
+	const vector<BattleEffectTemplate>* skillEffects = GBattleTemplates.GetEffects(request.skill->effectGroupKey);
+	const bool hasAdjacentAlliesEffect = skillEffects != nullptr && any_of(skillEffects->begin(), skillEffects->end(),
+		[](const BattleEffectTemplate& effect)
+		{
+			return effect.trigger == "ON_CAST" && effect.effectTarget == "ADJACENT_ALLIES";
+		});
 	if (request.findAlliedPawns)
 	{
 		for (BattlePawn* ally : request.findAlliedPawns(caster))
@@ -81,6 +88,25 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 			effectRequest.targetPawn = ally;
 			effectRequest.hasTargetPawn = true;
 			AppendEffectResult(effectResult, executor.ExecuteTrigger(effectRequest, "ON_CAST", BattleEffectTargetScope::TeamTargetOnly));
+			result.extraChangedPawns.push_back(ally);
+		}
+	}
+	if (request.findAlliedPawns && hasAdjacentAlliesEffect)
+	{
+		for (BattlePawn* ally : request.findAlliedPawns(caster))
+		{
+			if (ally == nullptr || ally->pawnId == caster.pawnId)
+				continue;
+			const int32 dq = abs(caster.axial.q() - ally->axial.q());
+			const int32 dr = abs(caster.axial.r() - ally->axial.r());
+			const int32 ds = abs((caster.axial.q() + caster.axial.r()) - (ally->axial.q() + ally->axial.r()));
+			if ((dq + dr + ds) / 2 != 1)
+				continue;
+
+			effectRequest.target = MakeEffectContext(*ally);
+			effectRequest.targetPawn = ally;
+			effectRequest.hasTargetPawn = true;
+			AppendEffectResult(effectResult, executor.ExecuteTrigger(effectRequest, "ON_CAST", BattleEffectTargetScope::AdjacentAlliesTargetOnly));
 			result.extraChangedPawns.push_back(ally);
 		}
 	}

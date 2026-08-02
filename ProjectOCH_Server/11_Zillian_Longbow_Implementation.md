@@ -14,7 +14,7 @@ BattlePawn -> Zillian -> ZillianLongbow
 
 | Slot | Skill | Server behavior |
 | --- | --- | --- |
-| 1 | 내가 성녀라니 | Battle-start passive. Zillian receives 1.5x morale loss. A successful hostile direct or area hit applies Dizzy +1 to the attacker; evades, DOT, and self-damage do not trigger it. |
+| 1 | 내가 성녀라니 | Battle-start passive. Zillian receives 1.5x morale loss. A successful hostile direct or area hit immediately rolls Dizzy Stun against the attacker; evades, DOT, and self-damage do not trigger it. The roll uses Zillian's BaseFocus and the attacker's BaseWill. |
 | 2 | 기초 활질 | DEX-scaled physical ranged attack, range 1-4. |
 | 3 | 조금 거친 치유법 | SPELL-scaled allied heal, range 1-4. `ZillianLongbow` marks this support skill as an arrow that uses the normal hit/evasion roll; on a miss neither heal nor BLEED applies. On hit, it applies non-stacking BLEED for 2 target turns; BLEED deals 6 direct HP damage at the target turn start. |
 | 4 | 비장의 몽둥이질 | High STR-scaled adjacent melee attack. |
@@ -25,7 +25,7 @@ BattlePawn -> Zillian -> ZillianLongbow
 ## Generic Status Extensions
 
 - `APPLY_DOT`: registers a harmful, cleanseable owner-turn HP DOT.
-- `CLEANSE_HARMFUL`: removes all flagged harmful statuses, including BLEED, FROSTBITE, DIZZY, STUN, and the existing Suen accuracy-down debuff.
+- `CLEANSE_HARMFUL`: removes all flagged harmful statuses, including BLEED, FROSTBITE, STUN, and the existing Suen accuracy-down debuff.
 - `SACRIFICE_HP`: directly spends current HP without consuming armor or barriers.
 - `ON_HIT_RECEIVED`: runtime passive trigger for a successful hostile hit.
 

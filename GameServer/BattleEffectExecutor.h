@@ -87,6 +87,7 @@ struct BattleEffectExecutionRequest
 	bool isEvaded = false;
 	bool isCritical = false;
 	bool isAreaDamage = false;
+	bool requestOptionalPositionSwap = false;
 	double targetDamageMultiplier = 1.0;
 	const Protocol::AxialCoord* targetAxial = nullptr;
 	function<Protocol::BattleTileType(const Protocol::AxialCoord&)> getBaseTileType;
@@ -122,6 +123,7 @@ enum class BattleEffectTargetScope
 	CasterOnly,
 	TargetOnly,
 	TeamTargetOnly,
+	AdjacentAlliesTargetOnly,
 };
 
 class BattleEffectExecutor
@@ -131,7 +133,7 @@ public:
 	BattleEffectExecutionResult ExecuteTrigger(const BattleEffectExecutionRequest& request, const string& trigger,
 		BattleEffectTargetScope scope = BattleEffectTargetScope::All);
 	bool AdvanceOwnerTurn(BattleEffectPawnContext pawn);
-	void ApplyDizzyToPawn(BattlePawn& target, int32 stackDelta) const;
+	void ApplyDizzyToPawn(BattlePawn& source, BattlePawn& target) const;
 
 private:
 	void ExecuteDealDamage(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
@@ -176,6 +178,6 @@ private:
 	string GetParam(const BattleEffectTemplate& effect, const string& key, const string& fallback = "") const;
 	int32 GetIntParam(const BattleEffectTemplate& effect, const string& key, int32 fallback = 0) const;
 	double GetDoubleParam(const BattleEffectTemplate& effect, const string& key, double fallback = 0.0) const;
-	bool RollDizzyResistance(const BattleEffectPawnContext& target) const;
-	void ApplyDizzyStacks(BattleEffectPawnContext target, int32 stackDelta) const;
+	void ApplyDizzy(BattleEffectPawnContext source, BattleEffectPawnContext target) const;
+	bool RollDizzyStun(const BattleEffectPawnContext& source, const BattleEffectPawnContext& target) const;
 };

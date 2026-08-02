@@ -14,6 +14,7 @@ struct BattleSkillActionRequest
 	bool isBackAttack = false;
 	bool isGuarded = false;
 	bool isCounter = false;
+	bool requestOptionalPositionSwap = false;
 	string actionType;
 	const Protocol::AxialCoord* targetAxial = nullptr;
 	function<bool(const BattlePawn&, BattlePawn&, const BattleSkillTemplate&)> shouldEvadeTarget;

@@ -47,6 +47,18 @@ At HP 0, a pawn remains in battle state with `is_dead=true`, is removed from the
 
 Critical and evade are resolved server-side. `ALEN_SHIELD` additionally supports a bounded conditional counterattack while its Carbas guard stance is active.
 
+## Dizzy and Stun
+
+`APPLY_DIZZY` is an immediate control check, not a stacking status. Each application rolls `STUN` using only the source pawn's `BaseFocus` and the target pawn's `BaseWill`:
+
+```text
+clamp(DIZZY_STUN_BASE_PERCENT + BaseFocus × DIZZY_STUN_FOCUS_PERCENT_PER_POINT
+      - BaseWill × DIZZY_STUN_WILL_PERCENT_PER_POINT,
+      DIZZY_STUN_MIN_PERCENT, DIZZY_STUN_MAX_PERCENT)
+```
+
+The default configuration is `40 + BaseFocus × 5 - BaseWill × 5`, clamped to 5–95 percent. Current morale and temporary stat modifiers do not affect this check. On success, `STUN` blocks the target's next owner turn; on failure no persistent Dizzy status is created.
+
 ## Battle Tile State
 
 Each battle tile has:
@@ -87,6 +99,16 @@ All implemented Beige Ice rules are defined in [[08_Battle_Data_Tables]]. Summar
 - Pride: dashes up to two tiles, pushes an enemy with collision Dizzy, advances into the pushed enemy's original tile, then taunts adjacent enemies for one owner turn. A taunted pawn has a 75 percent chance to be required to attack Alen.
 - Duel Master: self-buff that converts 50 percent of DEFENSE to STR for 4 owner turns.
 - Sub action: restores 20 percent of maximum MORALE to one allied pawn in range 3.
+
+## Zillian Mace Implementation
+
+- Passive: Saintly Burden receives 1.5x MORALE loss. A successful hostile hit against Zillian immediately performs a Dizzy Stun check against the attacker.
+- Basic Batting: adjacent STR-scaled physical attack.
+- Go Away!: weak adjacent physical attack followed by a Dizzy Stun check.
+- Dazzling Glare: applies a 2-owner-turn, cleanseable 30 percent hit-rate reduction to each hit enemy in radius 1.
+- Unwanted Power: restores HP to every adjacent allied pawn, excluding Zillian.
+- No One Die!: spends 50 percent of Zillian's current HP, then applies a 2-owner-turn barrier to all allies.
+- I Want To Go Home: restores and cleanses an adjacent ally. It swaps positions only when the skill request sets `request_optional_position_swap=true`.
 
 ## Client State Contract
 

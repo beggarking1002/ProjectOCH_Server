@@ -84,7 +84,7 @@ BattleSkill.csv → BattleSkillEffect.csv → BattleSkillEffectParam.csv
 - 자원·타일 enum 값
 - Unity cell 좌표에서 축좌표로의 맵 변환
 
-밸런스 값은 데이터에 두되, 어지러움 4스택·저항 공식·사기 단계처럼 전 캐릭터가 공유하는 전투 규칙은 `BattleRules.h`에 코드 상수로 유지했다. 전역 규칙까지 CSV화하면서 생기는 키 관리·누락 검증 비용을 피하기 위한 선택이다.
+밸런스 값은 데이터에 두되, 사기 단계처럼 전 캐릭터가 공유하는 전투 규칙은 `BattleRules.h`에 코드 상수로 유지했다. 어지러움의 스턴 확률은 밸런스 조정이 가능하도록 `BattleConfig.csv`에 두었다.
 
 ### C. 헥사 좌표 경계의 명확화
 
@@ -137,11 +137,11 @@ ZOC는 이동에 대한 단발성 기회 공격으로 별도 처리했다. 일�
 ### F. 공용 자원·상태이상 기반
 
 - `MORALE`: `BaseWill × 10`으로 최대치를 초기화하고 현재/최대 자원을 동기화
-- `DIZZY`: 공용 `APPLY_DIZZY` primitive가 스택 4 도달 시 의지력과 현재 사기를 사용해 저항 판정
+- `DIZZY`: 공용 `APPLY_DIZZY` primitive가 적용 즉시 부여자의 BaseFocus와 대상의 BaseWill로 스턴 확률을 판정
 - `STUN`: 다음 자기 턴에 이동·일반 스킬·궁극기·보조행동을 서버에서 차단
 - 상태는 `remainingOwnerTurns` 기준으로 만료하며, 제어용 내부 상태는 클라이언트에 노출하지 않는다.
 
-알렌 창의 밀쳐내기 충돌 처리는 공용 `ApplyDizzyStacks` 로직을 호출한다. 밀쳐지는 대상과 뒤에서 충돌한 Pawn에 스택을 적용하며, 스택 해석 자체는 어떤 캐릭터도 재사용할 수 있는 공용 primitive로 유지했다.
+알렌 창의 밀쳐내기 충돌 처리는 공용 `ApplyDizzy` 로직을 호출한다. 밀쳐지는 대상과 뒤에서 충돌한 Pawn 각각에 즉시 스턴 판정을 적용하며, 판정 자체는 어떤 캐릭터도 재사용할 수 있는 공용 primitive로 유지했다.
 
 ## 3. 네트워크와 동시성
 

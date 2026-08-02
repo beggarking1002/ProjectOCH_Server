@@ -7,6 +7,7 @@
 #include "SuenAxe.h"
 #include "SuenParvis.h"
 #include "ZillianLongbow.h"
+#include "ZillianMace.h"
 
 bool BattlePawn::IsNormalSkillSlot(int32 skillSlot)
 {
@@ -208,6 +209,8 @@ BattlePawnRef CreateBattlePawn(Protocol::PawnClass pawnClass)
 
 	if (pawnClass == Protocol::PAWN_CLASS_ZILLIAN_LONGBOW)
 		return make_shared<ZillianLongbow>();
+	if (pawnClass == Protocol::PAWN_CLASS_ZILLIAN_MACE)
+		return make_shared<ZillianMace>();
 
 	return make_shared<BattlePawn>();
 }

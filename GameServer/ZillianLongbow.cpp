@@ -4,7 +4,7 @@
 void ZillianLongbow::OnSuccessfulHitReceived(BattlePawn& attacker)
 {
 	BattleEffectExecutor effectExecutor;
-	effectExecutor.ApplyDizzyToPawn(attacker, 1);
+	effectExecutor.ApplyDizzyToPawn(*this, attacker);
 }
 
 bool ZillianLongbow::RequiresHitCheck(const BattleSkillTemplate& skill) const

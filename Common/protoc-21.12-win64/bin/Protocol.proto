@@ -125,6 +125,7 @@ message C_BATTLE_SKILL {
 	uint64 target_pawn_id = 4;
 	AxialCoord target_axial = 5;
 	AxialCoord line_direction_axial = 6;
+	bool request_optional_position_swap = 7;
 }
 
 message S_BATTLE_SKILL {

@@ -99,7 +99,9 @@ The current PvP development roster is also data-driven for its original single-t
 - `SUEN_AXE`: five cast skills with the legacy AP costs, ranges, and 30/45/35/55/90 damage values.
 - `ZILLIAN_LONGBOW`: five cast skills with the legacy AP costs, ranges, and 20/35/45/30/80 damage values.
 - `ALEN_SPEAR`: five cast skills with the legacy AP costs, ranges, and 25/35/45/30/80 damage values.
-- `ALEN_SHIELD`: Carbas Will and Morale Boost reuse Alen's shared effect groups. Its remaining rows define sword damage, stance toggle, intercept/swap/temporary armor, dash/push/taunt, and a marked-target Duel Master modifier.
+- `ALEN_SHIELD`: Carbas Will and Morale Boost reuse Alen's shared effect groups. Its remaining rows define sword damage, stance toggle, intercept/swap/temporary armor, dash/push/taunt, and a self-buff Duel Master.
+- `SUEN_PARVIS`: when Parvis is installed, slot 2 is Sit Shot and slot 3 remains Stand Shot. Before installation, slot 2 installs Parvis and slot 3 is also Stand Shot.
+- `ZILLIAN_MACE`: shares Saintly Burden's 1.5x MORALE loss with Zillian Longbow. Its rows define a mace attack, damage plus immediate Dizzy Stun check, radius-1 Blind, adjacent-allies heal, a self-HP-sacrifice team barrier, and an adjacent heal/cleanse with a client-selected optional swap.
 
 `BEIGE_FIRE` uses HEAT as its resource and introduces two character-resolved target shapes: `RADIUS_1` for Explosion and `LINE_3` for Fire Wall. Its Fire Wall applies the `FIRE` overlay, and Teleport uses the reusable `TELEPORT_TO_OVERLAY` primitive with an `EMPTY_TILE` target and `RequiredOverlayType=FIRE`.
 

@@ -3060,6 +3060,7 @@ class C_BATTLE_SKILL final :
     kCasterPawnIdFieldNumber = 2,
     kTargetPawnIdFieldNumber = 4,
     kSkillSlotFieldNumber = 3,
+    kRequestOptionalPositionSwapFieldNumber = 7,
   };
   // .Protocol.AxialCoord target_axial = 5;
   bool has_target_axial() const;
@@ -3133,6 +3134,15 @@ class C_BATTLE_SKILL final :
   void _internal_set_skill_slot(int32_t value);
   public:
 
+  // bool request_optional_position_swap = 7;
+  void clear_request_optional_position_swap();
+  bool request_optional_position_swap() const;
+  void set_request_optional_position_swap(bool value);
+  private:
+  bool _internal_request_optional_position_swap() const;
+  void _internal_set_request_optional_position_swap(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.C_BATTLE_SKILL)
  private:
   class _Internal;
@@ -3147,6 +3157,7 @@ class C_BATTLE_SKILL final :
     uint64_t caster_pawn_id_;
     uint64_t target_pawn_id_;
     int32_t skill_slot_;
+    bool request_optional_position_swap_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -7523,6 +7534,26 @@ inline void C_BATTLE_SKILL::set_allocated_line_direction_axial(::Protocol::Axial
   }
   _impl_.line_direction_axial_ = line_direction_axial;
   // @@protoc_insertion_point(field_set_allocated:Protocol.C_BATTLE_SKILL.line_direction_axial)
+}
+
+// bool request_optional_position_swap = 7;
+inline void C_BATTLE_SKILL::clear_request_optional_position_swap() {
+  _impl_.request_optional_position_swap_ = false;
+}
+inline bool C_BATTLE_SKILL::_internal_request_optional_position_swap() const {
+  return _impl_.request_optional_position_swap_;
+}
+inline bool C_BATTLE_SKILL::request_optional_position_swap() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_BATTLE_SKILL.request_optional_position_swap)
+  return _internal_request_optional_position_swap();
+}
+inline void C_BATTLE_SKILL::_internal_set_request_optional_position_swap(bool value) {
+
+  _impl_.request_optional_position_swap_ = value;
+}
+inline void C_BATTLE_SKILL::set_request_optional_position_swap(bool value) {
+  _internal_set_request_optional_position_swap(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_BATTLE_SKILL.request_optional_position_swap)
 }
 
 // -------------------------------------------------------------------

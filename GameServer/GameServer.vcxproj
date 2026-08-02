@@ -170,6 +170,7 @@
 	<ClCompile Include="AlenSpear.cpp" />
 	<ClCompile Include="Zillian.cpp" />
 	<ClCompile Include="ZillianLongbow.cpp" />
+	<ClCompile Include="ZillianMace.cpp" />
     <ClCompile Include="BattleTemplateManager.cpp" />
     <ClCompile Include="BattleRoom.cpp" />
     <ClCompile Include="Creature.cpp" />
@@ -210,6 +211,7 @@
 	<ClInclude Include="AlenSpear.h" />
 	<ClInclude Include="Zillian.h" />
 	<ClInclude Include="ZillianLongbow.h" />
+	<ClInclude Include="ZillianMace.h" />
 	<ClInclude Include="Beige.h" />
 	<ClInclude Include="BeigeFire.h" />
 	<ClInclude Include="BeigeIce.h" />

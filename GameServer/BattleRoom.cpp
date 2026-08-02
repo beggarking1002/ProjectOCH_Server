@@ -607,6 +607,7 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		actionRequest.isUltimate = skillSpec.isUltimate;
 		actionRequest.isBackAttack = isBackAttack;
 		actionRequest.isGuarded = wasIntercepted;
+		actionRequest.requestOptionalPositionSwap = pkt.request_optional_position_swap();
 		actionRequest.targetAxial = executionTargetAxial;
 		actionRequest.shouldEvadeTarget = [this](const BattlePawn& attacker, BattlePawn& defender, const BattleSkillTemplate& skill)
 			{
@@ -1398,8 +1399,6 @@ void BattleRoom::CopyBattlePawn(const BattlePawn& src, Protocol::BattlePawnInfo*
 
 	for (const auto& item : src.statuses)
 	{
-		if (item.first == BattleRules::DizzyResolvedStatusKey)
-			continue;
 		Protocol::BattleStatusState* statusState = dst->add_statuses();
 		statusState->set_status_key(item.first);
 		statusState->set_stacks(item.second.stacks);
@@ -1453,8 +1452,6 @@ void BattleRoom::CopyBattlePawnDelta(const BattlePawn& src, Protocol::BattlePawn
 
 	for (const auto& item : src.statuses)
 	{
-		if (item.first == BattleRules::DizzyResolvedStatusKey)
-			continue;
 		Protocol::BattleStatusState* statusState = dst->add_statuses();
 		statusState->set_status_key(item.first);
 		statusState->set_stacks(item.second.stacks);

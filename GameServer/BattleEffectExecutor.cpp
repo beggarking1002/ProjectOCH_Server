@@ -18,6 +18,26 @@ namespace
 			});
 		return value;
 	}
+
+	BattleEffectPawnContext BuildPawnContext(BattlePawn& pawn)
+	{
+		BattleEffectPawnContext context;
+		context.pawnId = pawn.pawnId;
+		context.ownerId = pawn.ownerId;
+		context.pawnClass = pawn.pawnClass;
+		context.axial = &pawn.axial;
+		context.hp = &pawn.hp;
+		context.maxHp = &pawn.maxHp;
+		context.armor = &pawn.armor;
+		context.resources = &pawn.resources;
+		context.maxResources = &pawn.maxResources;
+		context.barriers = &pawn.barriers;
+		context.statuses = &pawn.statuses;
+		context.statBonuses = &pawn.statBonuses;
+		context.auras = &pawn.auras;
+		context.zocModifiers = &pawn.zocModifiers;
+		return context;
+	}
 }
 
 BattleEffectExecutionResult BattleEffectExecutor::ExecuteOnCast(const BattleEffectExecutionRequest& request)
@@ -41,11 +61,13 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 			const bool casterEffect = effect.effectTarget == "CASTER" || effect.effectTarget == "SELF";
 			if (scope == BattleEffectTargetScope::TeamTargetOnly)
 				return effect.effectTarget == "ALL_ALLIES";
+			if (scope == BattleEffectTargetScope::AdjacentAlliesTargetOnly)
+				return effect.effectTarget == "ADJACENT_ALLIES";
 			if (scope == BattleEffectTargetScope::CasterOnly)
 				return casterEffect;
 			if (scope == BattleEffectTargetScope::TargetOnly)
-				return casterEffect == false && effect.effectTarget != "ALL_ALLIES";
-			return effect.effectTarget != "ALL_ALLIES";
+				return casterEffect == false && effect.effectTarget != "ALL_ALLIES" && effect.effectTarget != "ADJACENT_ALLIES";
+			return effect.effectTarget != "ALL_ALLIES" && effect.effectTarget != "ADJACENT_ALLIES";
 		};
 
 	unordered_map<string, int32> stopPriorities;
@@ -80,6 +102,8 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 		if (effect.effectKey == "DEAL_DAMAGE")
 			ExecuteDealDamage(effect, request, result);
 		else if (effect.effectKey == "RESTORE_HP")
+			ExecuteRestoreHp(effect, request);
+		else if (effect.effectKey == "RESTORE_ADJACENT_ALLIES")
 			ExecuteRestoreHp(effect, request);
 		else if (effect.effectKey == "MODIFY_RESOURCE")
 			ExecuteModifyResource(effect, request);
@@ -122,6 +146,8 @@ BattleEffectExecutionResult BattleEffectExecutor::ExecuteTrigger(const BattleEff
 		else if (effect.effectKey == "PICKUP_EQUIPMENT")
 			ExecutePickupEquipment(effect, request, result);
 		else if (effect.effectKey == "SWAP_POSITION")
+			ExecuteSwapPosition(effect, request);
+		else if (effect.effectKey == "OPTIONAL_SWAP_POSITION" && request.requestOptionalPositionSwap)
 			ExecuteSwapPosition(effect, request);
 		else if (effect.effectKey == "ADD_STAT_FROM_STAT")
 			ExecuteAddStatFromStat(effect, request);
@@ -211,24 +237,9 @@ bool BattleEffectExecutor::AdvanceOwnerTurn(BattleEffectPawnContext pawn)
 	return changed;
 }
 
-void BattleEffectExecutor::ApplyDizzyToPawn(BattlePawn& target, int32 stackDelta) const
+void BattleEffectExecutor::ApplyDizzyToPawn(BattlePawn& source, BattlePawn& target) const
 {
-	BattleEffectPawnContext context;
-	context.pawnId = target.pawnId;
-	context.ownerId = target.ownerId;
-	context.pawnClass = target.pawnClass;
-	context.axial = &target.axial;
-	context.hp = &target.hp;
-	context.maxHp = &target.maxHp;
-	context.armor = &target.armor;
-	context.resources = &target.resources;
-	context.maxResources = &target.maxResources;
-	context.barriers = &target.barriers;
-	context.statuses = &target.statuses;
-	context.statBonuses = &target.statBonuses;
-	context.auras = &target.auras;
-	context.zocModifiers = &target.zocModifiers;
-	ApplyDizzyStacks(context, max(1, stackDelta));
+	ApplyDizzy(BuildPawnContext(source), BuildPawnContext(target));
 }
 
 void BattleEffectExecutor::ExecuteDealDamage(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request,
@@ -401,6 +412,8 @@ void BattleEffectExecutor::ExecuteApplyBarrier(const BattleEffectTemplate& effec
 
 void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
 {
+	if ((effect.effectTarget == "TARGET" || effect.effectTarget == "TARGET_ENEMY") && request.hasTargetPawn == false)
+		return;
 	BattleEffectPawnContext target = SelectTarget(effect, request);
 	if (target.statuses == nullptr)
 		return;
@@ -561,7 +574,7 @@ void BattleEffectExecutor::ExecuteApplyTaunt(const BattleEffectTemplate& effect,
 void BattleEffectExecutor::ExecuteApplyDizzy(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
 {
 	BattleEffectPawnContext target = SelectTarget(effect, request);
-	ApplyDizzyStacks(target, max(1, GetIntParam(effect, "stack_delta", 1)));
+	ApplyDizzy(request.caster, target);
 }
 
 void BattleEffectExecutor::ExecuteApplyDot(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
@@ -598,9 +611,6 @@ void BattleEffectExecutor::ExecuteCleanseHarmful(const BattleEffectTemplate& eff
 		else
 			++it;
 	}
-	// A completed dizzy cycle is internal state and must be removed with its
-	// visible Dizzy status so a cleanse fully releases the target.
-	target.statuses->erase(BattleRules::DizzyResolvedStatusKey);
 }
 
 void BattleEffectExecutor::ExecuteSacrificeHp(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
@@ -613,38 +623,13 @@ void BattleEffectExecutor::ExecuteSacrificeHp(const BattleEffectTemplate& effect
 	cout << "BATTLE_HP_SACRIFICE pawn_id=" << target.pawnId << " amount=" << cost << " hp=" << *target.hp << endl;
 }
 
-void BattleEffectExecutor::ApplyDizzyStacks(BattleEffectPawnContext target, int32 stackDelta) const
+void BattleEffectExecutor::ApplyDizzy(BattleEffectPawnContext source, BattleEffectPawnContext target) const
 {
 	if (target.statuses == nullptr)
 		return;
 
-	// A completed dizzy cycle cannot be built again before the target's next own turn.
-	if (target.statuses->find(BattleRules::DizzyResolvedStatusKey) != target.statuses->end())
-		return;
-
-	stackDelta = max(1, stackDelta);
-	BattleStatusState& dizzy = (*target.statuses)[BattleRules::DizzyStatusKey];
-	dizzy.isHarmful = true;
-	dizzy.isCleanseable = true;
-	dizzy.stacks = min(BattleRules::DizzyMaxStacks, dizzy.stacks + stackDelta);
-
-	cout << "BATTLE_DIZZY_APPLY"
-		<< " pawn_id=" << target.pawnId
-		<< " stack_delta=" << stackDelta
-		<< " stacks=" << dizzy.stacks
-		<< endl;
-
-	if (dizzy.stacks < BattleRules::DizzyMaxStacks)
-		return;
-
-	// The completed stack remains visible until the target's next own turn.
-	dizzy.remainingOwnerTurns = 1;
-	BattleStatusState& resolved = (*target.statuses)[BattleRules::DizzyResolvedStatusKey];
-	resolved.stacks = 1;
-	resolved.remainingOwnerTurns = 1;
-
-	const bool resisted = RollDizzyResistance(target);
-	if (resisted == false)
+	const bool stunned = RollDizzyStun(source, target);
+	if (stunned)
 	{
 		BattleStatusState& stun = (*target.statuses)[BattleRules::StunStatusKey];
 		stun.stacks = 1;
@@ -653,10 +638,10 @@ void BattleEffectExecutor::ApplyDizzyStacks(BattleEffectPawnContext target, int3
 		stun.isCleanseable = true;
 	}
 
-	cout << "BATTLE_DIZZY_RESOLVE"
-		<< " pawn_id=" << target.pawnId
-		<< " resisted=" << resisted
-		<< " result=" << (resisted ? "RESIST" : "STUN")
+	cout << "BATTLE_DIZZY_RESULT"
+		<< " source_pawn_id=" << source.pawnId
+		<< " target_pawn_id=" << target.pawnId
+		<< " result=" << (stunned ? "STUN" : "NONE")
 		<< endl;
 }
 
@@ -725,27 +710,11 @@ void BattleEffectExecutor::ExecutePushTarget(const BattleEffectTemplate& effect,
 	// the pushed target; a blocking unit applies it to both collided units.
 	if (pushResult.blockedByObstacle || pushResult.collisionPawn != nullptr)
 	{
-		const int32 dizzyStacks = max(1, GetIntParam(effect, "collision_dizzy_stacks", 1));
-		ApplyDizzyStacks(request.target, dizzyStacks);
+		ApplyDizzy(request.caster, request.target);
 
 		if (pushResult.collisionPawn != nullptr)
 		{
-			BattleEffectPawnContext collision;
-			collision.pawnId = pushResult.collisionPawn->pawnId;
-			collision.ownerId = pushResult.collisionPawn->ownerId;
-			collision.pawnClass = pushResult.collisionPawn->pawnClass;
-			collision.axial = &pushResult.collisionPawn->axial;
-			collision.hp = &pushResult.collisionPawn->hp;
-			collision.maxHp = &pushResult.collisionPawn->maxHp;
-			collision.armor = &pushResult.collisionPawn->armor;
-			collision.resources = &pushResult.collisionPawn->resources;
-			collision.maxResources = &pushResult.collisionPawn->maxResources;
-			collision.barriers = &pushResult.collisionPawn->barriers;
-			collision.statuses = &pushResult.collisionPawn->statuses;
-			collision.statBonuses = &pushResult.collisionPawn->statBonuses;
-			collision.auras = &pushResult.collisionPawn->auras;
-			collision.zocModifiers = &pushResult.collisionPawn->zocModifiers;
-			ApplyDizzyStacks(collision, dizzyStacks);
+			ApplyDizzy(request.caster, BuildPawnContext(*pushResult.collisionPawn));
 			result.changedPawns.push_back(pushResult.collisionPawn);
 		}
 	}
@@ -1183,39 +1152,35 @@ double BattleEffectExecutor::GetDoubleParam(const BattleEffectTemplate& effect, 
 	}
 }
 
-bool BattleEffectExecutor::RollDizzyResistance(const BattleEffectPawnContext& target) const
+bool BattleEffectExecutor::RollDizzyStun(const BattleEffectPawnContext& source, const BattleEffectPawnContext& target) const
 {
+	const BattlePawnClassTemplate* sourceTemplate = GBattleTemplates.GetPawnClassTemplate(source.pawnClass);
 	const BattlePawnClassTemplate* targetTemplate = GBattleTemplates.GetPawnClassTemplate(target.pawnClass);
-	if (targetTemplate == nullptr)
+	if (sourceTemplate == nullptr || targetTemplate == nullptr)
 		return false;
 
-	const int32 will = GetStatValue(*targetTemplate, &target, "WILL");
-	double moraleRatio = 0.0;
-	if (target.resources != nullptr && target.maxResources != nullptr)
-	{
-		auto moraleIt = target.resources->find(Protocol::BATTLE_RESOURCE_TYPE_MORALE);
-		auto maxMoraleIt = target.maxResources->find(Protocol::BATTLE_RESOURCE_TYPE_MORALE);
-		if (moraleIt != target.resources->end() && maxMoraleIt != target.maxResources->end() && maxMoraleIt->second > 0)
-			moraleRatio = static_cast<double>(moraleIt->second) / static_cast<double>(maxMoraleIt->second);
-	}
-
-	const int32 resistPercent = clamp(static_cast<int32>(floor(
-		BattleRules::DizzyResistBasePercent +
-		static_cast<double>(will) * BattleRules::DizzyResistWillMultiplier +
-		moraleRatio * BattleRules::DizzyResistMoraleRatioMultiplier)), 0, 100);
+	const int32 sourceBaseFocus = sourceTemplate->baseFocus;
+	const int32 targetBaseWill = targetTemplate->baseWill;
+	const double chance = GBattleTemplates.GetConfigDouble("DIZZY_STUN_BASE_PERCENT", 40.0) +
+		static_cast<double>(sourceBaseFocus) * GBattleTemplates.GetConfigDouble("DIZZY_STUN_FOCUS_PERCENT_PER_POINT", 5.0) -
+		static_cast<double>(targetBaseWill) * GBattleTemplates.GetConfigDouble("DIZZY_STUN_WILL_PERCENT_PER_POINT", 5.0);
+	const int32 stunPercent = clamp(static_cast<int32>(floor(chance)),
+		static_cast<int32>(GBattleTemplates.GetConfigDouble("DIZZY_STUN_MIN_PERCENT", 5.0)),
+		static_cast<int32>(GBattleTemplates.GetConfigDouble("DIZZY_STUN_MAX_PERCENT", 95.0)));
 
 	static random_device randomDevice;
 	static mt19937 randomGenerator(randomDevice());
 	uniform_int_distribution<int32> distribution(1, 100);
 	const int32 roll = distribution(randomGenerator);
-	const bool resisted = roll <= resistPercent;
+	const bool stunned = roll <= stunPercent;
 
-	cout << "BATTLE_DIZZY_RESIST"
-		<< " pawn_id=" << target.pawnId
-		<< " will=" << will
-		<< " morale_ratio=" << moraleRatio
-		<< " resist_percent=" << resistPercent
+	cout << "BATTLE_DIZZY_CHECK"
+		<< " source_pawn_id=" << source.pawnId
+		<< " target_pawn_id=" << target.pawnId
+		<< " source_base_focus=" << sourceBaseFocus
+		<< " target_base_will=" << targetBaseWill
+		<< " stun_percent=" << stunPercent
 		<< " roll=" << roll
 		<< endl;
-	return resisted;
+	return stunned;
 }
