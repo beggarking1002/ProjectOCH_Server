@@ -1651,7 +1651,6 @@ class BattlePawnInfo final :
     kMoveRangeFieldNumber = 7,
     kArmorFieldNumber = 8,
     kMaxArmorFieldNumber = 9,
-    kCurrentApFieldNumber = 10,
     kCanMoveFieldNumber = 11,
     kUsedSubActionThisTurnFieldNumber = 12,
     kUsedUltimateFieldNumber = 13,
@@ -1826,15 +1825,6 @@ class BattlePawnInfo final :
   void _internal_set_max_armor(int32_t value);
   public:
 
-  // int32 current_ap = 10;
-  void clear_current_ap();
-  int32_t current_ap() const;
-  void set_current_ap(int32_t value);
-  private:
-  int32_t _internal_current_ap() const;
-  void _internal_set_current_ap(int32_t value);
-  public:
-
   // bool can_move = 11;
   void clear_can_move();
   bool can_move() const;
@@ -1955,7 +1945,6 @@ class BattlePawnInfo final :
     int32_t move_range_;
     int32_t armor_;
     int32_t max_armor_;
-    int32_t current_ap_;
     bool can_move_;
     bool used_sub_action_this_turn_;
     bool used_ultimate_;
@@ -2103,7 +2092,6 @@ class BattlePawnDelta final :
     kPawnIdFieldNumber = 1,
     kHpFieldNumber = 2,
     kArmorFieldNumber = 3,
-    kCurrentApFieldNumber = 4,
     kCanMoveFieldNumber = 5,
     kUsedSubActionThisTurnFieldNumber = 6,
     kUsedUltimateFieldNumber = 7,
@@ -2233,15 +2221,6 @@ class BattlePawnDelta final :
   void _internal_set_armor(int32_t value);
   public:
 
-  // int32 current_ap = 4;
-  void clear_current_ap();
-  int32_t current_ap() const;
-  void set_current_ap(int32_t value);
-  private:
-  int32_t _internal_current_ap() const;
-  void _internal_set_current_ap(int32_t value);
-  public:
-
   // bool can_move = 5;
   void clear_can_move();
   bool can_move() const;
@@ -2357,7 +2336,6 @@ class BattlePawnDelta final :
     uint64_t pawn_id_;
     int32_t hp_;
     int32_t armor_;
-    int32_t current_ap_;
     bool can_move_;
     bool used_sub_action_this_turn_;
     bool used_ultimate_;
@@ -3732,26 +3710,6 @@ inline void BattlePawnInfo::set_max_armor(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.max_armor)
 }
 
-// int32 current_ap = 10;
-inline void BattlePawnInfo::clear_current_ap() {
-  _impl_.current_ap_ = 0;
-}
-inline int32_t BattlePawnInfo::_internal_current_ap() const {
-  return _impl_.current_ap_;
-}
-inline int32_t BattlePawnInfo::current_ap() const {
-  // @@protoc_insertion_point(field_get:Protocol.BattlePawnInfo.current_ap)
-  return _internal_current_ap();
-}
-inline void BattlePawnInfo::_internal_set_current_ap(int32_t value) {
-  
-  _impl_.current_ap_ = value;
-}
-inline void BattlePawnInfo::set_current_ap(int32_t value) {
-  _internal_set_current_ap(value);
-  // @@protoc_insertion_point(field_set:Protocol.BattlePawnInfo.current_ap)
-}
-
 // bool can_move = 11;
 inline void BattlePawnInfo::clear_can_move() {
   _impl_.can_move_ = false;
@@ -4194,26 +4152,6 @@ inline void BattlePawnDelta::_internal_set_armor(int32_t value) {
 inline void BattlePawnDelta::set_armor(int32_t value) {
   _internal_set_armor(value);
   // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.armor)
-}
-
-// int32 current_ap = 4;
-inline void BattlePawnDelta::clear_current_ap() {
-  _impl_.current_ap_ = 0;
-}
-inline int32_t BattlePawnDelta::_internal_current_ap() const {
-  return _impl_.current_ap_;
-}
-inline int32_t BattlePawnDelta::current_ap() const {
-  // @@protoc_insertion_point(field_get:Protocol.BattlePawnDelta.current_ap)
-  return _internal_current_ap();
-}
-inline void BattlePawnDelta::_internal_set_current_ap(int32_t value) {
-  
-  _impl_.current_ap_ = value;
-}
-inline void BattlePawnDelta::set_current_ap(int32_t value) {
-  _internal_set_current_ap(value);
-  // @@protoc_insertion_point(field_set:Protocol.BattlePawnDelta.current_ap)
 }
 
 // bool can_move = 5;

@@ -57,7 +57,7 @@ All battle positions in protocol messages are pure axial coordinates, using `Axi
 
 `S_ENTER_BATTLE` provides complete initial state, including pawn information and all `BattleTileInfo` entries. Action responses are authoritative and include the state necessary for incremental synchronization:
 
-- `pawn_deltas`: AP, movement flags, HP, armor/barrier values, facing, resources, statuses, auras, and death state.
+- `pawn_deltas`: action-use and movement flags, HP, armor/barrier values, facing, resources, statuses, auras, and death state.
 - `tile_deltas`: changed `base_tile_type` and/or `overlay_type`.
 - action logs and current/next turn identifiers.
 

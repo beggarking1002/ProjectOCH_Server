@@ -6,7 +6,7 @@ Updated: 2026-08-01.
 
 `BattleRoom` is authoritative. The Unity client sends intent, previews possible targets, and plays presentation. The server validates every action and returns the resulting battle state through `S_BATTLE_*` packets.
 
-`Player::battlePawns` stores player-owned `Pawn` records. `BattleRoom` creates `BattlePawn` runtime snapshots for a battle. Runtime state includes HP, armor, AP, turn flags, death, facing, resources, barriers, statuses, and auras.
+`Player::battlePawns` stores player-owned `Pawn` records. `BattleRoom` creates `BattlePawn` runtime snapshots for a battle. Runtime state includes HP, armor, turn action-use flags, death, facing, resources, barriers, statuses, and auras.
 
 `BattlePawn` now owns the character-behavior boundary. It resolves class-specific target areas, while `BattleSkillResolver` evaluates generic table-driven modifiers and aura radius changes. `BattleSkillExecutionService` builds effect requests, resolves chained/area targets, executes common effects, and collects deltas. The current hierarchy is `BattlePawn -> Beige -> BeigeIce`; `BeigeIce` implements the `TRIANGLE_3` Hail-area resolver. New character-only target rules belong in their own `BattlePawn` subclass, not in `BattleRoom`.
 
@@ -32,10 +32,10 @@ All distance, range, neighbor, Hail, and aura calculations use axial coordinates
 
 ## Turn and Movement Rules
 
-- Start of an owner turn: AP becomes 2, movement is reset, and sub-action usage resets.
+- Start of an owner turn: movement and per-turn action-use flags reset.
 - Tanker pawns recover `floor((maxArmor - armor) / 2)`.
-- Movement consumes no AP, but is unavailable after an AP 2 action.
-- AP 1 actions preserve movement when the pawn has not moved. Ultimate and sub-action AP costs are also defined by `BattleSkill.csv`; a cost of 0 leaves AP unchanged.
+- Each pawn may move once and use one normal skill (slots 2-5) once per turn, in either order unless a skill blocks movement.
+- Ultimate is once per battle and sub-action is once per owner turn; both are independent of the normal-skill and movement allowances.
 - `C_BATTLE_END_TURN` is the action that advances the queue. At the end of a queue cycle, alive pawns are shuffled for the next cycle.
 - The server validates battle id, current turn, ownership, alive state, map bounds, walkability, range, and occupancy.
 

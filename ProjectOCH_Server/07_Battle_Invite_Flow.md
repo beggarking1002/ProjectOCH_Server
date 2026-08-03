@@ -16,7 +16,7 @@ The field `Room` owns pending invites because it owns field-player membership an
 
 ## Battle Pawn Source
 
-PvP battle pawns are snapshots of `Player::battlePawns`; they are not the field player object and do not persist battle-only HP, AP, resource, or status state after the battle.
+PvP battle pawns are snapshots of `Player::battlePawns`; they are not the field player object and do not persist battle-only HP, action-use, resource, or status state after the battle.
 
 Current development defaults in `ObjectUtils.cpp` are:
 

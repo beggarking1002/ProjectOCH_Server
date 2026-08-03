@@ -10,12 +10,19 @@ Updated: 2026-07-20.
 | --- | --- |
 | `ClassKey.csv` | Design class key to protobuf `PawnClass` mapping. |
 | `PawnTemplate.csv` | Role and base stats. Runtime max HP and armor derive from these stats in `BattleRoom`. |
-| `BattleSkill.csv` | Skill identity, action slot, AP cost, range, target type, and effect group. |
+| `BattleSkill.csv` | Skill identity, action slot, range, target type, and effect group. |
 | `BattleSkillEffect.csv` | Ordered effect instances and triggers for an effect group. |
 | `BattleSkillEffectParam.csv` | One parameter per effect instance. |
+| `BattleZoc.csv` | Explicit base ZOC profile for every melee class: enabled state, range, front arc, reaction limit, reaction slot, and triggers. |
 | `EnumDef.csv` | Human-readable enum/value catalog for data authoring. It is not loaded by the C++ runtime. |
 
 The client should mirror the battle skill/effect data it needs for tooltip and range preview, but the server remains authoritative for all results.
+
+## ZOC Data Contract
+
+`BattleZoc.csv` is the single source of truth for base ZOC. Every class whose slot 2 is a `CAST` / `MELEE` / `ENEMY_SINGLE` reaction skill must have an enabled row. Server startup validates this requirement; it does not infer an unstated ZOC profile from the melee skill anymore.
+
+The current base profiles are `SUEN_AXE`, `ALEN_SPEAR`, `ALEN_SHIELD`, and `ZILLIAN_MACE`. The client should read the same table to preview each enemy's danger zone before a move. Timed modifications such as Alen Spear's Sentinel are still applied server-side through `APPLY_ZOC_MODIFIER`.
 
 ## Battle Map JSON
 
@@ -96,9 +103,9 @@ Implemented primitives include:
 
 The current PvP development roster is also data-driven for its original single-target damage behavior:
 
-- `SUEN_AXE`: five cast skills with the legacy AP costs, ranges, and 30/45/35/55/90 damage values.
-- `ZILLIAN_LONGBOW`: five cast skills with the legacy AP costs, ranges, and 20/35/45/30/80 damage values.
-- `ALEN_SPEAR`: five cast skills with the legacy AP costs, ranges, and 25/35/45/30/80 damage values.
+- `SUEN_AXE`: five cast skills with legacy ranges and 30/45/35/55/90 damage values.
+- `ZILLIAN_LONGBOW`: five cast skills with legacy ranges and 20/35/45/30/80 damage values.
+- `ALEN_SPEAR`: five cast skills with legacy ranges and 25/35/45/30/80 damage values.
 - `ALEN_SHIELD`: Carbas Will and Morale Boost reuse Alen's shared effect groups. Its remaining rows define sword damage, stance toggle, intercept/swap/temporary armor, dash/push/taunt, and a self-buff Duel Master.
 - `SUEN_PARVIS`: when Parvis is installed, slot 2 is Sit Shot and slot 3 remains Stand Shot. Before installation, slot 2 installs Parvis and slot 3 is also Stand Shot.
 - `ZILLIAN_MACE`: shares Saintly Burden's 1.5x MORALE loss with Zillian Longbow. Its rows define a mace attack, damage plus immediate Dizzy Stun check, radius-1 Blind, adjacent-allies heal, a self-HP-sacrifice team barrier, and an adjacent heal/cleanse with a client-selected optional swap.

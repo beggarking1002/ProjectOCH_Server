@@ -1366,7 +1366,6 @@ void BattleRoom::CopyBattlePawn(const BattlePawn& src, Protocol::BattlePawnInfo*
 	dst->set_move_range(_movementService.GetMoveRange(src));
 	dst->set_armor(src.armor);
 	dst->set_max_armor(src.GetEffectiveMaxArmor());
-	dst->set_current_ap(src.currentAp);
 	dst->set_can_move(CanMove(src));
 	dst->set_used_normal_skill_this_turn(src.usedNormalSkillThisTurn);
 	dst->set_is_action_blocked(src.isActionBlockedThisTurn);
@@ -1419,7 +1418,6 @@ void BattleRoom::CopyBattlePawnDelta(const BattlePawn& src, Protocol::BattlePawn
 	dst->mutable_axial()->CopyFrom(src.axial);
 	dst->set_hp(src.hp);
 	dst->set_armor(src.armor);
-	dst->set_current_ap(src.currentAp);
 	dst->set_move_range(_movementService.GetMoveRange(src));
 	dst->set_can_move(CanMove(src));
 	dst->set_used_normal_skill_this_turn(src.usedNormalSkillThisTurn);
@@ -1706,7 +1704,6 @@ bool BattleRoom::TryGetSkillSpec(const BattlePawn& pawn, int32 skillSlot, SkillS
 	spec.targetType = skill->targetType;
 	spec.skillTemplate = skill;
 	spec.casterTemplate = pawnTemplate;
-	spec.apCost = skill->apCost;
 	spec.damage = 0;
 		spec.rangeMin = skill->rangeMin;
 		spec.rangeMax = skill->rangeMax;
@@ -1715,10 +1712,9 @@ bool BattleRoom::TryGetSkillSpec(const BattlePawn& pawn, int32 skillSlot, SkillS
 	}
 
 	// Compatibility fallback for classes that do not yet have authored battle data.
-	auto setSpec = [&spec](int32 apCost, int32 damage, int32 range, bool isUltimate = false)
+	auto setSpec = [&spec](int32 damage, int32 range, bool isUltimate = false)
 		{
 			spec = SkillSpec();
-			spec.apCost = apCost;
 			spec.damage = damage;
 			spec.rangeMin = 0;
 			spec.rangeMax = range;
@@ -1732,11 +1728,11 @@ bool BattleRoom::TryGetSkillSpec(const BattlePawn& pawn, int32 skillSlot, SkillS
 	case Protocol::PAWN_CLASS_BEIGE_FIRE:
 		switch (skillSlot)
 		{
-		case 2: return setSpec(1, 20, 3);
-		case 3: return setSpec(2, 40, 3);
-		case 4: return setSpec(2, 30, 4);
-		case 5: return setSpec(2, 50, 3);
-		case 6: return setSpec(0, 85, 4, true);
+		case 2: return setSpec(20, 3);
+		case 3: return setSpec(40, 3);
+		case 4: return setSpec(30, 4);
+		case 5: return setSpec(50, 3);
+		case 6: return setSpec(85, 4, true);
 		default: break;
 		}
 		break;
@@ -1747,15 +1743,15 @@ bool BattleRoom::TryGetSkillSpec(const BattlePawn& pawn, int32 skillSlot, SkillS
 	switch (skillSlot)
 	{
 	case 2:
-		return setSpec(1, 25, 1);
+		return setSpec(25, 1);
 	case 3:
-		return setSpec(2, 35, 3);
+		return setSpec(35, 3);
 	case 4:
-		return setSpec(2, 45, 2);
+		return setSpec(45, 2);
 	case 5:
-		return setSpec(2, 30, 4);
+		return setSpec(30, 4);
 	case 6:
-		return setSpec(0, 80, 3, true);
+		return setSpec(80, 3, true);
 	default:
 		spec = SkillSpec();
 		reason = "invalid skill slot";
@@ -1836,7 +1832,7 @@ void BattleRoom::StartTurn(BattleState& battle, BattlePawn& pawn)
 	const auto stunIt = pawn.statuses.find(BattleRules::StunStatusKey);
 	const bool isStunnedThisTurn = stunIt != pawn.statuses.end() && stunIt->second.remainingOwnerTurns != 0;
 
-	// Expire duration effects before AP and player input are made available for this turn.
+	// Expire duration effects before turn actions and player input are made available.
 	if (AdvanceOwnerTurnEffects(pawn))
 		battle.turnStartChangedPawnIds.push_back(pawn.pawnId);
 	_skillResolver.RefreshAuraRadii(pawn);
@@ -2454,7 +2450,6 @@ void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint
 		<< " target=(" << target.q() << ", " << target.r() << ")"
 		<< " next_turn_pawn_id=" << nextTurnPawnId
 		<< " result=" << Protocol::BattleMoveResult_Name(result)
-		<< " remaining_ap=" << (pawn != nullptr ? pawn->currentAp : 0)
 		<< " can_move=" << (pawn != nullptr ? CanMove(*pawn) : false)
 		<< " battle_state_version=" << stateVersion
 		<< " reason=\"" << reason << "\""
@@ -2472,7 +2467,6 @@ void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint
 	movePkt.set_next_turn_pawn_id(nextTurnPawnId);
 	movePkt.set_result(result);
 	movePkt.set_reason(reason);
-	movePkt.set_remaining_ap(pawn != nullptr ? pawn->currentAp : 0);
 	movePkt.set_can_move(pawn != nullptr ? CanMove(*pawn) : false);
 	movePkt.set_battle_state_version(stateVersion);
 	if (turnQueueResynced && battleIt != _battles.end())
@@ -2516,7 +2510,6 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 		<< " target_hp=" << targetHp
 		<< " target_armor=" << targetArmor
 		<< " next_turn_pawn_id=" << nextTurnPawnId
-		<< " remaining_ap=" << (caster != nullptr ? caster->currentAp : 0)
 		<< " can_move=" << (caster != nullptr ? CanMove(*caster) : false)
 		<< " battle_state_version=" << stateVersion
 		<< " reason=\"" << reason << "\""
@@ -2536,7 +2529,6 @@ void BattleRoom::SendBattleSkillResult(GameSessionRef session, bool success, uin
 	skillPkt.set_target_hp(targetHp);
 	skillPkt.set_next_turn_pawn_id(nextTurnPawnId);
 	skillPkt.set_reason(reason);
-	skillPkt.set_remaining_ap(caster != nullptr ? caster->currentAp : 0);
 	skillPkt.set_can_move(caster != nullptr ? CanMove(*caster) : false);
 	skillPkt.set_used_sub_action_this_turn(caster != nullptr ? caster->usedSubActionThisTurn : false);
 	skillPkt.set_used_ultimate(caster != nullptr ? caster->usedUltimate : false);
@@ -2580,7 +2572,6 @@ void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, u
 		<< " battle_id=" << battleId
 		<< " pawn_id=" << pawnId
 		<< " next_turn_pawn_id=" << nextTurnPawnId
-		<< " remaining_ap=" << (responsePawn != nullptr ? responsePawn->currentAp : 0)
 		<< " can_move=" << (responsePawn != nullptr ? CanMove(*responsePawn) : false)
 		<< " battle_state_version=" << stateVersion
 		<< " reason=\"" << reason << "\""
@@ -2595,7 +2586,6 @@ void BattleRoom::SendBattleEndTurnResult(GameSessionRef session, bool success, u
 	endTurnPkt.set_pawn_id(pawnId);
 	endTurnPkt.set_next_turn_pawn_id(nextTurnPawnId);
 	endTurnPkt.set_reason(reason);
-	endTurnPkt.set_remaining_ap(responsePawn != nullptr ? responsePawn->currentAp : 0);
 	endTurnPkt.set_can_move(responsePawn != nullptr ? CanMove(*responsePawn) : false);
 	endTurnPkt.set_used_sub_action_this_turn(responsePawn != nullptr ? responsePawn->usedSubActionThisTurn : false);
 	endTurnPkt.set_used_ultimate(responsePawn != nullptr ? responsePawn->usedUltimate : false);

@@ -99,7 +99,6 @@ void BattlePawn::MarkSkillSlotUsed(int32 skillSlot)
 	if (IsNormalSkillSlot(skillSlot))
 	{
 		usedNormalSkillThisTurn = true;
-		currentAp = 0;
 	}
 	else if (IsUltimateSkillSlot(skillSlot))
 		usedUltimate = true;
@@ -109,9 +108,6 @@ void BattlePawn::MarkSkillSlotUsed(int32 skillSlot)
 
 void BattlePawn::ResetTurnActionUsage()
 {
-	// currentAp is kept for legacy client/UI compatibility.  The authoritative
-	// action rule is the per-slot usage state below: one normal skill per turn.
-	currentAp = 2;
 	hasMovedThisTurn = false;
 	zocReactionsUsedThisTurn = 0;
 	usedNormalSkillThisTurn = false;
@@ -121,7 +117,6 @@ void BattlePawn::ResetTurnActionUsage()
 
 void BattlePawn::InitializeBattleActionUsage()
 {
-	currentAp = 0;
 	hasMovedThisTurn = false;
 	zocReactionsUsedThisTurn = 0;
 	usedNormalSkillThisTurn = false;
@@ -133,7 +128,6 @@ void BattlePawn::InitializeBattleActionUsage()
 void BattlePawn::MarkDefeated()
 {
 	hp = 0;
-	currentAp = 0;
 	hasMovedThisTurn = true;
 	isActionBlockedThisTurn = true;
 	isDead = true;

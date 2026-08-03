@@ -21,7 +21,6 @@ private:
 		string targetType;
 		const BattleSkillTemplate* skillTemplate = nullptr;
 		const BattlePawnClassTemplate* casterTemplate = nullptr;
-		int32 apCost = 0;
 		int32 damage = 0;
 		int32 rangeMin = 0;
 		int32 rangeMax = 0;

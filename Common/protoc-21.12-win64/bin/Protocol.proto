@@ -109,7 +109,6 @@ message S_BATTLE_MOVE
 	uint64 next_turn_pawn_id = 6;
 	BattleMoveResult result = 7;
 	string reason = 8;
-	int32 remaining_ap = 9;
 	bool can_move = 10;
 	repeated BattlePawnDelta pawn_deltas = 11;
 	repeated BattleActionLog logs = 12;
@@ -139,7 +138,6 @@ message S_BATTLE_SKILL {
 	int32 target_hp = 8;
 	uint64 next_turn_pawn_id = 9;
 	string reason = 10;
-	int32 remaining_ap = 11;
 	bool can_move = 12;
 	bool used_sub_action_this_turn = 13;
 	bool used_ultimate = 14;
@@ -163,7 +161,6 @@ message S_BATTLE_END_TURN {
 	uint64 pawn_id = 3;
 	uint64 next_turn_pawn_id = 4;
 	string reason = 5;
-	int32 remaining_ap = 6;
 	bool can_move = 7;
 	bool used_sub_action_this_turn = 8;
 	bool used_ultimate = 9;

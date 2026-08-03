@@ -55,7 +55,6 @@ public:
 	int32 moveRange = 0;
 	int32 armor = 0;
 	int32 maxArmor = 0;
-	int32 currentAp = 0;
 	bool hasMovedThisTurn = false;
 	int32 zocReactionsUsedThisTurn = 0;
 	bool usedNormalSkillThisTurn = false;

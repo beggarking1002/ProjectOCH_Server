@@ -74,7 +74,6 @@ message BattlePawnInfo
 	int32 move_range = 7;
 	int32 armor = 8;
 	int32 max_armor = 9;
-	int32 current_ap = 10;
 	bool can_move = 11;
 	bool used_sub_action_this_turn = 12;
 	bool used_ultimate = 13;
@@ -99,7 +98,6 @@ message BattlePawnDelta
 	uint64 pawn_id = 1;
 	int32 hp = 2;
 	int32 armor = 3;
-	int32 current_ap = 4;
 	bool can_move = 5;
 	bool used_sub_action_this_turn = 6;
 	bool used_ultimate = 7;

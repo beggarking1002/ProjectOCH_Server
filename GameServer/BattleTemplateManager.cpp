@@ -413,7 +413,6 @@ bool BattleTemplateManager::LoadBattleSkill(const string& path)
 		skill.damageType = Cell(rows[i], header, "DamageType");
 		skill.slotVariantKey = Cell(rows[i], header, "SlotVariantKey");
 		skill.actionSlot = ToInt(Cell(rows[i], header, "ActionSlot"));
-		skill.apCost = ToInt(Cell(rows[i], header, "ApCost"));
 		skill.rangeMin = ToInt(Cell(rows[i], header, "RangeMin"));
 		skill.rangeMax = ToInt(Cell(rows[i], header, "RangeMax"));
 		skill.targetType = Cell(rows[i], header, "TargetType");

@@ -87,6 +87,6 @@ Common\\protoc-21.12-win64\\bin\\Protocol.proto
 
 ## 현재 전투 상태
 
-구현된 주요 범위는 PvP 초대/수락, shared battle entry, 턴 queue, AP/이동/사거리/점유/소유권 검증, armor/barrier/status/aura, battle result acknowledgement와 필드 복귀다. action response는 pawn/tile delta와 action log를 포함하므로 클라이언트는 서버 응답을 최종 상태로 반영해야 한다.
+구현된 주요 범위는 PvP 초대/수락, shared battle entry, 턴 queue, 행동 사용/이동/사거리/점유/소유권 검증, armor/barrier/status/aura, battle result acknowledgement와 필드 복귀다. action response는 pawn/tile delta와 action log를 포함하므로 클라이언트는 서버 응답을 최종 상태로 반영해야 한다.
 
 후속 우선순위는 Unity의 axial conversion 실전 검증, prop collision 검증, 남은 클래스의 data-driven skill 작성, target shape 확장, 전투 simulation test다. 자세한 규칙은 [[10_Battle_Architecture_Rules]], 구현 현황은 [[09_Implementation_Status_2026-07-20]]을 따른다.

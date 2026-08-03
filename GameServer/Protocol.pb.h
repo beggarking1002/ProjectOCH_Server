@@ -2711,7 +2711,6 @@ class S_BATTLE_MOVE final :
     kCanMoveFieldNumber = 10,
     kTurnQueueResyncedFieldNumber = 14,
     kBattleStateVersionFieldNumber = 13,
-    kRemainingApFieldNumber = 9,
   };
   // repeated .Protocol.BattlePawnDelta pawn_deltas = 11;
   int pawn_deltas_size() const;
@@ -2893,15 +2892,6 @@ class S_BATTLE_MOVE final :
   void _internal_set_battle_state_version(uint64_t value);
   public:
 
-  // int32 remaining_ap = 9;
-  void clear_remaining_ap();
-  int32_t remaining_ap() const;
-  void set_remaining_ap(int32_t value);
-  private:
-  int32_t _internal_remaining_ap() const;
-  void _internal_set_remaining_ap(int32_t value);
-  public:
-
   // @@protoc_insertion_point(class_scope:Protocol.S_BATTLE_MOVE)
  private:
   class _Internal;
@@ -2925,7 +2915,6 @@ class S_BATTLE_MOVE final :
     bool can_move_;
     bool turn_queue_resynced_;
     uint64_t battle_state_version_;
-    int32_t remaining_ap_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3303,10 +3292,9 @@ class S_BATTLE_SKILL final :
     kCanMoveFieldNumber = 12,
     kUsedSubActionThisTurnFieldNumber = 13,
     kUsedUltimateFieldNumber = 14,
-    kRemainingApFieldNumber = 11,
     kTargetArmorFieldNumber = 15,
-    kBattleStateVersionFieldNumber = 18,
     kTurnQueueResyncedFieldNumber = 20,
+    kBattleStateVersionFieldNumber = 18,
   };
   // repeated .Protocol.BattlePawnDelta pawn_deltas = 16;
   int pawn_deltas_size() const;
@@ -3515,15 +3503,6 @@ class S_BATTLE_SKILL final :
   void _internal_set_used_ultimate(bool value);
   public:
 
-  // int32 remaining_ap = 11;
-  void clear_remaining_ap();
-  int32_t remaining_ap() const;
-  void set_remaining_ap(int32_t value);
-  private:
-  int32_t _internal_remaining_ap() const;
-  void _internal_set_remaining_ap(int32_t value);
-  public:
-
   // int32 target_armor = 15;
   void clear_target_armor();
   int32_t target_armor() const;
@@ -3533,15 +3512,6 @@ class S_BATTLE_SKILL final :
   void _internal_set_target_armor(int32_t value);
   public:
 
-  // uint64 battle_state_version = 18;
-  void clear_battle_state_version();
-  uint64_t battle_state_version() const;
-  void set_battle_state_version(uint64_t value);
-  private:
-  uint64_t _internal_battle_state_version() const;
-  void _internal_set_battle_state_version(uint64_t value);
-  public:
-
   // bool turn_queue_resynced = 20;
   void clear_turn_queue_resynced();
   bool turn_queue_resynced() const;
@@ -3549,6 +3519,15 @@ class S_BATTLE_SKILL final :
   private:
   bool _internal_turn_queue_resynced() const;
   void _internal_set_turn_queue_resynced(bool value);
+  public:
+
+  // uint64 battle_state_version = 18;
+  void clear_battle_state_version();
+  uint64_t battle_state_version() const;
+  void set_battle_state_version(uint64_t value);
+  private:
+  uint64_t _internal_battle_state_version() const;
+  void _internal_set_battle_state_version(uint64_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.S_BATTLE_SKILL)
@@ -3577,10 +3556,9 @@ class S_BATTLE_SKILL final :
     bool can_move_;
     bool used_sub_action_this_turn_;
     bool used_ultimate_;
-    int32_t remaining_ap_;
     int32_t target_armor_;
-    uint64_t battle_state_version_;
     bool turn_queue_resynced_;
+    uint64_t battle_state_version_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3876,14 +3854,13 @@ class S_BATTLE_END_TURN final :
     kBattleIdFieldNumber = 2,
     kPawnIdFieldNumber = 3,
     kNextTurnPawnIdFieldNumber = 4,
-    kRemainingApFieldNumber = 6,
     kSuccessFieldNumber = 1,
     kCanMoveFieldNumber = 7,
     kUsedSubActionThisTurnFieldNumber = 8,
     kUsedUltimateFieldNumber = 9,
+    kTurnQueueResyncedFieldNumber = 15,
     kBattleStateVersionFieldNumber = 12,
     kEnteringTurnPawnIdFieldNumber = 14,
-    kTurnQueueResyncedFieldNumber = 15,
   };
   // repeated .Protocol.BattlePawnDelta pawn_deltas = 10;
   int pawn_deltas_size() const;
@@ -4002,15 +3979,6 @@ class S_BATTLE_END_TURN final :
   void _internal_set_next_turn_pawn_id(uint64_t value);
   public:
 
-  // int32 remaining_ap = 6;
-  void clear_remaining_ap();
-  int32_t remaining_ap() const;
-  void set_remaining_ap(int32_t value);
-  private:
-  int32_t _internal_remaining_ap() const;
-  void _internal_set_remaining_ap(int32_t value);
-  public:
-
   // bool success = 1;
   void clear_success();
   bool success() const;
@@ -4047,6 +4015,15 @@ class S_BATTLE_END_TURN final :
   void _internal_set_used_ultimate(bool value);
   public:
 
+  // bool turn_queue_resynced = 15;
+  void clear_turn_queue_resynced();
+  bool turn_queue_resynced() const;
+  void set_turn_queue_resynced(bool value);
+  private:
+  bool _internal_turn_queue_resynced() const;
+  void _internal_set_turn_queue_resynced(bool value);
+  public:
+
   // uint64 battle_state_version = 12;
   void clear_battle_state_version();
   uint64_t battle_state_version() const;
@@ -4063,15 +4040,6 @@ class S_BATTLE_END_TURN final :
   private:
   uint64_t _internal_entering_turn_pawn_id() const;
   void _internal_set_entering_turn_pawn_id(uint64_t value);
-  public:
-
-  // bool turn_queue_resynced = 15;
-  void clear_turn_queue_resynced();
-  bool turn_queue_resynced() const;
-  void set_turn_queue_resynced(bool value);
-  private:
-  bool _internal_turn_queue_resynced() const;
-  void _internal_set_turn_queue_resynced(bool value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.S_BATTLE_END_TURN)
@@ -4091,14 +4059,13 @@ class S_BATTLE_END_TURN final :
     uint64_t battle_id_;
     uint64_t pawn_id_;
     uint64_t next_turn_pawn_id_;
-    int32_t remaining_ap_;
     bool success_;
     bool can_move_;
     bool used_sub_action_this_turn_;
     bool used_ultimate_;
+    bool turn_queue_resynced_;
     uint64_t battle_state_version_;
     uint64_t entering_turn_pawn_id_;
-    bool turn_queue_resynced_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -7081,26 +7048,6 @@ inline void S_BATTLE_MOVE::set_allocated_reason(std::string* reason) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_BATTLE_MOVE.reason)
 }
 
-// int32 remaining_ap = 9;
-inline void S_BATTLE_MOVE::clear_remaining_ap() {
-  _impl_.remaining_ap_ = 0;
-}
-inline int32_t S_BATTLE_MOVE::_internal_remaining_ap() const {
-  return _impl_.remaining_ap_;
-}
-inline int32_t S_BATTLE_MOVE::remaining_ap() const {
-  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_MOVE.remaining_ap)
-  return _internal_remaining_ap();
-}
-inline void S_BATTLE_MOVE::_internal_set_remaining_ap(int32_t value) {
-  
-  _impl_.remaining_ap_ = value;
-}
-inline void S_BATTLE_MOVE::set_remaining_ap(int32_t value) {
-  _internal_set_remaining_ap(value);
-  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_MOVE.remaining_ap)
-}
-
 // bool can_move = 10;
 inline void S_BATTLE_MOVE::clear_can_move() {
   _impl_.can_move_ = false;
@@ -7855,26 +7802,6 @@ inline void S_BATTLE_SKILL::set_allocated_reason(std::string* reason) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_BATTLE_SKILL.reason)
 }
 
-// int32 remaining_ap = 11;
-inline void S_BATTLE_SKILL::clear_remaining_ap() {
-  _impl_.remaining_ap_ = 0;
-}
-inline int32_t S_BATTLE_SKILL::_internal_remaining_ap() const {
-  return _impl_.remaining_ap_;
-}
-inline int32_t S_BATTLE_SKILL::remaining_ap() const {
-  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_SKILL.remaining_ap)
-  return _internal_remaining_ap();
-}
-inline void S_BATTLE_SKILL::_internal_set_remaining_ap(int32_t value) {
-  
-  _impl_.remaining_ap_ = value;
-}
-inline void S_BATTLE_SKILL::set_remaining_ap(int32_t value) {
-  _internal_set_remaining_ap(value);
-  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_SKILL.remaining_ap)
-}
-
 // bool can_move = 12;
 inline void S_BATTLE_SKILL::clear_can_move() {
   _impl_.can_move_ = false;
@@ -8329,26 +8256,6 @@ inline void S_BATTLE_END_TURN::set_allocated_reason(std::string* reason) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_BATTLE_END_TURN.reason)
-}
-
-// int32 remaining_ap = 6;
-inline void S_BATTLE_END_TURN::clear_remaining_ap() {
-  _impl_.remaining_ap_ = 0;
-}
-inline int32_t S_BATTLE_END_TURN::_internal_remaining_ap() const {
-  return _impl_.remaining_ap_;
-}
-inline int32_t S_BATTLE_END_TURN::remaining_ap() const {
-  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_END_TURN.remaining_ap)
-  return _internal_remaining_ap();
-}
-inline void S_BATTLE_END_TURN::_internal_set_remaining_ap(int32_t value) {
-  
-  _impl_.remaining_ap_ = value;
-}
-inline void S_BATTLE_END_TURN::set_remaining_ap(int32_t value) {
-  _internal_set_remaining_ap(value);
-  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_END_TURN.remaining_ap)
 }
 
 // bool can_move = 7;

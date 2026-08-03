@@ -4,7 +4,7 @@
 
 - PvP battle invitation, accept/decline, shared battle room entry, field pawn despawn, result packets, per-player result acknowledgement, and field return.
 - Randomized turn queue per full cycle.
-- Server-authoritative AP, movement availability, ownership, current-turn, target, range, occupancy, and ally-target validation.
+- Server-authoritative action-use, movement availability, ownership, current-turn, target, range, occupancy, and ally-target validation.
 - Battle pawn runtime model with armor, barriers, resources, statuses, auras, facing, role, and death state.
 - Armor/barrier/HP damage ordering, tank armor recovery, death notification, and battle end resolution.
 - Pure axial battle coordinates with Unity Point Top / Odd-R conversion helpers.
@@ -12,10 +12,10 @@
 - Data loading and validation at startup through `BattleTemplateManager`.
 - First full data-driven class: Beige Ice, including passive, normal skills, ultimate modifiers, and sub action.
 - Generic `ADD_SKILL_MODIFIER` and timed `APPLY_STAT_MODIFIER` table paths.
-- Migrated the active PvP development roster's legacy Suen Axe, Zillian Longbow, and Alen Spear damage skills into the CSV/effect pipeline while preserving their AP costs, ranges, and damage values.
+- Migrated the active PvP development roster's legacy Suen Axe, Zillian Longbow, and Alen Spear damage skills into the CSV/effect pipeline while preserving their ranges and damage values.
 - Extracted character-specific battle behavior from `BattleRoom`: `BattlePawn` subclasses now resolve class-only target areas, and `BattleSkillResolver` owns generic skill modifier/aura rules.
 - Added the current character hierarchy: `BattlePawn -> Beige -> BeigeIce`.
-- Extracted common skill execution from `BattleRoom` into `BattleSkillExecutionService`; `BattleRoom` now retains validation, turn/AP handling, death resolution, and packet delivery.
+- Extracted common skill execution from `BattleRoom` into `BattleSkillExecutionService`; `BattleRoom` now retains validation, turn/action-use handling, death resolution, and packet delivery.
 - Implemented Beige Fire's HEAT passive, Fireball, Explosion, Fire Wall, FIRE-overlay teleport, ultimate damage/backlash modifiers, and Cooling Potion through the character behavior and data/effect pipeline.
 
 ## Current Important Files
@@ -39,7 +39,7 @@ Battle protocol now includes:
 - `C_BATTLE_RESULT_ACK` = 1027
 - `S_BATTLE_RESULT_ACK` = 1028
 
-`BattlePawnInfo` and `BattlePawnDelta` include resources, barriers, statuses, auras, shield totals, facing, AP/movement state, ultimate/sub-action flags, and death state. `S_ENTER_BATTLE` sends all initial tile states; subsequent battle packets send deltas.
+`BattlePawnInfo` and `BattlePawnDelta` include resources, barriers, statuses, auras, shield totals, facing, action-use/movement state, ultimate/sub-action flags, and death state. `S_ENTER_BATTLE` sends all initial tile states; subsequent battle packets send deltas.
 
 ## Client Integration State
 

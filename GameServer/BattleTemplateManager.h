@@ -32,7 +32,6 @@ struct BattleSkillTemplate
 	string damageType;
 	string slotVariantKey;
 	int32 actionSlot = 0;
-	int32 apCost = 0;
 	int32 rangeMin = 0;
 	int32 rangeMax = 0;
 	string targetType;
