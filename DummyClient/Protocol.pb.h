@@ -7548,7 +7548,7 @@ inline bool C_BATTLE_SKILL::request_optional_position_swap() const {
   return _internal_request_optional_position_swap();
 }
 inline void C_BATTLE_SKILL::_internal_set_request_optional_position_swap(bool value) {
-
+  
   _impl_.request_optional_position_swap_ = value;
 }
 inline void C_BATTLE_SKILL::set_request_optional_position_swap(bool value) {

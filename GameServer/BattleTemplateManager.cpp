@@ -670,6 +670,29 @@ bool BattleTemplateManager::ValidateTemplates()
 		}
 	}
 
+	// A base melee reaction is a player-facing movement rule. Keep its ZOC
+	// profile explicit in BattleZoc.csv rather than inferring a hidden default
+	// from the slot-2 skill at runtime.
+	for (const auto& item : _skillsByClassKey)
+	{
+		const bool hasBaseMeleeReaction = any_of(item.second.begin(), item.second.end(), [](const BattleSkillTemplate& skill)
+			{
+				return skill.actionSlot == 2 && skill.skillCategory == "CAST" &&
+					skill.combatType == "MELEE" && skill.targetType == "ENEMY_SINGLE";
+			});
+		if (hasBaseMeleeReaction == false)
+			continue;
+
+		auto classIt = _classKeyToPawnClass.find(item.first);
+		const auto zocIt = classIt != _classKeyToPawnClass.end() ? _zocTemplates.find(classIt->second) : _zocTemplates.end();
+		if (zocIt == _zocTemplates.end() || zocIt->second.enabled == false)
+		{
+			cout << "[BattleTemplateManager] Base melee class requires an enabled BattleZoc profile"
+				<< " class_key=" << item.first << endl;
+			return false;
+		}
+	}
+
 	for (const BattleEffectParamTemplate& param : _effectParams)
 	{
 		auto groupIt = _effectsByGroupKey.find(param.effectGroupKey);

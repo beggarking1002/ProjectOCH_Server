@@ -2,3 +2,5 @@ ClassKey,Enabled,Range,FrontArcWidth,ReactionLimitPerTurn,ReactionSkillSlot,Trig
 string,bool,int,int,int,int,string
 SUEN_AXE,TRUE,1,3,1,2,ENEMY_MOVE_IN_ZONE
 ALEN_SPEAR,TRUE,2,3,1,2,ENEMY_MOVE_IN_ZONE
+ALEN_SHIELD,TRUE,1,3,1,2,ENEMY_MOVE_IN_ZONE
+ZILLIAN_MACE,TRUE,1,3,1,2,ENEMY_MOVE_IN_ZONE

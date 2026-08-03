@@ -16,11 +16,6 @@ BattleZocProfile BattleZocService::GetProfile(const BattlePawn& pawn) const
 		profile.reactionSkillSlot = templateProfile->reactionSkillSlot;
 		profile.triggers = templateProfile->triggers;
 	}
-	else if (HasMeleeReactionSkill(pawn))
-	{
-		profile.enabled = true;
-		profile.triggers.insert("ENEMY_MOVE_IN_ZONE");
-	}
 
 	for (const BattleZocModifierState& modifier : pawn.zocModifiers)
 	{
