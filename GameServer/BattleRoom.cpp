@@ -254,7 +254,7 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 		return;
 	}
 
-	const Protocol::BattleFacingDirection facing = _spatialService.GetFacingForMove(start, pkt.target(), pawn->facingDirection);
+	const Protocol::BattleFacingDirection facing = _spatialService.GetFacingToward(start, pkt.target(), pawn->facingDirection);
 	pawn->ApplyResolvedMove(pkt.target(), facing);
 
 	vector<Protocol::BattleActionLog> zocLogs;
@@ -582,6 +582,11 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		}
 
 		areaDirectionAxial = &lineDirectionAxial;
+	}
+
+	if (enemyTarget && target != nullptr && target->ownerId != caster->ownerId)
+	{
+		caster->facingDirection = _spatialService.GetFacingToward(caster->axial, target->axial, caster->facingDirection);
 	}
 
 	caster->MarkSkillSlotUsed(pkt.skill_slot());
@@ -2221,6 +2226,7 @@ bool BattleRoom::TryExecuteZocAttack(BattleState& battle, BattlePawn& zocOwner, 
 	request.barrierIdGenerator = &_barrierIdGenerator;
 
 	zocOwner.MarkZocReactionUsed();
+	zocOwner.facingDirection = _spatialService.GetFacingToward(zocOwner.axial, movingPawn.axial, zocOwner.facingDirection);
 	BattleSkillActionResult result = _skillExecutionService.Execute(request);
 	logs.insert(logs.end(), result.logs.begin(), result.logs.end());
 	tileDeltas.insert(tileDeltas.end(), result.tileDeltas.begin(), result.tileDeltas.end());
@@ -2374,6 +2380,7 @@ bool BattleRoom::TryExecuteCounterattack(BattleState& battle, BattlePawn& defend
 	request.barrierIdGenerator = &_barrierIdGenerator;
 
 	const int32 attackerHpBeforeCounter = attacker.hp;
+	defender.facingDirection = _spatialService.GetFacingToward(defender.axial, attacker.axial, defender.facingDirection);
 	BattleSkillActionResult result = _skillExecutionService.Execute(request);
 	for (const Protocol::BattleActionLog& counterLog : result.logs)
 	{

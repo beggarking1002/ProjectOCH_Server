@@ -13,7 +13,7 @@ public:
 	bool IsInBounds(const Protocol::AxialCoord& coord) const;
 	int32 AxialDistance(const Protocol::AxialCoord& lhs, const Protocol::AxialCoord& rhs) const;
 	int32 FindClosestDirectionIndex(const Protocol::AxialCoord& source, const Protocol::AxialCoord& target) const;
-	Protocol::BattleFacingDirection GetFacingForMove(const Protocol::AxialCoord& start, const Protocol::AxialCoord& target,
+	Protocol::BattleFacingDirection GetFacingToward(const Protocol::AxialCoord& start, const Protocol::AxialCoord& target,
 		Protocol::BattleFacingDirection fallbackFacing) const;
 	bool IsBackAttack(const BattlePawn& attacker, const BattlePawn& defender) const;
 

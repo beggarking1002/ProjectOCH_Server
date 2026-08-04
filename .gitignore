@@ -56,6 +56,10 @@ coverage*.info
 *.coverage
 *.coveragexml
 
+# Local generated artifacts
+/output/
+/tmp/
+
 # Local environment and OS files
 .env
 .env.*

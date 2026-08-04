@@ -60,7 +60,7 @@ int32 BattleSpatialService::FindClosestDirectionIndex(const Protocol::AxialCoord
 	return bestDirection;
 }
 
-Protocol::BattleFacingDirection BattleSpatialService::GetFacingForMove(const Protocol::AxialCoord& start,
+Protocol::BattleFacingDirection BattleSpatialService::GetFacingToward(const Protocol::AxialCoord& start,
 	const Protocol::AxialCoord& target, Protocol::BattleFacingDirection fallbackFacing) const
 {
 	const int32 directionIndex = FindClosestDirectionIndex(start, target);
