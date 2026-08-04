@@ -12,16 +12,7 @@ PlayerRef ObjectUtils::CreatePlayer(GameSessionRef session)
 
 	PlayerRef player = make_shared<Player>();
 	player->objectInfo->set_object_id(newId);
-	if (newId % 2 == 1)
-	{
-		player->AddBattlePawn(Protocol::PAWN_CLASS_SUEN_PARVIS);
-		player->AddBattlePawn(Protocol::PAWN_CLASS_BEIGE_FIRE);
-	}
-	else
-	{
-		player->AddBattlePawn(Protocol::PAWN_CLASS_ZILLIAN_LONGBOW);
-		player->AddBattlePawn(Protocol::PAWN_CLASS_ALEN_SWORD_SHIELD);
-	}
+	// PvP battle pawns are assigned only after both players finish class selection.
 
 	player->session = session;
 	session->player.store(player);

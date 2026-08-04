@@ -17,6 +17,7 @@ public:
 
 public:
 	PawnRef AddBattlePawn(Protocol::PawnClass pawnClass, int32 level = 1);
+	void SetBattlePawnClasses(const vector<Protocol::PawnClass>& pawnClasses, int32 level = 1);
 
 };
 

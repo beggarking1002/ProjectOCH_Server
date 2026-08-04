@@ -11,6 +11,27 @@ RoomRef GRoom = make_shared<Room>();
 namespace
 {
 	constexpr uint32 kMoveDurationMs = 300;
+
+	int32 GetBattleClassFamily(Protocol::PawnClass pawnClass)
+	{
+		switch (pawnClass)
+		{
+		case Protocol::PAWN_CLASS_SUEN_AXE_SWORD:
+		case Protocol::PAWN_CLASS_SUEN_PARVIS:
+			return 0;
+		case Protocol::PAWN_CLASS_BEIGE_ICE:
+		case Protocol::PAWN_CLASS_BEIGE_FIRE:
+			return 1;
+		case Protocol::PAWN_CLASS_ALEN_SPEAR:
+		case Protocol::PAWN_CLASS_ALEN_SWORD_SHIELD:
+			return 2;
+		case Protocol::PAWN_CLASS_ZILLIAN_LONGBOW:
+		case Protocol::PAWN_CLASS_ZILLIAN_MACE:
+			return 3;
+		default:
+			return -1;
+		}
+	}
 }
 
 Room::Room()
@@ -249,6 +270,11 @@ void Room::HandleBattleInvite(GameSessionRef session, Protocol::C_BATTLE_INVITE 
 		return;
 	}
 
+	if (_battleClassSelectionRequesterByPlayerId.find(requesterId) != _battleClassSelectionRequesterByPlayerId.end())
+	{
+		SendBattleInviteRequest(session, false, requesterId, targetId, "you are selecting battle classes");
+		return;
+	}
 	auto targetIt = _objects.find(targetId);
 	if (targetIt == _objects.end())
 	{
@@ -276,6 +302,11 @@ void Room::HandleBattleInvite(GameSessionRef session, Protocol::C_BATTLE_INVITE 
 		return;
 	}
 
+	if (_battleClassSelectionRequesterByPlayerId.find(targetId) != _battleClassSelectionRequesterByPlayerId.end())
+	{
+		SendBattleInviteRequest(session, false, requesterId, targetId, "target is selecting battle classes");
+		return;
+	}
 	PendingBattleInvite invite;
 	invite.requesterId = requesterId;
 	invite.targetId = targetId;
@@ -356,10 +387,19 @@ void Room::HandleBattleInviteResponse(GameSessionRef session, Protocol::C_BATTLE
 		return;
 	}
 
-	SendBattleInviteResult(requesterSession, true, requesterId, targetId, "accepted");
-	SendBattleInviteResult(session, true, requesterId, targetId, "accepted");
-	RemovePlayersFromFieldForBattle({ requester, target });
-	GBattleRoom->DoAsync(&BattleRoom::HandleEnterPvpBattle, requesterSession, session);
+	PendingBattleClassSelection selection;
+	selection.requesterId = requesterId;
+	selection.targetId = targetId;
+	selection.requesterSession = requesterSession;
+	selection.targetSession = session;
+	_battleClassSelectionsByRequesterId[requesterId] = selection;
+	_battleClassSelectionRequesterByPlayerId[requesterId] = requesterId;
+	_battleClassSelectionRequesterByPlayerId[targetId] = requesterId;
+
+	SendBattleInviteResult(requesterSession, true, requesterId, targetId, "accepted; choose battle classes");
+	SendBattleInviteResult(session, true, requesterId, targetId, "accepted; choose battle classes");
+	SendBattleClassSelectionStart(requesterSession, requesterId, targetId);
+	SendBattleClassSelectionStart(session, requesterId, targetId);
 
 	cout << "BATTLE_INVITE_ACCEPTED"
 		<< " requester_id=" << requesterId
@@ -367,6 +407,92 @@ void Room::HandleBattleInviteResponse(GameSessionRef session, Protocol::C_BATTLE
 		<< endl;
 }
 
+void Room::HandleBattleClassSelection(GameSessionRef session, Protocol::C_BATTLE_CLASS_SELECTION pkt)
+{
+	PlayerRef player = GetPlayerInRoom(session);
+	if (player == nullptr)
+	{
+		SendBattleClassSelectionResult(session, false, false, 0, 0, "player is not in field");
+		return;
+	}
+
+	const uint64 playerId = player->objectInfo->object_id();
+	auto selectionOwnerIt = _battleClassSelectionRequesterByPlayerId.find(playerId);
+	if (selectionOwnerIt == _battleClassSelectionRequesterByPlayerId.end())
+	{
+		SendBattleClassSelectionResult(session, false, false, playerId, 0, "battle class selection not found");
+		return;
+	}
+
+	auto selectionIt = _battleClassSelectionsByRequesterId.find(selectionOwnerIt->second);
+	if (selectionIt == _battleClassSelectionsByRequesterId.end())
+	{
+		_battleClassSelectionRequesterByPlayerId.erase(selectionOwnerIt);
+		SendBattleClassSelectionResult(session, false, false, playerId, 0, "battle class selection expired");
+		return;
+	}
+
+	vector<Protocol::PawnClass> selectedClasses;
+	string reason;
+	if (TryBuildBattleClassSelection(pkt, selectedClasses, reason) == false)
+	{
+		SendBattleClassSelectionResult(session, false, false, selectionIt->second.requesterId, selectionIt->second.targetId, reason);
+		return;
+	}
+
+	PendingBattleClassSelection& selection = selectionIt->second;
+	if (playerId == selection.requesterId)
+	{
+		selection.requesterClasses = move(selectedClasses);
+		selection.requesterSelected = true;
+	}
+	else if (playerId == selection.targetId)
+	{
+		selection.targetClasses = move(selectedClasses);
+		selection.targetSelected = true;
+	}
+	else
+	{
+		SendBattleClassSelectionResult(session, false, false, selection.requesterId, selection.targetId, "player is not part of this selection");
+		return;
+	}
+
+	if (selection.requesterSelected == false || selection.targetSelected == false)
+	{
+		SendBattleClassSelectionResult(session, true, true, selection.requesterId, selection.targetId, "waiting for opponent class selection");
+		return;
+	}
+
+	PendingBattleClassSelection completedSelection = selection;
+	GameSessionRef requesterSession = completedSelection.requesterSession.lock();
+	GameSessionRef targetSession = completedSelection.targetSession.lock();
+	auto requesterIt = _objects.find(completedSelection.requesterId);
+	auto targetIt = _objects.find(completedSelection.targetId);
+	PlayerRef requester = requesterIt != _objects.end() ? dynamic_pointer_cast<Player>(requesterIt->second) : nullptr;
+	PlayerRef target = targetIt != _objects.end() ? dynamic_pointer_cast<Player>(targetIt->second) : nullptr;
+	if (requesterSession == nullptr || targetSession == nullptr || requester == nullptr || target == nullptr)
+	{
+		CancelBattleClassSelectionForPlayer(playerId, "player left field before battle entry");
+		return;
+	}
+
+	requester->SetBattlePawnClasses(completedSelection.requesterClasses);
+	target->SetBattlePawnClasses(completedSelection.targetClasses);
+	_battleClassSelectionRequesterByPlayerId.erase(completedSelection.requesterId);
+	_battleClassSelectionRequesterByPlayerId.erase(completedSelection.targetId);
+	_battleClassSelectionsByRequesterId.erase(completedSelection.requesterId);
+
+	SendBattleClassSelectionResult(requesterSession, true, false, completedSelection.requesterId, completedSelection.targetId, "battle classes locked");
+	SendBattleClassSelectionResult(targetSession, true, false, completedSelection.requesterId, completedSelection.targetId, "battle classes locked");
+	RemovePlayersFromFieldForBattle({ requester, target });
+	GBattleRoom->DoAsync(&BattleRoom::HandleEnterPvpBattle, requesterSession, targetSession);
+
+	cout << "BATTLE_CLASS_SELECTION_COMPLETE"
+		<< " requester_id=" << completedSelection.requesterId
+		<< " target_id=" << completedSelection.targetId
+		<< " pawn_count_per_player=" << completedSelection.requesterClasses.size()
+		<< endl;
+}
 void Room::UpdateTick()
 {
 	//cout << "Update Room" << endl;
@@ -551,6 +677,43 @@ void Room::SendBattleInviteResult(GameSessionRef session, bool accepted, uint64 
 	session->Send(sendBuffer);
 }
 
+void Room::SendBattleClassSelectionStart(GameSessionRef session, uint64 requesterId, uint64 targetId)
+{
+	if (session == nullptr)
+		return;
+
+	Protocol::S_BATTLE_CLASS_SELECTION_START pkt;
+	pkt.set_requester_player_id(requesterId);
+	pkt.set_target_player_id(targetId);
+	pkt.add_suen_options(Protocol::PAWN_CLASS_SUEN_AXE_SWORD);
+	pkt.add_suen_options(Protocol::PAWN_CLASS_SUEN_PARVIS);
+	pkt.add_beige_options(Protocol::PAWN_CLASS_BEIGE_ICE);
+	pkt.add_beige_options(Protocol::PAWN_CLASS_BEIGE_FIRE);
+	pkt.add_alen_options(Protocol::PAWN_CLASS_ALEN_SPEAR);
+	pkt.add_alen_options(Protocol::PAWN_CLASS_ALEN_SWORD_SHIELD);
+	pkt.add_zillian_options(Protocol::PAWN_CLASS_ZILLIAN_LONGBOW);
+	pkt.add_zillian_options(Protocol::PAWN_CLASS_ZILLIAN_MACE);
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(pkt);
+	session->Send(sendBuffer);
+}
+
+void Room::SendBattleClassSelectionResult(GameSessionRef session, bool success, bool waitingForOpponent,
+	uint64 requesterId, uint64 targetId, const string& reason)
+{
+	if (session == nullptr)
+		return;
+
+	Protocol::S_BATTLE_CLASS_SELECTION_RESULT pkt;
+	pkt.set_success(success);
+	pkt.set_waiting_for_opponent(waitingForOpponent);
+	pkt.set_requester_player_id(requesterId);
+	pkt.set_target_player_id(targetId);
+	pkt.set_reason(reason);
+
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(pkt);
+	session->Send(sendBuffer);
+}
 void Room::SendBattleResultAck(GameSessionRef session, bool success, uint64 battleId, const string& reason)
 {
 	cout << "S_BATTLE_RESULT_ACK"
@@ -606,6 +769,7 @@ void Room::RemovePlayersFromFieldForBattle(const vector<PlayerRef>& players)
 
 void Room::CancelBattleInvitesForPlayer(uint64 playerId, const string& reason)
 {
+	CancelBattleClassSelectionForPlayer(playerId, reason);
 	auto outgoingIt = _battleInviteTargetByRequesterId.find(playerId);
 	if (outgoingIt != _battleInviteTargetByRequesterId.end())
 	{
@@ -631,6 +795,71 @@ void Room::CancelBattleInvitesForPlayer(uint64 playerId, const string& reason)
 	}
 }
 
+void Room::CancelBattleClassSelectionForPlayer(uint64 playerId, const string& reason)
+{
+	auto selectionOwnerIt = _battleClassSelectionRequesterByPlayerId.find(playerId);
+	if (selectionOwnerIt == _battleClassSelectionRequesterByPlayerId.end())
+		return;
+
+	auto selectionIt = _battleClassSelectionsByRequesterId.find(selectionOwnerIt->second);
+	if (selectionIt == _battleClassSelectionsByRequesterId.end())
+	{
+		_battleClassSelectionRequesterByPlayerId.erase(selectionOwnerIt);
+		return;
+	}
+
+	PendingBattleClassSelection selection = selectionIt->second;
+	_battleClassSelectionRequesterByPlayerId.erase(selection.requesterId);
+	_battleClassSelectionRequesterByPlayerId.erase(selection.targetId);
+	_battleClassSelectionsByRequesterId.erase(selectionIt);
+
+	if (selection.requesterId != playerId)
+		SendBattleClassSelectionResult(selection.requesterSession.lock(), false, false, selection.requesterId, selection.targetId, reason);
+	if (selection.targetId != playerId)
+		SendBattleClassSelectionResult(selection.targetSession.lock(), false, false, selection.requesterId, selection.targetId, reason);
+}
+
+bool Room::TryBuildBattleClassSelection(const Protocol::C_BATTLE_CLASS_SELECTION& pkt,
+	vector<Protocol::PawnClass>& selectedClasses, string& reason) const
+{
+	if (pkt.selected_pawn_classes_size() != 4)
+	{
+		reason = "select exactly one class for Suen, Beige, Alen, and Zillian";
+		return false;
+	}
+
+	vector<Protocol::PawnClass> classByFamily(4, Protocol::PAWN_CLASS_NONE);
+	for (int32 index = 0; index < pkt.selected_pawn_classes_size(); index++)
+	{
+		const Protocol::PawnClass pawnClass = pkt.selected_pawn_classes(index);
+		const int32 family = GetBattleClassFamily(pawnClass);
+		if (family < 0)
+		{
+			reason = "selected class is not available for PvP";
+			return false;
+		}
+
+		if (classByFamily[family] != Protocol::PAWN_CLASS_NONE)
+		{
+			reason = "select only one class from each character family";
+			return false;
+		}
+
+		classByFamily[family] = pawnClass;
+	}
+
+	for (Protocol::PawnClass pawnClass : classByFamily)
+	{
+		if (pawnClass == Protocol::PAWN_CLASS_NONE)
+		{
+			reason = "missing character family selection";
+			return false;
+		}
+	}
+
+	selectedClasses = move(classByFamily);
+	return true;
+}
 void Room::Broadcast(SendBufferRef sendBuffer, uint64 exceptId)
 {
 	for (auto& item : _objects)

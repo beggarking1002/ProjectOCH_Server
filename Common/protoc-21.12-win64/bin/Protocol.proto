@@ -220,3 +220,24 @@ message S_BATTLE_RESULT_ACK {
 	uint64 battle_id = 2;
 	string reason = 3;
 }
+
+message S_BATTLE_CLASS_SELECTION_START {
+	uint64 requester_player_id = 1;
+	uint64 target_player_id = 2;
+	repeated PawnClass suen_options = 3;
+	repeated PawnClass beige_options = 4;
+	repeated PawnClass alen_options = 5;
+	repeated PawnClass zillian_options = 6;
+}
+
+message C_BATTLE_CLASS_SELECTION {
+	repeated PawnClass selected_pawn_classes = 1;
+}
+
+message S_BATTLE_CLASS_SELECTION_RESULT {
+	bool success = 1;
+	bool waiting_for_opponent = 2;
+	uint64 requester_player_id = 3;
+	uint64 target_player_id = 4;
+	string reason = 5;
+}

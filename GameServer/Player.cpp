@@ -21,3 +21,10 @@ PawnRef Player::AddBattlePawn(Protocol::PawnClass pawnClass, int32 level)
 	battlePawns.push_back(pawn);
 	return pawn;
 }
+
+void Player::SetBattlePawnClasses(const vector<Protocol::PawnClass>& pawnClasses, int32 level)
+{
+	battlePawns.clear();
+	for (Protocol::PawnClass pawnClass : pawnClasses)
+		AddBattlePawn(pawnClass, level);
+}

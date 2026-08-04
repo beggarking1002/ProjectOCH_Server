@@ -35,6 +35,9 @@ enum : uint16
 	PKT_S_BATTLE_RESULT = 1026,
 	PKT_C_BATTLE_RESULT_ACK = 1027,
 	PKT_S_BATTLE_RESULT_ACK = 1028,
+	PKT_S_BATTLE_CLASS_SELECTION_START = 1029,
+	PKT_C_BATTLE_CLASS_SELECTION = 1030,
+	PKT_S_BATTLE_CLASS_SELECTION_RESULT = 1031,
 };
 
 // Custom Handlers
@@ -51,6 +54,7 @@ bool Handle_C_BATTLE_END_TURN(PacketSessionRef& session, Protocol::C_BATTLE_END_
 bool Handle_C_BATTLE_INVITE(PacketSessionRef& session, Protocol::C_BATTLE_INVITE& pkt);
 bool Handle_C_BATTLE_INVITE_RESPONSE(PacketSessionRef& session, Protocol::C_BATTLE_INVITE_RESPONSE& pkt);
 bool Handle_C_BATTLE_RESULT_ACK(PacketSessionRef& session, Protocol::C_BATTLE_RESULT_ACK& pkt);
+bool Handle_C_BATTLE_CLASS_SELECTION(PacketSessionRef& session, Protocol::C_BATTLE_CLASS_SELECTION& pkt);
 
 class ServerPacketHandler
 {
@@ -71,6 +75,7 @@ public:
 		GPacketHandler[PKT_C_BATTLE_INVITE] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_BATTLE_INVITE>(Handle_C_BATTLE_INVITE, session, buffer, len); };
 		GPacketHandler[PKT_C_BATTLE_INVITE_RESPONSE] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_BATTLE_INVITE_RESPONSE>(Handle_C_BATTLE_INVITE_RESPONSE, session, buffer, len); };
 		GPacketHandler[PKT_C_BATTLE_RESULT_ACK] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_BATTLE_RESULT_ACK>(Handle_C_BATTLE_RESULT_ACK, session, buffer, len); };
+		GPacketHandler[PKT_C_BATTLE_CLASS_SELECTION] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_BATTLE_CLASS_SELECTION>(Handle_C_BATTLE_CLASS_SELECTION, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len)
@@ -95,6 +100,8 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::S_BATTLE_PAWN_DEAD& pkt) { return MakeSendBuffer(pkt, PKT_S_BATTLE_PAWN_DEAD); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_BATTLE_RESULT& pkt) { return MakeSendBuffer(pkt, PKT_S_BATTLE_RESULT); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_BATTLE_RESULT_ACK& pkt) { return MakeSendBuffer(pkt, PKT_S_BATTLE_RESULT_ACK); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_BATTLE_CLASS_SELECTION_START& pkt) { return MakeSendBuffer(pkt, PKT_S_BATTLE_CLASS_SELECTION_START); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_BATTLE_CLASS_SELECTION_RESULT& pkt) { return MakeSendBuffer(pkt, PKT_S_BATTLE_CLASS_SELECTION_RESULT); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

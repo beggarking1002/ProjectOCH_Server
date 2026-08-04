@@ -17,6 +17,7 @@ public:
 	void HandleMove(GameSessionRef session, Protocol::C_MOVE pkt);
 	void HandleBattleInvite(GameSessionRef session, Protocol::C_BATTLE_INVITE pkt);
 	void HandleBattleInviteResponse(GameSessionRef session, Protocol::C_BATTLE_INVITE_RESPONSE pkt);
+	void HandleBattleClassSelection(GameSessionRef session, Protocol::C_BATTLE_CLASS_SELECTION pkt);
 
 public:
 	void UpdateTick();
@@ -33,9 +34,15 @@ private:
 	void SendBattleInviteRequest(GameSessionRef session, bool success, uint64 requesterId, uint64 targetId, const string& reason);
 	void SendBattleInviteReceived(GameSessionRef session, uint64 requesterId);
 	void SendBattleInviteResult(GameSessionRef session, bool accepted, uint64 requesterId, uint64 targetId, const string& reason);
+	void SendBattleClassSelectionStart(GameSessionRef session, uint64 requesterId, uint64 targetId);
+	void SendBattleClassSelectionResult(GameSessionRef session, bool success, bool waitingForOpponent,
+		uint64 requesterId, uint64 targetId, const string& reason);
 	void SendBattleResultAck(GameSessionRef session, bool success, uint64 battleId, const string& reason);
 	void RemovePlayersFromFieldForBattle(const vector<PlayerRef>& players);
 	void CancelBattleInvitesForPlayer(uint64 playerId, const string& reason);
+	void CancelBattleClassSelectionForPlayer(uint64 playerId, const string& reason);
+	bool TryBuildBattleClassSelection(const Protocol::C_BATTLE_CLASS_SELECTION& pkt,
+		vector<Protocol::PawnClass>& selectedClasses, string& reason) const;
 
 private:
 	void Broadcast(SendBufferRef sendBuffer, uint64 exceptId = 0);
@@ -49,9 +56,23 @@ private:
 		weak_ptr<GameSession> targetSession;
 	};
 
+	struct PendingBattleClassSelection
+	{
+		uint64 requesterId = 0;
+		uint64 targetId = 0;
+		weak_ptr<GameSession> requesterSession;
+		weak_ptr<GameSession> targetSession;
+		bool requesterSelected = false;
+		bool targetSelected = false;
+		vector<Protocol::PawnClass> requesterClasses;
+		vector<Protocol::PawnClass> targetClasses;
+	};
+
 	unordered_map<uint64, ObjectRef> _objects;
 	unordered_map<uint64, PendingBattleInvite> _battleInvitesByTargetId;
 	unordered_map<uint64, uint64> _battleInviteTargetByRequesterId;
+	unordered_map<uint64, PendingBattleClassSelection> _battleClassSelectionsByRequesterId;
+	unordered_map<uint64, uint64> _battleClassSelectionRequesterByPlayerId;
 };
 
 extern RoomRef GRoom;

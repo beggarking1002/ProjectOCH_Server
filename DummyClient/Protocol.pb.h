@@ -48,6 +48,9 @@ struct TableStruct_Protocol_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Protocol_2eproto;
 namespace Protocol {
+class C_BATTLE_CLASS_SELECTION;
+struct C_BATTLE_CLASS_SELECTIONDefaultTypeInternal;
+extern C_BATTLE_CLASS_SELECTIONDefaultTypeInternal _C_BATTLE_CLASS_SELECTION_default_instance_;
 class C_BATTLE_END_TURN;
 struct C_BATTLE_END_TURNDefaultTypeInternal;
 extern C_BATTLE_END_TURNDefaultTypeInternal _C_BATTLE_END_TURN_default_instance_;
@@ -84,6 +87,12 @@ extern C_LOGINDefaultTypeInternal _C_LOGIN_default_instance_;
 class C_MOVE;
 struct C_MOVEDefaultTypeInternal;
 extern C_MOVEDefaultTypeInternal _C_MOVE_default_instance_;
+class S_BATTLE_CLASS_SELECTION_RESULT;
+struct S_BATTLE_CLASS_SELECTION_RESULTDefaultTypeInternal;
+extern S_BATTLE_CLASS_SELECTION_RESULTDefaultTypeInternal _S_BATTLE_CLASS_SELECTION_RESULT_default_instance_;
+class S_BATTLE_CLASS_SELECTION_START;
+struct S_BATTLE_CLASS_SELECTION_STARTDefaultTypeInternal;
+extern S_BATTLE_CLASS_SELECTION_STARTDefaultTypeInternal _S_BATTLE_CLASS_SELECTION_START_default_instance_;
 class S_BATTLE_END_TURN;
 struct S_BATTLE_END_TURNDefaultTypeInternal;
 extern S_BATTLE_END_TURNDefaultTypeInternal _S_BATTLE_END_TURN_default_instance_;
@@ -137,6 +146,7 @@ struct S_SPAWNDefaultTypeInternal;
 extern S_SPAWNDefaultTypeInternal _S_SPAWN_default_instance_;
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
+template<> ::Protocol::C_BATTLE_CLASS_SELECTION* Arena::CreateMaybeMessage<::Protocol::C_BATTLE_CLASS_SELECTION>(Arena*);
 template<> ::Protocol::C_BATTLE_END_TURN* Arena::CreateMaybeMessage<::Protocol::C_BATTLE_END_TURN>(Arena*);
 template<> ::Protocol::C_BATTLE_INVITE* Arena::CreateMaybeMessage<::Protocol::C_BATTLE_INVITE>(Arena*);
 template<> ::Protocol::C_BATTLE_INVITE_RESPONSE* Arena::CreateMaybeMessage<::Protocol::C_BATTLE_INVITE_RESPONSE>(Arena*);
@@ -149,6 +159,8 @@ template<> ::Protocol::C_ENTER_GAME* Arena::CreateMaybeMessage<::Protocol::C_ENT
 template<> ::Protocol::C_LEAVE_GAME* Arena::CreateMaybeMessage<::Protocol::C_LEAVE_GAME>(Arena*);
 template<> ::Protocol::C_LOGIN* Arena::CreateMaybeMessage<::Protocol::C_LOGIN>(Arena*);
 template<> ::Protocol::C_MOVE* Arena::CreateMaybeMessage<::Protocol::C_MOVE>(Arena*);
+template<> ::Protocol::S_BATTLE_CLASS_SELECTION_RESULT* Arena::CreateMaybeMessage<::Protocol::S_BATTLE_CLASS_SELECTION_RESULT>(Arena*);
+template<> ::Protocol::S_BATTLE_CLASS_SELECTION_START* Arena::CreateMaybeMessage<::Protocol::S_BATTLE_CLASS_SELECTION_START>(Arena*);
 template<> ::Protocol::S_BATTLE_END_TURN* Arena::CreateMaybeMessage<::Protocol::S_BATTLE_END_TURN>(Arena*);
 template<> ::Protocol::S_BATTLE_INVITE_RECEIVED* Arena::CreateMaybeMessage<::Protocol::S_BATTLE_INVITE_RECEIVED>(Arena*);
 template<> ::Protocol::S_BATTLE_INVITE_REQUEST* Arena::CreateMaybeMessage<::Protocol::S_BATTLE_INVITE_REQUEST>(Arena*);
@@ -5550,6 +5562,599 @@ class S_BATTLE_RESULT_ACK final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_Protocol_2eproto;
 };
+// -------------------------------------------------------------------
+
+class S_BATTLE_CLASS_SELECTION_START final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_BATTLE_CLASS_SELECTION_START) */ {
+ public:
+  inline S_BATTLE_CLASS_SELECTION_START() : S_BATTLE_CLASS_SELECTION_START(nullptr) {}
+  ~S_BATTLE_CLASS_SELECTION_START() override;
+  explicit PROTOBUF_CONSTEXPR S_BATTLE_CLASS_SELECTION_START(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_BATTLE_CLASS_SELECTION_START(const S_BATTLE_CLASS_SELECTION_START& from);
+  S_BATTLE_CLASS_SELECTION_START(S_BATTLE_CLASS_SELECTION_START&& from) noexcept
+    : S_BATTLE_CLASS_SELECTION_START() {
+    *this = ::std::move(from);
+  }
+
+  inline S_BATTLE_CLASS_SELECTION_START& operator=(const S_BATTLE_CLASS_SELECTION_START& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_BATTLE_CLASS_SELECTION_START& operator=(S_BATTLE_CLASS_SELECTION_START&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_BATTLE_CLASS_SELECTION_START& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_BATTLE_CLASS_SELECTION_START* internal_default_instance() {
+    return reinterpret_cast<const S_BATTLE_CLASS_SELECTION_START*>(
+               &_S_BATTLE_CLASS_SELECTION_START_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    29;
+
+  friend void swap(S_BATTLE_CLASS_SELECTION_START& a, S_BATTLE_CLASS_SELECTION_START& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_BATTLE_CLASS_SELECTION_START* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_BATTLE_CLASS_SELECTION_START* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_BATTLE_CLASS_SELECTION_START* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_BATTLE_CLASS_SELECTION_START>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_BATTLE_CLASS_SELECTION_START& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const S_BATTLE_CLASS_SELECTION_START& from) {
+    S_BATTLE_CLASS_SELECTION_START::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_BATTLE_CLASS_SELECTION_START* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_BATTLE_CLASS_SELECTION_START";
+  }
+  protected:
+  explicit S_BATTLE_CLASS_SELECTION_START(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSuenOptionsFieldNumber = 3,
+    kBeigeOptionsFieldNumber = 4,
+    kAlenOptionsFieldNumber = 5,
+    kZillianOptionsFieldNumber = 6,
+    kRequesterPlayerIdFieldNumber = 1,
+    kTargetPlayerIdFieldNumber = 2,
+  };
+  // repeated .Protocol.PawnClass suen_options = 3;
+  int suen_options_size() const;
+  private:
+  int _internal_suen_options_size() const;
+  public:
+  void clear_suen_options();
+  private:
+  ::Protocol::PawnClass _internal_suen_options(int index) const;
+  void _internal_add_suen_options(::Protocol::PawnClass value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* _internal_mutable_suen_options();
+  public:
+  ::Protocol::PawnClass suen_options(int index) const;
+  void set_suen_options(int index, ::Protocol::PawnClass value);
+  void add_suen_options(::Protocol::PawnClass value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>& suen_options() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* mutable_suen_options();
+
+  // repeated .Protocol.PawnClass beige_options = 4;
+  int beige_options_size() const;
+  private:
+  int _internal_beige_options_size() const;
+  public:
+  void clear_beige_options();
+  private:
+  ::Protocol::PawnClass _internal_beige_options(int index) const;
+  void _internal_add_beige_options(::Protocol::PawnClass value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* _internal_mutable_beige_options();
+  public:
+  ::Protocol::PawnClass beige_options(int index) const;
+  void set_beige_options(int index, ::Protocol::PawnClass value);
+  void add_beige_options(::Protocol::PawnClass value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>& beige_options() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* mutable_beige_options();
+
+  // repeated .Protocol.PawnClass alen_options = 5;
+  int alen_options_size() const;
+  private:
+  int _internal_alen_options_size() const;
+  public:
+  void clear_alen_options();
+  private:
+  ::Protocol::PawnClass _internal_alen_options(int index) const;
+  void _internal_add_alen_options(::Protocol::PawnClass value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* _internal_mutable_alen_options();
+  public:
+  ::Protocol::PawnClass alen_options(int index) const;
+  void set_alen_options(int index, ::Protocol::PawnClass value);
+  void add_alen_options(::Protocol::PawnClass value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>& alen_options() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* mutable_alen_options();
+
+  // repeated .Protocol.PawnClass zillian_options = 6;
+  int zillian_options_size() const;
+  private:
+  int _internal_zillian_options_size() const;
+  public:
+  void clear_zillian_options();
+  private:
+  ::Protocol::PawnClass _internal_zillian_options(int index) const;
+  void _internal_add_zillian_options(::Protocol::PawnClass value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* _internal_mutable_zillian_options();
+  public:
+  ::Protocol::PawnClass zillian_options(int index) const;
+  void set_zillian_options(int index, ::Protocol::PawnClass value);
+  void add_zillian_options(::Protocol::PawnClass value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>& zillian_options() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* mutable_zillian_options();
+
+  // uint64 requester_player_id = 1;
+  void clear_requester_player_id();
+  uint64_t requester_player_id() const;
+  void set_requester_player_id(uint64_t value);
+  private:
+  uint64_t _internal_requester_player_id() const;
+  void _internal_set_requester_player_id(uint64_t value);
+  public:
+
+  // uint64 target_player_id = 2;
+  void clear_target_player_id();
+  uint64_t target_player_id() const;
+  void set_target_player_id(uint64_t value);
+  private:
+  uint64_t _internal_target_player_id() const;
+  void _internal_set_target_player_id(uint64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_BATTLE_CLASS_SELECTION_START)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField<int> suen_options_;
+    mutable std::atomic<int> _suen_options_cached_byte_size_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField<int> beige_options_;
+    mutable std::atomic<int> _beige_options_cached_byte_size_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField<int> alen_options_;
+    mutable std::atomic<int> _alen_options_cached_byte_size_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField<int> zillian_options_;
+    mutable std::atomic<int> _zillian_options_cached_byte_size_;
+    uint64_t requester_player_id_;
+    uint64_t target_player_id_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class C_BATTLE_CLASS_SELECTION final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.C_BATTLE_CLASS_SELECTION) */ {
+ public:
+  inline C_BATTLE_CLASS_SELECTION() : C_BATTLE_CLASS_SELECTION(nullptr) {}
+  ~C_BATTLE_CLASS_SELECTION() override;
+  explicit PROTOBUF_CONSTEXPR C_BATTLE_CLASS_SELECTION(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  C_BATTLE_CLASS_SELECTION(const C_BATTLE_CLASS_SELECTION& from);
+  C_BATTLE_CLASS_SELECTION(C_BATTLE_CLASS_SELECTION&& from) noexcept
+    : C_BATTLE_CLASS_SELECTION() {
+    *this = ::std::move(from);
+  }
+
+  inline C_BATTLE_CLASS_SELECTION& operator=(const C_BATTLE_CLASS_SELECTION& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline C_BATTLE_CLASS_SELECTION& operator=(C_BATTLE_CLASS_SELECTION&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const C_BATTLE_CLASS_SELECTION& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const C_BATTLE_CLASS_SELECTION* internal_default_instance() {
+    return reinterpret_cast<const C_BATTLE_CLASS_SELECTION*>(
+               &_C_BATTLE_CLASS_SELECTION_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    30;
+
+  friend void swap(C_BATTLE_CLASS_SELECTION& a, C_BATTLE_CLASS_SELECTION& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(C_BATTLE_CLASS_SELECTION* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(C_BATTLE_CLASS_SELECTION* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  C_BATTLE_CLASS_SELECTION* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C_BATTLE_CLASS_SELECTION>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const C_BATTLE_CLASS_SELECTION& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const C_BATTLE_CLASS_SELECTION& from) {
+    C_BATTLE_CLASS_SELECTION::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(C_BATTLE_CLASS_SELECTION* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.C_BATTLE_CLASS_SELECTION";
+  }
+  protected:
+  explicit C_BATTLE_CLASS_SELECTION(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSelectedPawnClassesFieldNumber = 1,
+  };
+  // repeated .Protocol.PawnClass selected_pawn_classes = 1;
+  int selected_pawn_classes_size() const;
+  private:
+  int _internal_selected_pawn_classes_size() const;
+  public:
+  void clear_selected_pawn_classes();
+  private:
+  ::Protocol::PawnClass _internal_selected_pawn_classes(int index) const;
+  void _internal_add_selected_pawn_classes(::Protocol::PawnClass value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* _internal_mutable_selected_pawn_classes();
+  public:
+  ::Protocol::PawnClass selected_pawn_classes(int index) const;
+  void set_selected_pawn_classes(int index, ::Protocol::PawnClass value);
+  void add_selected_pawn_classes(::Protocol::PawnClass value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>& selected_pawn_classes() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* mutable_selected_pawn_classes();
+
+  // @@protoc_insertion_point(class_scope:Protocol.C_BATTLE_CLASS_SELECTION)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField<int> selected_pawn_classes_;
+    mutable std::atomic<int> _selected_pawn_classes_cached_byte_size_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class S_BATTLE_CLASS_SELECTION_RESULT final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_BATTLE_CLASS_SELECTION_RESULT) */ {
+ public:
+  inline S_BATTLE_CLASS_SELECTION_RESULT() : S_BATTLE_CLASS_SELECTION_RESULT(nullptr) {}
+  ~S_BATTLE_CLASS_SELECTION_RESULT() override;
+  explicit PROTOBUF_CONSTEXPR S_BATTLE_CLASS_SELECTION_RESULT(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_BATTLE_CLASS_SELECTION_RESULT(const S_BATTLE_CLASS_SELECTION_RESULT& from);
+  S_BATTLE_CLASS_SELECTION_RESULT(S_BATTLE_CLASS_SELECTION_RESULT&& from) noexcept
+    : S_BATTLE_CLASS_SELECTION_RESULT() {
+    *this = ::std::move(from);
+  }
+
+  inline S_BATTLE_CLASS_SELECTION_RESULT& operator=(const S_BATTLE_CLASS_SELECTION_RESULT& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_BATTLE_CLASS_SELECTION_RESULT& operator=(S_BATTLE_CLASS_SELECTION_RESULT&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_BATTLE_CLASS_SELECTION_RESULT& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_BATTLE_CLASS_SELECTION_RESULT* internal_default_instance() {
+    return reinterpret_cast<const S_BATTLE_CLASS_SELECTION_RESULT*>(
+               &_S_BATTLE_CLASS_SELECTION_RESULT_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    31;
+
+  friend void swap(S_BATTLE_CLASS_SELECTION_RESULT& a, S_BATTLE_CLASS_SELECTION_RESULT& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_BATTLE_CLASS_SELECTION_RESULT* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_BATTLE_CLASS_SELECTION_RESULT* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_BATTLE_CLASS_SELECTION_RESULT* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_BATTLE_CLASS_SELECTION_RESULT>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_BATTLE_CLASS_SELECTION_RESULT& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const S_BATTLE_CLASS_SELECTION_RESULT& from) {
+    S_BATTLE_CLASS_SELECTION_RESULT::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_BATTLE_CLASS_SELECTION_RESULT* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_BATTLE_CLASS_SELECTION_RESULT";
+  }
+  protected:
+  explicit S_BATTLE_CLASS_SELECTION_RESULT(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kReasonFieldNumber = 5,
+    kRequesterPlayerIdFieldNumber = 3,
+    kTargetPlayerIdFieldNumber = 4,
+    kSuccessFieldNumber = 1,
+    kWaitingForOpponentFieldNumber = 2,
+  };
+  // string reason = 5;
+  void clear_reason();
+  const std::string& reason() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_reason(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_reason();
+  PROTOBUF_NODISCARD std::string* release_reason();
+  void set_allocated_reason(std::string* reason);
+  private:
+  const std::string& _internal_reason() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_reason(const std::string& value);
+  std::string* _internal_mutable_reason();
+  public:
+
+  // uint64 requester_player_id = 3;
+  void clear_requester_player_id();
+  uint64_t requester_player_id() const;
+  void set_requester_player_id(uint64_t value);
+  private:
+  uint64_t _internal_requester_player_id() const;
+  void _internal_set_requester_player_id(uint64_t value);
+  public:
+
+  // uint64 target_player_id = 4;
+  void clear_target_player_id();
+  uint64_t target_player_id() const;
+  void set_target_player_id(uint64_t value);
+  private:
+  uint64_t _internal_target_player_id() const;
+  void _internal_set_target_player_id(uint64_t value);
+  public:
+
+  // bool success = 1;
+  void clear_success();
+  bool success() const;
+  void set_success(bool value);
+  private:
+  bool _internal_success() const;
+  void _internal_set_success(bool value);
+  public:
+
+  // bool waiting_for_opponent = 2;
+  void clear_waiting_for_opponent();
+  bool waiting_for_opponent() const;
+  void set_waiting_for_opponent(bool value);
+  private:
+  bool _internal_waiting_for_opponent() const;
+  void _internal_set_waiting_for_opponent(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_BATTLE_CLASS_SELECTION_RESULT)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
+    uint64_t requester_player_id_;
+    uint64_t target_player_id_;
+    bool success_;
+    bool waiting_for_opponent_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
 // ===================================================================
 
 
@@ -9082,9 +9687,412 @@ inline void S_BATTLE_RESULT_ACK::set_allocated_reason(std::string* reason) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_BATTLE_RESULT_ACK.reason)
 }
 
+// -------------------------------------------------------------------
+
+// S_BATTLE_CLASS_SELECTION_START
+
+// uint64 requester_player_id = 1;
+inline void S_BATTLE_CLASS_SELECTION_START::clear_requester_player_id() {
+  _impl_.requester_player_id_ = uint64_t{0u};
+}
+inline uint64_t S_BATTLE_CLASS_SELECTION_START::_internal_requester_player_id() const {
+  return _impl_.requester_player_id_;
+}
+inline uint64_t S_BATTLE_CLASS_SELECTION_START::requester_player_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_CLASS_SELECTION_START.requester_player_id)
+  return _internal_requester_player_id();
+}
+inline void S_BATTLE_CLASS_SELECTION_START::_internal_set_requester_player_id(uint64_t value) {
+  
+  _impl_.requester_player_id_ = value;
+}
+inline void S_BATTLE_CLASS_SELECTION_START::set_requester_player_id(uint64_t value) {
+  _internal_set_requester_player_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_CLASS_SELECTION_START.requester_player_id)
+}
+
+// uint64 target_player_id = 2;
+inline void S_BATTLE_CLASS_SELECTION_START::clear_target_player_id() {
+  _impl_.target_player_id_ = uint64_t{0u};
+}
+inline uint64_t S_BATTLE_CLASS_SELECTION_START::_internal_target_player_id() const {
+  return _impl_.target_player_id_;
+}
+inline uint64_t S_BATTLE_CLASS_SELECTION_START::target_player_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_CLASS_SELECTION_START.target_player_id)
+  return _internal_target_player_id();
+}
+inline void S_BATTLE_CLASS_SELECTION_START::_internal_set_target_player_id(uint64_t value) {
+  
+  _impl_.target_player_id_ = value;
+}
+inline void S_BATTLE_CLASS_SELECTION_START::set_target_player_id(uint64_t value) {
+  _internal_set_target_player_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_CLASS_SELECTION_START.target_player_id)
+}
+
+// repeated .Protocol.PawnClass suen_options = 3;
+inline int S_BATTLE_CLASS_SELECTION_START::_internal_suen_options_size() const {
+  return _impl_.suen_options_.size();
+}
+inline int S_BATTLE_CLASS_SELECTION_START::suen_options_size() const {
+  return _internal_suen_options_size();
+}
+inline void S_BATTLE_CLASS_SELECTION_START::clear_suen_options() {
+  _impl_.suen_options_.Clear();
+}
+inline ::Protocol::PawnClass S_BATTLE_CLASS_SELECTION_START::_internal_suen_options(int index) const {
+  return static_cast< ::Protocol::PawnClass >(_impl_.suen_options_.Get(index));
+}
+inline ::Protocol::PawnClass S_BATTLE_CLASS_SELECTION_START::suen_options(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_CLASS_SELECTION_START.suen_options)
+  return _internal_suen_options(index);
+}
+inline void S_BATTLE_CLASS_SELECTION_START::set_suen_options(int index, ::Protocol::PawnClass value) {
+  _impl_.suen_options_.Set(index, value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_CLASS_SELECTION_START.suen_options)
+}
+inline void S_BATTLE_CLASS_SELECTION_START::_internal_add_suen_options(::Protocol::PawnClass value) {
+  _impl_.suen_options_.Add(value);
+}
+inline void S_BATTLE_CLASS_SELECTION_START::add_suen_options(::Protocol::PawnClass value) {
+  _internal_add_suen_options(value);
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_CLASS_SELECTION_START.suen_options)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>&
+S_BATTLE_CLASS_SELECTION_START::suen_options() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_CLASS_SELECTION_START.suen_options)
+  return _impl_.suen_options_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
+S_BATTLE_CLASS_SELECTION_START::_internal_mutable_suen_options() {
+  return &_impl_.suen_options_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
+S_BATTLE_CLASS_SELECTION_START::mutable_suen_options() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_CLASS_SELECTION_START.suen_options)
+  return _internal_mutable_suen_options();
+}
+
+// repeated .Protocol.PawnClass beige_options = 4;
+inline int S_BATTLE_CLASS_SELECTION_START::_internal_beige_options_size() const {
+  return _impl_.beige_options_.size();
+}
+inline int S_BATTLE_CLASS_SELECTION_START::beige_options_size() const {
+  return _internal_beige_options_size();
+}
+inline void S_BATTLE_CLASS_SELECTION_START::clear_beige_options() {
+  _impl_.beige_options_.Clear();
+}
+inline ::Protocol::PawnClass S_BATTLE_CLASS_SELECTION_START::_internal_beige_options(int index) const {
+  return static_cast< ::Protocol::PawnClass >(_impl_.beige_options_.Get(index));
+}
+inline ::Protocol::PawnClass S_BATTLE_CLASS_SELECTION_START::beige_options(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_CLASS_SELECTION_START.beige_options)
+  return _internal_beige_options(index);
+}
+inline void S_BATTLE_CLASS_SELECTION_START::set_beige_options(int index, ::Protocol::PawnClass value) {
+  _impl_.beige_options_.Set(index, value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_CLASS_SELECTION_START.beige_options)
+}
+inline void S_BATTLE_CLASS_SELECTION_START::_internal_add_beige_options(::Protocol::PawnClass value) {
+  _impl_.beige_options_.Add(value);
+}
+inline void S_BATTLE_CLASS_SELECTION_START::add_beige_options(::Protocol::PawnClass value) {
+  _internal_add_beige_options(value);
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_CLASS_SELECTION_START.beige_options)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>&
+S_BATTLE_CLASS_SELECTION_START::beige_options() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_CLASS_SELECTION_START.beige_options)
+  return _impl_.beige_options_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
+S_BATTLE_CLASS_SELECTION_START::_internal_mutable_beige_options() {
+  return &_impl_.beige_options_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
+S_BATTLE_CLASS_SELECTION_START::mutable_beige_options() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_CLASS_SELECTION_START.beige_options)
+  return _internal_mutable_beige_options();
+}
+
+// repeated .Protocol.PawnClass alen_options = 5;
+inline int S_BATTLE_CLASS_SELECTION_START::_internal_alen_options_size() const {
+  return _impl_.alen_options_.size();
+}
+inline int S_BATTLE_CLASS_SELECTION_START::alen_options_size() const {
+  return _internal_alen_options_size();
+}
+inline void S_BATTLE_CLASS_SELECTION_START::clear_alen_options() {
+  _impl_.alen_options_.Clear();
+}
+inline ::Protocol::PawnClass S_BATTLE_CLASS_SELECTION_START::_internal_alen_options(int index) const {
+  return static_cast< ::Protocol::PawnClass >(_impl_.alen_options_.Get(index));
+}
+inline ::Protocol::PawnClass S_BATTLE_CLASS_SELECTION_START::alen_options(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_CLASS_SELECTION_START.alen_options)
+  return _internal_alen_options(index);
+}
+inline void S_BATTLE_CLASS_SELECTION_START::set_alen_options(int index, ::Protocol::PawnClass value) {
+  _impl_.alen_options_.Set(index, value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_CLASS_SELECTION_START.alen_options)
+}
+inline void S_BATTLE_CLASS_SELECTION_START::_internal_add_alen_options(::Protocol::PawnClass value) {
+  _impl_.alen_options_.Add(value);
+}
+inline void S_BATTLE_CLASS_SELECTION_START::add_alen_options(::Protocol::PawnClass value) {
+  _internal_add_alen_options(value);
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_CLASS_SELECTION_START.alen_options)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>&
+S_BATTLE_CLASS_SELECTION_START::alen_options() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_CLASS_SELECTION_START.alen_options)
+  return _impl_.alen_options_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
+S_BATTLE_CLASS_SELECTION_START::_internal_mutable_alen_options() {
+  return &_impl_.alen_options_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
+S_BATTLE_CLASS_SELECTION_START::mutable_alen_options() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_CLASS_SELECTION_START.alen_options)
+  return _internal_mutable_alen_options();
+}
+
+// repeated .Protocol.PawnClass zillian_options = 6;
+inline int S_BATTLE_CLASS_SELECTION_START::_internal_zillian_options_size() const {
+  return _impl_.zillian_options_.size();
+}
+inline int S_BATTLE_CLASS_SELECTION_START::zillian_options_size() const {
+  return _internal_zillian_options_size();
+}
+inline void S_BATTLE_CLASS_SELECTION_START::clear_zillian_options() {
+  _impl_.zillian_options_.Clear();
+}
+inline ::Protocol::PawnClass S_BATTLE_CLASS_SELECTION_START::_internal_zillian_options(int index) const {
+  return static_cast< ::Protocol::PawnClass >(_impl_.zillian_options_.Get(index));
+}
+inline ::Protocol::PawnClass S_BATTLE_CLASS_SELECTION_START::zillian_options(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_CLASS_SELECTION_START.zillian_options)
+  return _internal_zillian_options(index);
+}
+inline void S_BATTLE_CLASS_SELECTION_START::set_zillian_options(int index, ::Protocol::PawnClass value) {
+  _impl_.zillian_options_.Set(index, value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_CLASS_SELECTION_START.zillian_options)
+}
+inline void S_BATTLE_CLASS_SELECTION_START::_internal_add_zillian_options(::Protocol::PawnClass value) {
+  _impl_.zillian_options_.Add(value);
+}
+inline void S_BATTLE_CLASS_SELECTION_START::add_zillian_options(::Protocol::PawnClass value) {
+  _internal_add_zillian_options(value);
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_CLASS_SELECTION_START.zillian_options)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>&
+S_BATTLE_CLASS_SELECTION_START::zillian_options() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_CLASS_SELECTION_START.zillian_options)
+  return _impl_.zillian_options_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
+S_BATTLE_CLASS_SELECTION_START::_internal_mutable_zillian_options() {
+  return &_impl_.zillian_options_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
+S_BATTLE_CLASS_SELECTION_START::mutable_zillian_options() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_CLASS_SELECTION_START.zillian_options)
+  return _internal_mutable_zillian_options();
+}
+
+// -------------------------------------------------------------------
+
+// C_BATTLE_CLASS_SELECTION
+
+// repeated .Protocol.PawnClass selected_pawn_classes = 1;
+inline int C_BATTLE_CLASS_SELECTION::_internal_selected_pawn_classes_size() const {
+  return _impl_.selected_pawn_classes_.size();
+}
+inline int C_BATTLE_CLASS_SELECTION::selected_pawn_classes_size() const {
+  return _internal_selected_pawn_classes_size();
+}
+inline void C_BATTLE_CLASS_SELECTION::clear_selected_pawn_classes() {
+  _impl_.selected_pawn_classes_.Clear();
+}
+inline ::Protocol::PawnClass C_BATTLE_CLASS_SELECTION::_internal_selected_pawn_classes(int index) const {
+  return static_cast< ::Protocol::PawnClass >(_impl_.selected_pawn_classes_.Get(index));
+}
+inline ::Protocol::PawnClass C_BATTLE_CLASS_SELECTION::selected_pawn_classes(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.C_BATTLE_CLASS_SELECTION.selected_pawn_classes)
+  return _internal_selected_pawn_classes(index);
+}
+inline void C_BATTLE_CLASS_SELECTION::set_selected_pawn_classes(int index, ::Protocol::PawnClass value) {
+  _impl_.selected_pawn_classes_.Set(index, value);
+  // @@protoc_insertion_point(field_set:Protocol.C_BATTLE_CLASS_SELECTION.selected_pawn_classes)
+}
+inline void C_BATTLE_CLASS_SELECTION::_internal_add_selected_pawn_classes(::Protocol::PawnClass value) {
+  _impl_.selected_pawn_classes_.Add(value);
+}
+inline void C_BATTLE_CLASS_SELECTION::add_selected_pawn_classes(::Protocol::PawnClass value) {
+  _internal_add_selected_pawn_classes(value);
+  // @@protoc_insertion_point(field_add:Protocol.C_BATTLE_CLASS_SELECTION.selected_pawn_classes)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>&
+C_BATTLE_CLASS_SELECTION::selected_pawn_classes() const {
+  // @@protoc_insertion_point(field_list:Protocol.C_BATTLE_CLASS_SELECTION.selected_pawn_classes)
+  return _impl_.selected_pawn_classes_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
+C_BATTLE_CLASS_SELECTION::_internal_mutable_selected_pawn_classes() {
+  return &_impl_.selected_pawn_classes_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
+C_BATTLE_CLASS_SELECTION::mutable_selected_pawn_classes() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.C_BATTLE_CLASS_SELECTION.selected_pawn_classes)
+  return _internal_mutable_selected_pawn_classes();
+}
+
+// -------------------------------------------------------------------
+
+// S_BATTLE_CLASS_SELECTION_RESULT
+
+// bool success = 1;
+inline void S_BATTLE_CLASS_SELECTION_RESULT::clear_success() {
+  _impl_.success_ = false;
+}
+inline bool S_BATTLE_CLASS_SELECTION_RESULT::_internal_success() const {
+  return _impl_.success_;
+}
+inline bool S_BATTLE_CLASS_SELECTION_RESULT::success() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_CLASS_SELECTION_RESULT.success)
+  return _internal_success();
+}
+inline void S_BATTLE_CLASS_SELECTION_RESULT::_internal_set_success(bool value) {
+  
+  _impl_.success_ = value;
+}
+inline void S_BATTLE_CLASS_SELECTION_RESULT::set_success(bool value) {
+  _internal_set_success(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_CLASS_SELECTION_RESULT.success)
+}
+
+// bool waiting_for_opponent = 2;
+inline void S_BATTLE_CLASS_SELECTION_RESULT::clear_waiting_for_opponent() {
+  _impl_.waiting_for_opponent_ = false;
+}
+inline bool S_BATTLE_CLASS_SELECTION_RESULT::_internal_waiting_for_opponent() const {
+  return _impl_.waiting_for_opponent_;
+}
+inline bool S_BATTLE_CLASS_SELECTION_RESULT::waiting_for_opponent() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_CLASS_SELECTION_RESULT.waiting_for_opponent)
+  return _internal_waiting_for_opponent();
+}
+inline void S_BATTLE_CLASS_SELECTION_RESULT::_internal_set_waiting_for_opponent(bool value) {
+  
+  _impl_.waiting_for_opponent_ = value;
+}
+inline void S_BATTLE_CLASS_SELECTION_RESULT::set_waiting_for_opponent(bool value) {
+  _internal_set_waiting_for_opponent(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_CLASS_SELECTION_RESULT.waiting_for_opponent)
+}
+
+// uint64 requester_player_id = 3;
+inline void S_BATTLE_CLASS_SELECTION_RESULT::clear_requester_player_id() {
+  _impl_.requester_player_id_ = uint64_t{0u};
+}
+inline uint64_t S_BATTLE_CLASS_SELECTION_RESULT::_internal_requester_player_id() const {
+  return _impl_.requester_player_id_;
+}
+inline uint64_t S_BATTLE_CLASS_SELECTION_RESULT::requester_player_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_CLASS_SELECTION_RESULT.requester_player_id)
+  return _internal_requester_player_id();
+}
+inline void S_BATTLE_CLASS_SELECTION_RESULT::_internal_set_requester_player_id(uint64_t value) {
+  
+  _impl_.requester_player_id_ = value;
+}
+inline void S_BATTLE_CLASS_SELECTION_RESULT::set_requester_player_id(uint64_t value) {
+  _internal_set_requester_player_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_CLASS_SELECTION_RESULT.requester_player_id)
+}
+
+// uint64 target_player_id = 4;
+inline void S_BATTLE_CLASS_SELECTION_RESULT::clear_target_player_id() {
+  _impl_.target_player_id_ = uint64_t{0u};
+}
+inline uint64_t S_BATTLE_CLASS_SELECTION_RESULT::_internal_target_player_id() const {
+  return _impl_.target_player_id_;
+}
+inline uint64_t S_BATTLE_CLASS_SELECTION_RESULT::target_player_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_CLASS_SELECTION_RESULT.target_player_id)
+  return _internal_target_player_id();
+}
+inline void S_BATTLE_CLASS_SELECTION_RESULT::_internal_set_target_player_id(uint64_t value) {
+  
+  _impl_.target_player_id_ = value;
+}
+inline void S_BATTLE_CLASS_SELECTION_RESULT::set_target_player_id(uint64_t value) {
+  _internal_set_target_player_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_CLASS_SELECTION_RESULT.target_player_id)
+}
+
+// string reason = 5;
+inline void S_BATTLE_CLASS_SELECTION_RESULT::clear_reason() {
+  _impl_.reason_.ClearToEmpty();
+}
+inline const std::string& S_BATTLE_CLASS_SELECTION_RESULT::reason() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_CLASS_SELECTION_RESULT.reason)
+  return _internal_reason();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void S_BATTLE_CLASS_SELECTION_RESULT::set_reason(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.reason_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_CLASS_SELECTION_RESULT.reason)
+}
+inline std::string* S_BATTLE_CLASS_SELECTION_RESULT::mutable_reason() {
+  std::string* _s = _internal_mutable_reason();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_BATTLE_CLASS_SELECTION_RESULT.reason)
+  return _s;
+}
+inline const std::string& S_BATTLE_CLASS_SELECTION_RESULT::_internal_reason() const {
+  return _impl_.reason_.Get();
+}
+inline void S_BATTLE_CLASS_SELECTION_RESULT::_internal_set_reason(const std::string& value) {
+  
+  _impl_.reason_.Set(value, GetArenaForAllocation());
+}
+inline std::string* S_BATTLE_CLASS_SELECTION_RESULT::_internal_mutable_reason() {
+  
+  return _impl_.reason_.Mutable(GetArenaForAllocation());
+}
+inline std::string* S_BATTLE_CLASS_SELECTION_RESULT::release_reason() {
+  // @@protoc_insertion_point(field_release:Protocol.S_BATTLE_CLASS_SELECTION_RESULT.reason)
+  return _impl_.reason_.Release();
+}
+inline void S_BATTLE_CLASS_SELECTION_RESULT::set_allocated_reason(std::string* reason) {
+  if (reason != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.reason_.SetAllocated(reason, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.reason_.IsDefault()) {
+    _impl_.reason_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_BATTLE_CLASS_SELECTION_RESULT.reason)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
