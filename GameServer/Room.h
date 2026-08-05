@@ -17,6 +17,7 @@ public:
 	void HandleMove(GameSessionRef session, Protocol::C_MOVE pkt);
 	void HandleBattleInvite(GameSessionRef session, Protocol::C_BATTLE_INVITE pkt);
 	void HandleBattleInviteResponse(GameSessionRef session, Protocol::C_BATTLE_INVITE_RESPONSE pkt);
+	void HandleDebugBattleSelectionStart(GameSessionRef session);
 	void HandleBattleClassSelection(GameSessionRef session, Protocol::C_BATTLE_CLASS_SELECTION pkt);
 
 public:
@@ -41,6 +42,7 @@ private:
 	void RemovePlayersFromFieldForBattle(const vector<PlayerRef>& players);
 	void CancelBattleInvitesForPlayer(uint64 playerId, const string& reason);
 	void CancelBattleClassSelectionForPlayer(uint64 playerId, const string& reason);
+	void CancelDebugBattleClassSelection(uint64 playerId);
 	bool TryBuildBattleClassSelection(const Protocol::C_BATTLE_CLASS_SELECTION& pkt,
 		vector<Protocol::PawnClass>& selectedClasses, string& reason) const;
 
@@ -73,6 +75,7 @@ private:
 	unordered_map<uint64, uint64> _battleInviteTargetByRequesterId;
 	unordered_map<uint64, PendingBattleClassSelection> _battleClassSelectionsByRequesterId;
 	unordered_map<uint64, uint64> _battleClassSelectionRequesterByPlayerId;
+	unordered_map<uint64, weak_ptr<GameSession>> _debugBattleClassSelectionsByPlayerId;
 };
 
 extern RoomRef GRoom;

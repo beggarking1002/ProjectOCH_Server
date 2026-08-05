@@ -407,6 +407,33 @@ void Room::HandleBattleInviteResponse(GameSessionRef session, Protocol::C_BATTLE
 		<< endl;
 }
 
+void Room::HandleDebugBattleSelectionStart(GameSessionRef session)
+{
+	PlayerRef player = GetPlayerInRoom(session);
+	if (player == nullptr)
+	{
+		SendBattleClassSelectionResult(session, false, false, 0, 0, "player is not in field");
+		return;
+	}
+
+	const uint64 playerId = player->objectInfo->object_id();
+	if (_debugBattleClassSelectionsByPlayerId.find(playerId) != _debugBattleClassSelectionsByPlayerId.end() ||
+		_battleClassSelectionRequesterByPlayerId.find(playerId) != _battleClassSelectionRequesterByPlayerId.end() ||
+		_battleInviteTargetByRequesterId.find(playerId) != _battleInviteTargetByRequesterId.end() ||
+		_battleInvitesByTargetId.find(playerId) != _battleInvitesByTargetId.end())
+	{
+		SendBattleClassSelectionResult(session, false, false, playerId, 0, "battle class selection is already in progress");
+		return;
+	}
+
+	_debugBattleClassSelectionsByPlayerId[playerId] = session;
+	SendBattleClassSelectionStart(session, playerId, 0);
+
+	cout << "DEBUG_BATTLE_CLASS_SELECTION_START"
+		<< " player_id=" << playerId
+		<< endl;
+}
+
 void Room::HandleBattleClassSelection(GameSessionRef session, Protocol::C_BATTLE_CLASS_SELECTION pkt)
 {
 	PlayerRef player = GetPlayerInRoom(session);
@@ -417,6 +444,30 @@ void Room::HandleBattleClassSelection(GameSessionRef session, Protocol::C_BATTLE
 	}
 
 	const uint64 playerId = player->objectInfo->object_id();
+	auto debugSelectionIt = _debugBattleClassSelectionsByPlayerId.find(playerId);
+	if (debugSelectionIt != _debugBattleClassSelectionsByPlayerId.end())
+	{
+		vector<Protocol::PawnClass> selectedClasses;
+		string reason;
+		if (TryBuildBattleClassSelection(pkt, selectedClasses, reason) == false)
+		{
+			SendBattleClassSelectionResult(session, false, false, playerId, 0, reason);
+			return;
+		}
+
+		player->SetBattlePawnClasses(selectedClasses);
+		_debugBattleClassSelectionsByPlayerId.erase(debugSelectionIt);
+		SendBattleClassSelectionResult(session, true, false, playerId, 0, "battle classes locked");
+		RemovePlayersFromFieldForBattle({ player });
+		GBattleRoom->DoAsync(&BattleRoom::HandleEnterBattle, session);
+
+		cout << "DEBUG_BATTLE_CLASS_SELECTION_COMPLETE"
+			<< " player_id=" << playerId
+			<< " pawn_count=" << selectedClasses.size()
+			<< endl;
+		return;
+	}
+
 	auto selectionOwnerIt = _battleClassSelectionRequesterByPlayerId.find(playerId);
 	if (selectionOwnerIt == _battleClassSelectionRequesterByPlayerId.end())
 	{
@@ -769,6 +820,7 @@ void Room::RemovePlayersFromFieldForBattle(const vector<PlayerRef>& players)
 
 void Room::CancelBattleInvitesForPlayer(uint64 playerId, const string& reason)
 {
+	CancelDebugBattleClassSelection(playerId);
 	CancelBattleClassSelectionForPlayer(playerId, reason);
 	auto outgoingIt = _battleInviteTargetByRequesterId.find(playerId);
 	if (outgoingIt != _battleInviteTargetByRequesterId.end())
@@ -817,6 +869,11 @@ void Room::CancelBattleClassSelectionForPlayer(uint64 playerId, const string& re
 		SendBattleClassSelectionResult(selection.requesterSession.lock(), false, false, selection.requesterId, selection.targetId, reason);
 	if (selection.targetId != playerId)
 		SendBattleClassSelectionResult(selection.targetSession.lock(), false, false, selection.requesterId, selection.targetId, reason);
+}
+
+void Room::CancelDebugBattleClassSelection(uint64 playerId)
+{
+	_debugBattleClassSelectionsByPlayerId.erase(playerId);
 }
 
 bool Room::TryBuildBattleClassSelection(const Protocol::C_BATTLE_CLASS_SELECTION& pkt,

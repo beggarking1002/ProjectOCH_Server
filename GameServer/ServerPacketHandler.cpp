@@ -86,7 +86,15 @@ bool Handle_C_CHAT(PacketSessionRef& session, Protocol::C_CHAT& pkt)
 bool Handle_C_ENTER_BATTLE(PacketSessionRef& session, Protocol::C_ENTER_BATTLE& pkt)
 {
 	auto gameSession = static_pointer_cast<GameSession>(session);
-	GBattleRoom->DoAsync(&BattleRoom::HandleEnterBattle, gameSession);
+	PlayerRef player = gameSession->player.load();
+	if (player == nullptr)
+		return false;
+
+	RoomRef room = player->room.load().lock();
+	if (room == nullptr)
+		return false;
+
+	room->DoAsync(&Room::HandleDebugBattleSelectionStart, gameSession);
 
 	return true;
 }
