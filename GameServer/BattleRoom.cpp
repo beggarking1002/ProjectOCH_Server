@@ -235,11 +235,12 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 		return;
 	}
 
-	const bool isReachable = _movementService.IsReachable(start, pkt.target(), _movementService.GetMoveRange(*pawn),
+	vector<Protocol::AxialCoord> movePath;
+	const bool isReachable = _movementService.TryFindPath(start, pkt.target(), _movementService.GetMoveRange(*pawn),
 		[this, &battle, pawn](const Protocol::AxialCoord& axial)
 		{
 			return IsBattleWalkable(battle, axial) && IsOccupied(battle, axial, pawn->pawnId) == false;
-		});
+		}, movePath);
 	if (isReachable == false)
 	{
 		SendBattleMoveResult(session, false, battle.battleId, pawn->pawnId, start, start, battle.currentTurnPawnId,
@@ -254,13 +255,22 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 		return;
 	}
 
-	const Protocol::BattleFacingDirection facing = _spatialService.GetFacingToward(start, pkt.target(), pawn->facingDirection);
-	pawn->ApplyResolvedMove(pkt.target(), facing);
-
 	vector<Protocol::BattleActionLog> zocLogs;
 	vector<Protocol::BattleTileInfo> zocTileDeltas;
 	vector<const BattlePawn*> zocChangedPawns;
 	vector<BattlePawn*> zocDeathCandidates;
+	vector<Protocol::AxialCoord> traversedPath;
+	bool endedOnFire = false;
+	for (const Protocol::AxialCoord& step : movePath)
+	{
+		const Protocol::BattleFacingDirection facing = _spatialService.GetFacingToward(pawn->axial, step, pawn->facingDirection);
+		pawn->ApplyResolvedMove(step, facing);
+		traversedPath.push_back(step);
+		endedOnFire = GetTileOverlayType(battle, pawn->axial) == Protocol::BATTLE_TILE_OVERLAY_TYPE_FIRE;
+		ApplyFireTileLandingDamage(battle, *pawn, zocLogs, zocChangedPawns, zocDeathCandidates);
+		if (IsAlive(*pawn) == false)
+			break;
+	}
 	auto tryTriggerZocFrom = [this, &battle, pawn, &start, &zocLogs, &zocTileDeltas, &zocChangedPawns, &zocDeathCandidates]
 		(const vector<BattlePawnRef>& candidates)
 		{
@@ -280,6 +290,8 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 	tryTriggerZocFrom(battle.alliedPawns);
 	if (IsAlive(*pawn))
 		tryTriggerZocFrom(battle.enemyPawns);
+	if (IsAlive(*pawn) && traversedPath.empty() == false && endedOnFire == false)
+		ApplyFireTileLandingDamage(battle, *pawn, zocLogs, zocChangedPawns, zocDeathCandidates);
 
 	vector<pair<BattlePawn*, uint64>> zocDeaths;
 	unordered_set<uint64> checkedZocDeathPawnIds;
@@ -321,21 +333,21 @@ void BattleRoom::HandleBattleMove(GameSessionRef session, Protocol::C_BATTLE_MOV
 	battle.stateVersion++;
 
 	SendBattleMoveResult(session, true, battle.battleId, pawn->pawnId, start, pawn->axial, battle.currentTurnPawnId,
-		Protocol::BATTLE_MOVE_RESULT_OK, "", pawn, zocLogs, zocChangedPawns, zocDeaths.empty() == false);
+		Protocol::BATTLE_MOVE_RESULT_OK, "", pawn, zocLogs, zocChangedPawns, zocDeaths.empty() == false, traversedPath);
 	if (battle.isPvp)
 	{
 		GameSessionRef ownerSession = battle.ownerSession.lock();
 		if (ownerSession != nullptr && ownerSession != session)
 		{
 			SendBattleMoveResult(ownerSession, true, battle.battleId, pawn->pawnId, start, pawn->axial, battle.currentTurnPawnId,
-				Protocol::BATTLE_MOVE_RESULT_OK, "", pawn, zocLogs, zocChangedPawns, zocDeaths.empty() == false);
+				Protocol::BATTLE_MOVE_RESULT_OK, "", pawn, zocLogs, zocChangedPawns, zocDeaths.empty() == false, traversedPath);
 		}
 
 		GameSessionRef opponentSession = battle.opponentSession.lock();
 		if (opponentSession != nullptr && opponentSession != session && opponentSession != ownerSession)
 		{
 			SendBattleMoveResult(opponentSession, true, battle.battleId, pawn->pawnId, start, pawn->axial, battle.currentTurnPawnId,
-				Protocol::BATTLE_MOVE_RESULT_OK, "", pawn, zocLogs, zocChangedPawns, zocDeaths.empty() == false);
+				Protocol::BATTLE_MOVE_RESULT_OK, "", pawn, zocLogs, zocChangedPawns, zocDeaths.empty() == false, traversedPath);
 		}
 	}
 
@@ -599,6 +611,17 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 	vector<const BattlePawn*> extraChangedPawns;
 	vector<BattlePawn*> affectedPawns;
 	vector<BattlePawn*> deathCandidates;
+	unordered_map<uint64, Protocol::AxialCoord> axialBeforeAction;
+	auto capturePawnAxial = [&axialBeforeAction](const vector<BattlePawnRef>& pawns)
+		{
+			for (const BattlePawnRef& candidate : pawns)
+			{
+				if (candidate != nullptr)
+					axialBeforeAction[candidate->pawnId] = candidate->axial;
+			}
+		};
+	capturePawnAxial(battle.alliedPawns);
+	capturePawnAxial(battle.enemyPawns);
 
 	int32 appliedDamage = skillSpec.damage;
 	if (skillSpec.skillTemplate != nullptr && skillSpec.casterTemplate != nullptr)
@@ -771,6 +794,30 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 		TryExecuteCounterattack(battle, *target, *caster, logs, tileDeltas, extraChangedPawns, deathCandidates);
 	}
 	TryExecuteAllyAttackZocReactions(battle, *caster, affectedPawns, logs, tileDeltas, extraChangedPawns, deathCandidates);
+	for (const BattlePawnRef& candidate : battle.alliedPawns)
+	{
+		if (candidate == nullptr)
+			continue;
+
+		auto beforeIt = axialBeforeAction.find(candidate->pawnId);
+		if (beforeIt != axialBeforeAction.end() &&
+			(beforeIt->second.q() != candidate->axial.q() || beforeIt->second.r() != candidate->axial.r()))
+		{
+			ApplyFireTileLandingDamage(battle, *candidate, logs, extraChangedPawns, deathCandidates);
+		}
+	}
+	for (const BattlePawnRef& candidate : battle.enemyPawns)
+	{
+		if (candidate == nullptr)
+			continue;
+
+		auto beforeIt = axialBeforeAction.find(candidate->pawnId);
+		if (beforeIt != axialBeforeAction.end() &&
+			(beforeIt->second.q() != candidate->axial.q() || beforeIt->second.r() != candidate->axial.r()))
+		{
+			ApplyFireTileLandingDamage(battle, *candidate, logs, extraChangedPawns, deathCandidates);
+		}
+	}
 
 	vector<pair<BattlePawn*, uint64>> deadPawns;
 	unordered_set<uint64> checkedPawnIds;
@@ -2069,6 +2116,43 @@ void BattleRoom::ApplyDamage(BattlePawn& target, int32 damage)
 		target.hp = max(0, target.hp - hpDamage);
 }
 
+void BattleRoom::ApplyFireTileLandingDamage(BattleState& battle, BattlePawn& pawn,
+	vector<Protocol::BattleActionLog>& logs, vector<const BattlePawn*>& changedPawns,
+	vector<BattlePawn*>& deathCandidates)
+{
+	if (IsAlive(pawn) == false || GetTileOverlayType(battle, pawn.axial) != Protocol::BATTLE_TILE_OVERLAY_TYPE_FIRE)
+		return;
+
+	ApplyDamage(pawn, BattleRules::FireTileLandingDamage);
+
+	Protocol::BattleActionLog actionLog;
+	actionLog.set_attacker_pawn_id(0);
+	actionLog.set_defender_pawn_id(pawn.pawnId);
+	actionLog.set_skill_slot(0);
+	actionLog.set_action_type("fire_tile");
+	actionLog.set_damage(BattleRules::FireTileLandingDamage);
+	actionLog.set_is_critical(false);
+	actionLog.set_is_evaded(false);
+	actionLog.set_is_guarded(false);
+	actionLog.set_is_perfect_guarded(false);
+	actionLog.set_is_counter(false);
+	actionLog.set_is_back_attack(false);
+	actionLog.set_hp_after(pawn.hp);
+	actionLog.set_armor_after(pawn.armor);
+	logs.push_back(actionLog);
+	changedPawns.push_back(&pawn);
+	deathCandidates.push_back(&pawn);
+
+	cout << "BATTLE_FIRE_TILE_DAMAGE"
+		<< " pawn_id=" << pawn.pawnId
+		<< " q=" << pawn.axial.q()
+		<< " r=" << pawn.axial.r()
+		<< " damage=" << BattleRules::FireTileLandingDamage
+		<< " hp_after=" << pawn.hp
+		<< " armor_after=" << pawn.armor
+		<< endl;
+}
+
 bool BattleRoom::RollEvade(const BattlePawn& attacker, BattlePawn& defender, const BattleSkillTemplate& skill)
 {
 	const BattlePawnClassTemplate* defenderTemplate = GBattleTemplates.GetPawnClassTemplate(defender.pawnClass);
@@ -2444,7 +2528,7 @@ void BattleRoom::SendEnterBattle(GameSessionRef session, Protocol::S_ENTER_BATTL
 void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
 	const Protocol::AxialCoord& start, const Protocol::AxialCoord& target, uint64 nextTurnPawnId,
 	Protocol::BattleMoveResult result, const string& reason, const BattlePawn* pawn,
-	const vector<Protocol::BattleActionLog>& logs, const vector<const BattlePawn*>& extraPawns, bool turnQueueResynced)
+	const vector<Protocol::BattleActionLog>& logs, const vector<const BattlePawn*>& extraPawns, bool turnQueueResynced, const vector<Protocol::AxialCoord>& path)
 {
 	const auto battleIt = _battles.find(battleId);
 	const uint64 stateVersion = battleIt != _battles.end() ? battleIt->second.stateVersion : 0;
@@ -2471,6 +2555,8 @@ void BattleRoom::SendBattleMoveResult(GameSessionRef session, bool success, uint
 	movePkt.set_pawn_id(pawnId);
 	movePkt.mutable_start()->CopyFrom(start);
 	movePkt.mutable_target()->CopyFrom(target);
+	for (const Protocol::AxialCoord& step : path)
+		movePkt.add_path()->CopyFrom(step);
 	movePkt.set_next_turn_pawn_id(nextTurnPawnId);
 	movePkt.set_result(result);
 	movePkt.set_reason(reason);

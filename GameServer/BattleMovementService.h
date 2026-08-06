@@ -15,6 +15,8 @@ public:
 	}
 
 	int32 GetMoveRange(const BattlePawn& pawn) const;
+	bool TryFindPath(const Protocol::AxialCoord& start, const Protocol::AxialCoord& target, int32 maxSteps,
+		const function<bool(const Protocol::AxialCoord&)>& canTraverse, vector<Protocol::AxialCoord>& outPath) const;
 	bool IsReachable(const Protocol::AxialCoord& start, const Protocol::AxialCoord& target, int32 maxSteps,
 		const function<bool(const Protocol::AxialCoord&)>& canTraverse) const;
 

@@ -123,6 +123,9 @@ private:
 	void ExecuteBattleStartEffects(BattleState& battle);
 	bool AdvanceOwnerTurnEffects(BattlePawn& pawn);
 	void ApplyDamage(BattlePawn& target, int32 damage);
+	void ApplyFireTileLandingDamage(BattleState& battle, BattlePawn& pawn,
+		vector<Protocol::BattleActionLog>& logs, vector<const BattlePawn*>& changedPawns,
+		vector<BattlePawn*>& deathCandidates);
 	bool RollEvade(const BattlePawn& attacker, BattlePawn& defender, const BattleSkillTemplate& skill);
 	bool RollCritical(const BattlePawn& attacker, const BattleSkillTemplate& skill);
 	BattlePushResult ResolvePush(BattleState& battle, BattlePawn& attacker, BattlePawn& target);
@@ -142,9 +145,10 @@ private:
 
 	void SendEnterBattle(GameSessionRef session, Protocol::S_ENTER_BATTLE& pkt);
 	void SendBattleMoveResult(GameSessionRef session, bool success, uint64 battleId, uint64 pawnId,
-		const Protocol::AxialCoord& start, const Protocol::AxialCoord& target, uint64 nextTurnPawnId,
+	const Protocol::AxialCoord& start, const Protocol::AxialCoord& target, uint64 nextTurnPawnId,
 		Protocol::BattleMoveResult result, const string& reason, const BattlePawn* pawn = nullptr,
-		const vector<Protocol::BattleActionLog>& logs = {}, const vector<const BattlePawn*>& extraPawns = {}, bool turnQueueResynced = false);
+		const vector<Protocol::BattleActionLog>& logs = {}, const vector<const BattlePawn*>& extraPawns = {}, bool turnQueueResynced = false,
+		const vector<Protocol::AxialCoord>& path = {});
 	void SendBattleSkillResult(GameSessionRef session, bool success, uint64 battleId, uint64 casterPawnId,
 		int32 skillSlot, uint64 targetPawnId, const Protocol::AxialCoord& targetAxial,
 	int32 damage, int32 targetHp, int32 targetArmor, uint64 nextTurnPawnId, const string& reason,

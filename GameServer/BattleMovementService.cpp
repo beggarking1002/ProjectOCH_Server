@@ -12,9 +12,10 @@ int32 BattleMovementService::GetMoveRange(const BattlePawn& pawn) const
 		_skillResolver.GetStatModifierMultiplier(pawn, "MOVE_RANGE"))));
 }
 
-bool BattleMovementService::IsReachable(const Protocol::AxialCoord& start, const Protocol::AxialCoord& target, int32 maxSteps,
-	const function<bool(const Protocol::AxialCoord&)>& canTraverse) const
+bool BattleMovementService::TryFindPath(const Protocol::AxialCoord& start, const Protocol::AxialCoord& target, int32 maxSteps,
+	const function<bool(const Protocol::AxialCoord&)>& canTraverse, vector<Protocol::AxialCoord>& outPath) const
 {
+	outPath.clear();
 	if (maxSteps < 0 || canTraverse == nullptr)
 		return false;
 	if (start.q() == target.q() && start.r() == target.r())
@@ -28,6 +29,7 @@ bool BattleMovementService::IsReachable(const Protocol::AxialCoord& start, const
 
 	queue<pair<Protocol::AxialCoord, int32>> frontier;
 	unordered_set<uint64> visited;
+	unordered_map<uint64, Protocol::AxialCoord> previousByKey;
 	frontier.emplace(start, 0);
 	visited.insert(makeKey(start));
 
@@ -45,11 +47,28 @@ bool BattleMovementService::IsReachable(const Protocol::AxialCoord& start, const
 			next.set_r(current.r() + BattleSpatialService::Directions[directionIndex][1]);
 			if (canTraverse(next) == false || visited.insert(makeKey(next)).second == false)
 				continue;
+			previousByKey.emplace(makeKey(next), current);
 			if (next.q() == target.q() && next.r() == target.r())
+			{
+				Protocol::AxialCoord step = target;
+				while (step.q() != start.q() || step.r() != start.r())
+				{
+					outPath.push_back(step);
+					step = previousByKey.at(makeKey(step));
+				}
+				reverse(outPath.begin(), outPath.end());
 				return true;
+			}
 			frontier.emplace(next, steps + 1);
 		}
 	}
 
 	return false;
+}
+
+bool BattleMovementService::IsReachable(const Protocol::AxialCoord& start, const Protocol::AxialCoord& target, int32 maxSteps,
+	const function<bool(const Protocol::AxialCoord&)>& canTraverse) const
+{
+	vector<Protocol::AxialCoord> ignoredPath;
+	return TryFindPath(start, target, maxSteps, canTraverse, ignoredPath);
 }

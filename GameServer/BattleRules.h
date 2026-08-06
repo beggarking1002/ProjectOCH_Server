@@ -8,4 +8,5 @@ namespace BattleRules
 
 	constexpr int MoraleMaxFromWillMultiplier = 10;
 	constexpr double MoraleStageRatio = 0.20;
+	constexpr int FireTileLandingDamage = 10;
 }

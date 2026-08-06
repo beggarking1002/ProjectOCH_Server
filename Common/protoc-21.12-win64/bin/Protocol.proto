@@ -115,6 +115,7 @@ message S_BATTLE_MOVE
   uint64 battle_state_version = 13;
   bool turn_queue_resynced = 14;
   repeated uint64 upcoming_turn_pawn_ids = 15;
+  repeated AxialCoord path = 16;
 }
 
 message C_BATTLE_SKILL {

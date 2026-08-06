@@ -2712,6 +2712,7 @@ class S_BATTLE_MOVE final :
     kPawnDeltasFieldNumber = 11,
     kLogsFieldNumber = 12,
     kUpcomingTurnPawnIdsFieldNumber = 15,
+    kPathFieldNumber = 16,
     kReasonFieldNumber = 8,
     kStartFieldNumber = 4,
     kTargetFieldNumber = 5,
@@ -2781,6 +2782,24 @@ class S_BATTLE_MOVE final :
       upcoming_turn_pawn_ids() const;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
       mutable_upcoming_turn_pawn_ids();
+
+  // repeated .Protocol.AxialCoord path = 16;
+  int path_size() const;
+  private:
+  int _internal_path_size() const;
+  public:
+  void clear_path();
+  ::Protocol::AxialCoord* mutable_path(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::AxialCoord >*
+      mutable_path();
+  private:
+  const ::Protocol::AxialCoord& _internal_path(int index) const;
+  ::Protocol::AxialCoord* _internal_add_path();
+  public:
+  const ::Protocol::AxialCoord& path(int index) const;
+  ::Protocol::AxialCoord* add_path();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::AxialCoord >&
+      path() const;
 
   // string reason = 8;
   void clear_reason();
@@ -2916,6 +2935,7 @@ class S_BATTLE_MOVE final :
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleActionLog > logs_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t > upcoming_turn_pawn_ids_;
     mutable std::atomic<int> _upcoming_turn_pawn_ids_cached_byte_size_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::AxialCoord > path_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
     ::Protocol::AxialCoord* start_;
     ::Protocol::AxialCoord* target_;
@@ -7832,6 +7852,43 @@ inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
 S_BATTLE_MOVE::mutable_upcoming_turn_pawn_ids() {
   // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_MOVE.upcoming_turn_pawn_ids)
   return _internal_mutable_upcoming_turn_pawn_ids();
+}
+
+// repeated .Protocol.AxialCoord path = 16;
+inline int S_BATTLE_MOVE::_internal_path_size() const {
+  return _impl_.path_.size();
+}
+inline int S_BATTLE_MOVE::path_size() const {
+  return _internal_path_size();
+}
+inline ::Protocol::AxialCoord* S_BATTLE_MOVE::mutable_path(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_BATTLE_MOVE.path)
+  return _impl_.path_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::AxialCoord >*
+S_BATTLE_MOVE::mutable_path() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_MOVE.path)
+  return &_impl_.path_;
+}
+inline const ::Protocol::AxialCoord& S_BATTLE_MOVE::_internal_path(int index) const {
+  return _impl_.path_.Get(index);
+}
+inline const ::Protocol::AxialCoord& S_BATTLE_MOVE::path(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_MOVE.path)
+  return _internal_path(index);
+}
+inline ::Protocol::AxialCoord* S_BATTLE_MOVE::_internal_add_path() {
+  return _impl_.path_.Add();
+}
+inline ::Protocol::AxialCoord* S_BATTLE_MOVE::add_path() {
+  ::Protocol::AxialCoord* _add = _internal_add_path();
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_MOVE.path)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::AxialCoord >&
+S_BATTLE_MOVE::path() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_MOVE.path)
+  return _impl_.path_;
 }
 
 // -------------------------------------------------------------------

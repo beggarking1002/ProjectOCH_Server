@@ -232,6 +232,7 @@ PROTOBUF_CONSTEXPR S_BATTLE_MOVE::S_BATTLE_MOVE(
   , /*decltype(_impl_.logs_)*/{}
   , /*decltype(_impl_.upcoming_turn_pawn_ids_)*/{}
   , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
+  , /*decltype(_impl_.path_)*/{}
   , /*decltype(_impl_.reason_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.start_)*/nullptr
   , /*decltype(_impl_.target_)*/nullptr
@@ -672,6 +673,7 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_MOVE, _impl_.battle_state_version_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_MOVE, _impl_.turn_queue_resynced_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_MOVE, _impl_.upcoming_turn_pawn_ids_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_MOVE, _impl_.path_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::C_BATTLE_SKILL, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -863,22 +865,22 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 92, -1, -1, sizeof(::Protocol::S_ENTER_BATTLE)},
   { 108, -1, -1, sizeof(::Protocol::C_BATTLE_MOVE)},
   { 117, -1, -1, sizeof(::Protocol::S_BATTLE_MOVE)},
-  { 137, -1, -1, sizeof(::Protocol::C_BATTLE_SKILL)},
-  { 150, -1, -1, sizeof(::Protocol::S_BATTLE_SKILL)},
-  { 176, -1, -1, sizeof(::Protocol::C_BATTLE_END_TURN)},
-  { 184, -1, -1, sizeof(::Protocol::S_BATTLE_END_TURN)},
-  { 205, -1, -1, sizeof(::Protocol::C_BATTLE_INVITE)},
-  { 212, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_REQUEST)},
-  { 222, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_RECEIVED)},
-  { 229, -1, -1, sizeof(::Protocol::C_BATTLE_INVITE_RESPONSE)},
-  { 237, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_RESULT)},
-  { 247, -1, -1, sizeof(::Protocol::S_BATTLE_PAWN_DEAD)},
-  { 256, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT)},
-  { 264, -1, -1, sizeof(::Protocol::C_BATTLE_RESULT_ACK)},
-  { 271, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT_ACK)},
-  { 280, -1, -1, sizeof(::Protocol::S_BATTLE_CLASS_SELECTION_START)},
-  { 292, -1, -1, sizeof(::Protocol::C_BATTLE_CLASS_SELECTION)},
-  { 299, -1, -1, sizeof(::Protocol::S_BATTLE_CLASS_SELECTION_RESULT)},
+  { 138, -1, -1, sizeof(::Protocol::C_BATTLE_SKILL)},
+  { 151, -1, -1, sizeof(::Protocol::S_BATTLE_SKILL)},
+  { 177, -1, -1, sizeof(::Protocol::C_BATTLE_END_TURN)},
+  { 185, -1, -1, sizeof(::Protocol::S_BATTLE_END_TURN)},
+  { 206, -1, -1, sizeof(::Protocol::C_BATTLE_INVITE)},
+  { 213, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_REQUEST)},
+  { 223, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_RECEIVED)},
+  { 230, -1, -1, sizeof(::Protocol::C_BATTLE_INVITE_RESPONSE)},
+  { 238, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_RESULT)},
+  { 248, -1, -1, sizeof(::Protocol::S_BATTLE_PAWN_DEAD)},
+  { 257, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT)},
+  { 265, -1, -1, sizeof(::Protocol::C_BATTLE_RESULT_ACK)},
+  { 272, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT_ACK)},
+  { 281, -1, -1, sizeof(::Protocol::S_BATTLE_CLASS_SELECTION_START)},
+  { 293, -1, -1, sizeof(::Protocol::C_BATTLE_CLASS_SELECTION)},
+  { 300, -1, -1, sizeof(::Protocol::S_BATTLE_CLASS_SELECTION_RESULT)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -941,7 +943,7 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "eTileInfo\022\036\n\026upcoming_turn_pawn_ids\030\n \003("
   "\004\"Y\n\rC_BATTLE_MOVE\022\021\n\tbattle_id\030\001 \001(\004\022\017\n"
   "\007pawn_id\030\002 \001(\004\022$\n\006target\030\003 \001(\0132\024.Protoco"
-  "l.AxialCoord\"\254\003\n\rS_BATTLE_MOVE\022\017\n\007succes"
+  "l.AxialCoord\"\320\003\n\rS_BATTLE_MOVE\022\017\n\007succes"
   "s\030\001 \001(\010\022\021\n\tbattle_id\030\002 \001(\004\022\017\n\007pawn_id\030\003 "
   "\001(\004\022#\n\005start\030\004 \001(\0132\024.Protocol.AxialCoord"
   "\022$\n\006target\030\005 \001(\0132\024.Protocol.AxialCoord\022\031"
@@ -952,69 +954,70 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "\014 \003(\0132\031.Protocol.BattleActionLog\022\034\n\024batt"
   "le_state_version\030\r \001(\004\022\033\n\023turn_queue_res"
   "ynced\030\016 \001(\010\022\036\n\026upcoming_turn_pawn_ids\030\017 "
-  "\003(\004\"\357\001\n\016C_BATTLE_SKILL\022\021\n\tbattle_id\030\001 \001("
-  "\004\022\026\n\016caster_pawn_id\030\002 \001(\004\022\022\n\nskill_slot\030"
-  "\003 \001(\005\022\026\n\016target_pawn_id\030\004 \001(\004\022*\n\014target_"
-  "axial\030\005 \001(\0132\024.Protocol.AxialCoord\0222\n\024lin"
-  "e_direction_axial\030\006 \001(\0132\024.Protocol.Axial"
-  "Coord\022&\n\036request_optional_position_swap\030"
-  "\007 \001(\010\"\267\004\n\016S_BATTLE_SKILL\022\017\n\007success\030\001 \001("
-  "\010\022\021\n\tbattle_id\030\002 \001(\004\022\026\n\016caster_pawn_id\030\003"
-  " \001(\004\022\022\n\nskill_slot\030\004 \001(\005\022\026\n\016target_pawn_"
-  "id\030\005 \001(\004\022*\n\014target_axial\030\006 \001(\0132\024.Protoco"
-  "l.AxialCoord\022\016\n\006damage\030\007 \001(\005\022\021\n\ttarget_h"
-  "p\030\010 \001(\005\022\031\n\021next_turn_pawn_id\030\t \001(\004\022\016\n\006re"
-  "ason\030\n \001(\t\022\020\n\010can_move\030\014 \001(\010\022!\n\031used_sub"
-  "_action_this_turn\030\r \001(\010\022\025\n\rused_ultimate"
-  "\030\016 \001(\010\022\024\n\014target_armor\030\017 \001(\005\022.\n\013pawn_del"
-  "tas\030\020 \003(\0132\031.Protocol.BattlePawnDelta\022\'\n\004"
-  "logs\030\021 \003(\0132\031.Protocol.BattleActionLog\022\034\n"
-  "\024battle_state_version\030\022 \001(\004\022-\n\013tile_delt"
-  "as\030\023 \003(\0132\030.Protocol.BattleTileInfo\022\033\n\023tu"
-  "rn_queue_resynced\030\024 \001(\010\022\036\n\026upcoming_turn"
-  "_pawn_ids\030\025 \003(\004\"7\n\021C_BATTLE_END_TURN\022\021\n\t"
-  "battle_id\030\001 \001(\004\022\017\n\007pawn_id\030\002 \001(\004\"\301\003\n\021S_B"
-  "ATTLE_END_TURN\022\017\n\007success\030\001 \001(\010\022\021\n\tbattl"
-  "e_id\030\002 \001(\004\022\017\n\007pawn_id\030\003 \001(\004\022\031\n\021next_turn"
-  "_pawn_id\030\004 \001(\004\022\016\n\006reason\030\005 \001(\t\022\020\n\010can_mo"
-  "ve\030\007 \001(\010\022!\n\031used_sub_action_this_turn\030\010 "
-  "\001(\010\022\025\n\rused_ultimate\030\t \001(\010\022.\n\013pawn_delta"
-  "s\030\n \003(\0132\031.Protocol.BattlePawnDelta\022\'\n\004lo"
-  "gs\030\013 \003(\0132\031.Protocol.BattleActionLog\022\034\n\024b"
-  "attle_state_version\030\014 \001(\004\022-\n\013tile_deltas"
-  "\030\r \003(\0132\030.Protocol.BattleTileInfo\022\035\n\025ente"
-  "ring_turn_pawn_id\030\016 \001(\004\022\033\n\023turn_queue_re"
-  "synced\030\017 \001(\010\022\036\n\026upcoming_turn_pawn_ids\030\020"
-  " \003(\004\"+\n\017C_BATTLE_INVITE\022\030\n\020target_player"
-  "_id\030\001 \001(\004\"q\n\027S_BATTLE_INVITE_REQUEST\022\017\n\007"
-  "success\030\001 \001(\010\022\033\n\023requester_player_id\030\002 \001"
-  "(\004\022\030\n\020target_player_id\030\003 \001(\004\022\016\n\006reason\030\004"
-  " \001(\t\"7\n\030S_BATTLE_INVITE_RECEIVED\022\033\n\023requ"
-  "ester_player_id\030\001 \001(\004\"G\n\030C_BATTLE_INVITE"
-  "_RESPONSE\022\033\n\023requester_player_id\030\001 \001(\004\022\016"
-  "\n\006accept\030\002 \001(\010\"q\n\026S_BATTLE_INVITE_RESULT"
-  "\022\020\n\010accepted\030\001 \001(\010\022\033\n\023requester_player_i"
-  "d\030\002 \001(\004\022\030\n\020target_player_id\030\003 \001(\004\022\016\n\006rea"
-  "son\030\004 \001(\t\"P\n\022S_BATTLE_PAWN_DEAD\022\021\n\tbattl"
-  "e_id\030\001 \001(\004\022\017\n\007pawn_id\030\002 \001(\004\022\026\n\016killer_pa"
-  "wn_id\030\003 \001(\004\"5\n\017S_BATTLE_RESULT\022\021\n\tbattle"
-  "_id\030\001 \001(\004\022\017\n\007victory\030\002 \001(\010\"(\n\023C_BATTLE_R"
-  "ESULT_ACK\022\021\n\tbattle_id\030\001 \001(\004\"I\n\023S_BATTLE"
-  "_RESULT_ACK\022\017\n\007success\030\001 \001(\010\022\021\n\tbattle_i"
-  "d\030\002 \001(\004\022\016\n\006reason\030\003 \001(\t\"\207\002\n\036S_BATTLE_CLA"
-  "SS_SELECTION_START\022\033\n\023requester_player_i"
-  "d\030\001 \001(\004\022\030\n\020target_player_id\030\002 \001(\004\022)\n\014sue"
-  "n_options\030\003 \003(\0162\023.Protocol.PawnClass\022*\n\r"
-  "beige_options\030\004 \003(\0162\023.Protocol.PawnClass"
-  "\022)\n\014alen_options\030\005 \003(\0162\023.Protocol.PawnCl"
-  "ass\022,\n\017zillian_options\030\006 \003(\0162\023.Protocol."
-  "PawnClass\"N\n\030C_BATTLE_CLASS_SELECTION\0222\n"
-  "\025selected_pawn_classes\030\001 \003(\0162\023.Protocol."
-  "PawnClass\"\227\001\n\037S_BATTLE_CLASS_SELECTION_R"
-  "ESULT\022\017\n\007success\030\001 \001(\010\022\034\n\024waiting_for_op"
-  "ponent\030\002 \001(\010\022\033\n\023requester_player_id\030\003 \001("
-  "\004\022\030\n\020target_player_id\030\004 \001(\004\022\016\n\006reason\030\005 "
-  "\001(\tb\006proto3"
+  "\003(\004\022\"\n\004path\030\020 \003(\0132\024.Protocol.AxialCoord\""
+  "\357\001\n\016C_BATTLE_SKILL\022\021\n\tbattle_id\030\001 \001(\004\022\026\n"
+  "\016caster_pawn_id\030\002 \001(\004\022\022\n\nskill_slot\030\003 \001("
+  "\005\022\026\n\016target_pawn_id\030\004 \001(\004\022*\n\014target_axia"
+  "l\030\005 \001(\0132\024.Protocol.AxialCoord\0222\n\024line_di"
+  "rection_axial\030\006 \001(\0132\024.Protocol.AxialCoor"
+  "d\022&\n\036request_optional_position_swap\030\007 \001("
+  "\010\"\267\004\n\016S_BATTLE_SKILL\022\017\n\007success\030\001 \001(\010\022\021\n"
+  "\tbattle_id\030\002 \001(\004\022\026\n\016caster_pawn_id\030\003 \001(\004"
+  "\022\022\n\nskill_slot\030\004 \001(\005\022\026\n\016target_pawn_id\030\005"
+  " \001(\004\022*\n\014target_axial\030\006 \001(\0132\024.Protocol.Ax"
+  "ialCoord\022\016\n\006damage\030\007 \001(\005\022\021\n\ttarget_hp\030\010 "
+  "\001(\005\022\031\n\021next_turn_pawn_id\030\t \001(\004\022\016\n\006reason"
+  "\030\n \001(\t\022\020\n\010can_move\030\014 \001(\010\022!\n\031used_sub_act"
+  "ion_this_turn\030\r \001(\010\022\025\n\rused_ultimate\030\016 \001"
+  "(\010\022\024\n\014target_armor\030\017 \001(\005\022.\n\013pawn_deltas\030"
+  "\020 \003(\0132\031.Protocol.BattlePawnDelta\022\'\n\004logs"
+  "\030\021 \003(\0132\031.Protocol.BattleActionLog\022\034\n\024bat"
+  "tle_state_version\030\022 \001(\004\022-\n\013tile_deltas\030\023"
+  " \003(\0132\030.Protocol.BattleTileInfo\022\033\n\023turn_q"
+  "ueue_resynced\030\024 \001(\010\022\036\n\026upcoming_turn_paw"
+  "n_ids\030\025 \003(\004\"7\n\021C_BATTLE_END_TURN\022\021\n\tbatt"
+  "le_id\030\001 \001(\004\022\017\n\007pawn_id\030\002 \001(\004\"\301\003\n\021S_BATTL"
+  "E_END_TURN\022\017\n\007success\030\001 \001(\010\022\021\n\tbattle_id"
+  "\030\002 \001(\004\022\017\n\007pawn_id\030\003 \001(\004\022\031\n\021next_turn_paw"
+  "n_id\030\004 \001(\004\022\016\n\006reason\030\005 \001(\t\022\020\n\010can_move\030\007"
+  " \001(\010\022!\n\031used_sub_action_this_turn\030\010 \001(\010\022"
+  "\025\n\rused_ultimate\030\t \001(\010\022.\n\013pawn_deltas\030\n "
+  "\003(\0132\031.Protocol.BattlePawnDelta\022\'\n\004logs\030\013"
+  " \003(\0132\031.Protocol.BattleActionLog\022\034\n\024battl"
+  "e_state_version\030\014 \001(\004\022-\n\013tile_deltas\030\r \003"
+  "(\0132\030.Protocol.BattleTileInfo\022\035\n\025entering"
+  "_turn_pawn_id\030\016 \001(\004\022\033\n\023turn_queue_resync"
+  "ed\030\017 \001(\010\022\036\n\026upcoming_turn_pawn_ids\030\020 \003(\004"
+  "\"+\n\017C_BATTLE_INVITE\022\030\n\020target_player_id\030"
+  "\001 \001(\004\"q\n\027S_BATTLE_INVITE_REQUEST\022\017\n\007succ"
+  "ess\030\001 \001(\010\022\033\n\023requester_player_id\030\002 \001(\004\022\030"
+  "\n\020target_player_id\030\003 \001(\004\022\016\n\006reason\030\004 \001(\t"
+  "\"7\n\030S_BATTLE_INVITE_RECEIVED\022\033\n\023requeste"
+  "r_player_id\030\001 \001(\004\"G\n\030C_BATTLE_INVITE_RES"
+  "PONSE\022\033\n\023requester_player_id\030\001 \001(\004\022\016\n\006ac"
+  "cept\030\002 \001(\010\"q\n\026S_BATTLE_INVITE_RESULT\022\020\n\010"
+  "accepted\030\001 \001(\010\022\033\n\023requester_player_id\030\002 "
+  "\001(\004\022\030\n\020target_player_id\030\003 \001(\004\022\016\n\006reason\030"
+  "\004 \001(\t\"P\n\022S_BATTLE_PAWN_DEAD\022\021\n\tbattle_id"
+  "\030\001 \001(\004\022\017\n\007pawn_id\030\002 \001(\004\022\026\n\016killer_pawn_i"
+  "d\030\003 \001(\004\"5\n\017S_BATTLE_RESULT\022\021\n\tbattle_id\030"
+  "\001 \001(\004\022\017\n\007victory\030\002 \001(\010\"(\n\023C_BATTLE_RESUL"
+  "T_ACK\022\021\n\tbattle_id\030\001 \001(\004\"I\n\023S_BATTLE_RES"
+  "ULT_ACK\022\017\n\007success\030\001 \001(\010\022\021\n\tbattle_id\030\002 "
+  "\001(\004\022\016\n\006reason\030\003 \001(\t\"\207\002\n\036S_BATTLE_CLASS_S"
+  "ELECTION_START\022\033\n\023requester_player_id\030\001 "
+  "\001(\004\022\030\n\020target_player_id\030\002 \001(\004\022)\n\014suen_op"
+  "tions\030\003 \003(\0162\023.Protocol.PawnClass\022*\n\rbeig"
+  "e_options\030\004 \003(\0162\023.Protocol.PawnClass\022)\n\014"
+  "alen_options\030\005 \003(\0162\023.Protocol.PawnClass\022"
+  ",\n\017zillian_options\030\006 \003(\0162\023.Protocol.Pawn"
+  "Class\"N\n\030C_BATTLE_CLASS_SELECTION\0222\n\025sel"
+  "ected_pawn_classes\030\001 \003(\0162\023.Protocol.Pawn"
+  "Class\"\227\001\n\037S_BATTLE_CLASS_SELECTION_RESUL"
+  "T\022\017\n\007success\030\001 \001(\010\022\034\n\024waiting_for_oppone"
+  "nt\030\002 \001(\010\022\033\n\023requester_player_id\030\003 \001(\004\022\030\n"
+  "\020target_player_id\030\004 \001(\004\022\016\n\006reason\030\005 \001(\tb"
+  "\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -1022,7 +1025,7 @@ static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_de
 };
 static ::_pbi::once_flag descriptor_table_Protocol_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Protocol_2eproto = {
-    false, false, 3891, descriptor_table_protodef_Protocol_2eproto,
+    false, false, 3927, descriptor_table_protodef_Protocol_2eproto,
     "Protocol.proto",
     &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 32,
     schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
@@ -3907,6 +3910,9 @@ void S_BATTLE_MOVE::clear_pawn_deltas() {
 void S_BATTLE_MOVE::clear_logs() {
   _impl_.logs_.Clear();
 }
+void S_BATTLE_MOVE::clear_path() {
+  _impl_.path_.Clear();
+}
 S_BATTLE_MOVE::S_BATTLE_MOVE(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -3921,6 +3927,7 @@ S_BATTLE_MOVE::S_BATTLE_MOVE(const S_BATTLE_MOVE& from)
     , decltype(_impl_.logs_){from._impl_.logs_}
     , decltype(_impl_.upcoming_turn_pawn_ids_){from._impl_.upcoming_turn_pawn_ids_}
     , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
+    , decltype(_impl_.path_){from._impl_.path_}
     , decltype(_impl_.reason_){}
     , decltype(_impl_.start_){nullptr}
     , decltype(_impl_.target_){nullptr}
@@ -3964,6 +3971,7 @@ inline void S_BATTLE_MOVE::SharedCtor(
     , decltype(_impl_.logs_){arena}
     , decltype(_impl_.upcoming_turn_pawn_ids_){arena}
     , /*decltype(_impl_._upcoming_turn_pawn_ids_cached_byte_size_)*/{0}
+    , decltype(_impl_.path_){arena}
     , decltype(_impl_.reason_){}
     , decltype(_impl_.start_){nullptr}
     , decltype(_impl_.target_){nullptr}
@@ -3997,6 +4005,7 @@ inline void S_BATTLE_MOVE::SharedDtor() {
   _impl_.pawn_deltas_.~RepeatedPtrField();
   _impl_.logs_.~RepeatedPtrField();
   _impl_.upcoming_turn_pawn_ids_.~RepeatedField();
+  _impl_.path_.~RepeatedPtrField();
   _impl_.reason_.Destroy();
   if (this != internal_default_instance()) delete _impl_.start_;
   if (this != internal_default_instance()) delete _impl_.target_;
@@ -4015,6 +4024,7 @@ void S_BATTLE_MOVE::Clear() {
   _impl_.pawn_deltas_.Clear();
   _impl_.logs_.Clear();
   _impl_.upcoming_turn_pawn_ids_.Clear();
+  _impl_.path_.Clear();
   _impl_.reason_.ClearToEmpty();
   if (GetArenaForAllocation() == nullptr && _impl_.start_ != nullptr) {
     delete _impl_.start_;
@@ -4164,6 +4174,19 @@ const char* S_BATTLE_MOVE::_InternalParse(const char* ptr, ::_pbi::ParseContext*
         } else
           goto handle_unusual;
         continue;
+      // repeated .Protocol.AxialCoord path = 16;
+      case 16:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 130)) {
+          ptr -= 2;
+          do {
+            ptr += 2;
+            ptr = ctx->ParseMessage(_internal_add_path(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<130>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -4291,6 +4314,14 @@ uint8_t* S_BATTLE_MOVE::_InternalSerialize(
     }
   }
 
+  // repeated .Protocol.AxialCoord path = 16;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_path_size()); i < n; i++) {
+    const auto& repfield = this->_internal_path(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(16, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -4333,6 +4364,13 @@ size_t S_BATTLE_MOVE::ByteSizeLong() const {
     _impl_._upcoming_turn_pawn_ids_cached_byte_size_.store(cached_size,
                                     std::memory_order_relaxed);
     total_size += data_size;
+  }
+
+  // repeated .Protocol.AxialCoord path = 16;
+  total_size += 2UL * this->_internal_path_size();
+  for (const auto& msg : this->_impl_.path_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // string reason = 8;
@@ -4418,6 +4456,7 @@ void S_BATTLE_MOVE::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
   _this->_impl_.pawn_deltas_.MergeFrom(from._impl_.pawn_deltas_);
   _this->_impl_.logs_.MergeFrom(from._impl_.logs_);
   _this->_impl_.upcoming_turn_pawn_ids_.MergeFrom(from._impl_.upcoming_turn_pawn_ids_);
+  _this->_impl_.path_.MergeFrom(from._impl_.path_);
   if (!from._internal_reason().empty()) {
     _this->_internal_set_reason(from._internal_reason());
   }
@@ -4475,6 +4514,7 @@ void S_BATTLE_MOVE::InternalSwap(S_BATTLE_MOVE* other) {
   _impl_.pawn_deltas_.InternalSwap(&other->_impl_.pawn_deltas_);
   _impl_.logs_.InternalSwap(&other->_impl_.logs_);
   _impl_.upcoming_turn_pawn_ids_.InternalSwap(&other->_impl_.upcoming_turn_pawn_ids_);
+  _impl_.path_.InternalSwap(&other->_impl_.path_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.reason_, lhs_arena,
       &other->_impl_.reason_, rhs_arena
