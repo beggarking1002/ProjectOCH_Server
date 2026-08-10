@@ -143,10 +143,7 @@ int32 BattlePawn::GetShieldCurrent() const
 
 int32 BattlePawn::GetShieldMax() const
 {
-	int32 value = GetEffectiveMaxArmor();
-	for (const BattleBarrierState& barrier : barriers)
-		value += barrier.maxValue;
-	return value;
+	return max(0, maxHp);
 }
 
 int32 BattlePawn::GetEffectiveMaxArmor() const
@@ -158,7 +155,7 @@ int32 BattlePawn::GetEffectiveMaxArmor() const
 		if (status.remainingOwnerTurns != 0)
 			value += status.flatArmorBonus;
 	}
-	return max(0, value);
+	return min(max(0, maxHp), max(0, value));
 }
 
 vector<Protocol::AxialCoord> BattlePawn::ResolveTargetArea(const string& shape, const Protocol::AxialCoord& target,

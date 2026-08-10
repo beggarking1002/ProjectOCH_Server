@@ -387,12 +387,20 @@ void BattleEffectExecutor::ExecuteSetResourceMax(const BattleEffectTemplate& eff
 void BattleEffectExecutor::ExecuteApplyBarrier(const BattleEffectTemplate& effect, const BattleEffectExecutionRequest& request)
 {
 	BattleEffectPawnContext target = SelectTarget(effect, request);
-	if (target.barriers == nullptr)
+	if (target.barriers == nullptr || target.maxHp == nullptr || target.armor == nullptr)
 		return;
 
-	const int32 value = CalculateValue(effect, *request.casterTemplate, request.caster);
+	const int32 requestedValue = CalculateValue(effect, *request.casterTemplate, request.caster);
 	const int32 durationTurns = GetIntParam(effect, "duration_turns", 0);
-	if (value <= 0 || durationTurns <= 0)
+	if (requestedValue <= 0 || durationTurns <= 0)
+		return;
+
+	int32 currentBarrier = 0;
+	for (const BattleBarrierState& existingBarrier : *target.barriers)
+		currentBarrier += max(0, existingBarrier.value);
+	const int32 remainingShieldCapacity = max(0, *target.maxHp - max(0, *target.armor) - currentBarrier);
+	const int32 value = min(requestedValue, remainingShieldCapacity);
+	if (value <= 0)
 		return;
 
 	BattleBarrierState barrier;
@@ -406,6 +414,7 @@ void BattleEffectExecutor::ExecuteApplyBarrier(const BattleEffectTemplate& effec
 	cout << "BATTLE_BARRIER_APPLY"
 		<< " pawn_id=" << target.pawnId
 		<< " value=" << value
+		<< " requested_value=" << requestedValue
 		<< " duration_turns=" << durationTurns
 		<< endl;
 }
@@ -450,7 +459,19 @@ void BattleEffectExecutor::ExecuteApplyStatus(const BattleEffectTemplate& effect
 			status.flatArmorBonus = GetIntParam(effect, "value", 0);
 	}
 	if (target.armor != nullptr && status.flatArmorBonus != previousArmorBonus)
+	{
 		*target.armor = max(0, *target.armor + status.flatArmorBonus - previousArmorBonus);
+		if (target.maxHp != nullptr)
+		{
+			int32 currentBarrier = 0;
+			if (target.barriers != nullptr)
+			{
+				for (const BattleBarrierState& barrier : *target.barriers)
+					currentBarrier += max(0, barrier.value);
+			}
+			*target.armor = min(*target.armor, max(0, *target.maxHp - currentBarrier));
+		}
+	}
 	status.sourcePawnId = request.caster.pawnId;
 	status.sourceSkillSlot = request.skillSlot;
 	status.isHarmful = status.isHarmful || ToUpperString(GetParam(effect, "is_harmful")) == "TRUE";

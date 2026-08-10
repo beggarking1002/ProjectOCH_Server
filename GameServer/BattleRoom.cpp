@@ -781,6 +781,38 @@ void BattleRoom::HandleBattleSkill(GameSessionRef session, Protocol::C_BATTLE_SK
 			extraChangedPawns.push_back(caster);
 		}
 	}
+	if (primarySkillIsMelee && target != nullptr && target->ownerId != caster->ownerId)
+	{
+		const int32 counterDistance = _spatialService.AxialDistance(caster->axial, target->axial);
+		const auto carbasGuardIt = target->statuses.find("ALEN_SHIELD_CARBAS_GUARD");
+		const bool hasCarbasGuard = carbasGuardIt != target->statuses.end() && carbasGuardIt->second.remainingOwnerTurns != 0;
+		const bool counterOnSuccessfulHit = target->CanCounterattackOnSuccessfulHit();
+		const bool wasSuccessfulHit = hitDefenderIds.contains(target->pawnId);
+		const bool standardCounterCondition = target->UsesConditionalCounterattack() == false &&
+			(wasEvaded || target->hp == targetHpBeforeAction);
+
+		cout << "BATTLE_COUNTER_CHECK"
+			<< " attacker_pawn_id=" << caster->pawnId
+			<< " attacker_class=" << Protocol::PawnClass_Name(caster->pawnClass)
+			<< " attacker_axial=(" << caster->axial.q() << "," << caster->axial.r() << ")"
+			<< " defender_pawn_id=" << target->pawnId
+			<< " defender_class=" << Protocol::PawnClass_Name(target->pawnClass)
+			<< " defender_axial=(" << target->axial.q() << "," << target->axial.r() << ")"
+			<< " distance=" << counterDistance
+			<< " caster_alive=" << IsAlive(*caster)
+			<< " defender_alive=" << IsAlive(*target)
+			<< " primary_melee=" << primarySkillIsMelee
+			<< " was_evaded=" << wasEvaded
+			<< " successful_hit=" << wasSuccessfulHit
+			<< " defender_hp_before=" << targetHpBeforeAction
+			<< " defender_hp_after=" << target->hp
+			<< " conditional_counter=" << target->UsesConditionalCounterattack()
+			<< " carbas_guard=" << hasCarbasGuard
+			<< " counter_on_successful_hit=" << counterOnSuccessfulHit
+			<< " standard_counter_condition=" << standardCounterCondition
+			<< endl;
+	}
+
 	if (primarySkillIsMelee && target != nullptr && target->ownerId != caster->ownerId && IsAlive(*caster) && IsAlive(*target) &&
 		target->CanCounterattackOnSuccessfulHit() && hitDefenderIds.contains(target->pawnId) &&
 		_spatialService.AxialDistance(caster->axial, target->axial) == 1)
@@ -1156,8 +1188,8 @@ BattlePawnRef BattleRoom::MakeBattlePawn(uint64 ownerId, Protocol::PawnClass paw
 	pawn->hp = hp;
 	pawn->maxHp = hp;
 	pawn->moveRange = moveRange;
-	pawn->armor = maxArmor;
-	pawn->maxArmor = maxArmor;
+	pawn->maxArmor = role == Protocol::BATTLE_PAWN_ROLE_TANKER ? pawn->maxHp : min(max(0, maxArmor), pawn->maxHp);
+	pawn->armor = pawn->maxArmor;
 	pawn->InitializeBattleActionUsage();
 	pawn->isDead = false;
 	pawn->facingDirection = cellX <= 0 ? Protocol::BATTLE_FACING_DIRECTION_Q_POS : Protocol::BATTLE_FACING_DIRECTION_Q_NEG;
@@ -1899,12 +1931,13 @@ void BattleRoom::StartTurn(BattleState& battle, BattlePawn& pawn)
 		battle.turnStartChangedPawnIds.push_back(pawn.pawnId);
 	}
 
-	const int32 effectiveMaxArmor = pawn.GetEffectiveMaxArmor();
-	if (CanRecoverArmor(pawn) && pawn.armor < effectiveMaxArmor)
+	const int32 currentBarrier = max(0, pawn.GetShieldCurrent() - pawn.armor);
+	const int32 armorCapacity = min(pawn.GetEffectiveMaxArmor(), max(0, pawn.maxHp - currentBarrier));
+	if (CanRecoverArmor(pawn) && pawn.armor < armorCapacity)
 	{
-		const int32 lostArmor = effectiveMaxArmor - pawn.armor;
+		const int32 lostArmor = armorCapacity - pawn.armor;
 		const int32 recoverArmor = lostArmor / 2;
-		pawn.armor = min(effectiveMaxArmor, pawn.armor + recoverArmor);
+		pawn.armor = min(armorCapacity, pawn.armor + recoverArmor);
 	}
 
 	ExecutePassiveTrigger(pawn, "ON_OWNER_TURN_START");
