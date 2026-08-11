@@ -10,7 +10,22 @@
 RoomRef GRoom = make_shared<Room>();
 namespace
 {
-	constexpr uint32 kMoveDurationMs = 300;
+	constexpr double kFieldMoveSpeedWorldPerSecond = 3.2;
+
+	uint32 GetFieldMoveDurationMs(const Protocol::Vec2Fixed& start, const Protocol::Vec2Fixed& target)
+	{
+		const double deltaX = static_cast<double>(target.x()) - static_cast<double>(start.x());
+		const double deltaY = static_cast<double>(target.y()) - static_cast<double>(start.y());
+		const double distanceInWorld = sqrt((deltaX * deltaX) + (deltaY * deltaY)) /
+			static_cast<double>(GFieldWalkMapData.FixedPointScale());
+		if (distanceInWorld <= 0.0)
+			return 0;
+
+		const double durationMs = ceil((distanceInWorld / kFieldMoveSpeedWorldPerSecond) * 1000.0);
+		return durationMs >= static_cast<double>((numeric_limits<uint32>::max)())
+			? (numeric_limits<uint32>::max)()
+			: static_cast<uint32>(durationMs);
+	}
 
 	int32 GetBattleClassFamily(Protocol::PawnClass pawnClass)
 	{
@@ -229,7 +244,7 @@ void Room::HandleMove(GameSessionRef session, Protocol::C_MOVE pkt)
 	movePkt.set_object_id(objectId);
 	movePkt.mutable_start()->CopyFrom(start);
 	movePkt.mutable_target()->CopyFrom(*player->position);
-	movePkt.set_duration_ms(kMoveDurationMs);
+	movePkt.set_duration_ms(GetFieldMoveDurationMs(start, *player->position));
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(movePkt);
 	Broadcast(sendBuffer);

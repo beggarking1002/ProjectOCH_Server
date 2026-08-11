@@ -18,6 +18,7 @@ public:
 	bool IsWalkableFixed(const Protocol::Vec2Fixed& position) const;
 	bool IsWalkableFixed(const Protocol::Vec2Fixed& position, int32& cellX, int32& cellY) const;
 	bool TryGetRandomWalkablePosition(Protocol::Vec2Fixed& position) const;
+	int32 FixedPointScale() const { return _fixedPointScale; }
 
 private:
 	bool IsWalkableCell(int32 cellX, int32 cellY) const;
