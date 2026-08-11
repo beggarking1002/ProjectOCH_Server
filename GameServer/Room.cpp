@@ -12,12 +12,19 @@ namespace
 {
 	constexpr double kFieldMoveSpeedWorldPerSecond = 3.2;
 
-	uint32 GetFieldMoveDurationMs(const Protocol::Vec2Fixed& start, const Protocol::Vec2Fixed& target)
+	uint32 GetFieldMoveDurationMs(const Protocol::Vec2Fixed& start, const vector<Protocol::Vec2Fixed>& path)
 	{
-		const double deltaX = static_cast<double>(target.x()) - static_cast<double>(start.x());
-		const double deltaY = static_cast<double>(target.y()) - static_cast<double>(start.y());
-		const double distanceInWorld = sqrt((deltaX * deltaX) + (deltaY * deltaY)) /
-			static_cast<double>(GFieldWalkMapData.FixedPointScale());
+		Protocol::Vec2Fixed previous;
+		previous.CopyFrom(start);
+		double distanceInWorld = 0.0;
+		for (const Protocol::Vec2Fixed& waypoint : path)
+		{
+			const double deltaX = static_cast<double>(waypoint.x()) - static_cast<double>(previous.x());
+			const double deltaY = static_cast<double>(waypoint.y()) - static_cast<double>(previous.y());
+			distanceInWorld += sqrt((deltaX * deltaX) + (deltaY * deltaY)) /
+				static_cast<double>(GFieldWalkMapData.FixedPointScale());
+			previous.CopyFrom(waypoint);
+		}
 		if (distanceInWorld <= 0.0)
 			return 0;
 
@@ -213,17 +220,21 @@ void Room::HandleMove(GameSessionRef session, Protocol::C_MOVE pkt)
 	int32 cellY = 0;
 	const bool walkable = GFieldWalkMapData.IsWalkableFixed(pkt.target(), cellX, cellY);
 
+	Protocol::Vec2Fixed start;
+	start.CopyFrom(*player->position);
+	vector<Protocol::Vec2Fixed> movePath;
+	const bool hasPath = walkable && GFieldWalkMapData.TryFindPathFixed(start, pkt.target(), movePath);
+
 	cout << "C_MOVE object_id=" << objectId
 		<< " fixed_x=" << pkt.target().x()
 		<< " fixed_y=" << pkt.target().y()
 		<< " cell_x=" << cellX
 		<< " cell_y=" << cellY
-		<< " walkable=" << walkable << endl;
+		<< " walkable=" << walkable
+		<< " path_found=" << hasPath
+		<< " waypoint_count=" << movePath.size() << endl;
 
-	Protocol::Vec2Fixed start;
-	start.CopyFrom(*player->position);
-
-	if (walkable == false)
+	if (hasPath == false)
 	{
 		Protocol::S_MOVE rejectPkt;
 		rejectPkt.set_object_id(objectId);
@@ -244,7 +255,9 @@ void Room::HandleMove(GameSessionRef session, Protocol::C_MOVE pkt)
 	movePkt.set_object_id(objectId);
 	movePkt.mutable_start()->CopyFrom(start);
 	movePkt.mutable_target()->CopyFrom(*player->position);
-	movePkt.set_duration_ms(GetFieldMoveDurationMs(start, *player->position));
+	for (const Protocol::Vec2Fixed& waypoint : movePath)
+		movePkt.add_path()->CopyFrom(waypoint);
+	movePkt.set_duration_ms(GetFieldMoveDurationMs(start, movePath));
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(movePkt);
 	Broadcast(sendBuffer);

@@ -1,9 +1,12 @@
 #include "pch.h"
 #include "FieldWalkMapData.h"
 
+#include <array>
 #include <cmath>
 #include <fstream>
 #include <limits>
+#include <map>
+#include <queue>
 #include <random>
 #include <regex>
 #include <sstream>
@@ -92,6 +95,62 @@ namespace
 	bool IsOddRow(int32 cellY)
 	{
 		return (cellY & 1) != 0;
+	}
+
+	struct FieldCell
+	{
+		int32 x = 0;
+		int32 y = 0;
+
+		bool operator==(const FieldCell& other) const { return x == other.x && y == other.y; }
+		bool operator<(const FieldCell& other) const
+		{
+			return y != other.y ? y < other.y : x < other.x;
+		}
+	};
+
+	struct OpenNode
+	{
+		FieldCell cell;
+		int32 costFromStart = 0;
+		int32 estimatedTotalCost = 0;
+
+		bool operator<(const OpenNode& other) const
+		{
+			if (estimatedTotalCost != other.estimatedTotalCost)
+				return estimatedTotalCost > other.estimatedTotalCost;
+			if (costFromStart != other.costFromStart)
+				return costFromStart > other.costFromStart;
+			return other.cell < cell;
+		}
+	};
+
+	int32 OddRToAxialQ(const FieldCell& cell)
+	{
+		return cell.x - ((cell.y - (cell.y & 1)) / 2);
+	}
+
+	int32 EstimateHexDistance(const FieldCell& from, const FieldCell& to)
+	{
+		const int32 fromQ = OddRToAxialQ(from);
+		const int32 toQ = OddRToAxialQ(to);
+		const int32 deltaQ = toQ - fromQ;
+		const int32 deltaR = to.y - from.y;
+		return (abs(deltaQ) + abs(deltaR) + abs(deltaQ + deltaR)) / 2;
+	}
+
+	array<FieldCell, 6> GetNeighbors(const FieldCell& cell)
+	{
+		const int32 diagonalX = IsOddRow(cell.y) ? cell.x + 1 : cell.x - 1;
+		return
+		{
+			FieldCell{ cell.x - 1, cell.y },
+			FieldCell{ cell.x + 1, cell.y },
+			FieldCell{ cell.x, cell.y - 1 },
+			FieldCell{ diagonalX, cell.y - 1 },
+			FieldCell{ cell.x, cell.y + 1 },
+			FieldCell{ diagonalX, cell.y + 1 },
+		};
 	}
 }
 
@@ -223,6 +282,87 @@ bool FieldWalkMapData::TryGetRandomWalkablePosition(Protocol::Vec2Fixed& positio
 	const int32 cellX = cellXDist(generator);
 
 	CellToFixed(cellX, cellY, position);
+	return true;
+}
+
+bool FieldWalkMapData::TryFindPathFixed(const Protocol::Vec2Fixed& start, const Protocol::Vec2Fixed& target,
+	vector<Protocol::Vec2Fixed>& outWaypoints) const
+{
+	outWaypoints.clear();
+	if (_loaded == false)
+		return false;
+
+	int32 startX = 0;
+	int32 startY = 0;
+	int32 targetX = 0;
+	int32 targetY = 0;
+	if (IsWalkableFixed(start, startX, startY) == false || IsWalkableFixed(target, targetX, targetY) == false)
+		return false;
+
+	const FieldCell startCell{ startX, startY };
+	const FieldCell targetCell{ targetX, targetY };
+	if (startCell == targetCell)
+	{
+		outWaypoints.push_back(target);
+		return true;
+	}
+
+	priority_queue<OpenNode> openNodes;
+	map<FieldCell, int32> costs;
+	map<FieldCell, FieldCell> predecessors;
+	openNodes.push(OpenNode{ startCell, 0, EstimateHexDistance(startCell, targetCell) });
+	costs.emplace(startCell, 0);
+
+	bool found = false;
+	while (openNodes.empty() == false)
+	{
+		const OpenNode current = openNodes.top();
+		openNodes.pop();
+
+		auto currentCostIt = costs.find(current.cell);
+		if (currentCostIt == costs.end() || current.costFromStart != currentCostIt->second)
+			continue;
+		if (current.cell == targetCell)
+		{
+			found = true;
+			break;
+		}
+
+		for (const FieldCell& neighbor : GetNeighbors(current.cell))
+		{
+			if (IsWalkableCell(neighbor.x, neighbor.y) == false)
+				continue;
+
+			const int32 nextCost = current.costFromStart + 1;
+			auto knownCostIt = costs.find(neighbor);
+			if (knownCostIt != costs.end() && knownCostIt->second <= nextCost)
+				continue;
+
+			costs[neighbor] = nextCost;
+			predecessors[neighbor] = current.cell;
+			openNodes.push(OpenNode{ neighbor, nextCost, nextCost + EstimateHexDistance(neighbor, targetCell) });
+		}
+	}
+
+	if (found == false)
+		return false;
+
+	vector<FieldCell> cells;
+	FieldCell current = targetCell;
+	while ((current == startCell) == false)
+	{
+		cells.push_back(current);
+		current = predecessors.at(current);
+	}
+	reverse(cells.begin(), cells.end());
+
+	for (size_t index = 0; index + 1 < cells.size(); index++)
+	{
+		Protocol::Vec2Fixed waypoint;
+		CellToFixed(cells[index].x, cells[index].y, waypoint);
+		outWaypoints.push_back(waypoint);
+	}
+	outWaypoints.push_back(target);
 	return true;
 }
 

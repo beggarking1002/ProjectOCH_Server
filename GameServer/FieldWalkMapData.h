@@ -18,6 +18,9 @@ public:
 	bool IsWalkableFixed(const Protocol::Vec2Fixed& position) const;
 	bool IsWalkableFixed(const Protocol::Vec2Fixed& position, int32& cellX, int32& cellY) const;
 	bool TryGetRandomWalkablePosition(Protocol::Vec2Fixed& position) const;
+	// Builds a shortest traversable route. The returned waypoints exclude start and include target.
+	bool TryFindPathFixed(const Protocol::Vec2Fixed& start, const Protocol::Vec2Fixed& target,
+		vector<Protocol::Vec2Fixed>& outWaypoints) const;
 	int32 FixedPointScale() const { return _fixedPointScale; }
 
 private:

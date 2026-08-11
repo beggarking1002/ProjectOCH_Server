@@ -1598,11 +1598,30 @@ class S_MOVE final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kPathFieldNumber = 5,
     kStartFieldNumber = 2,
     kTargetFieldNumber = 3,
     kObjectIdFieldNumber = 1,
     kDurationMsFieldNumber = 4,
   };
+  // repeated .Protocol.Vec2Fixed path = 5;
+  int path_size() const;
+  private:
+  int _internal_path_size() const;
+  public:
+  void clear_path();
+  ::Protocol::Vec2Fixed* mutable_path(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::Vec2Fixed >*
+      mutable_path();
+  private:
+  const ::Protocol::Vec2Fixed& _internal_path(int index) const;
+  ::Protocol::Vec2Fixed* _internal_add_path();
+  public:
+  const ::Protocol::Vec2Fixed& path(int index) const;
+  ::Protocol::Vec2Fixed* add_path();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::Vec2Fixed >&
+      path() const;
+
   // .Protocol.Vec2Fixed start = 2;
   bool has_start() const;
   private:
@@ -1665,6 +1684,7 @@ class S_MOVE final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::Vec2Fixed > path_;
     ::Protocol::Vec2Fixed* start_;
     ::Protocol::Vec2Fixed* target_;
     uint64_t object_id_;
@@ -6744,6 +6764,43 @@ inline void S_MOVE::_internal_set_duration_ms(uint32_t value) {
 inline void S_MOVE::set_duration_ms(uint32_t value) {
   _internal_set_duration_ms(value);
   // @@protoc_insertion_point(field_set:Protocol.S_MOVE.duration_ms)
+}
+
+// repeated .Protocol.Vec2Fixed path = 5;
+inline int S_MOVE::_internal_path_size() const {
+  return _impl_.path_.size();
+}
+inline int S_MOVE::path_size() const {
+  return _internal_path_size();
+}
+inline ::Protocol::Vec2Fixed* S_MOVE::mutable_path(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_MOVE.path)
+  return _impl_.path_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::Vec2Fixed >*
+S_MOVE::mutable_path() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_MOVE.path)
+  return &_impl_.path_;
+}
+inline const ::Protocol::Vec2Fixed& S_MOVE::_internal_path(int index) const {
+  return _impl_.path_.Get(index);
+}
+inline const ::Protocol::Vec2Fixed& S_MOVE::path(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_MOVE.path)
+  return _internal_path(index);
+}
+inline ::Protocol::Vec2Fixed* S_MOVE::_internal_add_path() {
+  return _impl_.path_.Add();
+}
+inline ::Protocol::Vec2Fixed* S_MOVE::add_path() {
+  ::Protocol::Vec2Fixed* _add = _internal_add_path();
+  // @@protoc_insertion_point(field_add:Protocol.S_MOVE.path)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::Vec2Fixed >&
+S_MOVE::path() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_MOVE.path)
+  return _impl_.path_;
 }
 
 // -------------------------------------------------------------------
