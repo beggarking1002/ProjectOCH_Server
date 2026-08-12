@@ -356,13 +356,55 @@ bool FieldWalkMapData::TryFindPathFixed(const Protocol::Vec2Fixed& start, const 
 	}
 	reverse(cells.begin(), cells.end());
 
+	vector<Protocol::Vec2Fixed> rawWaypoints;
 	for (size_t index = 0; index + 1 < cells.size(); index++)
 	{
 		Protocol::Vec2Fixed waypoint;
 		CellToFixed(cells[index].x, cells[index].y, waypoint);
-		outWaypoints.push_back(waypoint);
+		rawWaypoints.push_back(waypoint);
 	}
-	outWaypoints.push_back(target);
+	rawWaypoints.push_back(target);
+
+	// A* visits each hex center. Rendering every center makes even an open route
+	// appear as a tile-by-tile zigzag, so greedily pull the string taut between
+	// the farthest pairs that retain a fully walkable line of sight.
+	const int32 sampleSpacing = (max)(1, _fixedPointScale / 10);
+	auto hasWalkableLineOfSight = [this, sampleSpacing](const Protocol::Vec2Fixed& from, const Protocol::Vec2Fixed& to)
+		{
+			const double deltaX = static_cast<double>(to.x()) - static_cast<double>(from.x());
+			const double deltaY = static_cast<double>(to.y()) - static_cast<double>(from.y());
+			const int32 sampleCount = (max)(1, static_cast<int32>(ceil(sqrt((deltaX * deltaX) + (deltaY * deltaY)) / sampleSpacing)));
+			for (int32 sampleIndex = 0; sampleIndex <= sampleCount; sampleIndex++)
+			{
+				const double t = static_cast<double>(sampleIndex) / sampleCount;
+				Protocol::Vec2Fixed sample;
+				sample.set_x(static_cast<int32>(llround(static_cast<double>(from.x()) + (deltaX * t))));
+				sample.set_y(static_cast<int32>(llround(static_cast<double>(from.y()) + (deltaY * t))));
+				if (IsWalkableFixed(sample) == false)
+					return false;
+			}
+			return true;
+		};
+
+	Protocol::Vec2Fixed routeStart;
+	routeStart.CopyFrom(start);
+	for (size_t currentIndex = 0; currentIndex < rawWaypoints.size();)
+	{
+		size_t nextIndex = currentIndex;
+		for (size_t candidateIndex = rawWaypoints.size(); candidateIndex > currentIndex;)
+		{
+			candidateIndex--;
+			if (hasWalkableLineOfSight(routeStart, rawWaypoints[candidateIndex]))
+			{
+				nextIndex = candidateIndex;
+				break;
+			}
+		}
+
+		outWaypoints.push_back(rawWaypoints[nextIndex]);
+		routeStart.CopyFrom(rawWaypoints[nextIndex]);
+		currentIndex = nextIndex + 1;
+	}
 	return true;
 }
 
