@@ -6,11 +6,13 @@
 #include "ObjectUtils.h"
 #include "FieldWalkMapData.h"
 #include "BattleRoom.h"
+#include "VillageDataManager.h"
 
 RoomRef GRoom = make_shared<Room>();
 namespace
 {
 	constexpr double kFieldMoveSpeedWorldPerSecond = 3.2;
+	constexpr int32 kVillageInteractionRangeCells = 2;
 
 	uint32 GetFieldMoveDurationMs(const Protocol::Vec2Fixed& start, const vector<Protocol::Vec2Fixed>& path)
 	{
@@ -263,6 +265,70 @@ void Room::HandleMove(GameSessionRef session, Protocol::C_MOVE pkt)
 	Broadcast(sendBuffer);
 }
 
+void Room::HandleEnterVillage(GameSessionRef session, Protocol::C_ENTER_VILLAGE pkt)
+{
+	auto sendResult = [&session](bool success, const string& reason, const string& villageId,
+		const string& villageName, const string& villageDescription)
+		{
+			Protocol::S_ENTER_VILLAGE resultPkt;
+			resultPkt.set_success(success);
+			resultPkt.set_reason(reason);
+			resultPkt.set_village_id(villageId);
+			resultPkt.set_village_name(villageName);
+			resultPkt.set_village_description(villageDescription);
+			session->Send(ServerPacketHandler::MakeSendBuffer(resultPkt));
+		};
+
+	PlayerRef player = GetPlayerInRoom(session);
+	if (player == nullptr)
+	{
+		sendResult(false, "player is not in field", "", "", "");
+		return;
+	}
+
+	if (pkt.map_id() != GFieldWalkMapData.MapId())
+	{
+		sendResult(false, "requested map is not active", "", "", "");
+		return;
+	}
+
+	string villageId;
+	if (GFieldWalkMapData.TryGetVillageIdAtCell(pkt.cell_x(), pkt.cell_y(), villageId) == false)
+	{
+		sendResult(false, "target cell is not a village", "", "", "");
+		return;
+	}
+
+	int32 playerCellX = 0;
+	int32 playerCellY = 0;
+	if (GFieldWalkMapData.TryGetCellFromFixed(*player->position, playerCellX, playerCellY) == false)
+	{
+		sendResult(false, "player position is unavailable", "", "", "");
+		return;
+	}
+
+	if (GFieldWalkMapData.GetHexDistanceCells(playerCellX, playerCellY, pkt.cell_x(), pkt.cell_y()) >
+		kVillageInteractionRangeCells)
+	{
+		sendResult(false, "village is too far away", "", "", "");
+		return;
+	}
+
+	const VillageTemplate* village = GVillageData.GetVillage(villageId);
+	if (village == nullptr)
+	{
+		sendResult(false, "village content is not configured", villageId, "", "");
+		return;
+	}
+
+	cout << "C_ENTER_VILLAGE player_id=" << player->objectInfo->object_id()
+		<< " map_id=" << pkt.map_id()
+		<< " cell_x=" << pkt.cell_x()
+		<< " cell_y=" << pkt.cell_y()
+		<< " village_id=" << villageId << endl;
+
+	sendResult(true, "", village->villageId, village->name, village->description);
+}
 void Room::HandleBattleInvite(GameSessionRef session, Protocol::C_BATTLE_INVITE pkt)
 {
 	PlayerRef requester = GetPlayerInRoom(session);

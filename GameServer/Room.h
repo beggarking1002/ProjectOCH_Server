@@ -15,6 +15,7 @@ public:
 	bool HandleEnterPlayerFromBattle(PlayerRef player, uint64 battleId);
 	bool HandleLeavePlayer(GameSessionRef session);
 	void HandleMove(GameSessionRef session, Protocol::C_MOVE pkt);
+	void HandleEnterVillage(GameSessionRef session, Protocol::C_ENTER_VILLAGE pkt);
 	void HandleBattleInvite(GameSessionRef session, Protocol::C_BATTLE_INVITE pkt);
 	void HandleBattleInviteResponse(GameSessionRef session, Protocol::C_BATTLE_INVITE_RESPONSE pkt);
 	void HandleDebugBattleSelectionStart(GameSessionRef session);

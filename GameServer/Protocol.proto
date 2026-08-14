@@ -69,3 +69,19 @@ message S_CHAT
 	uint64 playerId = 1;
 	string msg = 2;
 }
+
+message C_ENTER_VILLAGE
+{
+	string map_id = 1;
+	sint32 cell_x = 2;
+	sint32 cell_y = 3;
+}
+
+message S_ENTER_VILLAGE
+{
+	bool success = 1;
+	string reason = 2;
+	string village_id = 3;
+	string village_name = 4;
+	string village_description = 5;
+}

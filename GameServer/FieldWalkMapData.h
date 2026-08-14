@@ -7,6 +7,7 @@ class FieldWalkMapData
 public:
 	struct Range
 	{
+		int32 y = 0;
 		int32 xMin = 0;
 		int32 xMax = 0;
 	};
@@ -17,6 +18,9 @@ public:
 
 	bool IsWalkableFixed(const Protocol::Vec2Fixed& position) const;
 	bool IsWalkableFixed(const Protocol::Vec2Fixed& position, int32& cellX, int32& cellY) const;
+	bool TryGetCellFromFixed(const Protocol::Vec2Fixed& position, int32& cellX, int32& cellY) const;
+	bool TryGetVillageIdAtCell(int32 cellX, int32 cellY, string& outVillageId) const;
+	int32 GetHexDistanceCells(int32 fromCellX, int32 fromCellY, int32 toCellX, int32 toCellY) const;
 	bool TryGetRandomWalkablePosition(Protocol::Vec2Fixed& position) const;
 	// Builds a shortest traversable route. The returned waypoints exclude start and include target.
 	bool TryFindPathFixed(const Protocol::Vec2Fixed& start, const Protocol::Vec2Fixed& target,
@@ -24,7 +28,14 @@ public:
 	int32 FixedPointScale() const { return _fixedPointScale; }
 
 private:
+	struct VillageArea
+	{
+		string villageId;
+		vector<Range> tileRanges;
+	};
+
 	bool IsWalkableCell(int32 cellX, int32 cellY) const;
+	bool IsVillageCell(int32 cellX, int32 cellY) const;
 	void FixedToCell(const Protocol::Vec2Fixed& position, int32& cellX, int32& cellY) const;
 	void CellToFixed(int32 cellX, int32 cellY, Protocol::Vec2Fixed& position) const;
 
@@ -37,6 +48,7 @@ private:
 	double _originWorldX = 0.0;
 	double _originWorldY = 0.0;
 	unordered_map<int32, vector<Range>> _walkableRanges;
+	vector<VillageArea> _villageAreas;
 };
 
 extern FieldWalkMapData GFieldWalkMapData;

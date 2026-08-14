@@ -92,6 +92,34 @@ namespace
 		return false;
 	}
 
+	vector<string> ExtractObjectBlocks(const string& arrayBlock)
+	{
+		vector<string> objects;
+		int32 depth = 0;
+		size_t objectStart = string::npos;
+
+		for (size_t i = 0; i < arrayBlock.size(); i++)
+		{
+			if (arrayBlock[i] == '{')
+			{
+				if (depth == 0)
+					objectStart = i;
+				depth++;
+			}
+			else if (arrayBlock[i] == '}')
+			{
+				depth--;
+				if (depth == 0 && objectStart != string::npos)
+				{
+					objects.push_back(arrayBlock.substr(objectStart, i - objectStart + 1));
+					objectStart = string::npos;
+				}
+			}
+		}
+
+		return objects;
+	}
+
 	bool IsOddRow(int32 cellY)
 	{
 		return (cellY & 1) != 0;
@@ -168,12 +196,14 @@ bool FieldWalkMapData::LoadFromFile(const string& path)
 	string cellSizeBlock;
 	string originWorldBlock;
 	string walkableRangesBlock;
+	string villageAreasBlock;
 
 	if (ExtractString(json, "map_id", mapId) == false ||
 		ExtractInt(json, "fixed_point_scale", fixedPointScale) == false ||
 		ExtractBlock(json, "cell_size", '{', '}', cellSizeBlock) == false ||
 		ExtractBlock(json, "origin_world", '{', '}', originWorldBlock) == false ||
-		ExtractBlock(json, "walkable_ranges", '[', ']', walkableRangesBlock) == false)
+		ExtractBlock(json, "walkable_ranges", '[', ']', walkableRangesBlock) == false ||
+		ExtractBlock(json, "village_areas", '[', ']', villageAreasBlock) == false)
 	{
 		cout << "[FieldWalkMapData] Invalid walkmap schema: " << path << endl;
 		return false;
@@ -204,6 +234,7 @@ bool FieldWalkMapData::LoadFromFile(const string& path)
 		const smatch& match = *it;
 		const int32 y = stoi(match[1].str());
 		Range range;
+		range.y = y;
 		range.xMin = stoi(match[2].str());
 		range.xMax = stoi(match[3].str());
 		if (range.xMax < range.xMin)
@@ -226,6 +257,41 @@ bool FieldWalkMapData::LoadFromFile(const string& path)
 			});
 	}
 
+	vector<VillageArea> villageAreas;
+	for (const string& villageBlock : ExtractObjectBlocks(villageAreasBlock))
+	{
+		VillageArea villageArea;
+		string tileRangesBlock;
+		if (ExtractString(villageBlock, "village_id", villageArea.villageId) == false ||
+			ExtractBlock(villageBlock, "tile_ranges", '[', ']', tileRangesBlock) == false ||
+			villageArea.villageId.empty())
+		{
+			cout << "[FieldWalkMapData] Invalid village_area: " << path << endl;
+			return false;
+		}
+
+		for (sregex_iterator it(tileRangesBlock.begin(), tileRangesBlock.end(), rangePattern), end; it != end; ++it)
+		{
+			const smatch& match = *it;
+			Range range;
+			range.xMin = stoi(match[2].str());
+			range.xMax = stoi(match[3].str());
+			if (range.xMax < range.xMin)
+				swap(range.xMin, range.xMax);
+
+			villageArea.tileRanges.push_back(range);
+			villageArea.tileRanges.back().y = stoi(match[1].str());
+		}
+
+		if (villageArea.tileRanges.empty())
+		{
+			cout << "[FieldWalkMapData] Empty village tile_ranges: " << villageArea.villageId << endl;
+			return false;
+		}
+
+		villageAreas.push_back(move(villageArea));
+	}
+
 	_mapId = mapId;
 	_fixedPointScale = fixedPointScale;
 	_cellSizeX = cellSizeX;
@@ -233,10 +299,12 @@ bool FieldWalkMapData::LoadFromFile(const string& path)
 	_originWorldX = originWorldX;
 	_originWorldY = originWorldY;
 	_walkableRanges = move(rangesByY);
+	_villageAreas = move(villageAreas);
 	_loaded = true;
 
 	cout << "[FieldWalkMapData] Loaded " << _mapId
 		<< " rows=" << _walkableRanges.size()
+		<< " village_areas=" << _villageAreas.size()
 		<< " fixed_point_scale=" << _fixedPointScale
 		<< " cell_size=(" << _cellSizeX << ", " << _cellSizeY << ")" << endl;
 
@@ -257,6 +325,43 @@ bool FieldWalkMapData::IsWalkableFixed(const Protocol::Vec2Fixed& position, int3
 
 	FixedToCell(position, cellX, cellY);
 	return IsWalkableCell(cellX, cellY);
+}
+
+bool FieldWalkMapData::TryGetCellFromFixed(const Protocol::Vec2Fixed& position, int32& cellX, int32& cellY) const
+{
+	if (_loaded == false)
+		return false;
+
+	FixedToCell(position, cellX, cellY);
+	return true;
+}
+
+bool FieldWalkMapData::TryGetVillageIdAtCell(int32 cellX, int32 cellY, string& outVillageId) const
+{
+	outVillageId.clear();
+	if (_loaded == false)
+		return false;
+
+	for (const VillageArea& villageArea : _villageAreas)
+	{
+		for (const Range& range : villageArea.tileRanges)
+		{
+			if (range.y == cellY && cellX >= range.xMin && cellX <= range.xMax)
+			{
+				outVillageId = villageArea.villageId;
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+int32 FieldWalkMapData::GetHexDistanceCells(int32 fromCellX, int32 fromCellY, int32 toCellX, int32 toCellY) const
+{
+	const FieldCell from{ fromCellX, fromCellY };
+	const FieldCell to{ toCellX, toCellY };
+	return EstimateHexDistance(from, to);
 }
 
 bool FieldWalkMapData::TryGetRandomWalkablePosition(Protocol::Vec2Fixed& position) const
@@ -410,6 +515,9 @@ bool FieldWalkMapData::TryFindPathFixed(const Protocol::Vec2Fixed& start, const 
 
 bool FieldWalkMapData::IsWalkableCell(int32 cellX, int32 cellY) const
 {
+	if (IsVillageCell(cellX, cellY))
+		return false;
+
 	auto findIt = _walkableRanges.find(cellY);
 	if (findIt == _walkableRanges.end())
 		return false;
@@ -418,6 +526,20 @@ bool FieldWalkMapData::IsWalkableCell(int32 cellX, int32 cellY) const
 	{
 		if (cellX >= range.xMin && cellX <= range.xMax)
 			return true;
+	}
+
+	return false;
+}
+
+bool FieldWalkMapData::IsVillageCell(int32 cellX, int32 cellY) const
+{
+	for (const VillageArea& villageArea : _villageAreas)
+	{
+		for (const Range& range : villageArea.tileRanges)
+		{
+			if (range.y == cellY && cellX >= range.xMin && cellX <= range.xMax)
+				return true;
+		}
 	}
 
 	return false;

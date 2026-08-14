@@ -78,6 +78,9 @@ extern C_ENTER_BATTLEDefaultTypeInternal _C_ENTER_BATTLE_default_instance_;
 class C_ENTER_GAME;
 struct C_ENTER_GAMEDefaultTypeInternal;
 extern C_ENTER_GAMEDefaultTypeInternal _C_ENTER_GAME_default_instance_;
+class C_ENTER_VILLAGE;
+struct C_ENTER_VILLAGEDefaultTypeInternal;
+extern C_ENTER_VILLAGEDefaultTypeInternal _C_ENTER_VILLAGE_default_instance_;
 class C_LEAVE_GAME;
 struct C_LEAVE_GAMEDefaultTypeInternal;
 extern C_LEAVE_GAMEDefaultTypeInternal _C_LEAVE_GAME_default_instance_;
@@ -132,6 +135,9 @@ extern S_ENTER_BATTLEDefaultTypeInternal _S_ENTER_BATTLE_default_instance_;
 class S_ENTER_GAME;
 struct S_ENTER_GAMEDefaultTypeInternal;
 extern S_ENTER_GAMEDefaultTypeInternal _S_ENTER_GAME_default_instance_;
+class S_ENTER_VILLAGE;
+struct S_ENTER_VILLAGEDefaultTypeInternal;
+extern S_ENTER_VILLAGEDefaultTypeInternal _S_ENTER_VILLAGE_default_instance_;
 class S_LEAVE_GAME;
 struct S_LEAVE_GAMEDefaultTypeInternal;
 extern S_LEAVE_GAMEDefaultTypeInternal _S_LEAVE_GAME_default_instance_;
@@ -156,6 +162,7 @@ template<> ::Protocol::C_BATTLE_SKILL* Arena::CreateMaybeMessage<::Protocol::C_B
 template<> ::Protocol::C_CHAT* Arena::CreateMaybeMessage<::Protocol::C_CHAT>(Arena*);
 template<> ::Protocol::C_ENTER_BATTLE* Arena::CreateMaybeMessage<::Protocol::C_ENTER_BATTLE>(Arena*);
 template<> ::Protocol::C_ENTER_GAME* Arena::CreateMaybeMessage<::Protocol::C_ENTER_GAME>(Arena*);
+template<> ::Protocol::C_ENTER_VILLAGE* Arena::CreateMaybeMessage<::Protocol::C_ENTER_VILLAGE>(Arena*);
 template<> ::Protocol::C_LEAVE_GAME* Arena::CreateMaybeMessage<::Protocol::C_LEAVE_GAME>(Arena*);
 template<> ::Protocol::C_LOGIN* Arena::CreateMaybeMessage<::Protocol::C_LOGIN>(Arena*);
 template<> ::Protocol::C_MOVE* Arena::CreateMaybeMessage<::Protocol::C_MOVE>(Arena*);
@@ -174,6 +181,7 @@ template<> ::Protocol::S_CHAT* Arena::CreateMaybeMessage<::Protocol::S_CHAT>(Are
 template<> ::Protocol::S_DESPAWN* Arena::CreateMaybeMessage<::Protocol::S_DESPAWN>(Arena*);
 template<> ::Protocol::S_ENTER_BATTLE* Arena::CreateMaybeMessage<::Protocol::S_ENTER_BATTLE>(Arena*);
 template<> ::Protocol::S_ENTER_GAME* Arena::CreateMaybeMessage<::Protocol::S_ENTER_GAME>(Arena*);
+template<> ::Protocol::S_ENTER_VILLAGE* Arena::CreateMaybeMessage<::Protocol::S_ENTER_VILLAGE>(Arena*);
 template<> ::Protocol::S_LEAVE_GAME* Arena::CreateMaybeMessage<::Protocol::S_LEAVE_GAME>(Arena*);
 template<> ::Protocol::S_LOGIN* Arena::CreateMaybeMessage<::Protocol::S_LOGIN>(Arena*);
 template<> ::Protocol::S_MOVE* Arena::CreateMaybeMessage<::Protocol::S_MOVE>(Arena*);
@@ -6195,6 +6203,393 @@ class S_BATTLE_CLASS_SELECTION_RESULT final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_Protocol_2eproto;
 };
+// -------------------------------------------------------------------
+
+class C_ENTER_VILLAGE final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.C_ENTER_VILLAGE) */ {
+ public:
+  inline C_ENTER_VILLAGE() : C_ENTER_VILLAGE(nullptr) {}
+  ~C_ENTER_VILLAGE() override;
+  explicit PROTOBUF_CONSTEXPR C_ENTER_VILLAGE(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  C_ENTER_VILLAGE(const C_ENTER_VILLAGE& from);
+  C_ENTER_VILLAGE(C_ENTER_VILLAGE&& from) noexcept
+    : C_ENTER_VILLAGE() {
+    *this = ::std::move(from);
+  }
+
+  inline C_ENTER_VILLAGE& operator=(const C_ENTER_VILLAGE& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline C_ENTER_VILLAGE& operator=(C_ENTER_VILLAGE&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const C_ENTER_VILLAGE& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const C_ENTER_VILLAGE* internal_default_instance() {
+    return reinterpret_cast<const C_ENTER_VILLAGE*>(
+               &_C_ENTER_VILLAGE_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    32;
+
+  friend void swap(C_ENTER_VILLAGE& a, C_ENTER_VILLAGE& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(C_ENTER_VILLAGE* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(C_ENTER_VILLAGE* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  C_ENTER_VILLAGE* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C_ENTER_VILLAGE>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const C_ENTER_VILLAGE& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const C_ENTER_VILLAGE& from) {
+    C_ENTER_VILLAGE::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(C_ENTER_VILLAGE* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.C_ENTER_VILLAGE";
+  }
+  protected:
+  explicit C_ENTER_VILLAGE(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kMapIdFieldNumber = 1,
+    kCellXFieldNumber = 2,
+    kCellYFieldNumber = 3,
+  };
+  // string map_id = 1;
+  void clear_map_id();
+  const std::string& map_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_map_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_map_id();
+  PROTOBUF_NODISCARD std::string* release_map_id();
+  void set_allocated_map_id(std::string* map_id);
+  private:
+  const std::string& _internal_map_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_map_id(const std::string& value);
+  std::string* _internal_mutable_map_id();
+  public:
+
+  // sint32 cell_x = 2;
+  void clear_cell_x();
+  int32_t cell_x() const;
+  void set_cell_x(int32_t value);
+  private:
+  int32_t _internal_cell_x() const;
+  void _internal_set_cell_x(int32_t value);
+  public:
+
+  // sint32 cell_y = 3;
+  void clear_cell_y();
+  int32_t cell_y() const;
+  void set_cell_y(int32_t value);
+  private:
+  int32_t _internal_cell_y() const;
+  void _internal_set_cell_y(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.C_ENTER_VILLAGE)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr map_id_;
+    int32_t cell_x_;
+    int32_t cell_y_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class S_ENTER_VILLAGE final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_ENTER_VILLAGE) */ {
+ public:
+  inline S_ENTER_VILLAGE() : S_ENTER_VILLAGE(nullptr) {}
+  ~S_ENTER_VILLAGE() override;
+  explicit PROTOBUF_CONSTEXPR S_ENTER_VILLAGE(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_ENTER_VILLAGE(const S_ENTER_VILLAGE& from);
+  S_ENTER_VILLAGE(S_ENTER_VILLAGE&& from) noexcept
+    : S_ENTER_VILLAGE() {
+    *this = ::std::move(from);
+  }
+
+  inline S_ENTER_VILLAGE& operator=(const S_ENTER_VILLAGE& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_ENTER_VILLAGE& operator=(S_ENTER_VILLAGE&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_ENTER_VILLAGE& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_ENTER_VILLAGE* internal_default_instance() {
+    return reinterpret_cast<const S_ENTER_VILLAGE*>(
+               &_S_ENTER_VILLAGE_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    33;
+
+  friend void swap(S_ENTER_VILLAGE& a, S_ENTER_VILLAGE& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_ENTER_VILLAGE* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_ENTER_VILLAGE* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_ENTER_VILLAGE* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_ENTER_VILLAGE>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_ENTER_VILLAGE& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const S_ENTER_VILLAGE& from) {
+    S_ENTER_VILLAGE::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_ENTER_VILLAGE* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_ENTER_VILLAGE";
+  }
+  protected:
+  explicit S_ENTER_VILLAGE(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kReasonFieldNumber = 2,
+    kVillageIdFieldNumber = 3,
+    kVillageNameFieldNumber = 4,
+    kVillageDescriptionFieldNumber = 5,
+    kSuccessFieldNumber = 1,
+  };
+  // string reason = 2;
+  void clear_reason();
+  const std::string& reason() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_reason(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_reason();
+  PROTOBUF_NODISCARD std::string* release_reason();
+  void set_allocated_reason(std::string* reason);
+  private:
+  const std::string& _internal_reason() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_reason(const std::string& value);
+  std::string* _internal_mutable_reason();
+  public:
+
+  // string village_id = 3;
+  void clear_village_id();
+  const std::string& village_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_village_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_village_id();
+  PROTOBUF_NODISCARD std::string* release_village_id();
+  void set_allocated_village_id(std::string* village_id);
+  private:
+  const std::string& _internal_village_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_village_id(const std::string& value);
+  std::string* _internal_mutable_village_id();
+  public:
+
+  // string village_name = 4;
+  void clear_village_name();
+  const std::string& village_name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_village_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_village_name();
+  PROTOBUF_NODISCARD std::string* release_village_name();
+  void set_allocated_village_name(std::string* village_name);
+  private:
+  const std::string& _internal_village_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_village_name(const std::string& value);
+  std::string* _internal_mutable_village_name();
+  public:
+
+  // string village_description = 5;
+  void clear_village_description();
+  const std::string& village_description() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_village_description(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_village_description();
+  PROTOBUF_NODISCARD std::string* release_village_description();
+  void set_allocated_village_description(std::string* village_description);
+  private:
+  const std::string& _internal_village_description() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_village_description(const std::string& value);
+  std::string* _internal_mutable_village_description();
+  public:
+
+  // bool success = 1;
+  void clear_success();
+  bool success() const;
+  void set_success(bool value);
+  private:
+  bool _internal_success() const;
+  void _internal_set_success(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_ENTER_VILLAGE)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr village_id_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr village_name_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr village_description_;
+    bool success_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
 // ===================================================================
 
 
@@ -10198,9 +10593,331 @@ inline void S_BATTLE_CLASS_SELECTION_RESULT::set_allocated_reason(std::string* r
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_BATTLE_CLASS_SELECTION_RESULT.reason)
 }
 
+// -------------------------------------------------------------------
+
+// C_ENTER_VILLAGE
+
+// string map_id = 1;
+inline void C_ENTER_VILLAGE::clear_map_id() {
+  _impl_.map_id_.ClearToEmpty();
+}
+inline const std::string& C_ENTER_VILLAGE::map_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_ENTER_VILLAGE.map_id)
+  return _internal_map_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void C_ENTER_VILLAGE::set_map_id(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.map_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.C_ENTER_VILLAGE.map_id)
+}
+inline std::string* C_ENTER_VILLAGE::mutable_map_id() {
+  std::string* _s = _internal_mutable_map_id();
+  // @@protoc_insertion_point(field_mutable:Protocol.C_ENTER_VILLAGE.map_id)
+  return _s;
+}
+inline const std::string& C_ENTER_VILLAGE::_internal_map_id() const {
+  return _impl_.map_id_.Get();
+}
+inline void C_ENTER_VILLAGE::_internal_set_map_id(const std::string& value) {
+  
+  _impl_.map_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* C_ENTER_VILLAGE::_internal_mutable_map_id() {
+  
+  return _impl_.map_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* C_ENTER_VILLAGE::release_map_id() {
+  // @@protoc_insertion_point(field_release:Protocol.C_ENTER_VILLAGE.map_id)
+  return _impl_.map_id_.Release();
+}
+inline void C_ENTER_VILLAGE::set_allocated_map_id(std::string* map_id) {
+  if (map_id != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.map_id_.SetAllocated(map_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.map_id_.IsDefault()) {
+    _impl_.map_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.C_ENTER_VILLAGE.map_id)
+}
+
+// sint32 cell_x = 2;
+inline void C_ENTER_VILLAGE::clear_cell_x() {
+  _impl_.cell_x_ = 0;
+}
+inline int32_t C_ENTER_VILLAGE::_internal_cell_x() const {
+  return _impl_.cell_x_;
+}
+inline int32_t C_ENTER_VILLAGE::cell_x() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_ENTER_VILLAGE.cell_x)
+  return _internal_cell_x();
+}
+inline void C_ENTER_VILLAGE::_internal_set_cell_x(int32_t value) {
+  
+  _impl_.cell_x_ = value;
+}
+inline void C_ENTER_VILLAGE::set_cell_x(int32_t value) {
+  _internal_set_cell_x(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_ENTER_VILLAGE.cell_x)
+}
+
+// sint32 cell_y = 3;
+inline void C_ENTER_VILLAGE::clear_cell_y() {
+  _impl_.cell_y_ = 0;
+}
+inline int32_t C_ENTER_VILLAGE::_internal_cell_y() const {
+  return _impl_.cell_y_;
+}
+inline int32_t C_ENTER_VILLAGE::cell_y() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_ENTER_VILLAGE.cell_y)
+  return _internal_cell_y();
+}
+inline void C_ENTER_VILLAGE::_internal_set_cell_y(int32_t value) {
+  
+  _impl_.cell_y_ = value;
+}
+inline void C_ENTER_VILLAGE::set_cell_y(int32_t value) {
+  _internal_set_cell_y(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_ENTER_VILLAGE.cell_y)
+}
+
+// -------------------------------------------------------------------
+
+// S_ENTER_VILLAGE
+
+// bool success = 1;
+inline void S_ENTER_VILLAGE::clear_success() {
+  _impl_.success_ = false;
+}
+inline bool S_ENTER_VILLAGE::_internal_success() const {
+  return _impl_.success_;
+}
+inline bool S_ENTER_VILLAGE::success() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_VILLAGE.success)
+  return _internal_success();
+}
+inline void S_ENTER_VILLAGE::_internal_set_success(bool value) {
+  
+  _impl_.success_ = value;
+}
+inline void S_ENTER_VILLAGE::set_success(bool value) {
+  _internal_set_success(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_ENTER_VILLAGE.success)
+}
+
+// string reason = 2;
+inline void S_ENTER_VILLAGE::clear_reason() {
+  _impl_.reason_.ClearToEmpty();
+}
+inline const std::string& S_ENTER_VILLAGE::reason() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_VILLAGE.reason)
+  return _internal_reason();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void S_ENTER_VILLAGE::set_reason(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.reason_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.S_ENTER_VILLAGE.reason)
+}
+inline std::string* S_ENTER_VILLAGE::mutable_reason() {
+  std::string* _s = _internal_mutable_reason();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_ENTER_VILLAGE.reason)
+  return _s;
+}
+inline const std::string& S_ENTER_VILLAGE::_internal_reason() const {
+  return _impl_.reason_.Get();
+}
+inline void S_ENTER_VILLAGE::_internal_set_reason(const std::string& value) {
+  
+  _impl_.reason_.Set(value, GetArenaForAllocation());
+}
+inline std::string* S_ENTER_VILLAGE::_internal_mutable_reason() {
+  
+  return _impl_.reason_.Mutable(GetArenaForAllocation());
+}
+inline std::string* S_ENTER_VILLAGE::release_reason() {
+  // @@protoc_insertion_point(field_release:Protocol.S_ENTER_VILLAGE.reason)
+  return _impl_.reason_.Release();
+}
+inline void S_ENTER_VILLAGE::set_allocated_reason(std::string* reason) {
+  if (reason != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.reason_.SetAllocated(reason, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.reason_.IsDefault()) {
+    _impl_.reason_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_ENTER_VILLAGE.reason)
+}
+
+// string village_id = 3;
+inline void S_ENTER_VILLAGE::clear_village_id() {
+  _impl_.village_id_.ClearToEmpty();
+}
+inline const std::string& S_ENTER_VILLAGE::village_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_VILLAGE.village_id)
+  return _internal_village_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void S_ENTER_VILLAGE::set_village_id(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.village_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.S_ENTER_VILLAGE.village_id)
+}
+inline std::string* S_ENTER_VILLAGE::mutable_village_id() {
+  std::string* _s = _internal_mutable_village_id();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_ENTER_VILLAGE.village_id)
+  return _s;
+}
+inline const std::string& S_ENTER_VILLAGE::_internal_village_id() const {
+  return _impl_.village_id_.Get();
+}
+inline void S_ENTER_VILLAGE::_internal_set_village_id(const std::string& value) {
+  
+  _impl_.village_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* S_ENTER_VILLAGE::_internal_mutable_village_id() {
+  
+  return _impl_.village_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* S_ENTER_VILLAGE::release_village_id() {
+  // @@protoc_insertion_point(field_release:Protocol.S_ENTER_VILLAGE.village_id)
+  return _impl_.village_id_.Release();
+}
+inline void S_ENTER_VILLAGE::set_allocated_village_id(std::string* village_id) {
+  if (village_id != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.village_id_.SetAllocated(village_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.village_id_.IsDefault()) {
+    _impl_.village_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_ENTER_VILLAGE.village_id)
+}
+
+// string village_name = 4;
+inline void S_ENTER_VILLAGE::clear_village_name() {
+  _impl_.village_name_.ClearToEmpty();
+}
+inline const std::string& S_ENTER_VILLAGE::village_name() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_VILLAGE.village_name)
+  return _internal_village_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void S_ENTER_VILLAGE::set_village_name(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.village_name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.S_ENTER_VILLAGE.village_name)
+}
+inline std::string* S_ENTER_VILLAGE::mutable_village_name() {
+  std::string* _s = _internal_mutable_village_name();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_ENTER_VILLAGE.village_name)
+  return _s;
+}
+inline const std::string& S_ENTER_VILLAGE::_internal_village_name() const {
+  return _impl_.village_name_.Get();
+}
+inline void S_ENTER_VILLAGE::_internal_set_village_name(const std::string& value) {
+  
+  _impl_.village_name_.Set(value, GetArenaForAllocation());
+}
+inline std::string* S_ENTER_VILLAGE::_internal_mutable_village_name() {
+  
+  return _impl_.village_name_.Mutable(GetArenaForAllocation());
+}
+inline std::string* S_ENTER_VILLAGE::release_village_name() {
+  // @@protoc_insertion_point(field_release:Protocol.S_ENTER_VILLAGE.village_name)
+  return _impl_.village_name_.Release();
+}
+inline void S_ENTER_VILLAGE::set_allocated_village_name(std::string* village_name) {
+  if (village_name != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.village_name_.SetAllocated(village_name, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.village_name_.IsDefault()) {
+    _impl_.village_name_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_ENTER_VILLAGE.village_name)
+}
+
+// string village_description = 5;
+inline void S_ENTER_VILLAGE::clear_village_description() {
+  _impl_.village_description_.ClearToEmpty();
+}
+inline const std::string& S_ENTER_VILLAGE::village_description() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_VILLAGE.village_description)
+  return _internal_village_description();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void S_ENTER_VILLAGE::set_village_description(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.village_description_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.S_ENTER_VILLAGE.village_description)
+}
+inline std::string* S_ENTER_VILLAGE::mutable_village_description() {
+  std::string* _s = _internal_mutable_village_description();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_ENTER_VILLAGE.village_description)
+  return _s;
+}
+inline const std::string& S_ENTER_VILLAGE::_internal_village_description() const {
+  return _impl_.village_description_.Get();
+}
+inline void S_ENTER_VILLAGE::_internal_set_village_description(const std::string& value) {
+  
+  _impl_.village_description_.Set(value, GetArenaForAllocation());
+}
+inline std::string* S_ENTER_VILLAGE::_internal_mutable_village_description() {
+  
+  return _impl_.village_description_.Mutable(GetArenaForAllocation());
+}
+inline std::string* S_ENTER_VILLAGE::release_village_description() {
+  // @@protoc_insertion_point(field_release:Protocol.S_ENTER_VILLAGE.village_description)
+  return _impl_.village_description_.Release();
+}
+inline void S_ENTER_VILLAGE::set_allocated_village_description(std::string* village_description) {
+  if (village_description != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.village_description_.SetAllocated(village_description, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.village_description_.IsDefault()) {
+    _impl_.village_description_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_ENTER_VILLAGE.village_description)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

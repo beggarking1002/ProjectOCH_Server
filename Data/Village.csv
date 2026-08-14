@@ -1,0 +1,7 @@
+VillageId,Name,Description,ArtworkAddress,ShopEnabled,InnEnabled,QuestEnabled
+string,string,string,string,bool,bool,bool
+village_northwatch,북부 감시 마을,눈 덮인 길목을 지키는 작은 정착지.,Village/village1,1,1,1
+village_eastgate,동부 관문,동쪽 상단 길목의 교역 마을.,Village/village2,1,1,1
+village_riverside,강변 마을,강과 숲이 만나는 교역 거점.,Village/village3,1,1,1
+village_westfield,서부 들판 마을,넓은 들판의 농경 마을.,Village/village4,1,1,1
+village_southport,남부 항구,남쪽 길의 상인들이 모이는 정착지.,Village/village5,1,1,1
