@@ -370,23 +370,25 @@ bool FieldWalkMapData::TryGetRandomWalkablePosition(Protocol::Vec2Fixed& positio
 		return false;
 
 	static thread_local mt19937 generator{ random_device{}() };
+	vector<FieldCell> spawnableCells;
+	for (const auto& [cellY, ranges] : _walkableRanges)
+	{
+		for (const Range& range : ranges)
+		{
+			for (int32 cellX = range.xMin; cellX <= range.xMax; cellX++)
+			{
+				if (IsVillageCell(cellX, cellY) == false)
+					spawnableCells.push_back({ cellX, cellY });
+			}
+		}
+	}
 
-	vector<int32> rows;
-	rows.reserve(_walkableRanges.size());
-	for (const auto& item : _walkableRanges)
-		rows.push_back(item.first);
+	if (spawnableCells.empty())
+		return false;
 
-	uniform_int_distribution<size_t> rowDist(0, rows.size() - 1);
-	const int32 cellY = rows[rowDist(generator)];
-	const vector<Range>& ranges = _walkableRanges.at(cellY);
-
-	uniform_int_distribution<size_t> rangeDist(0, ranges.size() - 1);
-	const Range& range = ranges[rangeDist(generator)];
-
-	uniform_int_distribution<int32> cellXDist(range.xMin, range.xMax);
-	const int32 cellX = cellXDist(generator);
-
-	CellToFixed(cellX, cellY, position);
+	uniform_int_distribution<size_t> cellDist(0, spawnableCells.size() - 1);
+	const FieldCell& spawnCell = spawnableCells[cellDist(generator)];
+	CellToFixed(spawnCell.x, spawnCell.y, position);
 	return true;
 }
 

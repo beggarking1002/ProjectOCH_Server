@@ -16,6 +16,9 @@ public:
 	bool HandleLeavePlayer(GameSessionRef session);
 	void HandleMove(GameSessionRef session, Protocol::C_MOVE pkt);
 	void HandleEnterVillage(GameSessionRef session, Protocol::C_ENTER_VILLAGE pkt);
+	void HandleVillageShopOpen(GameSessionRef session, Protocol::C_VILLAGE_SHOP_OPEN pkt);
+	void HandleVillageShopBuy(GameSessionRef session, Protocol::C_VILLAGE_SHOP_BUY pkt);
+	void HandleVillageShopSell(GameSessionRef session, Protocol::C_VILLAGE_SHOP_SELL pkt);
 	void HandleBattleInvite(GameSessionRef session, Protocol::C_BATTLE_INVITE pkt);
 	void HandleBattleInviteResponse(GameSessionRef session, Protocol::C_BATTLE_INVITE_RESPONSE pkt);
 	void HandleDebugBattleSelectionStart(GameSessionRef session);

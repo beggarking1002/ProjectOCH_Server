@@ -1,0 +1,14 @@
+ItemId,OriginVillageId,PremiumBuyerVillageId
+string,string,string
+trade_iron_ingot,village_eastgate,village_southport
+trade_copper,village_eastgate,village_riverside
+trade_gem,village_eastgate,village_southport
+trade_fur,village_northwatch,village_southport
+trade_frost_crystal,village_northwatch,village_eastgate
+trade_leather,village_riverside,village_northwatch
+trade_dye,village_riverside,village_westfield
+trade_silk,village_southport,village_eastgate
+trade_spice,village_southport,village_northwatch
+trade_oil,village_southport,village_northwatch
+trade_pearl,village_southport,village_eastgate
+trade_wool,village_westfield,village_southport

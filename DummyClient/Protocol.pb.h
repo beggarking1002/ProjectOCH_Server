@@ -90,6 +90,18 @@ extern C_LOGINDefaultTypeInternal _C_LOGIN_default_instance_;
 class C_MOVE;
 struct C_MOVEDefaultTypeInternal;
 extern C_MOVEDefaultTypeInternal _C_MOVE_default_instance_;
+class C_VILLAGE_SHOP_BUY;
+struct C_VILLAGE_SHOP_BUYDefaultTypeInternal;
+extern C_VILLAGE_SHOP_BUYDefaultTypeInternal _C_VILLAGE_SHOP_BUY_default_instance_;
+class C_VILLAGE_SHOP_OPEN;
+struct C_VILLAGE_SHOP_OPENDefaultTypeInternal;
+extern C_VILLAGE_SHOP_OPENDefaultTypeInternal _C_VILLAGE_SHOP_OPEN_default_instance_;
+class C_VILLAGE_SHOP_SELL;
+struct C_VILLAGE_SHOP_SELLDefaultTypeInternal;
+extern C_VILLAGE_SHOP_SELLDefaultTypeInternal _C_VILLAGE_SHOP_SELL_default_instance_;
+class ExpeditionItemStackInfo;
+struct ExpeditionItemStackInfoDefaultTypeInternal;
+extern ExpeditionItemStackInfoDefaultTypeInternal _ExpeditionItemStackInfo_default_instance_;
 class S_BATTLE_CLASS_SELECTION_RESULT;
 struct S_BATTLE_CLASS_SELECTION_RESULTDefaultTypeInternal;
 extern S_BATTLE_CLASS_SELECTION_RESULTDefaultTypeInternal _S_BATTLE_CLASS_SELECTION_RESULT_default_instance_;
@@ -138,6 +150,9 @@ extern S_ENTER_GAMEDefaultTypeInternal _S_ENTER_GAME_default_instance_;
 class S_ENTER_VILLAGE;
 struct S_ENTER_VILLAGEDefaultTypeInternal;
 extern S_ENTER_VILLAGEDefaultTypeInternal _S_ENTER_VILLAGE_default_instance_;
+class S_EXPEDITION_STATE;
+struct S_EXPEDITION_STATEDefaultTypeInternal;
+extern S_EXPEDITION_STATEDefaultTypeInternal _S_EXPEDITION_STATE_default_instance_;
 class S_LEAVE_GAME;
 struct S_LEAVE_GAMEDefaultTypeInternal;
 extern S_LEAVE_GAMEDefaultTypeInternal _S_LEAVE_GAME_default_instance_;
@@ -150,6 +165,15 @@ extern S_MOVEDefaultTypeInternal _S_MOVE_default_instance_;
 class S_SPAWN;
 struct S_SPAWNDefaultTypeInternal;
 extern S_SPAWNDefaultTypeInternal _S_SPAWN_default_instance_;
+class S_VILLAGE_SHOP_STATE;
+struct S_VILLAGE_SHOP_STATEDefaultTypeInternal;
+extern S_VILLAGE_SHOP_STATEDefaultTypeInternal _S_VILLAGE_SHOP_STATE_default_instance_;
+class VillageShopListingInfo;
+struct VillageShopListingInfoDefaultTypeInternal;
+extern VillageShopListingInfoDefaultTypeInternal _VillageShopListingInfo_default_instance_;
+class VillageTradeBuyOfferInfo;
+struct VillageTradeBuyOfferInfoDefaultTypeInternal;
+extern VillageTradeBuyOfferInfoDefaultTypeInternal _VillageTradeBuyOfferInfo_default_instance_;
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
 template<> ::Protocol::C_BATTLE_CLASS_SELECTION* Arena::CreateMaybeMessage<::Protocol::C_BATTLE_CLASS_SELECTION>(Arena*);
@@ -166,6 +190,10 @@ template<> ::Protocol::C_ENTER_VILLAGE* Arena::CreateMaybeMessage<::Protocol::C_
 template<> ::Protocol::C_LEAVE_GAME* Arena::CreateMaybeMessage<::Protocol::C_LEAVE_GAME>(Arena*);
 template<> ::Protocol::C_LOGIN* Arena::CreateMaybeMessage<::Protocol::C_LOGIN>(Arena*);
 template<> ::Protocol::C_MOVE* Arena::CreateMaybeMessage<::Protocol::C_MOVE>(Arena*);
+template<> ::Protocol::C_VILLAGE_SHOP_BUY* Arena::CreateMaybeMessage<::Protocol::C_VILLAGE_SHOP_BUY>(Arena*);
+template<> ::Protocol::C_VILLAGE_SHOP_OPEN* Arena::CreateMaybeMessage<::Protocol::C_VILLAGE_SHOP_OPEN>(Arena*);
+template<> ::Protocol::C_VILLAGE_SHOP_SELL* Arena::CreateMaybeMessage<::Protocol::C_VILLAGE_SHOP_SELL>(Arena*);
+template<> ::Protocol::ExpeditionItemStackInfo* Arena::CreateMaybeMessage<::Protocol::ExpeditionItemStackInfo>(Arena*);
 template<> ::Protocol::S_BATTLE_CLASS_SELECTION_RESULT* Arena::CreateMaybeMessage<::Protocol::S_BATTLE_CLASS_SELECTION_RESULT>(Arena*);
 template<> ::Protocol::S_BATTLE_CLASS_SELECTION_START* Arena::CreateMaybeMessage<::Protocol::S_BATTLE_CLASS_SELECTION_START>(Arena*);
 template<> ::Protocol::S_BATTLE_END_TURN* Arena::CreateMaybeMessage<::Protocol::S_BATTLE_END_TURN>(Arena*);
@@ -182,10 +210,14 @@ template<> ::Protocol::S_DESPAWN* Arena::CreateMaybeMessage<::Protocol::S_DESPAW
 template<> ::Protocol::S_ENTER_BATTLE* Arena::CreateMaybeMessage<::Protocol::S_ENTER_BATTLE>(Arena*);
 template<> ::Protocol::S_ENTER_GAME* Arena::CreateMaybeMessage<::Protocol::S_ENTER_GAME>(Arena*);
 template<> ::Protocol::S_ENTER_VILLAGE* Arena::CreateMaybeMessage<::Protocol::S_ENTER_VILLAGE>(Arena*);
+template<> ::Protocol::S_EXPEDITION_STATE* Arena::CreateMaybeMessage<::Protocol::S_EXPEDITION_STATE>(Arena*);
 template<> ::Protocol::S_LEAVE_GAME* Arena::CreateMaybeMessage<::Protocol::S_LEAVE_GAME>(Arena*);
 template<> ::Protocol::S_LOGIN* Arena::CreateMaybeMessage<::Protocol::S_LOGIN>(Arena*);
 template<> ::Protocol::S_MOVE* Arena::CreateMaybeMessage<::Protocol::S_MOVE>(Arena*);
 template<> ::Protocol::S_SPAWN* Arena::CreateMaybeMessage<::Protocol::S_SPAWN>(Arena*);
+template<> ::Protocol::S_VILLAGE_SHOP_STATE* Arena::CreateMaybeMessage<::Protocol::S_VILLAGE_SHOP_STATE>(Arena*);
+template<> ::Protocol::VillageShopListingInfo* Arena::CreateMaybeMessage<::Protocol::VillageShopListingInfo>(Arena*);
+template<> ::Protocol::VillageTradeBuyOfferInfo* Arena::CreateMaybeMessage<::Protocol::VillageTradeBuyOfferInfo>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace Protocol {
 
@@ -6590,6 +6622,1592 @@ class S_ENTER_VILLAGE final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_Protocol_2eproto;
 };
+// -------------------------------------------------------------------
+
+class ExpeditionItemStackInfo final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.ExpeditionItemStackInfo) */ {
+ public:
+  inline ExpeditionItemStackInfo() : ExpeditionItemStackInfo(nullptr) {}
+  ~ExpeditionItemStackInfo() override;
+  explicit PROTOBUF_CONSTEXPR ExpeditionItemStackInfo(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ExpeditionItemStackInfo(const ExpeditionItemStackInfo& from);
+  ExpeditionItemStackInfo(ExpeditionItemStackInfo&& from) noexcept
+    : ExpeditionItemStackInfo() {
+    *this = ::std::move(from);
+  }
+
+  inline ExpeditionItemStackInfo& operator=(const ExpeditionItemStackInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ExpeditionItemStackInfo& operator=(ExpeditionItemStackInfo&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ExpeditionItemStackInfo& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ExpeditionItemStackInfo* internal_default_instance() {
+    return reinterpret_cast<const ExpeditionItemStackInfo*>(
+               &_ExpeditionItemStackInfo_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    34;
+
+  friend void swap(ExpeditionItemStackInfo& a, ExpeditionItemStackInfo& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ExpeditionItemStackInfo* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ExpeditionItemStackInfo* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ExpeditionItemStackInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ExpeditionItemStackInfo>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const ExpeditionItemStackInfo& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const ExpeditionItemStackInfo& from) {
+    ExpeditionItemStackInfo::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ExpeditionItemStackInfo* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.ExpeditionItemStackInfo";
+  }
+  protected:
+  explicit ExpeditionItemStackInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kItemIdFieldNumber = 2,
+    kStackIdFieldNumber = 1,
+    kRemainingShelfLifeSecondsFieldNumber = 4,
+    kQuantityFieldNumber = 3,
+  };
+  // string item_id = 2;
+  void clear_item_id();
+  const std::string& item_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_item_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_item_id();
+  PROTOBUF_NODISCARD std::string* release_item_id();
+  void set_allocated_item_id(std::string* item_id);
+  private:
+  const std::string& _internal_item_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_item_id(const std::string& value);
+  std::string* _internal_mutable_item_id();
+  public:
+
+  // uint64 stack_id = 1;
+  void clear_stack_id();
+  uint64_t stack_id() const;
+  void set_stack_id(uint64_t value);
+  private:
+  uint64_t _internal_stack_id() const;
+  void _internal_set_stack_id(uint64_t value);
+  public:
+
+  // int64 remaining_shelf_life_seconds = 4;
+  void clear_remaining_shelf_life_seconds();
+  int64_t remaining_shelf_life_seconds() const;
+  void set_remaining_shelf_life_seconds(int64_t value);
+  private:
+  int64_t _internal_remaining_shelf_life_seconds() const;
+  void _internal_set_remaining_shelf_life_seconds(int64_t value);
+  public:
+
+  // int32 quantity = 3;
+  void clear_quantity();
+  int32_t quantity() const;
+  void set_quantity(int32_t value);
+  private:
+  int32_t _internal_quantity() const;
+  void _internal_set_quantity(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.ExpeditionItemStackInfo)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr item_id_;
+    uint64_t stack_id_;
+    int64_t remaining_shelf_life_seconds_;
+    int32_t quantity_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class VillageShopListingInfo final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.VillageShopListingInfo) */ {
+ public:
+  inline VillageShopListingInfo() : VillageShopListingInfo(nullptr) {}
+  ~VillageShopListingInfo() override;
+  explicit PROTOBUF_CONSTEXPR VillageShopListingInfo(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  VillageShopListingInfo(const VillageShopListingInfo& from);
+  VillageShopListingInfo(VillageShopListingInfo&& from) noexcept
+    : VillageShopListingInfo() {
+    *this = ::std::move(from);
+  }
+
+  inline VillageShopListingInfo& operator=(const VillageShopListingInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline VillageShopListingInfo& operator=(VillageShopListingInfo&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const VillageShopListingInfo& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const VillageShopListingInfo* internal_default_instance() {
+    return reinterpret_cast<const VillageShopListingInfo*>(
+               &_VillageShopListingInfo_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    35;
+
+  friend void swap(VillageShopListingInfo& a, VillageShopListingInfo& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(VillageShopListingInfo* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(VillageShopListingInfo* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  VillageShopListingInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<VillageShopListingInfo>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const VillageShopListingInfo& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const VillageShopListingInfo& from) {
+    VillageShopListingInfo::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(VillageShopListingInfo* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.VillageShopListingInfo";
+  }
+  protected:
+  explicit VillageShopListingInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kItemIdFieldNumber = 1,
+    kStockFieldNumber = 2,
+    kMaxStockFieldNumber = 3,
+    kUnitSellPriceFieldNumber = 4,
+  };
+  // string item_id = 1;
+  void clear_item_id();
+  const std::string& item_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_item_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_item_id();
+  PROTOBUF_NODISCARD std::string* release_item_id();
+  void set_allocated_item_id(std::string* item_id);
+  private:
+  const std::string& _internal_item_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_item_id(const std::string& value);
+  std::string* _internal_mutable_item_id();
+  public:
+
+  // int32 stock = 2;
+  void clear_stock();
+  int32_t stock() const;
+  void set_stock(int32_t value);
+  private:
+  int32_t _internal_stock() const;
+  void _internal_set_stock(int32_t value);
+  public:
+
+  // int32 max_stock = 3;
+  void clear_max_stock();
+  int32_t max_stock() const;
+  void set_max_stock(int32_t value);
+  private:
+  int32_t _internal_max_stock() const;
+  void _internal_set_max_stock(int32_t value);
+  public:
+
+  // int32 unit_sell_price = 4;
+  void clear_unit_sell_price();
+  int32_t unit_sell_price() const;
+  void set_unit_sell_price(int32_t value);
+  private:
+  int32_t _internal_unit_sell_price() const;
+  void _internal_set_unit_sell_price(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.VillageShopListingInfo)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr item_id_;
+    int32_t stock_;
+    int32_t max_stock_;
+    int32_t unit_sell_price_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class VillageTradeBuyOfferInfo final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.VillageTradeBuyOfferInfo) */ {
+ public:
+  inline VillageTradeBuyOfferInfo() : VillageTradeBuyOfferInfo(nullptr) {}
+  ~VillageTradeBuyOfferInfo() override;
+  explicit PROTOBUF_CONSTEXPR VillageTradeBuyOfferInfo(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  VillageTradeBuyOfferInfo(const VillageTradeBuyOfferInfo& from);
+  VillageTradeBuyOfferInfo(VillageTradeBuyOfferInfo&& from) noexcept
+    : VillageTradeBuyOfferInfo() {
+    *this = ::std::move(from);
+  }
+
+  inline VillageTradeBuyOfferInfo& operator=(const VillageTradeBuyOfferInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline VillageTradeBuyOfferInfo& operator=(VillageTradeBuyOfferInfo&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const VillageTradeBuyOfferInfo& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const VillageTradeBuyOfferInfo* internal_default_instance() {
+    return reinterpret_cast<const VillageTradeBuyOfferInfo*>(
+               &_VillageTradeBuyOfferInfo_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    36;
+
+  friend void swap(VillageTradeBuyOfferInfo& a, VillageTradeBuyOfferInfo& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(VillageTradeBuyOfferInfo* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(VillageTradeBuyOfferInfo* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  VillageTradeBuyOfferInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<VillageTradeBuyOfferInfo>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const VillageTradeBuyOfferInfo& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const VillageTradeBuyOfferInfo& from) {
+    VillageTradeBuyOfferInfo::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(VillageTradeBuyOfferInfo* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.VillageTradeBuyOfferInfo";
+  }
+  protected:
+  explicit VillageTradeBuyOfferInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kItemIdFieldNumber = 2,
+    kStackIdFieldNumber = 1,
+    kUnitBuyPriceFieldNumber = 3,
+  };
+  // string item_id = 2;
+  void clear_item_id();
+  const std::string& item_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_item_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_item_id();
+  PROTOBUF_NODISCARD std::string* release_item_id();
+  void set_allocated_item_id(std::string* item_id);
+  private:
+  const std::string& _internal_item_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_item_id(const std::string& value);
+  std::string* _internal_mutable_item_id();
+  public:
+
+  // uint64 stack_id = 1;
+  void clear_stack_id();
+  uint64_t stack_id() const;
+  void set_stack_id(uint64_t value);
+  private:
+  uint64_t _internal_stack_id() const;
+  void _internal_set_stack_id(uint64_t value);
+  public:
+
+  // int32 unit_buy_price = 3;
+  void clear_unit_buy_price();
+  int32_t unit_buy_price() const;
+  void set_unit_buy_price(int32_t value);
+  private:
+  int32_t _internal_unit_buy_price() const;
+  void _internal_set_unit_buy_price(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.VillageTradeBuyOfferInfo)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr item_id_;
+    uint64_t stack_id_;
+    int32_t unit_buy_price_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class S_EXPEDITION_STATE final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_EXPEDITION_STATE) */ {
+ public:
+  inline S_EXPEDITION_STATE() : S_EXPEDITION_STATE(nullptr) {}
+  ~S_EXPEDITION_STATE() override;
+  explicit PROTOBUF_CONSTEXPR S_EXPEDITION_STATE(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_EXPEDITION_STATE(const S_EXPEDITION_STATE& from);
+  S_EXPEDITION_STATE(S_EXPEDITION_STATE&& from) noexcept
+    : S_EXPEDITION_STATE() {
+    *this = ::std::move(from);
+  }
+
+  inline S_EXPEDITION_STATE& operator=(const S_EXPEDITION_STATE& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_EXPEDITION_STATE& operator=(S_EXPEDITION_STATE&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_EXPEDITION_STATE& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_EXPEDITION_STATE* internal_default_instance() {
+    return reinterpret_cast<const S_EXPEDITION_STATE*>(
+               &_S_EXPEDITION_STATE_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    37;
+
+  friend void swap(S_EXPEDITION_STATE& a, S_EXPEDITION_STATE& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_EXPEDITION_STATE* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_EXPEDITION_STATE* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_EXPEDITION_STATE* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_EXPEDITION_STATE>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_EXPEDITION_STATE& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const S_EXPEDITION_STATE& from) {
+    S_EXPEDITION_STATE::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_EXPEDITION_STATE* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_EXPEDITION_STATE";
+  }
+  protected:
+  explicit S_EXPEDITION_STATE(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kInventoryFieldNumber = 4,
+    kAutoConsumedItemIdsFieldNumber = 5,
+    kExpiredItemIdsFieldNumber = 6,
+    kGoldFieldNumber = 1,
+    kSatietyFieldNumber = 2,
+    kMaxSatietyFieldNumber = 3,
+    kThirstFieldNumber = 7,
+    kMaxThirstFieldNumber = 8,
+  };
+  // repeated .Protocol.ExpeditionItemStackInfo inventory = 4;
+  int inventory_size() const;
+  private:
+  int _internal_inventory_size() const;
+  public:
+  void clear_inventory();
+  ::Protocol::ExpeditionItemStackInfo* mutable_inventory(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ExpeditionItemStackInfo >*
+      mutable_inventory();
+  private:
+  const ::Protocol::ExpeditionItemStackInfo& _internal_inventory(int index) const;
+  ::Protocol::ExpeditionItemStackInfo* _internal_add_inventory();
+  public:
+  const ::Protocol::ExpeditionItemStackInfo& inventory(int index) const;
+  ::Protocol::ExpeditionItemStackInfo* add_inventory();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ExpeditionItemStackInfo >&
+      inventory() const;
+
+  // repeated string auto_consumed_item_ids = 5;
+  int auto_consumed_item_ids_size() const;
+  private:
+  int _internal_auto_consumed_item_ids_size() const;
+  public:
+  void clear_auto_consumed_item_ids();
+  const std::string& auto_consumed_item_ids(int index) const;
+  std::string* mutable_auto_consumed_item_ids(int index);
+  void set_auto_consumed_item_ids(int index, const std::string& value);
+  void set_auto_consumed_item_ids(int index, std::string&& value);
+  void set_auto_consumed_item_ids(int index, const char* value);
+  void set_auto_consumed_item_ids(int index, const char* value, size_t size);
+  std::string* add_auto_consumed_item_ids();
+  void add_auto_consumed_item_ids(const std::string& value);
+  void add_auto_consumed_item_ids(std::string&& value);
+  void add_auto_consumed_item_ids(const char* value);
+  void add_auto_consumed_item_ids(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& auto_consumed_item_ids() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_auto_consumed_item_ids();
+  private:
+  const std::string& _internal_auto_consumed_item_ids(int index) const;
+  std::string* _internal_add_auto_consumed_item_ids();
+  public:
+
+  // repeated string expired_item_ids = 6;
+  int expired_item_ids_size() const;
+  private:
+  int _internal_expired_item_ids_size() const;
+  public:
+  void clear_expired_item_ids();
+  const std::string& expired_item_ids(int index) const;
+  std::string* mutable_expired_item_ids(int index);
+  void set_expired_item_ids(int index, const std::string& value);
+  void set_expired_item_ids(int index, std::string&& value);
+  void set_expired_item_ids(int index, const char* value);
+  void set_expired_item_ids(int index, const char* value, size_t size);
+  std::string* add_expired_item_ids();
+  void add_expired_item_ids(const std::string& value);
+  void add_expired_item_ids(std::string&& value);
+  void add_expired_item_ids(const char* value);
+  void add_expired_item_ids(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& expired_item_ids() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_expired_item_ids();
+  private:
+  const std::string& _internal_expired_item_ids(int index) const;
+  std::string* _internal_add_expired_item_ids();
+  public:
+
+  // int32 gold = 1;
+  void clear_gold();
+  int32_t gold() const;
+  void set_gold(int32_t value);
+  private:
+  int32_t _internal_gold() const;
+  void _internal_set_gold(int32_t value);
+  public:
+
+  // int32 satiety = 2;
+  void clear_satiety();
+  int32_t satiety() const;
+  void set_satiety(int32_t value);
+  private:
+  int32_t _internal_satiety() const;
+  void _internal_set_satiety(int32_t value);
+  public:
+
+  // int32 max_satiety = 3;
+  void clear_max_satiety();
+  int32_t max_satiety() const;
+  void set_max_satiety(int32_t value);
+  private:
+  int32_t _internal_max_satiety() const;
+  void _internal_set_max_satiety(int32_t value);
+  public:
+
+  // int32 thirst = 7;
+  void clear_thirst();
+  int32_t thirst() const;
+  void set_thirst(int32_t value);
+  private:
+  int32_t _internal_thirst() const;
+  void _internal_set_thirst(int32_t value);
+  public:
+
+  // int32 max_thirst = 8;
+  void clear_max_thirst();
+  int32_t max_thirst() const;
+  void set_max_thirst(int32_t value);
+  private:
+  int32_t _internal_max_thirst() const;
+  void _internal_set_max_thirst(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_EXPEDITION_STATE)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ExpeditionItemStackInfo > inventory_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> auto_consumed_item_ids_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> expired_item_ids_;
+    int32_t gold_;
+    int32_t satiety_;
+    int32_t max_satiety_;
+    int32_t thirst_;
+    int32_t max_thirst_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class C_VILLAGE_SHOP_OPEN final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.C_VILLAGE_SHOP_OPEN) */ {
+ public:
+  inline C_VILLAGE_SHOP_OPEN() : C_VILLAGE_SHOP_OPEN(nullptr) {}
+  ~C_VILLAGE_SHOP_OPEN() override;
+  explicit PROTOBUF_CONSTEXPR C_VILLAGE_SHOP_OPEN(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  C_VILLAGE_SHOP_OPEN(const C_VILLAGE_SHOP_OPEN& from);
+  C_VILLAGE_SHOP_OPEN(C_VILLAGE_SHOP_OPEN&& from) noexcept
+    : C_VILLAGE_SHOP_OPEN() {
+    *this = ::std::move(from);
+  }
+
+  inline C_VILLAGE_SHOP_OPEN& operator=(const C_VILLAGE_SHOP_OPEN& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline C_VILLAGE_SHOP_OPEN& operator=(C_VILLAGE_SHOP_OPEN&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const C_VILLAGE_SHOP_OPEN& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const C_VILLAGE_SHOP_OPEN* internal_default_instance() {
+    return reinterpret_cast<const C_VILLAGE_SHOP_OPEN*>(
+               &_C_VILLAGE_SHOP_OPEN_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    38;
+
+  friend void swap(C_VILLAGE_SHOP_OPEN& a, C_VILLAGE_SHOP_OPEN& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(C_VILLAGE_SHOP_OPEN* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(C_VILLAGE_SHOP_OPEN* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  C_VILLAGE_SHOP_OPEN* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C_VILLAGE_SHOP_OPEN>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const C_VILLAGE_SHOP_OPEN& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const C_VILLAGE_SHOP_OPEN& from) {
+    C_VILLAGE_SHOP_OPEN::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(C_VILLAGE_SHOP_OPEN* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.C_VILLAGE_SHOP_OPEN";
+  }
+  protected:
+  explicit C_VILLAGE_SHOP_OPEN(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVillageIdFieldNumber = 1,
+  };
+  // string village_id = 1;
+  void clear_village_id();
+  const std::string& village_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_village_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_village_id();
+  PROTOBUF_NODISCARD std::string* release_village_id();
+  void set_allocated_village_id(std::string* village_id);
+  private:
+  const std::string& _internal_village_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_village_id(const std::string& value);
+  std::string* _internal_mutable_village_id();
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.C_VILLAGE_SHOP_OPEN)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr village_id_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class C_VILLAGE_SHOP_BUY final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.C_VILLAGE_SHOP_BUY) */ {
+ public:
+  inline C_VILLAGE_SHOP_BUY() : C_VILLAGE_SHOP_BUY(nullptr) {}
+  ~C_VILLAGE_SHOP_BUY() override;
+  explicit PROTOBUF_CONSTEXPR C_VILLAGE_SHOP_BUY(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  C_VILLAGE_SHOP_BUY(const C_VILLAGE_SHOP_BUY& from);
+  C_VILLAGE_SHOP_BUY(C_VILLAGE_SHOP_BUY&& from) noexcept
+    : C_VILLAGE_SHOP_BUY() {
+    *this = ::std::move(from);
+  }
+
+  inline C_VILLAGE_SHOP_BUY& operator=(const C_VILLAGE_SHOP_BUY& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline C_VILLAGE_SHOP_BUY& operator=(C_VILLAGE_SHOP_BUY&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const C_VILLAGE_SHOP_BUY& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const C_VILLAGE_SHOP_BUY* internal_default_instance() {
+    return reinterpret_cast<const C_VILLAGE_SHOP_BUY*>(
+               &_C_VILLAGE_SHOP_BUY_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    39;
+
+  friend void swap(C_VILLAGE_SHOP_BUY& a, C_VILLAGE_SHOP_BUY& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(C_VILLAGE_SHOP_BUY* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(C_VILLAGE_SHOP_BUY* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  C_VILLAGE_SHOP_BUY* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C_VILLAGE_SHOP_BUY>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const C_VILLAGE_SHOP_BUY& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const C_VILLAGE_SHOP_BUY& from) {
+    C_VILLAGE_SHOP_BUY::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(C_VILLAGE_SHOP_BUY* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.C_VILLAGE_SHOP_BUY";
+  }
+  protected:
+  explicit C_VILLAGE_SHOP_BUY(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVillageIdFieldNumber = 1,
+    kItemIdFieldNumber = 2,
+    kQuantityFieldNumber = 3,
+  };
+  // string village_id = 1;
+  void clear_village_id();
+  const std::string& village_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_village_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_village_id();
+  PROTOBUF_NODISCARD std::string* release_village_id();
+  void set_allocated_village_id(std::string* village_id);
+  private:
+  const std::string& _internal_village_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_village_id(const std::string& value);
+  std::string* _internal_mutable_village_id();
+  public:
+
+  // string item_id = 2;
+  void clear_item_id();
+  const std::string& item_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_item_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_item_id();
+  PROTOBUF_NODISCARD std::string* release_item_id();
+  void set_allocated_item_id(std::string* item_id);
+  private:
+  const std::string& _internal_item_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_item_id(const std::string& value);
+  std::string* _internal_mutable_item_id();
+  public:
+
+  // int32 quantity = 3;
+  void clear_quantity();
+  int32_t quantity() const;
+  void set_quantity(int32_t value);
+  private:
+  int32_t _internal_quantity() const;
+  void _internal_set_quantity(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.C_VILLAGE_SHOP_BUY)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr village_id_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr item_id_;
+    int32_t quantity_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class C_VILLAGE_SHOP_SELL final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.C_VILLAGE_SHOP_SELL) */ {
+ public:
+  inline C_VILLAGE_SHOP_SELL() : C_VILLAGE_SHOP_SELL(nullptr) {}
+  ~C_VILLAGE_SHOP_SELL() override;
+  explicit PROTOBUF_CONSTEXPR C_VILLAGE_SHOP_SELL(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  C_VILLAGE_SHOP_SELL(const C_VILLAGE_SHOP_SELL& from);
+  C_VILLAGE_SHOP_SELL(C_VILLAGE_SHOP_SELL&& from) noexcept
+    : C_VILLAGE_SHOP_SELL() {
+    *this = ::std::move(from);
+  }
+
+  inline C_VILLAGE_SHOP_SELL& operator=(const C_VILLAGE_SHOP_SELL& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline C_VILLAGE_SHOP_SELL& operator=(C_VILLAGE_SHOP_SELL&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const C_VILLAGE_SHOP_SELL& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const C_VILLAGE_SHOP_SELL* internal_default_instance() {
+    return reinterpret_cast<const C_VILLAGE_SHOP_SELL*>(
+               &_C_VILLAGE_SHOP_SELL_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    40;
+
+  friend void swap(C_VILLAGE_SHOP_SELL& a, C_VILLAGE_SHOP_SELL& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(C_VILLAGE_SHOP_SELL* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(C_VILLAGE_SHOP_SELL* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  C_VILLAGE_SHOP_SELL* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C_VILLAGE_SHOP_SELL>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const C_VILLAGE_SHOP_SELL& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const C_VILLAGE_SHOP_SELL& from) {
+    C_VILLAGE_SHOP_SELL::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(C_VILLAGE_SHOP_SELL* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.C_VILLAGE_SHOP_SELL";
+  }
+  protected:
+  explicit C_VILLAGE_SHOP_SELL(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVillageIdFieldNumber = 1,
+    kStackIdFieldNumber = 2,
+    kQuantityFieldNumber = 3,
+  };
+  // string village_id = 1;
+  void clear_village_id();
+  const std::string& village_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_village_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_village_id();
+  PROTOBUF_NODISCARD std::string* release_village_id();
+  void set_allocated_village_id(std::string* village_id);
+  private:
+  const std::string& _internal_village_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_village_id(const std::string& value);
+  std::string* _internal_mutable_village_id();
+  public:
+
+  // uint64 stack_id = 2;
+  void clear_stack_id();
+  uint64_t stack_id() const;
+  void set_stack_id(uint64_t value);
+  private:
+  uint64_t _internal_stack_id() const;
+  void _internal_set_stack_id(uint64_t value);
+  public:
+
+  // int32 quantity = 3;
+  void clear_quantity();
+  int32_t quantity() const;
+  void set_quantity(int32_t value);
+  private:
+  int32_t _internal_quantity() const;
+  void _internal_set_quantity(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.C_VILLAGE_SHOP_SELL)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr village_id_;
+    uint64_t stack_id_;
+    int32_t quantity_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class S_VILLAGE_SHOP_STATE final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_VILLAGE_SHOP_STATE) */ {
+ public:
+  inline S_VILLAGE_SHOP_STATE() : S_VILLAGE_SHOP_STATE(nullptr) {}
+  ~S_VILLAGE_SHOP_STATE() override;
+  explicit PROTOBUF_CONSTEXPR S_VILLAGE_SHOP_STATE(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_VILLAGE_SHOP_STATE(const S_VILLAGE_SHOP_STATE& from);
+  S_VILLAGE_SHOP_STATE(S_VILLAGE_SHOP_STATE&& from) noexcept
+    : S_VILLAGE_SHOP_STATE() {
+    *this = ::std::move(from);
+  }
+
+  inline S_VILLAGE_SHOP_STATE& operator=(const S_VILLAGE_SHOP_STATE& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_VILLAGE_SHOP_STATE& operator=(S_VILLAGE_SHOP_STATE&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_VILLAGE_SHOP_STATE& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_VILLAGE_SHOP_STATE* internal_default_instance() {
+    return reinterpret_cast<const S_VILLAGE_SHOP_STATE*>(
+               &_S_VILLAGE_SHOP_STATE_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    41;
+
+  friend void swap(S_VILLAGE_SHOP_STATE& a, S_VILLAGE_SHOP_STATE& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_VILLAGE_SHOP_STATE* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_VILLAGE_SHOP_STATE* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_VILLAGE_SHOP_STATE* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_VILLAGE_SHOP_STATE>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_VILLAGE_SHOP_STATE& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const S_VILLAGE_SHOP_STATE& from) {
+    S_VILLAGE_SHOP_STATE::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_VILLAGE_SHOP_STATE* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_VILLAGE_SHOP_STATE";
+  }
+  protected:
+  explicit S_VILLAGE_SHOP_STATE(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kListingsFieldNumber = 5,
+    kTradeBuyOffersFieldNumber = 8,
+    kReasonFieldNumber = 2,
+    kActionFieldNumber = 3,
+    kVillageIdFieldNumber = 4,
+    kExpeditionFieldNumber = 6,
+    kSuccessFieldNumber = 1,
+    kStockResetRemainingSecondsFieldNumber = 7,
+  };
+  // repeated .Protocol.VillageShopListingInfo listings = 5;
+  int listings_size() const;
+  private:
+  int _internal_listings_size() const;
+  public:
+  void clear_listings();
+  ::Protocol::VillageShopListingInfo* mutable_listings(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::VillageShopListingInfo >*
+      mutable_listings();
+  private:
+  const ::Protocol::VillageShopListingInfo& _internal_listings(int index) const;
+  ::Protocol::VillageShopListingInfo* _internal_add_listings();
+  public:
+  const ::Protocol::VillageShopListingInfo& listings(int index) const;
+  ::Protocol::VillageShopListingInfo* add_listings();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::VillageShopListingInfo >&
+      listings() const;
+
+  // repeated .Protocol.VillageTradeBuyOfferInfo trade_buy_offers = 8;
+  int trade_buy_offers_size() const;
+  private:
+  int _internal_trade_buy_offers_size() const;
+  public:
+  void clear_trade_buy_offers();
+  ::Protocol::VillageTradeBuyOfferInfo* mutable_trade_buy_offers(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::VillageTradeBuyOfferInfo >*
+      mutable_trade_buy_offers();
+  private:
+  const ::Protocol::VillageTradeBuyOfferInfo& _internal_trade_buy_offers(int index) const;
+  ::Protocol::VillageTradeBuyOfferInfo* _internal_add_trade_buy_offers();
+  public:
+  const ::Protocol::VillageTradeBuyOfferInfo& trade_buy_offers(int index) const;
+  ::Protocol::VillageTradeBuyOfferInfo* add_trade_buy_offers();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::VillageTradeBuyOfferInfo >&
+      trade_buy_offers() const;
+
+  // string reason = 2;
+  void clear_reason();
+  const std::string& reason() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_reason(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_reason();
+  PROTOBUF_NODISCARD std::string* release_reason();
+  void set_allocated_reason(std::string* reason);
+  private:
+  const std::string& _internal_reason() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_reason(const std::string& value);
+  std::string* _internal_mutable_reason();
+  public:
+
+  // string action = 3;
+  void clear_action();
+  const std::string& action() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_action(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_action();
+  PROTOBUF_NODISCARD std::string* release_action();
+  void set_allocated_action(std::string* action);
+  private:
+  const std::string& _internal_action() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_action(const std::string& value);
+  std::string* _internal_mutable_action();
+  public:
+
+  // string village_id = 4;
+  void clear_village_id();
+  const std::string& village_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_village_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_village_id();
+  PROTOBUF_NODISCARD std::string* release_village_id();
+  void set_allocated_village_id(std::string* village_id);
+  private:
+  const std::string& _internal_village_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_village_id(const std::string& value);
+  std::string* _internal_mutable_village_id();
+  public:
+
+  // .Protocol.S_EXPEDITION_STATE expedition = 6;
+  bool has_expedition() const;
+  private:
+  bool _internal_has_expedition() const;
+  public:
+  void clear_expedition();
+  const ::Protocol::S_EXPEDITION_STATE& expedition() const;
+  PROTOBUF_NODISCARD ::Protocol::S_EXPEDITION_STATE* release_expedition();
+  ::Protocol::S_EXPEDITION_STATE* mutable_expedition();
+  void set_allocated_expedition(::Protocol::S_EXPEDITION_STATE* expedition);
+  private:
+  const ::Protocol::S_EXPEDITION_STATE& _internal_expedition() const;
+  ::Protocol::S_EXPEDITION_STATE* _internal_mutable_expedition();
+  public:
+  void unsafe_arena_set_allocated_expedition(
+      ::Protocol::S_EXPEDITION_STATE* expedition);
+  ::Protocol::S_EXPEDITION_STATE* unsafe_arena_release_expedition();
+
+  // bool success = 1;
+  void clear_success();
+  bool success() const;
+  void set_success(bool value);
+  private:
+  bool _internal_success() const;
+  void _internal_set_success(bool value);
+  public:
+
+  // uint32 stock_reset_remaining_seconds = 7;
+  void clear_stock_reset_remaining_seconds();
+  uint32_t stock_reset_remaining_seconds() const;
+  void set_stock_reset_remaining_seconds(uint32_t value);
+  private:
+  uint32_t _internal_stock_reset_remaining_seconds() const;
+  void _internal_set_stock_reset_remaining_seconds(uint32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_VILLAGE_SHOP_STATE)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::VillageShopListingInfo > listings_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::VillageTradeBuyOfferInfo > trade_buy_offers_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr action_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr village_id_;
+    ::Protocol::S_EXPEDITION_STATE* expedition_;
+    bool success_;
+    uint32_t stock_reset_remaining_seconds_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
 // ===================================================================
 
 
@@ -10911,9 +12529,1277 @@ inline void S_ENTER_VILLAGE::set_allocated_village_description(std::string* vill
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_ENTER_VILLAGE.village_description)
 }
 
+// -------------------------------------------------------------------
+
+// ExpeditionItemStackInfo
+
+// uint64 stack_id = 1;
+inline void ExpeditionItemStackInfo::clear_stack_id() {
+  _impl_.stack_id_ = uint64_t{0u};
+}
+inline uint64_t ExpeditionItemStackInfo::_internal_stack_id() const {
+  return _impl_.stack_id_;
+}
+inline uint64_t ExpeditionItemStackInfo::stack_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.ExpeditionItemStackInfo.stack_id)
+  return _internal_stack_id();
+}
+inline void ExpeditionItemStackInfo::_internal_set_stack_id(uint64_t value) {
+  
+  _impl_.stack_id_ = value;
+}
+inline void ExpeditionItemStackInfo::set_stack_id(uint64_t value) {
+  _internal_set_stack_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.ExpeditionItemStackInfo.stack_id)
+}
+
+// string item_id = 2;
+inline void ExpeditionItemStackInfo::clear_item_id() {
+  _impl_.item_id_.ClearToEmpty();
+}
+inline const std::string& ExpeditionItemStackInfo::item_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.ExpeditionItemStackInfo.item_id)
+  return _internal_item_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ExpeditionItemStackInfo::set_item_id(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.item_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.ExpeditionItemStackInfo.item_id)
+}
+inline std::string* ExpeditionItemStackInfo::mutable_item_id() {
+  std::string* _s = _internal_mutable_item_id();
+  // @@protoc_insertion_point(field_mutable:Protocol.ExpeditionItemStackInfo.item_id)
+  return _s;
+}
+inline const std::string& ExpeditionItemStackInfo::_internal_item_id() const {
+  return _impl_.item_id_.Get();
+}
+inline void ExpeditionItemStackInfo::_internal_set_item_id(const std::string& value) {
+  
+  _impl_.item_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ExpeditionItemStackInfo::_internal_mutable_item_id() {
+  
+  return _impl_.item_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* ExpeditionItemStackInfo::release_item_id() {
+  // @@protoc_insertion_point(field_release:Protocol.ExpeditionItemStackInfo.item_id)
+  return _impl_.item_id_.Release();
+}
+inline void ExpeditionItemStackInfo::set_allocated_item_id(std::string* item_id) {
+  if (item_id != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.item_id_.SetAllocated(item_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.item_id_.IsDefault()) {
+    _impl_.item_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.ExpeditionItemStackInfo.item_id)
+}
+
+// int32 quantity = 3;
+inline void ExpeditionItemStackInfo::clear_quantity() {
+  _impl_.quantity_ = 0;
+}
+inline int32_t ExpeditionItemStackInfo::_internal_quantity() const {
+  return _impl_.quantity_;
+}
+inline int32_t ExpeditionItemStackInfo::quantity() const {
+  // @@protoc_insertion_point(field_get:Protocol.ExpeditionItemStackInfo.quantity)
+  return _internal_quantity();
+}
+inline void ExpeditionItemStackInfo::_internal_set_quantity(int32_t value) {
+  
+  _impl_.quantity_ = value;
+}
+inline void ExpeditionItemStackInfo::set_quantity(int32_t value) {
+  _internal_set_quantity(value);
+  // @@protoc_insertion_point(field_set:Protocol.ExpeditionItemStackInfo.quantity)
+}
+
+// int64 remaining_shelf_life_seconds = 4;
+inline void ExpeditionItemStackInfo::clear_remaining_shelf_life_seconds() {
+  _impl_.remaining_shelf_life_seconds_ = int64_t{0};
+}
+inline int64_t ExpeditionItemStackInfo::_internal_remaining_shelf_life_seconds() const {
+  return _impl_.remaining_shelf_life_seconds_;
+}
+inline int64_t ExpeditionItemStackInfo::remaining_shelf_life_seconds() const {
+  // @@protoc_insertion_point(field_get:Protocol.ExpeditionItemStackInfo.remaining_shelf_life_seconds)
+  return _internal_remaining_shelf_life_seconds();
+}
+inline void ExpeditionItemStackInfo::_internal_set_remaining_shelf_life_seconds(int64_t value) {
+  
+  _impl_.remaining_shelf_life_seconds_ = value;
+}
+inline void ExpeditionItemStackInfo::set_remaining_shelf_life_seconds(int64_t value) {
+  _internal_set_remaining_shelf_life_seconds(value);
+  // @@protoc_insertion_point(field_set:Protocol.ExpeditionItemStackInfo.remaining_shelf_life_seconds)
+}
+
+// -------------------------------------------------------------------
+
+// VillageShopListingInfo
+
+// string item_id = 1;
+inline void VillageShopListingInfo::clear_item_id() {
+  _impl_.item_id_.ClearToEmpty();
+}
+inline const std::string& VillageShopListingInfo::item_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.VillageShopListingInfo.item_id)
+  return _internal_item_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void VillageShopListingInfo::set_item_id(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.item_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.VillageShopListingInfo.item_id)
+}
+inline std::string* VillageShopListingInfo::mutable_item_id() {
+  std::string* _s = _internal_mutable_item_id();
+  // @@protoc_insertion_point(field_mutable:Protocol.VillageShopListingInfo.item_id)
+  return _s;
+}
+inline const std::string& VillageShopListingInfo::_internal_item_id() const {
+  return _impl_.item_id_.Get();
+}
+inline void VillageShopListingInfo::_internal_set_item_id(const std::string& value) {
+  
+  _impl_.item_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* VillageShopListingInfo::_internal_mutable_item_id() {
+  
+  return _impl_.item_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* VillageShopListingInfo::release_item_id() {
+  // @@protoc_insertion_point(field_release:Protocol.VillageShopListingInfo.item_id)
+  return _impl_.item_id_.Release();
+}
+inline void VillageShopListingInfo::set_allocated_item_id(std::string* item_id) {
+  if (item_id != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.item_id_.SetAllocated(item_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.item_id_.IsDefault()) {
+    _impl_.item_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.VillageShopListingInfo.item_id)
+}
+
+// int32 stock = 2;
+inline void VillageShopListingInfo::clear_stock() {
+  _impl_.stock_ = 0;
+}
+inline int32_t VillageShopListingInfo::_internal_stock() const {
+  return _impl_.stock_;
+}
+inline int32_t VillageShopListingInfo::stock() const {
+  // @@protoc_insertion_point(field_get:Protocol.VillageShopListingInfo.stock)
+  return _internal_stock();
+}
+inline void VillageShopListingInfo::_internal_set_stock(int32_t value) {
+  
+  _impl_.stock_ = value;
+}
+inline void VillageShopListingInfo::set_stock(int32_t value) {
+  _internal_set_stock(value);
+  // @@protoc_insertion_point(field_set:Protocol.VillageShopListingInfo.stock)
+}
+
+// int32 max_stock = 3;
+inline void VillageShopListingInfo::clear_max_stock() {
+  _impl_.max_stock_ = 0;
+}
+inline int32_t VillageShopListingInfo::_internal_max_stock() const {
+  return _impl_.max_stock_;
+}
+inline int32_t VillageShopListingInfo::max_stock() const {
+  // @@protoc_insertion_point(field_get:Protocol.VillageShopListingInfo.max_stock)
+  return _internal_max_stock();
+}
+inline void VillageShopListingInfo::_internal_set_max_stock(int32_t value) {
+  
+  _impl_.max_stock_ = value;
+}
+inline void VillageShopListingInfo::set_max_stock(int32_t value) {
+  _internal_set_max_stock(value);
+  // @@protoc_insertion_point(field_set:Protocol.VillageShopListingInfo.max_stock)
+}
+
+// int32 unit_sell_price = 4;
+inline void VillageShopListingInfo::clear_unit_sell_price() {
+  _impl_.unit_sell_price_ = 0;
+}
+inline int32_t VillageShopListingInfo::_internal_unit_sell_price() const {
+  return _impl_.unit_sell_price_;
+}
+inline int32_t VillageShopListingInfo::unit_sell_price() const {
+  // @@protoc_insertion_point(field_get:Protocol.VillageShopListingInfo.unit_sell_price)
+  return _internal_unit_sell_price();
+}
+inline void VillageShopListingInfo::_internal_set_unit_sell_price(int32_t value) {
+  
+  _impl_.unit_sell_price_ = value;
+}
+inline void VillageShopListingInfo::set_unit_sell_price(int32_t value) {
+  _internal_set_unit_sell_price(value);
+  // @@protoc_insertion_point(field_set:Protocol.VillageShopListingInfo.unit_sell_price)
+}
+
+// -------------------------------------------------------------------
+
+// VillageTradeBuyOfferInfo
+
+// uint64 stack_id = 1;
+inline void VillageTradeBuyOfferInfo::clear_stack_id() {
+  _impl_.stack_id_ = uint64_t{0u};
+}
+inline uint64_t VillageTradeBuyOfferInfo::_internal_stack_id() const {
+  return _impl_.stack_id_;
+}
+inline uint64_t VillageTradeBuyOfferInfo::stack_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.VillageTradeBuyOfferInfo.stack_id)
+  return _internal_stack_id();
+}
+inline void VillageTradeBuyOfferInfo::_internal_set_stack_id(uint64_t value) {
+  
+  _impl_.stack_id_ = value;
+}
+inline void VillageTradeBuyOfferInfo::set_stack_id(uint64_t value) {
+  _internal_set_stack_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.VillageTradeBuyOfferInfo.stack_id)
+}
+
+// string item_id = 2;
+inline void VillageTradeBuyOfferInfo::clear_item_id() {
+  _impl_.item_id_.ClearToEmpty();
+}
+inline const std::string& VillageTradeBuyOfferInfo::item_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.VillageTradeBuyOfferInfo.item_id)
+  return _internal_item_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void VillageTradeBuyOfferInfo::set_item_id(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.item_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.VillageTradeBuyOfferInfo.item_id)
+}
+inline std::string* VillageTradeBuyOfferInfo::mutable_item_id() {
+  std::string* _s = _internal_mutable_item_id();
+  // @@protoc_insertion_point(field_mutable:Protocol.VillageTradeBuyOfferInfo.item_id)
+  return _s;
+}
+inline const std::string& VillageTradeBuyOfferInfo::_internal_item_id() const {
+  return _impl_.item_id_.Get();
+}
+inline void VillageTradeBuyOfferInfo::_internal_set_item_id(const std::string& value) {
+  
+  _impl_.item_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* VillageTradeBuyOfferInfo::_internal_mutable_item_id() {
+  
+  return _impl_.item_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* VillageTradeBuyOfferInfo::release_item_id() {
+  // @@protoc_insertion_point(field_release:Protocol.VillageTradeBuyOfferInfo.item_id)
+  return _impl_.item_id_.Release();
+}
+inline void VillageTradeBuyOfferInfo::set_allocated_item_id(std::string* item_id) {
+  if (item_id != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.item_id_.SetAllocated(item_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.item_id_.IsDefault()) {
+    _impl_.item_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.VillageTradeBuyOfferInfo.item_id)
+}
+
+// int32 unit_buy_price = 3;
+inline void VillageTradeBuyOfferInfo::clear_unit_buy_price() {
+  _impl_.unit_buy_price_ = 0;
+}
+inline int32_t VillageTradeBuyOfferInfo::_internal_unit_buy_price() const {
+  return _impl_.unit_buy_price_;
+}
+inline int32_t VillageTradeBuyOfferInfo::unit_buy_price() const {
+  // @@protoc_insertion_point(field_get:Protocol.VillageTradeBuyOfferInfo.unit_buy_price)
+  return _internal_unit_buy_price();
+}
+inline void VillageTradeBuyOfferInfo::_internal_set_unit_buy_price(int32_t value) {
+  
+  _impl_.unit_buy_price_ = value;
+}
+inline void VillageTradeBuyOfferInfo::set_unit_buy_price(int32_t value) {
+  _internal_set_unit_buy_price(value);
+  // @@protoc_insertion_point(field_set:Protocol.VillageTradeBuyOfferInfo.unit_buy_price)
+}
+
+// -------------------------------------------------------------------
+
+// S_EXPEDITION_STATE
+
+// int32 gold = 1;
+inline void S_EXPEDITION_STATE::clear_gold() {
+  _impl_.gold_ = 0;
+}
+inline int32_t S_EXPEDITION_STATE::_internal_gold() const {
+  return _impl_.gold_;
+}
+inline int32_t S_EXPEDITION_STATE::gold() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_EXPEDITION_STATE.gold)
+  return _internal_gold();
+}
+inline void S_EXPEDITION_STATE::_internal_set_gold(int32_t value) {
+  
+  _impl_.gold_ = value;
+}
+inline void S_EXPEDITION_STATE::set_gold(int32_t value) {
+  _internal_set_gold(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_EXPEDITION_STATE.gold)
+}
+
+// int32 satiety = 2;
+inline void S_EXPEDITION_STATE::clear_satiety() {
+  _impl_.satiety_ = 0;
+}
+inline int32_t S_EXPEDITION_STATE::_internal_satiety() const {
+  return _impl_.satiety_;
+}
+inline int32_t S_EXPEDITION_STATE::satiety() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_EXPEDITION_STATE.satiety)
+  return _internal_satiety();
+}
+inline void S_EXPEDITION_STATE::_internal_set_satiety(int32_t value) {
+  
+  _impl_.satiety_ = value;
+}
+inline void S_EXPEDITION_STATE::set_satiety(int32_t value) {
+  _internal_set_satiety(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_EXPEDITION_STATE.satiety)
+}
+
+// int32 max_satiety = 3;
+inline void S_EXPEDITION_STATE::clear_max_satiety() {
+  _impl_.max_satiety_ = 0;
+}
+inline int32_t S_EXPEDITION_STATE::_internal_max_satiety() const {
+  return _impl_.max_satiety_;
+}
+inline int32_t S_EXPEDITION_STATE::max_satiety() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_EXPEDITION_STATE.max_satiety)
+  return _internal_max_satiety();
+}
+inline void S_EXPEDITION_STATE::_internal_set_max_satiety(int32_t value) {
+  
+  _impl_.max_satiety_ = value;
+}
+inline void S_EXPEDITION_STATE::set_max_satiety(int32_t value) {
+  _internal_set_max_satiety(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_EXPEDITION_STATE.max_satiety)
+}
+
+// repeated .Protocol.ExpeditionItemStackInfo inventory = 4;
+inline int S_EXPEDITION_STATE::_internal_inventory_size() const {
+  return _impl_.inventory_.size();
+}
+inline int S_EXPEDITION_STATE::inventory_size() const {
+  return _internal_inventory_size();
+}
+inline void S_EXPEDITION_STATE::clear_inventory() {
+  _impl_.inventory_.Clear();
+}
+inline ::Protocol::ExpeditionItemStackInfo* S_EXPEDITION_STATE::mutable_inventory(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_EXPEDITION_STATE.inventory)
+  return _impl_.inventory_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ExpeditionItemStackInfo >*
+S_EXPEDITION_STATE::mutable_inventory() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_EXPEDITION_STATE.inventory)
+  return &_impl_.inventory_;
+}
+inline const ::Protocol::ExpeditionItemStackInfo& S_EXPEDITION_STATE::_internal_inventory(int index) const {
+  return _impl_.inventory_.Get(index);
+}
+inline const ::Protocol::ExpeditionItemStackInfo& S_EXPEDITION_STATE::inventory(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_EXPEDITION_STATE.inventory)
+  return _internal_inventory(index);
+}
+inline ::Protocol::ExpeditionItemStackInfo* S_EXPEDITION_STATE::_internal_add_inventory() {
+  return _impl_.inventory_.Add();
+}
+inline ::Protocol::ExpeditionItemStackInfo* S_EXPEDITION_STATE::add_inventory() {
+  ::Protocol::ExpeditionItemStackInfo* _add = _internal_add_inventory();
+  // @@protoc_insertion_point(field_add:Protocol.S_EXPEDITION_STATE.inventory)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ExpeditionItemStackInfo >&
+S_EXPEDITION_STATE::inventory() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_EXPEDITION_STATE.inventory)
+  return _impl_.inventory_;
+}
+
+// repeated string auto_consumed_item_ids = 5;
+inline int S_EXPEDITION_STATE::_internal_auto_consumed_item_ids_size() const {
+  return _impl_.auto_consumed_item_ids_.size();
+}
+inline int S_EXPEDITION_STATE::auto_consumed_item_ids_size() const {
+  return _internal_auto_consumed_item_ids_size();
+}
+inline void S_EXPEDITION_STATE::clear_auto_consumed_item_ids() {
+  _impl_.auto_consumed_item_ids_.Clear();
+}
+inline std::string* S_EXPEDITION_STATE::add_auto_consumed_item_ids() {
+  std::string* _s = _internal_add_auto_consumed_item_ids();
+  // @@protoc_insertion_point(field_add_mutable:Protocol.S_EXPEDITION_STATE.auto_consumed_item_ids)
+  return _s;
+}
+inline const std::string& S_EXPEDITION_STATE::_internal_auto_consumed_item_ids(int index) const {
+  return _impl_.auto_consumed_item_ids_.Get(index);
+}
+inline const std::string& S_EXPEDITION_STATE::auto_consumed_item_ids(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_EXPEDITION_STATE.auto_consumed_item_ids)
+  return _internal_auto_consumed_item_ids(index);
+}
+inline std::string* S_EXPEDITION_STATE::mutable_auto_consumed_item_ids(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_EXPEDITION_STATE.auto_consumed_item_ids)
+  return _impl_.auto_consumed_item_ids_.Mutable(index);
+}
+inline void S_EXPEDITION_STATE::set_auto_consumed_item_ids(int index, const std::string& value) {
+  _impl_.auto_consumed_item_ids_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_EXPEDITION_STATE.auto_consumed_item_ids)
+}
+inline void S_EXPEDITION_STATE::set_auto_consumed_item_ids(int index, std::string&& value) {
+  _impl_.auto_consumed_item_ids_.Mutable(index)->assign(std::move(value));
+  // @@protoc_insertion_point(field_set:Protocol.S_EXPEDITION_STATE.auto_consumed_item_ids)
+}
+inline void S_EXPEDITION_STATE::set_auto_consumed_item_ids(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _impl_.auto_consumed_item_ids_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:Protocol.S_EXPEDITION_STATE.auto_consumed_item_ids)
+}
+inline void S_EXPEDITION_STATE::set_auto_consumed_item_ids(int index, const char* value, size_t size) {
+  _impl_.auto_consumed_item_ids_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:Protocol.S_EXPEDITION_STATE.auto_consumed_item_ids)
+}
+inline std::string* S_EXPEDITION_STATE::_internal_add_auto_consumed_item_ids() {
+  return _impl_.auto_consumed_item_ids_.Add();
+}
+inline void S_EXPEDITION_STATE::add_auto_consumed_item_ids(const std::string& value) {
+  _impl_.auto_consumed_item_ids_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:Protocol.S_EXPEDITION_STATE.auto_consumed_item_ids)
+}
+inline void S_EXPEDITION_STATE::add_auto_consumed_item_ids(std::string&& value) {
+  _impl_.auto_consumed_item_ids_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:Protocol.S_EXPEDITION_STATE.auto_consumed_item_ids)
+}
+inline void S_EXPEDITION_STATE::add_auto_consumed_item_ids(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _impl_.auto_consumed_item_ids_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:Protocol.S_EXPEDITION_STATE.auto_consumed_item_ids)
+}
+inline void S_EXPEDITION_STATE::add_auto_consumed_item_ids(const char* value, size_t size) {
+  _impl_.auto_consumed_item_ids_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:Protocol.S_EXPEDITION_STATE.auto_consumed_item_ids)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+S_EXPEDITION_STATE::auto_consumed_item_ids() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_EXPEDITION_STATE.auto_consumed_item_ids)
+  return _impl_.auto_consumed_item_ids_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+S_EXPEDITION_STATE::mutable_auto_consumed_item_ids() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_EXPEDITION_STATE.auto_consumed_item_ids)
+  return &_impl_.auto_consumed_item_ids_;
+}
+
+// repeated string expired_item_ids = 6;
+inline int S_EXPEDITION_STATE::_internal_expired_item_ids_size() const {
+  return _impl_.expired_item_ids_.size();
+}
+inline int S_EXPEDITION_STATE::expired_item_ids_size() const {
+  return _internal_expired_item_ids_size();
+}
+inline void S_EXPEDITION_STATE::clear_expired_item_ids() {
+  _impl_.expired_item_ids_.Clear();
+}
+inline std::string* S_EXPEDITION_STATE::add_expired_item_ids() {
+  std::string* _s = _internal_add_expired_item_ids();
+  // @@protoc_insertion_point(field_add_mutable:Protocol.S_EXPEDITION_STATE.expired_item_ids)
+  return _s;
+}
+inline const std::string& S_EXPEDITION_STATE::_internal_expired_item_ids(int index) const {
+  return _impl_.expired_item_ids_.Get(index);
+}
+inline const std::string& S_EXPEDITION_STATE::expired_item_ids(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_EXPEDITION_STATE.expired_item_ids)
+  return _internal_expired_item_ids(index);
+}
+inline std::string* S_EXPEDITION_STATE::mutable_expired_item_ids(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_EXPEDITION_STATE.expired_item_ids)
+  return _impl_.expired_item_ids_.Mutable(index);
+}
+inline void S_EXPEDITION_STATE::set_expired_item_ids(int index, const std::string& value) {
+  _impl_.expired_item_ids_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_EXPEDITION_STATE.expired_item_ids)
+}
+inline void S_EXPEDITION_STATE::set_expired_item_ids(int index, std::string&& value) {
+  _impl_.expired_item_ids_.Mutable(index)->assign(std::move(value));
+  // @@protoc_insertion_point(field_set:Protocol.S_EXPEDITION_STATE.expired_item_ids)
+}
+inline void S_EXPEDITION_STATE::set_expired_item_ids(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _impl_.expired_item_ids_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:Protocol.S_EXPEDITION_STATE.expired_item_ids)
+}
+inline void S_EXPEDITION_STATE::set_expired_item_ids(int index, const char* value, size_t size) {
+  _impl_.expired_item_ids_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:Protocol.S_EXPEDITION_STATE.expired_item_ids)
+}
+inline std::string* S_EXPEDITION_STATE::_internal_add_expired_item_ids() {
+  return _impl_.expired_item_ids_.Add();
+}
+inline void S_EXPEDITION_STATE::add_expired_item_ids(const std::string& value) {
+  _impl_.expired_item_ids_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:Protocol.S_EXPEDITION_STATE.expired_item_ids)
+}
+inline void S_EXPEDITION_STATE::add_expired_item_ids(std::string&& value) {
+  _impl_.expired_item_ids_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:Protocol.S_EXPEDITION_STATE.expired_item_ids)
+}
+inline void S_EXPEDITION_STATE::add_expired_item_ids(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _impl_.expired_item_ids_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:Protocol.S_EXPEDITION_STATE.expired_item_ids)
+}
+inline void S_EXPEDITION_STATE::add_expired_item_ids(const char* value, size_t size) {
+  _impl_.expired_item_ids_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:Protocol.S_EXPEDITION_STATE.expired_item_ids)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+S_EXPEDITION_STATE::expired_item_ids() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_EXPEDITION_STATE.expired_item_ids)
+  return _impl_.expired_item_ids_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+S_EXPEDITION_STATE::mutable_expired_item_ids() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_EXPEDITION_STATE.expired_item_ids)
+  return &_impl_.expired_item_ids_;
+}
+
+// int32 thirst = 7;
+inline void S_EXPEDITION_STATE::clear_thirst() {
+  _impl_.thirst_ = 0;
+}
+inline int32_t S_EXPEDITION_STATE::_internal_thirst() const {
+  return _impl_.thirst_;
+}
+inline int32_t S_EXPEDITION_STATE::thirst() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_EXPEDITION_STATE.thirst)
+  return _internal_thirst();
+}
+inline void S_EXPEDITION_STATE::_internal_set_thirst(int32_t value) {
+  
+  _impl_.thirst_ = value;
+}
+inline void S_EXPEDITION_STATE::set_thirst(int32_t value) {
+  _internal_set_thirst(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_EXPEDITION_STATE.thirst)
+}
+
+// int32 max_thirst = 8;
+inline void S_EXPEDITION_STATE::clear_max_thirst() {
+  _impl_.max_thirst_ = 0;
+}
+inline int32_t S_EXPEDITION_STATE::_internal_max_thirst() const {
+  return _impl_.max_thirst_;
+}
+inline int32_t S_EXPEDITION_STATE::max_thirst() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_EXPEDITION_STATE.max_thirst)
+  return _internal_max_thirst();
+}
+inline void S_EXPEDITION_STATE::_internal_set_max_thirst(int32_t value) {
+  
+  _impl_.max_thirst_ = value;
+}
+inline void S_EXPEDITION_STATE::set_max_thirst(int32_t value) {
+  _internal_set_max_thirst(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_EXPEDITION_STATE.max_thirst)
+}
+
+// -------------------------------------------------------------------
+
+// C_VILLAGE_SHOP_OPEN
+
+// string village_id = 1;
+inline void C_VILLAGE_SHOP_OPEN::clear_village_id() {
+  _impl_.village_id_.ClearToEmpty();
+}
+inline const std::string& C_VILLAGE_SHOP_OPEN::village_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_VILLAGE_SHOP_OPEN.village_id)
+  return _internal_village_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void C_VILLAGE_SHOP_OPEN::set_village_id(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.village_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.C_VILLAGE_SHOP_OPEN.village_id)
+}
+inline std::string* C_VILLAGE_SHOP_OPEN::mutable_village_id() {
+  std::string* _s = _internal_mutable_village_id();
+  // @@protoc_insertion_point(field_mutable:Protocol.C_VILLAGE_SHOP_OPEN.village_id)
+  return _s;
+}
+inline const std::string& C_VILLAGE_SHOP_OPEN::_internal_village_id() const {
+  return _impl_.village_id_.Get();
+}
+inline void C_VILLAGE_SHOP_OPEN::_internal_set_village_id(const std::string& value) {
+  
+  _impl_.village_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* C_VILLAGE_SHOP_OPEN::_internal_mutable_village_id() {
+  
+  return _impl_.village_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* C_VILLAGE_SHOP_OPEN::release_village_id() {
+  // @@protoc_insertion_point(field_release:Protocol.C_VILLAGE_SHOP_OPEN.village_id)
+  return _impl_.village_id_.Release();
+}
+inline void C_VILLAGE_SHOP_OPEN::set_allocated_village_id(std::string* village_id) {
+  if (village_id != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.village_id_.SetAllocated(village_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.village_id_.IsDefault()) {
+    _impl_.village_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.C_VILLAGE_SHOP_OPEN.village_id)
+}
+
+// -------------------------------------------------------------------
+
+// C_VILLAGE_SHOP_BUY
+
+// string village_id = 1;
+inline void C_VILLAGE_SHOP_BUY::clear_village_id() {
+  _impl_.village_id_.ClearToEmpty();
+}
+inline const std::string& C_VILLAGE_SHOP_BUY::village_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_VILLAGE_SHOP_BUY.village_id)
+  return _internal_village_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void C_VILLAGE_SHOP_BUY::set_village_id(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.village_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.C_VILLAGE_SHOP_BUY.village_id)
+}
+inline std::string* C_VILLAGE_SHOP_BUY::mutable_village_id() {
+  std::string* _s = _internal_mutable_village_id();
+  // @@protoc_insertion_point(field_mutable:Protocol.C_VILLAGE_SHOP_BUY.village_id)
+  return _s;
+}
+inline const std::string& C_VILLAGE_SHOP_BUY::_internal_village_id() const {
+  return _impl_.village_id_.Get();
+}
+inline void C_VILLAGE_SHOP_BUY::_internal_set_village_id(const std::string& value) {
+  
+  _impl_.village_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* C_VILLAGE_SHOP_BUY::_internal_mutable_village_id() {
+  
+  return _impl_.village_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* C_VILLAGE_SHOP_BUY::release_village_id() {
+  // @@protoc_insertion_point(field_release:Protocol.C_VILLAGE_SHOP_BUY.village_id)
+  return _impl_.village_id_.Release();
+}
+inline void C_VILLAGE_SHOP_BUY::set_allocated_village_id(std::string* village_id) {
+  if (village_id != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.village_id_.SetAllocated(village_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.village_id_.IsDefault()) {
+    _impl_.village_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.C_VILLAGE_SHOP_BUY.village_id)
+}
+
+// string item_id = 2;
+inline void C_VILLAGE_SHOP_BUY::clear_item_id() {
+  _impl_.item_id_.ClearToEmpty();
+}
+inline const std::string& C_VILLAGE_SHOP_BUY::item_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_VILLAGE_SHOP_BUY.item_id)
+  return _internal_item_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void C_VILLAGE_SHOP_BUY::set_item_id(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.item_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.C_VILLAGE_SHOP_BUY.item_id)
+}
+inline std::string* C_VILLAGE_SHOP_BUY::mutable_item_id() {
+  std::string* _s = _internal_mutable_item_id();
+  // @@protoc_insertion_point(field_mutable:Protocol.C_VILLAGE_SHOP_BUY.item_id)
+  return _s;
+}
+inline const std::string& C_VILLAGE_SHOP_BUY::_internal_item_id() const {
+  return _impl_.item_id_.Get();
+}
+inline void C_VILLAGE_SHOP_BUY::_internal_set_item_id(const std::string& value) {
+  
+  _impl_.item_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* C_VILLAGE_SHOP_BUY::_internal_mutable_item_id() {
+  
+  return _impl_.item_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* C_VILLAGE_SHOP_BUY::release_item_id() {
+  // @@protoc_insertion_point(field_release:Protocol.C_VILLAGE_SHOP_BUY.item_id)
+  return _impl_.item_id_.Release();
+}
+inline void C_VILLAGE_SHOP_BUY::set_allocated_item_id(std::string* item_id) {
+  if (item_id != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.item_id_.SetAllocated(item_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.item_id_.IsDefault()) {
+    _impl_.item_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.C_VILLAGE_SHOP_BUY.item_id)
+}
+
+// int32 quantity = 3;
+inline void C_VILLAGE_SHOP_BUY::clear_quantity() {
+  _impl_.quantity_ = 0;
+}
+inline int32_t C_VILLAGE_SHOP_BUY::_internal_quantity() const {
+  return _impl_.quantity_;
+}
+inline int32_t C_VILLAGE_SHOP_BUY::quantity() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_VILLAGE_SHOP_BUY.quantity)
+  return _internal_quantity();
+}
+inline void C_VILLAGE_SHOP_BUY::_internal_set_quantity(int32_t value) {
+  
+  _impl_.quantity_ = value;
+}
+inline void C_VILLAGE_SHOP_BUY::set_quantity(int32_t value) {
+  _internal_set_quantity(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_VILLAGE_SHOP_BUY.quantity)
+}
+
+// -------------------------------------------------------------------
+
+// C_VILLAGE_SHOP_SELL
+
+// string village_id = 1;
+inline void C_VILLAGE_SHOP_SELL::clear_village_id() {
+  _impl_.village_id_.ClearToEmpty();
+}
+inline const std::string& C_VILLAGE_SHOP_SELL::village_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_VILLAGE_SHOP_SELL.village_id)
+  return _internal_village_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void C_VILLAGE_SHOP_SELL::set_village_id(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.village_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.C_VILLAGE_SHOP_SELL.village_id)
+}
+inline std::string* C_VILLAGE_SHOP_SELL::mutable_village_id() {
+  std::string* _s = _internal_mutable_village_id();
+  // @@protoc_insertion_point(field_mutable:Protocol.C_VILLAGE_SHOP_SELL.village_id)
+  return _s;
+}
+inline const std::string& C_VILLAGE_SHOP_SELL::_internal_village_id() const {
+  return _impl_.village_id_.Get();
+}
+inline void C_VILLAGE_SHOP_SELL::_internal_set_village_id(const std::string& value) {
+  
+  _impl_.village_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* C_VILLAGE_SHOP_SELL::_internal_mutable_village_id() {
+  
+  return _impl_.village_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* C_VILLAGE_SHOP_SELL::release_village_id() {
+  // @@protoc_insertion_point(field_release:Protocol.C_VILLAGE_SHOP_SELL.village_id)
+  return _impl_.village_id_.Release();
+}
+inline void C_VILLAGE_SHOP_SELL::set_allocated_village_id(std::string* village_id) {
+  if (village_id != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.village_id_.SetAllocated(village_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.village_id_.IsDefault()) {
+    _impl_.village_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.C_VILLAGE_SHOP_SELL.village_id)
+}
+
+// uint64 stack_id = 2;
+inline void C_VILLAGE_SHOP_SELL::clear_stack_id() {
+  _impl_.stack_id_ = uint64_t{0u};
+}
+inline uint64_t C_VILLAGE_SHOP_SELL::_internal_stack_id() const {
+  return _impl_.stack_id_;
+}
+inline uint64_t C_VILLAGE_SHOP_SELL::stack_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_VILLAGE_SHOP_SELL.stack_id)
+  return _internal_stack_id();
+}
+inline void C_VILLAGE_SHOP_SELL::_internal_set_stack_id(uint64_t value) {
+  
+  _impl_.stack_id_ = value;
+}
+inline void C_VILLAGE_SHOP_SELL::set_stack_id(uint64_t value) {
+  _internal_set_stack_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_VILLAGE_SHOP_SELL.stack_id)
+}
+
+// int32 quantity = 3;
+inline void C_VILLAGE_SHOP_SELL::clear_quantity() {
+  _impl_.quantity_ = 0;
+}
+inline int32_t C_VILLAGE_SHOP_SELL::_internal_quantity() const {
+  return _impl_.quantity_;
+}
+inline int32_t C_VILLAGE_SHOP_SELL::quantity() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_VILLAGE_SHOP_SELL.quantity)
+  return _internal_quantity();
+}
+inline void C_VILLAGE_SHOP_SELL::_internal_set_quantity(int32_t value) {
+  
+  _impl_.quantity_ = value;
+}
+inline void C_VILLAGE_SHOP_SELL::set_quantity(int32_t value) {
+  _internal_set_quantity(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_VILLAGE_SHOP_SELL.quantity)
+}
+
+// -------------------------------------------------------------------
+
+// S_VILLAGE_SHOP_STATE
+
+// bool success = 1;
+inline void S_VILLAGE_SHOP_STATE::clear_success() {
+  _impl_.success_ = false;
+}
+inline bool S_VILLAGE_SHOP_STATE::_internal_success() const {
+  return _impl_.success_;
+}
+inline bool S_VILLAGE_SHOP_STATE::success() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_VILLAGE_SHOP_STATE.success)
+  return _internal_success();
+}
+inline void S_VILLAGE_SHOP_STATE::_internal_set_success(bool value) {
+  
+  _impl_.success_ = value;
+}
+inline void S_VILLAGE_SHOP_STATE::set_success(bool value) {
+  _internal_set_success(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_VILLAGE_SHOP_STATE.success)
+}
+
+// string reason = 2;
+inline void S_VILLAGE_SHOP_STATE::clear_reason() {
+  _impl_.reason_.ClearToEmpty();
+}
+inline const std::string& S_VILLAGE_SHOP_STATE::reason() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_VILLAGE_SHOP_STATE.reason)
+  return _internal_reason();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void S_VILLAGE_SHOP_STATE::set_reason(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.reason_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.S_VILLAGE_SHOP_STATE.reason)
+}
+inline std::string* S_VILLAGE_SHOP_STATE::mutable_reason() {
+  std::string* _s = _internal_mutable_reason();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_VILLAGE_SHOP_STATE.reason)
+  return _s;
+}
+inline const std::string& S_VILLAGE_SHOP_STATE::_internal_reason() const {
+  return _impl_.reason_.Get();
+}
+inline void S_VILLAGE_SHOP_STATE::_internal_set_reason(const std::string& value) {
+  
+  _impl_.reason_.Set(value, GetArenaForAllocation());
+}
+inline std::string* S_VILLAGE_SHOP_STATE::_internal_mutable_reason() {
+  
+  return _impl_.reason_.Mutable(GetArenaForAllocation());
+}
+inline std::string* S_VILLAGE_SHOP_STATE::release_reason() {
+  // @@protoc_insertion_point(field_release:Protocol.S_VILLAGE_SHOP_STATE.reason)
+  return _impl_.reason_.Release();
+}
+inline void S_VILLAGE_SHOP_STATE::set_allocated_reason(std::string* reason) {
+  if (reason != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.reason_.SetAllocated(reason, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.reason_.IsDefault()) {
+    _impl_.reason_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_VILLAGE_SHOP_STATE.reason)
+}
+
+// string action = 3;
+inline void S_VILLAGE_SHOP_STATE::clear_action() {
+  _impl_.action_.ClearToEmpty();
+}
+inline const std::string& S_VILLAGE_SHOP_STATE::action() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_VILLAGE_SHOP_STATE.action)
+  return _internal_action();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void S_VILLAGE_SHOP_STATE::set_action(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.action_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.S_VILLAGE_SHOP_STATE.action)
+}
+inline std::string* S_VILLAGE_SHOP_STATE::mutable_action() {
+  std::string* _s = _internal_mutable_action();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_VILLAGE_SHOP_STATE.action)
+  return _s;
+}
+inline const std::string& S_VILLAGE_SHOP_STATE::_internal_action() const {
+  return _impl_.action_.Get();
+}
+inline void S_VILLAGE_SHOP_STATE::_internal_set_action(const std::string& value) {
+  
+  _impl_.action_.Set(value, GetArenaForAllocation());
+}
+inline std::string* S_VILLAGE_SHOP_STATE::_internal_mutable_action() {
+  
+  return _impl_.action_.Mutable(GetArenaForAllocation());
+}
+inline std::string* S_VILLAGE_SHOP_STATE::release_action() {
+  // @@protoc_insertion_point(field_release:Protocol.S_VILLAGE_SHOP_STATE.action)
+  return _impl_.action_.Release();
+}
+inline void S_VILLAGE_SHOP_STATE::set_allocated_action(std::string* action) {
+  if (action != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.action_.SetAllocated(action, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.action_.IsDefault()) {
+    _impl_.action_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_VILLAGE_SHOP_STATE.action)
+}
+
+// string village_id = 4;
+inline void S_VILLAGE_SHOP_STATE::clear_village_id() {
+  _impl_.village_id_.ClearToEmpty();
+}
+inline const std::string& S_VILLAGE_SHOP_STATE::village_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_VILLAGE_SHOP_STATE.village_id)
+  return _internal_village_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void S_VILLAGE_SHOP_STATE::set_village_id(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.village_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.S_VILLAGE_SHOP_STATE.village_id)
+}
+inline std::string* S_VILLAGE_SHOP_STATE::mutable_village_id() {
+  std::string* _s = _internal_mutable_village_id();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_VILLAGE_SHOP_STATE.village_id)
+  return _s;
+}
+inline const std::string& S_VILLAGE_SHOP_STATE::_internal_village_id() const {
+  return _impl_.village_id_.Get();
+}
+inline void S_VILLAGE_SHOP_STATE::_internal_set_village_id(const std::string& value) {
+  
+  _impl_.village_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* S_VILLAGE_SHOP_STATE::_internal_mutable_village_id() {
+  
+  return _impl_.village_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* S_VILLAGE_SHOP_STATE::release_village_id() {
+  // @@protoc_insertion_point(field_release:Protocol.S_VILLAGE_SHOP_STATE.village_id)
+  return _impl_.village_id_.Release();
+}
+inline void S_VILLAGE_SHOP_STATE::set_allocated_village_id(std::string* village_id) {
+  if (village_id != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.village_id_.SetAllocated(village_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.village_id_.IsDefault()) {
+    _impl_.village_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_VILLAGE_SHOP_STATE.village_id)
+}
+
+// repeated .Protocol.VillageShopListingInfo listings = 5;
+inline int S_VILLAGE_SHOP_STATE::_internal_listings_size() const {
+  return _impl_.listings_.size();
+}
+inline int S_VILLAGE_SHOP_STATE::listings_size() const {
+  return _internal_listings_size();
+}
+inline void S_VILLAGE_SHOP_STATE::clear_listings() {
+  _impl_.listings_.Clear();
+}
+inline ::Protocol::VillageShopListingInfo* S_VILLAGE_SHOP_STATE::mutable_listings(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_VILLAGE_SHOP_STATE.listings)
+  return _impl_.listings_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::VillageShopListingInfo >*
+S_VILLAGE_SHOP_STATE::mutable_listings() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_VILLAGE_SHOP_STATE.listings)
+  return &_impl_.listings_;
+}
+inline const ::Protocol::VillageShopListingInfo& S_VILLAGE_SHOP_STATE::_internal_listings(int index) const {
+  return _impl_.listings_.Get(index);
+}
+inline const ::Protocol::VillageShopListingInfo& S_VILLAGE_SHOP_STATE::listings(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_VILLAGE_SHOP_STATE.listings)
+  return _internal_listings(index);
+}
+inline ::Protocol::VillageShopListingInfo* S_VILLAGE_SHOP_STATE::_internal_add_listings() {
+  return _impl_.listings_.Add();
+}
+inline ::Protocol::VillageShopListingInfo* S_VILLAGE_SHOP_STATE::add_listings() {
+  ::Protocol::VillageShopListingInfo* _add = _internal_add_listings();
+  // @@protoc_insertion_point(field_add:Protocol.S_VILLAGE_SHOP_STATE.listings)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::VillageShopListingInfo >&
+S_VILLAGE_SHOP_STATE::listings() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_VILLAGE_SHOP_STATE.listings)
+  return _impl_.listings_;
+}
+
+// .Protocol.S_EXPEDITION_STATE expedition = 6;
+inline bool S_VILLAGE_SHOP_STATE::_internal_has_expedition() const {
+  return this != internal_default_instance() && _impl_.expedition_ != nullptr;
+}
+inline bool S_VILLAGE_SHOP_STATE::has_expedition() const {
+  return _internal_has_expedition();
+}
+inline void S_VILLAGE_SHOP_STATE::clear_expedition() {
+  if (GetArenaForAllocation() == nullptr && _impl_.expedition_ != nullptr) {
+    delete _impl_.expedition_;
+  }
+  _impl_.expedition_ = nullptr;
+}
+inline const ::Protocol::S_EXPEDITION_STATE& S_VILLAGE_SHOP_STATE::_internal_expedition() const {
+  const ::Protocol::S_EXPEDITION_STATE* p = _impl_.expedition_;
+  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::S_EXPEDITION_STATE&>(
+      ::Protocol::_S_EXPEDITION_STATE_default_instance_);
+}
+inline const ::Protocol::S_EXPEDITION_STATE& S_VILLAGE_SHOP_STATE::expedition() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_VILLAGE_SHOP_STATE.expedition)
+  return _internal_expedition();
+}
+inline void S_VILLAGE_SHOP_STATE::unsafe_arena_set_allocated_expedition(
+    ::Protocol::S_EXPEDITION_STATE* expedition) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.expedition_);
+  }
+  _impl_.expedition_ = expedition;
+  if (expedition) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.S_VILLAGE_SHOP_STATE.expedition)
+}
+inline ::Protocol::S_EXPEDITION_STATE* S_VILLAGE_SHOP_STATE::release_expedition() {
+  
+  ::Protocol::S_EXPEDITION_STATE* temp = _impl_.expedition_;
+  _impl_.expedition_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::Protocol::S_EXPEDITION_STATE* S_VILLAGE_SHOP_STATE::unsafe_arena_release_expedition() {
+  // @@protoc_insertion_point(field_release:Protocol.S_VILLAGE_SHOP_STATE.expedition)
+  
+  ::Protocol::S_EXPEDITION_STATE* temp = _impl_.expedition_;
+  _impl_.expedition_ = nullptr;
+  return temp;
+}
+inline ::Protocol::S_EXPEDITION_STATE* S_VILLAGE_SHOP_STATE::_internal_mutable_expedition() {
+  
+  if (_impl_.expedition_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Protocol::S_EXPEDITION_STATE>(GetArenaForAllocation());
+    _impl_.expedition_ = p;
+  }
+  return _impl_.expedition_;
+}
+inline ::Protocol::S_EXPEDITION_STATE* S_VILLAGE_SHOP_STATE::mutable_expedition() {
+  ::Protocol::S_EXPEDITION_STATE* _msg = _internal_mutable_expedition();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_VILLAGE_SHOP_STATE.expedition)
+  return _msg;
+}
+inline void S_VILLAGE_SHOP_STATE::set_allocated_expedition(::Protocol::S_EXPEDITION_STATE* expedition) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.expedition_;
+  }
+  if (expedition) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(expedition);
+    if (message_arena != submessage_arena) {
+      expedition = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, expedition, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.expedition_ = expedition;
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_VILLAGE_SHOP_STATE.expedition)
+}
+
+// uint32 stock_reset_remaining_seconds = 7;
+inline void S_VILLAGE_SHOP_STATE::clear_stock_reset_remaining_seconds() {
+  _impl_.stock_reset_remaining_seconds_ = 0u;
+}
+inline uint32_t S_VILLAGE_SHOP_STATE::_internal_stock_reset_remaining_seconds() const {
+  return _impl_.stock_reset_remaining_seconds_;
+}
+inline uint32_t S_VILLAGE_SHOP_STATE::stock_reset_remaining_seconds() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_VILLAGE_SHOP_STATE.stock_reset_remaining_seconds)
+  return _internal_stock_reset_remaining_seconds();
+}
+inline void S_VILLAGE_SHOP_STATE::_internal_set_stock_reset_remaining_seconds(uint32_t value) {
+  
+  _impl_.stock_reset_remaining_seconds_ = value;
+}
+inline void S_VILLAGE_SHOP_STATE::set_stock_reset_remaining_seconds(uint32_t value) {
+  _internal_set_stock_reset_remaining_seconds(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_VILLAGE_SHOP_STATE.stock_reset_remaining_seconds)
+}
+
+// repeated .Protocol.VillageTradeBuyOfferInfo trade_buy_offers = 8;
+inline int S_VILLAGE_SHOP_STATE::_internal_trade_buy_offers_size() const {
+  return _impl_.trade_buy_offers_.size();
+}
+inline int S_VILLAGE_SHOP_STATE::trade_buy_offers_size() const {
+  return _internal_trade_buy_offers_size();
+}
+inline void S_VILLAGE_SHOP_STATE::clear_trade_buy_offers() {
+  _impl_.trade_buy_offers_.Clear();
+}
+inline ::Protocol::VillageTradeBuyOfferInfo* S_VILLAGE_SHOP_STATE::mutable_trade_buy_offers(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_VILLAGE_SHOP_STATE.trade_buy_offers)
+  return _impl_.trade_buy_offers_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::VillageTradeBuyOfferInfo >*
+S_VILLAGE_SHOP_STATE::mutable_trade_buy_offers() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_VILLAGE_SHOP_STATE.trade_buy_offers)
+  return &_impl_.trade_buy_offers_;
+}
+inline const ::Protocol::VillageTradeBuyOfferInfo& S_VILLAGE_SHOP_STATE::_internal_trade_buy_offers(int index) const {
+  return _impl_.trade_buy_offers_.Get(index);
+}
+inline const ::Protocol::VillageTradeBuyOfferInfo& S_VILLAGE_SHOP_STATE::trade_buy_offers(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_VILLAGE_SHOP_STATE.trade_buy_offers)
+  return _internal_trade_buy_offers(index);
+}
+inline ::Protocol::VillageTradeBuyOfferInfo* S_VILLAGE_SHOP_STATE::_internal_add_trade_buy_offers() {
+  return _impl_.trade_buy_offers_.Add();
+}
+inline ::Protocol::VillageTradeBuyOfferInfo* S_VILLAGE_SHOP_STATE::add_trade_buy_offers() {
+  ::Protocol::VillageTradeBuyOfferInfo* _add = _internal_add_trade_buy_offers();
+  // @@protoc_insertion_point(field_add:Protocol.S_VILLAGE_SHOP_STATE.trade_buy_offers)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::VillageTradeBuyOfferInfo >&
+S_VILLAGE_SHOP_STATE::trade_buy_offers() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_VILLAGE_SHOP_STATE.trade_buy_offers)
+  return _impl_.trade_buy_offers_;
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Room.h"
 #include "Player.h"
 #include "GameSession.h"
@@ -7,6 +7,8 @@
 #include "FieldWalkMapData.h"
 #include "BattleRoom.h"
 #include "VillageDataManager.h"
+#include "EconomyService.h"
+#include "GameSessionManager.h"
 
 RoomRef GRoom = make_shared<Room>();
 namespace
@@ -107,7 +109,7 @@ bool Room::LeaveRoom(ObjectRef object)
 	if (success == false)
 		return false;
 
-	// ÅğÀå »ç½ÇÀ» ÅğÀåÇÏ´Â ÇÃ·¹ÀÌ¾î¿¡°Ô ¾Ë¸°´Ù
+	// í‡´ì¥ ì‚¬ì‹¤ì„ í‡´ì¥í•˜ëŠ” í”Œë ˆì´ì–´ì—ê²Œ ì•Œë¦°ë‹¤
 	if (auto player = dynamic_pointer_cast<Player>(object))
 	{
 		Protocol::S_LEAVE_GAME leaveGamePkt;
@@ -121,7 +123,7 @@ bool Room::LeaveRoom(ObjectRef object)
 		}
 	}
 
-	// ÅğÀå »ç½ÇÀ» ¾Ë¸°´Ù
+	// í‡´ì¥ ì‚¬ì‹¤ì„ ì•Œë¦°ë‹¤
 	{
 		Protocol::S_DESPAWN despawnPkt;
 		despawnPkt.add_object_ids(objectId);
@@ -252,6 +254,7 @@ void Room::HandleMove(GameSessionRef session, Protocol::C_MOVE pkt)
 	}
 
 	player->position->CopyFrom(pkt.target());
+	player->activeVillageId.clear();
 
 	Protocol::S_MOVE movePkt;
 	movePkt.set_object_id(objectId);
@@ -327,7 +330,26 @@ void Room::HandleEnterVillage(GameSessionRef session, Protocol::C_ENTER_VILLAGE 
 		<< " cell_y=" << pkt.cell_y()
 		<< " village_id=" << villageId << endl;
 
+	player->activeVillageId = villageId;
 	sendResult(true, "", village->villageId, village->name, village->description);
+}
+
+void Room::HandleVillageShopOpen(GameSessionRef session, Protocol::C_VILLAGE_SHOP_OPEN pkt)
+{
+	PlayerRef player = GetPlayerInRoom(session);
+	GEconomyService.HandleShopOpen(session, player, pkt.village_id());
+}
+
+void Room::HandleVillageShopBuy(GameSessionRef session, Protocol::C_VILLAGE_SHOP_BUY pkt)
+{
+	PlayerRef player = GetPlayerInRoom(session);
+	GEconomyService.HandleShopBuy(session, player, pkt.village_id(), pkt.item_id(), pkt.quantity());
+}
+
+void Room::HandleVillageShopSell(GameSessionRef session, Protocol::C_VILLAGE_SHOP_SELL pkt)
+{
+	PlayerRef player = GetPlayerInRoom(session);
+	GEconomyService.HandleShopSell(session, player, pkt.village_id(), pkt.stack_id(), pkt.quantity());
 }
 void Room::HandleBattleInvite(GameSessionRef session, Protocol::C_BATTLE_INVITE pkt)
 {
@@ -640,7 +662,9 @@ void Room::HandleBattleClassSelection(GameSessionRef session, Protocol::C_BATTLE
 }
 void Room::UpdateTick()
 {
-	//cout << "Update Room" << endl;
+	const uint64 nowMs = ::GetTickCount64();
+	GEconomyService.UpdateTick(nowMs);
+	GSessionManager.UpdateEconomy(nowMs);
 
 	DoTimer(100, &Room::UpdateTick);
 }
@@ -652,7 +676,7 @@ RoomRef Room::GetRoomRef()
 
 bool Room::AddObject(ObjectRef object)
 {
-	// ÀÖ´Ù¸é ¹®Á¦°¡ ÀÖ´Ù.
+	// ìˆë‹¤ë©´ ë¬¸ì œê°€ ìˆë‹¤.
 	if (_objects.find(object->objectInfo->object_id()) != _objects.end())
 		return false;
 
@@ -665,14 +689,17 @@ bool Room::AddObject(ObjectRef object)
 
 bool Room::RemoveObject(uint64 objectId)
 {
-	// ¾ø´Ù¸é ¹®Á¦°¡ ÀÖ´Ù.
+	// ì—†ë‹¤ë©´ ë¬¸ì œê°€ ìˆë‹¤.
 	if (_objects.find(objectId) == _objects.end())
 		return false;
 
 	ObjectRef object = _objects[objectId];
 	PlayerRef player = dynamic_pointer_cast<Player>(object);
 	if (player)
+	{
+		player->activeVillageId.clear();
 		player->room.store(weak_ptr<Room>());
+	}
 
 	_objects.erase(objectId);
 
@@ -719,7 +746,11 @@ void Room::SendEnterGame(PlayerRef player, bool success)
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(enterGamePkt);
 	if (auto session = player->session.lock())
+	{
 		session->Send(sendBuffer);
+		if (success)
+			GEconomyService.SendExpeditionState(player);
+	}
 }
 
 void Room::SendSpawn(ObjectRef object, uint64 exceptId)

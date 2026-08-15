@@ -40,6 +40,11 @@ enum : uint16
 	PKT_S_BATTLE_CLASS_SELECTION_RESULT = 1031,
 	PKT_C_ENTER_VILLAGE = 1032,
 	PKT_S_ENTER_VILLAGE = 1033,
+	PKT_S_EXPEDITION_STATE = 1034,
+	PKT_C_VILLAGE_SHOP_OPEN = 1035,
+	PKT_C_VILLAGE_SHOP_BUY = 1036,
+	PKT_C_VILLAGE_SHOP_SELL = 1037,
+	PKT_S_VILLAGE_SHOP_STATE = 1038,
 };
 
 // Custom Handlers
@@ -58,6 +63,9 @@ bool Handle_C_BATTLE_INVITE_RESPONSE(PacketSessionRef& session, Protocol::C_BATT
 bool Handle_C_BATTLE_RESULT_ACK(PacketSessionRef& session, Protocol::C_BATTLE_RESULT_ACK& pkt);
 bool Handle_C_BATTLE_CLASS_SELECTION(PacketSessionRef& session, Protocol::C_BATTLE_CLASS_SELECTION& pkt);
 bool Handle_C_ENTER_VILLAGE(PacketSessionRef& session, Protocol::C_ENTER_VILLAGE& pkt);
+bool Handle_C_VILLAGE_SHOP_OPEN(PacketSessionRef& session, Protocol::C_VILLAGE_SHOP_OPEN& pkt);
+bool Handle_C_VILLAGE_SHOP_BUY(PacketSessionRef& session, Protocol::C_VILLAGE_SHOP_BUY& pkt);
+bool Handle_C_VILLAGE_SHOP_SELL(PacketSessionRef& session, Protocol::C_VILLAGE_SHOP_SELL& pkt);
 
 class ServerPacketHandler
 {
@@ -80,6 +88,9 @@ public:
 		GPacketHandler[PKT_C_BATTLE_RESULT_ACK] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_BATTLE_RESULT_ACK>(Handle_C_BATTLE_RESULT_ACK, session, buffer, len); };
 		GPacketHandler[PKT_C_BATTLE_CLASS_SELECTION] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_BATTLE_CLASS_SELECTION>(Handle_C_BATTLE_CLASS_SELECTION, session, buffer, len); };
 		GPacketHandler[PKT_C_ENTER_VILLAGE] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_ENTER_VILLAGE>(Handle_C_ENTER_VILLAGE, session, buffer, len); };
+		GPacketHandler[PKT_C_VILLAGE_SHOP_OPEN] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_VILLAGE_SHOP_OPEN>(Handle_C_VILLAGE_SHOP_OPEN, session, buffer, len); };
+		GPacketHandler[PKT_C_VILLAGE_SHOP_BUY] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_VILLAGE_SHOP_BUY>(Handle_C_VILLAGE_SHOP_BUY, session, buffer, len); };
+		GPacketHandler[PKT_C_VILLAGE_SHOP_SELL] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_VILLAGE_SHOP_SELL>(Handle_C_VILLAGE_SHOP_SELL, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len)
@@ -107,6 +118,8 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::S_BATTLE_CLASS_SELECTION_START& pkt) { return MakeSendBuffer(pkt, PKT_S_BATTLE_CLASS_SELECTION_START); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_BATTLE_CLASS_SELECTION_RESULT& pkt) { return MakeSendBuffer(pkt, PKT_S_BATTLE_CLASS_SELECTION_RESULT); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_ENTER_VILLAGE& pkt) { return MakeSendBuffer(pkt, PKT_S_ENTER_VILLAGE); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_EXPEDITION_STATE& pkt) { return MakeSendBuffer(pkt, PKT_S_EXPEDITION_STATE); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_VILLAGE_SHOP_STATE& pkt) { return MakeSendBuffer(pkt, PKT_S_VILLAGE_SHOP_STATE); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

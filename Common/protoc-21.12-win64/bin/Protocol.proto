@@ -258,3 +258,61 @@ message S_ENTER_VILLAGE {
 	string village_name = 4;
 	string village_description = 5;
 }
+
+message ExpeditionItemStackInfo {
+	uint64 stack_id = 1;
+	string item_id = 2;
+	int32 quantity = 3;
+	int64 remaining_shelf_life_seconds = 4;
+}
+
+message VillageShopListingInfo {
+	string item_id = 1;
+	int32 stock = 2;
+	int32 max_stock = 3;
+	int32 unit_sell_price = 4;
+}
+
+message VillageTradeBuyOfferInfo {
+	uint64 stack_id = 1;
+	string item_id = 2;
+	int32 unit_buy_price = 3;
+}
+
+message S_EXPEDITION_STATE {
+	int32 gold = 1;
+	int32 satiety = 2;
+	int32 max_satiety = 3;
+	repeated ExpeditionItemStackInfo inventory = 4;
+	repeated string auto_consumed_item_ids = 5;
+	repeated string expired_item_ids = 6;
+	int32 thirst = 7;
+	int32 max_thirst = 8;
+}
+
+message C_VILLAGE_SHOP_OPEN {
+	string village_id = 1;
+}
+
+message C_VILLAGE_SHOP_BUY {
+	string village_id = 1;
+	string item_id = 2;
+	int32 quantity = 3;
+}
+
+message C_VILLAGE_SHOP_SELL {
+	string village_id = 1;
+	uint64 stack_id = 2;
+	int32 quantity = 3;
+}
+
+message S_VILLAGE_SHOP_STATE {
+	bool success = 1;
+	string reason = 2;
+	string action = 3;
+	string village_id = 4;
+	repeated VillageShopListingInfo listings = 5;
+	S_EXPEDITION_STATE expedition = 6;
+	uint32 stock_reset_remaining_seconds = 7;
+	repeated VillageTradeBuyOfferInfo trade_buy_offers = 8;
+}

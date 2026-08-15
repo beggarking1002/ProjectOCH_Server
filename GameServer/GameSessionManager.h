@@ -10,6 +10,7 @@ public:
 	void Add(GameSessionRef session);
 	void Remove(GameSessionRef session);
 	void Broadcast(SendBufferRef sendBuffer);
+	void UpdateEconomy(uint64 nowMs);
 
 private:
 	USE_LOCK;

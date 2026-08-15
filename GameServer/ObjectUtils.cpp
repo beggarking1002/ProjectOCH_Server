@@ -12,6 +12,7 @@ PlayerRef ObjectUtils::CreatePlayer(GameSessionRef session)
 
 	PlayerRef player = make_shared<Player>();
 	player->objectInfo->set_object_id(newId);
+	player->InitializeEconomy(::GetTickCount64());
 	// PvP battle pawns are assigned only after both players finish class selection.
 
 	player->session = session;

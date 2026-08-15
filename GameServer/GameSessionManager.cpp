@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "GameSessionManager.h"
 #include "GameSession.h"
+#include "Player.h"
+#include "EconomyService.h"
 
 GameSessionManager GSessionManager;
 
@@ -22,5 +24,21 @@ void GameSessionManager::Broadcast(SendBufferRef sendBuffer)
 	for (GameSessionRef session : _sessions)
 	{
 		session->Send(sendBuffer);
+	}
+}
+
+void GameSessionManager::UpdateEconomy(uint64 nowMs)
+{
+	WRITE_LOCK;
+	for (const GameSessionRef& session : _sessions)
+	{
+		PlayerRef player = session != nullptr ? session->player.load() : nullptr;
+		if (player == nullptr)
+			continue;
+
+		vector<string> autoConsumedItemIds;
+		vector<string> expiredItemIds;
+		if (player->AdvanceEconomy(nowMs, autoConsumedItemIds, expiredItemIds))
+			GEconomyService.SendExpeditionState(player, autoConsumedItemIds, expiredItemIds);
 	}
 }

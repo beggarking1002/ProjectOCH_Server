@@ -14,6 +14,8 @@
 #include "BattleMapData.h"
 #include "BattleTemplateManager.h"
 #include "VillageDataManager.h"
+#include "EconomyDataManager.h"
+#include "EconomyService.h"
 
 enum
 {
@@ -43,6 +45,8 @@ int main()
 	ASSERT_CRASH(GBattleMapData.LoadFromFile("C:\\ProjectOCH\\Server\\Data\\Maps\\BattleField_001.walkmap.json"));
 	ASSERT_CRASH(GBattleTemplates.Load());
 	ASSERT_CRASH(GVillageData.Load());
+	ASSERT_CRASH(GEconomyData.Load());
+	ASSERT_CRASH(GEconomyService.Initialize(::GetTickCount64()));
 
 	ServerPacketHandler::Init();
 

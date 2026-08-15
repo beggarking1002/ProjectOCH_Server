@@ -1,0 +1,11 @@
+ConfigKey,Value,Unit
+string,int,string
+real_minutes_per_game_day,10,minutes
+expedition_satiety_max,100,points
+expedition_satiety_drain_per_real_minute,8,points_per_real_minute
+expedition_satiety_refill_threshold,60,points
+expedition_satiety_refill_target,80,points
+village_stock_reset_interval_real_minutes,70,minutes
+trade_premium_margin_percent,50,percent
+trade_other_margin_percent,10,percent
+expedition_starting_gold,1000,gold

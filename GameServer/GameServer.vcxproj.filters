@@ -26,6 +26,8 @@
     <ClCompile Include="Enum.pb.cc" />
     <ClCompile Include="FieldWalkMapData.cpp" />
 	<ClCompile Include="VillageDataManager.cpp" />
+	<ClCompile Include="EconomyDataManager.cpp" />
+	<ClCompile Include="EconomyService.cpp" />
     <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="GameSession.cpp" />
     <ClCompile Include="GameSessionManager.cpp" />
@@ -89,6 +91,8 @@
     <ClInclude Include="Enum.pb.h" />
     <ClInclude Include="FieldWalkMapData.h" />
 	<ClInclude Include="VillageDataManager.h" />
+	<ClInclude Include="EconomyDataManager.h" />
+	<ClInclude Include="EconomyService.h" />
     <ClInclude Include="GameSession.h" />
     <ClInclude Include="GameSessionManager.h" />
     <ClInclude Include="Monster.h" />
