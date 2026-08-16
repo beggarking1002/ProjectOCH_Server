@@ -8,6 +8,7 @@
 #include "BattleRoom.h"
 #include "VillageDataManager.h"
 #include "EconomyService.h"
+#include "QuestService.h"
 #include "GameSessionManager.h"
 #include "DatabaseManager.h"
 
@@ -332,6 +333,7 @@ void Room::HandleEnterVillage(GameSessionRef session, Protocol::C_ENTER_VILLAGE 
 		<< " village_id=" << villageId << endl;
 
 	player->activeVillageId = villageId;
+	GQuestService.OnVillageVisited(player, villageId);
 	sendResult(true, "", village->villageId, village->name, village->description);
 }
 
@@ -353,6 +355,26 @@ void Room::HandleVillageShopSell(GameSessionRef session, Protocol::C_VILLAGE_SHO
 	GEconomyService.HandleShopSell(session, player, pkt.village_id(), pkt.stack_id(), pkt.quantity());
 }
 
+void Room::HandleVillageQuestBoardOpen(GameSessionRef session, Protocol::C_VILLAGE_QUEST_BOARD_OPEN pkt)
+{
+	GQuestService.HandleBoardOpen(session, GetPlayerInRoom(session), pkt.village_id());
+}
+
+void Room::HandleQuestTrackerOpen(GameSessionRef session, Protocol::C_QUEST_TRACKER_OPEN pkt)
+{
+	GQuestService.HandleTrackerOpen(session, GetPlayerInRoom(session));
+}
+
+void Room::HandleQuestAccept(GameSessionRef session, Protocol::C_QUEST_ACCEPT pkt)
+{
+	GQuestService.HandleAccept(session, GetPlayerInRoom(session), pkt.quest_id());
+}
+
+void Room::HandleQuestClaimReward(GameSessionRef session, Protocol::C_QUEST_CLAIM_REWARD pkt)
+{
+	GQuestService.HandleClaimReward(session, GetPlayerInRoom(session), pkt.quest_id());
+}
+
 void Room::HandleResetPlayerData(GameSessionRef session, Protocol::C_RESET_PLAYER_DATA pkt)
 {
 	Protocol::S_RESET_PLAYER_DATA response;
@@ -361,12 +383,15 @@ void Room::HandleResetPlayerData(GameSessionRef session, Protocol::C_RESET_PLAYE
 		response.set_success(success);
 		response.set_reason(reason);
 		session->Send(ServerPacketHandler::MakeSendBuffer(response));
+		cout << "PLAYER_DATA_RESET_RESULT success=" << (success ? 1 : 0)
+			<< " reason=" << reason << endl;
 	};
 
-#if !defined(_DEBUG)
-	sendResponse(false, "player data reset is available only in development builds");
-	return;
-#else
+	if (!GDatabase.IsPlayerDataResetAllowed())
+	{
+		sendResponse(false, "player data reset is disabled by server configuration");
+		return;
+	}
 	if (pkt.confirmation() != "RESET")
 	{
 		sendResponse(false, "reset confirmation is invalid");
@@ -400,7 +425,8 @@ void Room::HandleResetPlayerData(GameSessionRef session, Protocol::C_RESET_PLAYE
 	cout << "PLAYER_DATA_RESET player_id=" << player->objectInfo->object_id() << endl;
 	sendResponse(true, "");
 	GEconomyService.SendExpeditionState(player);
-#endif
+	if (!player->activeVillageId.empty())
+		GQuestService.HandleBoardOpen(session, player, player->activeVillageId);
 }
 void Room::HandleBattleInvite(GameSessionRef session, Protocol::C_BATTLE_INVITE pkt)
 {

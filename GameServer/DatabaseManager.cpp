@@ -309,7 +309,8 @@ bool DatabaseManager::Initialize()
 		Disconnect();
 		return false;
 	}
-	cout << "[Database] MySQL persistence initialized database=" << _impl->database << endl;
+	cout << "[Database] MySQL persistence initialized database=" << _impl->database
+		<< " player_data_reset_allowed=" << (_allowPlayerDataReset ? 1 : 0) << endl;
 	return true;
 }
 
@@ -326,6 +327,7 @@ bool DatabaseManager::LoadConfig()
 		return false;
 	}
 	_enabled = enabled;
+	ExtractBool(json, "allow_player_data_reset", _allowPlayerDataReset);
 	if (!_enabled)
 		return true;
 
@@ -702,6 +704,87 @@ bool DatabaseManager::LoadPlayerEconomy(uint64 playerId, PersistentPlayerEconomy
 		outState.shopStock.push_back(move(stock));
 	}
 	_impl->mysqlFreeResult(shopStockResult);
+
+	const string questSql = "SELECT quest_id,template_id,status,display_name,description,category,start_village_id,completion_village_id,"
+		"prerequisite_template_id,board_slot,accepted_at_ms,ready_at_ms,completed_at_ms FROM player_quest_instances WHERE player_id=" +
+		to_string(playerId) + " ORDER BY quest_id";
+	if (!Execute(questSql))
+		return false;
+	MYSQL_RES* questResult = _impl->mysqlStoreResult(_impl->connection);
+	if (questResult == nullptr)
+		return false;
+	outState.quests.clear();
+	while (MYSQL_ROW row = _impl->mysqlFetchRow(questResult))
+	{
+		PlayerQuestState quest;
+		quest.questId = row[0] != nullptr ? row[0] : "";
+		quest.templateId = row[1] != nullptr ? row[1] : "";
+		const string status = row[2] != nullptr ? row[2] : "AVAILABLE";
+		quest.status = status == "COMPLETED" ? PlayerQuestStatus::Completed :
+			(status == "READY" ? PlayerQuestStatus::Ready :
+				(status == "ACTIVE" ? PlayerQuestStatus::Active : PlayerQuestStatus::Available));
+		quest.displayName = row[3] != nullptr ? row[3] : "";
+		quest.description = row[4] != nullptr ? row[4] : "";
+		quest.category = row[5] != nullptr ? row[5] : "";
+		quest.startVillageId = row[6] != nullptr ? row[6] : "";
+		quest.completionVillageId = row[7] != nullptr ? row[7] : "";
+		quest.prerequisiteTemplateId = row[8] != nullptr ? row[8] : "";
+		quest.boardSlot = static_cast<int32>(ToInt64(row[9]));
+		quest.acceptedAtMs = ToUInt64(row[10]);
+		quest.readyAtMs = ToUInt64(row[11]);
+		quest.completedAtMs = ToUInt64(row[12]);
+		outState.quests.push_back(move(quest));
+	}
+	_impl->mysqlFreeResult(questResult);
+
+	const string objectiveSql = "SELECT quest_id,objective_index,objective_type,target_village_id,target_item_id,required_count,progress "
+		"FROM player_quest_instance_objectives WHERE player_id=" +
+		to_string(playerId) + " ORDER BY quest_id,objective_index";
+	if (!Execute(objectiveSql))
+		return false;
+	MYSQL_RES* objectiveResult = _impl->mysqlStoreResult(_impl->connection);
+	if (objectiveResult == nullptr)
+		return false;
+	while (MYSQL_ROW row = _impl->mysqlFetchRow(objectiveResult))
+	{
+		const string questId = row[0] != nullptr ? row[0] : "";
+		auto quest = find_if(outState.quests.begin(), outState.quests.end(), [&questId](const PlayerQuestState& state)
+			{ return state.questId == questId; });
+		if (quest == outState.quests.end())
+			continue;
+		PlayerQuestObjectiveState objective;
+		objective.objectiveIndex = static_cast<uint32>(ToUInt64(row[1]));
+		objective.objectiveType = row[2] != nullptr ? row[2] : "";
+		objective.targetVillageId = row[3] != nullptr ? row[3] : "";
+		objective.targetItemId = row[4] != nullptr ? row[4] : "";
+		objective.requiredCount = static_cast<int32>(ToInt64(row[5]));
+		objective.progress = static_cast<int32>(ToInt64(row[6]));
+		quest->objectives.push_back(objective);
+	}
+	_impl->mysqlFreeResult(objectiveResult);
+
+	const string rewardSql = "SELECT quest_id,reward_index,reward_type,target_id,amount "
+		"FROM player_quest_instance_rewards WHERE player_id=" + to_string(playerId) + " ORDER BY quest_id,reward_index";
+	if (!Execute(rewardSql))
+		return false;
+	MYSQL_RES* rewardResult = _impl->mysqlStoreResult(_impl->connection);
+	if (rewardResult == nullptr)
+		return false;
+	while (MYSQL_ROW row = _impl->mysqlFetchRow(rewardResult))
+	{
+		const string questId = row[0] != nullptr ? row[0] : "";
+		auto quest = find_if(outState.quests.begin(), outState.quests.end(), [&questId](const PlayerQuestState& state)
+			{ return state.questId == questId; });
+		if (quest == outState.quests.end())
+			continue;
+		PlayerQuestRewardState reward;
+		reward.rewardIndex = static_cast<uint32>(ToUInt64(row[1]));
+		reward.rewardType = row[2] != nullptr ? row[2] : "";
+		reward.targetId = row[3] != nullptr ? row[3] : "";
+		reward.amount = static_cast<int32>(ToInt64(row[4]));
+		quest->rewards.push_back(move(reward));
+	}
+	_impl->mysqlFreeResult(rewardResult);
 	return true;
 }
 
@@ -754,6 +837,55 @@ bool DatabaseManager::SavePlayerEconomy(uint64 playerId, const PersistentPlayerE
 			to_string(playerId) + ",'" + Escape(stock.villageId) + "','" + Escape(stock.itemId) + "'," +
 			to_string(stock.stock) + "," + to_string((max)(uint64{ 1 }, stock.stockGeneration)) + ")";
 		success = Execute(stockSql);
+	}
+	if (success)
+		success = Execute("DELETE FROM player_quest_instances WHERE player_id=" + to_string(playerId));
+	for (const PlayerQuestState& quest : state.quests)
+	{
+		if (!success)
+			break;
+		if (quest.questId.empty())
+		{
+			success = false;
+			break;
+		}
+		const string status = quest.status == PlayerQuestStatus::Completed ? "COMPLETED" :
+			(quest.status == PlayerQuestStatus::Ready ? "READY" :
+				(quest.status == PlayerQuestStatus::Active ? "ACTIVE" : "AVAILABLE"));
+		const string playerQuestSql = "INSERT INTO player_quest_instances (player_id,quest_id,template_id,status,display_name,description,category,"
+			"start_village_id,completion_village_id,prerequisite_template_id,board_slot,accepted_at_ms,ready_at_ms,completed_at_ms) VALUES (" +
+			to_string(playerId) + ",'" + Escape(quest.questId) + "','" + Escape(quest.templateId) + "','" + status + "','" +
+			Escape(quest.displayName) + "','" + Escape(quest.description) + "','" + Escape(quest.category) + "','" +
+			Escape(quest.startVillageId) + "','" + Escape(quest.completionVillageId) + "','" +
+			Escape(quest.prerequisiteTemplateId) + "'," + to_string(quest.boardSlot) + "," + to_string(quest.acceptedAtMs) + "," +
+			to_string(quest.readyAtMs) + "," + to_string(quest.completedAtMs) + ")";
+		success = Execute(playerQuestSql);
+		for (const PlayerQuestObjectiveState& objective : quest.objectives)
+		{
+			if (!success || objective.objectiveIndex == 0 || objective.requiredCount <= 0 || objective.progress < 0)
+			{
+				success = false;
+				break;
+			}
+			const string playerObjectiveSql = "INSERT INTO player_quest_instance_objectives (player_id,quest_id,objective_index,objective_type,"
+				"target_village_id,target_item_id,required_count,progress) VALUES (" + to_string(playerId) + ",'" +
+				Escape(quest.questId) + "'," + to_string(objective.objectiveIndex) + ",'" + Escape(objective.objectiveType) + "','" +
+				Escape(objective.targetVillageId) + "','" + Escape(objective.targetItemId) + "'," +
+				to_string(objective.requiredCount) + "," + to_string(objective.progress) + ")";
+			success = Execute(playerObjectiveSql);
+		}
+		for (const PlayerQuestRewardState& reward : quest.rewards)
+		{
+			if (!success || reward.rewardIndex == 0 || reward.amount <= 0)
+			{
+				success = false;
+				break;
+			}
+			const string playerRewardSql = "INSERT INTO player_quest_instance_rewards (player_id,quest_id,reward_index,reward_type,target_id,amount) VALUES (" +
+				to_string(playerId) + ",'" + Escape(quest.questId) + "'," + to_string(reward.rewardIndex) + ",'" +
+				Escape(reward.rewardType) + "','" + Escape(reward.targetId) + "'," + to_string(reward.amount) + ")";
+			success = Execute(playerRewardSql);
+		}
 	}
 	if (success)
 	{

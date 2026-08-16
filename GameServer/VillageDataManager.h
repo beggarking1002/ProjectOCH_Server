@@ -16,6 +16,7 @@ class VillageDataManager
 public:
 	bool Load();
 	const VillageTemplate* GetVillage(const string& villageId) const;
+	const unordered_map<string, VillageTemplate>& GetAllVillages() const { return _villagesById; }
 
 private:
 	string ResolveDataPath(const string& fileName) const;

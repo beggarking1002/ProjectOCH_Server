@@ -23,6 +23,51 @@ struct PlayerVillageShopStockState
 	uint64 stockGeneration = 1;
 };
 
+enum class PlayerQuestStatus
+{
+	Available,
+	Active,
+	Ready,
+	Completed,
+};
+
+struct PlayerQuestObjectiveState
+{
+	uint32 objectiveIndex = 0;
+	string objectiveType;
+	string targetVillageId;
+	string targetItemId;
+	int32 requiredCount = 1;
+	int32 progress = 0;
+};
+
+struct PlayerQuestRewardState
+{
+	uint32 rewardIndex = 0;
+	string rewardType;
+	string targetId;
+	int32 amount = 0;
+};
+
+struct PlayerQuestState
+{
+	string questId;
+	string templateId;
+	string displayName;
+	string description;
+	string category;
+	string startVillageId;
+	string completionVillageId;
+	string prerequisiteTemplateId;
+	int32 boardSlot = -1;
+	PlayerQuestStatus status = PlayerQuestStatus::Available;
+	uint64 acceptedAtMs = 0;
+	uint64 readyAtMs = 0;
+	uint64 completedAtMs = 0;
+	vector<PlayerQuestObjectiveState> objectives;
+	vector<PlayerQuestRewardState> rewards;
+};
+
 // Runtime state stays owned by Player. Storage implementations serialize this
 // value object, keeping gameplay code independent from a database client.
 struct PersistentPlayerEconomyState
@@ -39,6 +84,7 @@ struct PersistentPlayerEconomyState
 	uint64 shopRestockElapsedMs = 0;
 	uint64 shopStockGeneration = 1;
 	vector<PlayerVillageShopStockState> shopStock;
+	vector<PlayerQuestState> quests;
 };
 
 class Player : public Creature
@@ -68,6 +114,12 @@ public:
 	bool AddInventoryItem(const EconomyItemTemplate& item, int32 quantity, vector<string>& autoConsumedItemIds);
 	const ExpeditionItemStackState* FindInventoryStack(uint64 stackId) const;
 	bool RemoveInventoryItem(uint64 stackId, int32 quantity);
+	int32 CountInventoryItem(const string& itemId) const;
+	bool RemoveInventoryItemFefo(const string& itemId, int32 quantity);
+	const PlayerQuestState* FindQuestState(const string& questId) const;
+	PlayerQuestState* FindQuestState(const string& questId);
+	bool AddQuestState(PlayerQuestState state);
+	const vector<PlayerQuestState>& QuestStates() const { return _quests; }
 	int32 GetVillageShopStock(const string& villageId, const string& itemId) const;
 	bool SpendVillageShopStock(const string& villageId, const string& itemId, int32 quantity);
 	uint32 GetShopRestockRemainingSeconds(uint64 intervalMs) const;
@@ -103,6 +155,7 @@ private:
 	uint64 _shopRestockElapsedMs = 0;
 	uint64 _shopStockGeneration = 1;
 	unordered_map<string, unordered_map<string, int32>> _shopStockByVillageId;
+	vector<PlayerQuestState> _quests;
 	bool _economyDirty = false;
 	uint64 _lastEconomyPersistedMs = 0;
 };

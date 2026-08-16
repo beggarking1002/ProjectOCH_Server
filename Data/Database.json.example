@@ -7,5 +7,6 @@
   "database": "project_och",
   "charset": "utf8mb4",
   "autosave_seconds": 5,
+	"allow_player_data_reset": false,
   "mysql_library_path": "C:\\Program Files\\MySQL\\MySQL Server 8.0\\lib\\libmysql.dll"
 }

@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "EconomyService.h"
 #include "DatabaseManager.h"
+#include "QuestService.h"
 
 GameSessionManager GSessionManager;
 
@@ -63,7 +64,10 @@ void GameSessionManager::UpdateEconomy(uint64 nowMs)
 		vector<string> autoConsumedItemIds;
 		vector<string> expiredItemIds;
 		if (player->AdvanceEconomy(nowMs, autoConsumedItemIds, expiredItemIds))
+		{
+			GQuestService.ReevaluateInventoryObjectives(player);
 			GEconomyService.SendExpeditionState(player, autoConsumedItemIds, expiredItemIds);
+		}
 		GDatabase.SavePlayerEconomyIfDue(player, nowMs);
 	}
 }

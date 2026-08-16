@@ -56,6 +56,7 @@ void Player::ResetEconomyProgress(uint64 nowMs)
 {
 	_economyInitialized = false;
 	_inventory.clear();
+	_quests.clear();
 	_nextInventoryStackId = 1;
 	_nextAcquiredSequence = 1;
 	_lastEconomyPersistedMs = 0;
@@ -103,6 +104,13 @@ void Player::RestoreEconomyState(const PersistentPlayerEconomyState& state, uint
 			continue;
 		itemIt->second = (max)(0, (min)(stock.stock, itemIt->second));
 	}
+	_quests.clear();
+	for (const PlayerQuestState& quest : state.quests)
+	{
+		if (quest.questId.empty())
+			continue;
+		_quests.push_back(quest);
+	}
 	_lastEconomyTickMs = nowMs;
 	_economyInitialized = true;
 	_economyDirty = false;
@@ -123,6 +131,7 @@ PersistentPlayerEconomyState Player::ExportEconomyState() const
 	state.inventory = _inventory;
 	state.shopRestockElapsedMs = _shopRestockElapsedMs;
 	state.shopStockGeneration = _shopStockGeneration;
+	state.quests = _quests;
 	for (const auto& villagePair : _shopStockByVillageId)
 	{
 		for (const auto& itemPair : villagePair.second)
@@ -265,6 +274,74 @@ bool Player::RemoveInventoryItem(uint64 stackId, int32 quantity)
 	it->quantity -= quantity;
 	if (it->quantity == 0)
 		_inventory.erase(it);
+	_economyDirty = true;
+	return true;
+}
+
+int32 Player::CountInventoryItem(const string& itemId) const
+{
+	int64 total = 0;
+	for (const ExpeditionItemStackState& stack : _inventory)
+	{
+		if (stack.itemId == itemId)
+			total += stack.quantity;
+	}
+	return total > (numeric_limits<int32>::max)() ? (numeric_limits<int32>::max)() : static_cast<int32>(total);
+}
+
+bool Player::RemoveInventoryItemFefo(const string& itemId, int32 quantity)
+{
+	if (itemId.empty() || quantity <= 0 || CountInventoryItem(itemId) < quantity)
+		return false;
+
+	while (quantity > 0)
+	{
+		auto best = _inventory.end();
+		for (auto it = _inventory.begin(); it != _inventory.end(); ++it)
+		{
+			if (it->itemId != itemId || it->quantity <= 0)
+				continue;
+			if (best == _inventory.end())
+			{
+				best = it;
+				continue;
+			}
+			const bool expires = it->remainingShelfLifeMs >= 0;
+			const bool bestExpires = best->remainingShelfLifeMs >= 0;
+			if ((expires != bestExpires && expires) ||
+				(expires == bestExpires && expires && it->remainingShelfLifeMs < best->remainingShelfLifeMs) ||
+				(expires == bestExpires && it->remainingShelfLifeMs == best->remainingShelfLifeMs && it->acquiredSequence < best->acquiredSequence))
+				best = it;
+		}
+		if (best == _inventory.end())
+			return false;
+		const int32 removed = (min)(quantity, best->quantity);
+		best->quantity -= removed;
+		quantity -= removed;
+		if (best->quantity == 0)
+			_inventory.erase(best);
+	}
+	_economyDirty = true;
+	return true;
+}
+
+const PlayerQuestState* Player::FindQuestState(const string& questId) const
+{
+	const auto it = find_if(_quests.begin(), _quests.end(), [&questId](const PlayerQuestState& state) { return state.questId == questId; });
+	return it != _quests.end() ? &*it : nullptr;
+}
+
+PlayerQuestState* Player::FindQuestState(const string& questId)
+{
+	const auto it = find_if(_quests.begin(), _quests.end(), [&questId](const PlayerQuestState& state) { return state.questId == questId; });
+	return it != _quests.end() ? &*it : nullptr;
+}
+
+bool Player::AddQuestState(PlayerQuestState state)
+{
+	if (state.questId.empty() || FindQuestState(state.questId) != nullptr)
+		return false;
+	_quests.push_back(move(state));
 	_economyDirty = true;
 	return true;
 }

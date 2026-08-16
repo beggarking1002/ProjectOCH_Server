@@ -727,8 +727,135 @@ struct S_RESET_PLAYER_DATADefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S_RESET_PLAYER_DATADefaultTypeInternal _S_RESET_PLAYER_DATA_default_instance_;
+PROTOBUF_CONSTEXPR QuestObjectiveProgressInfo::QuestObjectiveProgressInfo(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.description_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.objective_type_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.target_village_name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.target_item_name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.objective_index_)*/0u
+  , /*decltype(_impl_.progress_)*/0
+  , /*decltype(_impl_.required_count_)*/0
+  , /*decltype(_impl_.completed_)*/false
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct QuestObjectiveProgressInfoDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR QuestObjectiveProgressInfoDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~QuestObjectiveProgressInfoDefaultTypeInternal() {}
+  union {
+    QuestObjectiveProgressInfo _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 QuestObjectiveProgressInfoDefaultTypeInternal _QuestObjectiveProgressInfo_default_instance_;
+PROTOBUF_CONSTEXPR VillageQuestInfo::VillageQuestInfo(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.objectives_)*/{}
+  , /*decltype(_impl_.reward_descriptions_)*/{}
+  , /*decltype(_impl_.quest_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.display_name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.description_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.status_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.start_village_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.completion_village_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.completion_village_name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.can_accept_)*/false
+  , /*decltype(_impl_.can_claim_)*/false
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct VillageQuestInfoDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR VillageQuestInfoDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~VillageQuestInfoDefaultTypeInternal() {}
+  union {
+    VillageQuestInfo _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 VillageQuestInfoDefaultTypeInternal _VillageQuestInfo_default_instance_;
+PROTOBUF_CONSTEXPR C_VILLAGE_QUEST_BOARD_OPEN::C_VILLAGE_QUEST_BOARD_OPEN(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.village_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct C_VILLAGE_QUEST_BOARD_OPENDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR C_VILLAGE_QUEST_BOARD_OPENDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~C_VILLAGE_QUEST_BOARD_OPENDefaultTypeInternal() {}
+  union {
+    C_VILLAGE_QUEST_BOARD_OPEN _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C_VILLAGE_QUEST_BOARD_OPENDefaultTypeInternal _C_VILLAGE_QUEST_BOARD_OPEN_default_instance_;
+PROTOBUF_CONSTEXPR C_QUEST_ACCEPT::C_QUEST_ACCEPT(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.quest_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct C_QUEST_ACCEPTDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR C_QUEST_ACCEPTDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~C_QUEST_ACCEPTDefaultTypeInternal() {}
+  union {
+    C_QUEST_ACCEPT _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C_QUEST_ACCEPTDefaultTypeInternal _C_QUEST_ACCEPT_default_instance_;
+PROTOBUF_CONSTEXPR C_QUEST_CLAIM_REWARD::C_QUEST_CLAIM_REWARD(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.quest_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct C_QUEST_CLAIM_REWARDDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR C_QUEST_CLAIM_REWARDDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~C_QUEST_CLAIM_REWARDDefaultTypeInternal() {}
+  union {
+    C_QUEST_CLAIM_REWARD _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C_QUEST_CLAIM_REWARDDefaultTypeInternal _C_QUEST_CLAIM_REWARD_default_instance_;
+PROTOBUF_CONSTEXPR S_VILLAGE_QUEST_STATE::S_VILLAGE_QUEST_STATE(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.quests_)*/{}
+  , /*decltype(_impl_.reason_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.action_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.village_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.expedition_)*/nullptr
+  , /*decltype(_impl_.success_)*/false
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct S_VILLAGE_QUEST_STATEDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR S_VILLAGE_QUEST_STATEDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~S_VILLAGE_QUEST_STATEDefaultTypeInternal() {}
+  union {
+    S_VILLAGE_QUEST_STATE _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S_VILLAGE_QUEST_STATEDefaultTypeInternal _S_VILLAGE_QUEST_STATE_default_instance_;
+PROTOBUF_CONSTEXPR C_QUEST_TRACKER_OPEN::C_QUEST_TRACKER_OPEN(
+    ::_pbi::ConstantInitialized) {}
+struct C_QUEST_TRACKER_OPENDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR C_QUEST_TRACKER_OPENDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~C_QUEST_TRACKER_OPENDefaultTypeInternal() {}
+  union {
+    C_QUEST_TRACKER_OPEN _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C_QUEST_TRACKER_OPENDefaultTypeInternal _C_QUEST_TRACKER_OPEN_default_instance_;
+PROTOBUF_CONSTEXPR S_QUEST_TRACKER_STATE::S_QUEST_TRACKER_STATE(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.quests_)*/{}
+  , /*decltype(_impl_.reason_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.expedition_)*/nullptr
+  , /*decltype(_impl_.success_)*/false
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct S_QUEST_TRACKER_STATEDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR S_QUEST_TRACKER_STATEDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~S_QUEST_TRACKER_STATEDefaultTypeInternal() {}
+  union {
+    S_QUEST_TRACKER_STATE _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S_QUEST_TRACKER_STATEDefaultTypeInternal _S_QUEST_TRACKER_STATE_default_instance_;
 }  // namespace Protocol
-static ::_pb::Metadata file_level_metadata_Protocol_2eproto[44];
+static ::_pb::Metadata file_level_metadata_Protocol_2eproto[52];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_Protocol_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Protocol_2eproto = nullptr;
 
@@ -1168,6 +1295,86 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_RESET_PLAYER_DATA, _impl_.success_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_RESET_PLAYER_DATA, _impl_.reason_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::QuestObjectiveProgressInfo, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::QuestObjectiveProgressInfo, _impl_.objective_index_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::QuestObjectiveProgressInfo, _impl_.description_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::QuestObjectiveProgressInfo, _impl_.progress_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::QuestObjectiveProgressInfo, _impl_.required_count_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::QuestObjectiveProgressInfo, _impl_.completed_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::QuestObjectiveProgressInfo, _impl_.objective_type_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::QuestObjectiveProgressInfo, _impl_.target_village_name_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::QuestObjectiveProgressInfo, _impl_.target_item_name_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.quest_id_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.display_name_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.description_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.status_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.start_village_id_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.completion_village_id_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.completion_village_name_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.objectives_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.reward_descriptions_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.can_accept_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.can_claim_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_VILLAGE_QUEST_BOARD_OPEN, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_VILLAGE_QUEST_BOARD_OPEN, _impl_.village_id_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_QUEST_ACCEPT, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_QUEST_ACCEPT, _impl_.quest_id_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_QUEST_CLAIM_REWARD, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_QUEST_CLAIM_REWARD, _impl_.quest_id_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_VILLAGE_QUEST_STATE, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_VILLAGE_QUEST_STATE, _impl_.success_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_VILLAGE_QUEST_STATE, _impl_.reason_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_VILLAGE_QUEST_STATE, _impl_.action_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_VILLAGE_QUEST_STATE, _impl_.village_id_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_VILLAGE_QUEST_STATE, _impl_.quests_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_VILLAGE_QUEST_STATE, _impl_.expedition_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_QUEST_TRACKER_OPEN, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_QUEST_TRACKER_STATE, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_QUEST_TRACKER_STATE, _impl_.success_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_QUEST_TRACKER_STATE, _impl_.reason_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_QUEST_TRACKER_STATE, _impl_.quests_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_QUEST_TRACKER_STATE, _impl_.expedition_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::C_LOGIN)},
@@ -1214,6 +1421,14 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 406, -1, -1, sizeof(::Protocol::S_VILLAGE_SHOP_STATE)},
   { 420, -1, -1, sizeof(::Protocol::C_RESET_PLAYER_DATA)},
   { 427, -1, -1, sizeof(::Protocol::S_RESET_PLAYER_DATA)},
+  { 435, -1, -1, sizeof(::Protocol::QuestObjectiveProgressInfo)},
+  { 449, -1, -1, sizeof(::Protocol::VillageQuestInfo)},
+  { 466, -1, -1, sizeof(::Protocol::C_VILLAGE_QUEST_BOARD_OPEN)},
+  { 473, -1, -1, sizeof(::Protocol::C_QUEST_ACCEPT)},
+  { 480, -1, -1, sizeof(::Protocol::C_QUEST_CLAIM_REWARD)},
+  { 487, -1, -1, sizeof(::Protocol::S_VILLAGE_QUEST_STATE)},
+  { 499, -1, -1, sizeof(::Protocol::C_QUEST_TRACKER_OPEN)},
+  { 505, -1, -1, sizeof(::Protocol::S_QUEST_TRACKER_STATE)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -1261,6 +1476,14 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::Protocol::_S_VILLAGE_SHOP_STATE_default_instance_._instance,
   &::Protocol::_C_RESET_PLAYER_DATA_default_instance_._instance,
   &::Protocol::_S_RESET_PLAYER_DATA_default_instance_._instance,
+  &::Protocol::_QuestObjectiveProgressInfo_default_instance_._instance,
+  &::Protocol::_VillageQuestInfo_default_instance_._instance,
+  &::Protocol::_C_VILLAGE_QUEST_BOARD_OPEN_default_instance_._instance,
+  &::Protocol::_C_QUEST_ACCEPT_default_instance_._instance,
+  &::Protocol::_C_QUEST_CLAIM_REWARD_default_instance_._instance,
+  &::Protocol::_S_VILLAGE_QUEST_STATE_default_instance_._instance,
+  &::Protocol::_C_QUEST_TRACKER_OPEN_default_instance_._instance,
+  &::Protocol::_S_QUEST_TRACKER_STATE_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -1399,7 +1622,33 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "s\030\010 \003(\0132\".Protocol.VillageTradeBuyOfferI"
   "nfo\"+\n\023C_RESET_PLAYER_DATA\022\024\n\014confirmati"
   "on\030\001 \001(\t\"6\n\023S_RESET_PLAYER_DATA\022\017\n\007succe"
-  "ss\030\001 \001(\010\022\016\n\006reason\030\002 \001(\tb\006proto3"
+  "ss\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\"\326\001\n\032QuestObject"
+  "iveProgressInfo\022\027\n\017objective_index\030\001 \001(\r"
+  "\022\023\n\013description\030\002 \001(\t\022\020\n\010progress\030\003 \001(\005\022"
+  "\026\n\016required_count\030\004 \001(\005\022\021\n\tcompleted\030\005 \001"
+  "(\010\022\026\n\016objective_type\030\006 \001(\t\022\033\n\023target_vil"
+  "lage_name\030\007 \001(\t\022\030\n\020target_item_name\030\010 \001("
+  "\t\"\267\002\n\020VillageQuestInfo\022\020\n\010quest_id\030\001 \001(\t"
+  "\022\024\n\014display_name\030\002 \001(\t\022\023\n\013description\030\003 "
+  "\001(\t\022\016\n\006status\030\004 \001(\t\022\030\n\020start_village_id\030"
+  "\005 \001(\t\022\035\n\025completion_village_id\030\006 \001(\t\022\037\n\027"
+  "completion_village_name\030\007 \001(\t\0228\n\nobjecti"
+  "ves\030\010 \003(\0132$.Protocol.QuestObjectiveProgr"
+  "essInfo\022\033\n\023reward_descriptions\030\t \003(\t\022\022\n\n"
+  "can_accept\030\n \001(\010\022\021\n\tcan_claim\030\013 \001(\010\"0\n\032C"
+  "_VILLAGE_QUEST_BOARD_OPEN\022\022\n\nvillage_id\030"
+  "\001 \001(\t\"\"\n\016C_QUEST_ACCEPT\022\020\n\010quest_id\030\001 \001("
+  "\t\"(\n\024C_QUEST_CLAIM_REWARD\022\020\n\010quest_id\030\001 "
+  "\001(\t\"\272\001\n\025S_VILLAGE_QUEST_STATE\022\017\n\007success"
+  "\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\022"
+  "\n\nvillage_id\030\004 \001(\t\022*\n\006quests\030\005 \003(\0132\032.Pro"
+  "tocol.VillageQuestInfo\0220\n\nexpedition\030\006 \001"
+  "(\0132\034.Protocol.S_EXPEDITION_STATE\"\026\n\024C_QU"
+  "EST_TRACKER_OPEN\"\226\001\n\025S_QUEST_TRACKER_STA"
+  "TE\022\017\n\007success\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\022*\n\006q"
+  "uests\030\003 \003(\0132\032.Protocol.VillageQuestInfo\022"
+  "0\n\nexpedition\030\004 \001(\0132\034.Protocol.S_EXPEDIT"
+  "ION_STATEb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -1407,9 +1656,9 @@ static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_de
 };
 static ::_pbi::once_flag descriptor_table_Protocol_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Protocol_2eproto = {
-    false, false, 5432, descriptor_table_protodef_Protocol_2eproto,
+    false, false, 6457, descriptor_table_protodef_Protocol_2eproto,
     "Protocol.proto",
-    &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 44,
+    &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 52,
     schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
     file_level_metadata_Protocol_2eproto, file_level_enum_descriptors_Protocol_2eproto,
     file_level_service_descriptors_Protocol_2eproto,
@@ -13756,6 +14005,2472 @@ void S_RESET_PLAYER_DATA::InternalSwap(S_RESET_PLAYER_DATA* other) {
       file_level_metadata_Protocol_2eproto[43]);
 }
 
+// ===================================================================
+
+class QuestObjectiveProgressInfo::_Internal {
+ public:
+};
+
+QuestObjectiveProgressInfo::QuestObjectiveProgressInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:Protocol.QuestObjectiveProgressInfo)
+}
+QuestObjectiveProgressInfo::QuestObjectiveProgressInfo(const QuestObjectiveProgressInfo& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  QuestObjectiveProgressInfo* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.description_){}
+    , decltype(_impl_.objective_type_){}
+    , decltype(_impl_.target_village_name_){}
+    , decltype(_impl_.target_item_name_){}
+    , decltype(_impl_.objective_index_){}
+    , decltype(_impl_.progress_){}
+    , decltype(_impl_.required_count_){}
+    , decltype(_impl_.completed_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.description_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.description_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_description().empty()) {
+    _this->_impl_.description_.Set(from._internal_description(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.objective_type_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.objective_type_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_objective_type().empty()) {
+    _this->_impl_.objective_type_.Set(from._internal_objective_type(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.target_village_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.target_village_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_target_village_name().empty()) {
+    _this->_impl_.target_village_name_.Set(from._internal_target_village_name(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.target_item_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.target_item_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_target_item_name().empty()) {
+    _this->_impl_.target_item_name_.Set(from._internal_target_item_name(), 
+      _this->GetArenaForAllocation());
+  }
+  ::memcpy(&_impl_.objective_index_, &from._impl_.objective_index_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.completed_) -
+    reinterpret_cast<char*>(&_impl_.objective_index_)) + sizeof(_impl_.completed_));
+  // @@protoc_insertion_point(copy_constructor:Protocol.QuestObjectiveProgressInfo)
+}
+
+inline void QuestObjectiveProgressInfo::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.description_){}
+    , decltype(_impl_.objective_type_){}
+    , decltype(_impl_.target_village_name_){}
+    , decltype(_impl_.target_item_name_){}
+    , decltype(_impl_.objective_index_){0u}
+    , decltype(_impl_.progress_){0}
+    , decltype(_impl_.required_count_){0}
+    , decltype(_impl_.completed_){false}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.description_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.description_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.objective_type_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.objective_type_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.target_village_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.target_village_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.target_item_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.target_item_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+QuestObjectiveProgressInfo::~QuestObjectiveProgressInfo() {
+  // @@protoc_insertion_point(destructor:Protocol.QuestObjectiveProgressInfo)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void QuestObjectiveProgressInfo::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.description_.Destroy();
+  _impl_.objective_type_.Destroy();
+  _impl_.target_village_name_.Destroy();
+  _impl_.target_item_name_.Destroy();
+}
+
+void QuestObjectiveProgressInfo::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void QuestObjectiveProgressInfo::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.QuestObjectiveProgressInfo)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.description_.ClearToEmpty();
+  _impl_.objective_type_.ClearToEmpty();
+  _impl_.target_village_name_.ClearToEmpty();
+  _impl_.target_item_name_.ClearToEmpty();
+  ::memset(&_impl_.objective_index_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.completed_) -
+      reinterpret_cast<char*>(&_impl_.objective_index_)) + sizeof(_impl_.completed_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* QuestObjectiveProgressInfo::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // uint32 objective_index = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.objective_index_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string description = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_description();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.QuestObjectiveProgressInfo.description"));
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 progress = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _impl_.progress_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 required_count = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+          _impl_.required_count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool completed = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          _impl_.completed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string objective_type = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+          auto str = _internal_mutable_objective_type();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.QuestObjectiveProgressInfo.objective_type"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string target_village_name = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
+          auto str = _internal_mutable_target_village_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.QuestObjectiveProgressInfo.target_village_name"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string target_item_name = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
+          auto str = _internal_mutable_target_item_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.QuestObjectiveProgressInfo.target_item_name"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* QuestObjectiveProgressInfo::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.QuestObjectiveProgressInfo)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint32 objective_index = 1;
+  if (this->_internal_objective_index() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(1, this->_internal_objective_index(), target);
+  }
+
+  // string description = 2;
+  if (!this->_internal_description().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_description().data(), static_cast<int>(this->_internal_description().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.QuestObjectiveProgressInfo.description");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_description(), target);
+  }
+
+  // int32 progress = 3;
+  if (this->_internal_progress() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(3, this->_internal_progress(), target);
+  }
+
+  // int32 required_count = 4;
+  if (this->_internal_required_count() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(4, this->_internal_required_count(), target);
+  }
+
+  // bool completed = 5;
+  if (this->_internal_completed() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(5, this->_internal_completed(), target);
+  }
+
+  // string objective_type = 6;
+  if (!this->_internal_objective_type().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_objective_type().data(), static_cast<int>(this->_internal_objective_type().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.QuestObjectiveProgressInfo.objective_type");
+    target = stream->WriteStringMaybeAliased(
+        6, this->_internal_objective_type(), target);
+  }
+
+  // string target_village_name = 7;
+  if (!this->_internal_target_village_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_target_village_name().data(), static_cast<int>(this->_internal_target_village_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.QuestObjectiveProgressInfo.target_village_name");
+    target = stream->WriteStringMaybeAliased(
+        7, this->_internal_target_village_name(), target);
+  }
+
+  // string target_item_name = 8;
+  if (!this->_internal_target_item_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_target_item_name().data(), static_cast<int>(this->_internal_target_item_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.QuestObjectiveProgressInfo.target_item_name");
+    target = stream->WriteStringMaybeAliased(
+        8, this->_internal_target_item_name(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.QuestObjectiveProgressInfo)
+  return target;
+}
+
+size_t QuestObjectiveProgressInfo::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.QuestObjectiveProgressInfo)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string description = 2;
+  if (!this->_internal_description().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_description());
+  }
+
+  // string objective_type = 6;
+  if (!this->_internal_objective_type().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_objective_type());
+  }
+
+  // string target_village_name = 7;
+  if (!this->_internal_target_village_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_target_village_name());
+  }
+
+  // string target_item_name = 8;
+  if (!this->_internal_target_item_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_target_item_name());
+  }
+
+  // uint32 objective_index = 1;
+  if (this->_internal_objective_index() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_objective_index());
+  }
+
+  // int32 progress = 3;
+  if (this->_internal_progress() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_progress());
+  }
+
+  // int32 required_count = 4;
+  if (this->_internal_required_count() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_required_count());
+  }
+
+  // bool completed = 5;
+  if (this->_internal_completed() != 0) {
+    total_size += 1 + 1;
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData QuestObjectiveProgressInfo::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    QuestObjectiveProgressInfo::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*QuestObjectiveProgressInfo::GetClassData() const { return &_class_data_; }
+
+
+void QuestObjectiveProgressInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<QuestObjectiveProgressInfo*>(&to_msg);
+  auto& from = static_cast<const QuestObjectiveProgressInfo&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.QuestObjectiveProgressInfo)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_description().empty()) {
+    _this->_internal_set_description(from._internal_description());
+  }
+  if (!from._internal_objective_type().empty()) {
+    _this->_internal_set_objective_type(from._internal_objective_type());
+  }
+  if (!from._internal_target_village_name().empty()) {
+    _this->_internal_set_target_village_name(from._internal_target_village_name());
+  }
+  if (!from._internal_target_item_name().empty()) {
+    _this->_internal_set_target_item_name(from._internal_target_item_name());
+  }
+  if (from._internal_objective_index() != 0) {
+    _this->_internal_set_objective_index(from._internal_objective_index());
+  }
+  if (from._internal_progress() != 0) {
+    _this->_internal_set_progress(from._internal_progress());
+  }
+  if (from._internal_required_count() != 0) {
+    _this->_internal_set_required_count(from._internal_required_count());
+  }
+  if (from._internal_completed() != 0) {
+    _this->_internal_set_completed(from._internal_completed());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void QuestObjectiveProgressInfo::CopyFrom(const QuestObjectiveProgressInfo& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.QuestObjectiveProgressInfo)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool QuestObjectiveProgressInfo::IsInitialized() const {
+  return true;
+}
+
+void QuestObjectiveProgressInfo::InternalSwap(QuestObjectiveProgressInfo* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.description_, lhs_arena,
+      &other->_impl_.description_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.objective_type_, lhs_arena,
+      &other->_impl_.objective_type_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.target_village_name_, lhs_arena,
+      &other->_impl_.target_village_name_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.target_item_name_, lhs_arena,
+      &other->_impl_.target_item_name_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(QuestObjectiveProgressInfo, _impl_.completed_)
+      + sizeof(QuestObjectiveProgressInfo::_impl_.completed_)
+      - PROTOBUF_FIELD_OFFSET(QuestObjectiveProgressInfo, _impl_.objective_index_)>(
+          reinterpret_cast<char*>(&_impl_.objective_index_),
+          reinterpret_cast<char*>(&other->_impl_.objective_index_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata QuestObjectiveProgressInfo::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[44]);
+}
+
+// ===================================================================
+
+class VillageQuestInfo::_Internal {
+ public:
+};
+
+VillageQuestInfo::VillageQuestInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:Protocol.VillageQuestInfo)
+}
+VillageQuestInfo::VillageQuestInfo(const VillageQuestInfo& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  VillageQuestInfo* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.objectives_){from._impl_.objectives_}
+    , decltype(_impl_.reward_descriptions_){from._impl_.reward_descriptions_}
+    , decltype(_impl_.quest_id_){}
+    , decltype(_impl_.display_name_){}
+    , decltype(_impl_.description_){}
+    , decltype(_impl_.status_){}
+    , decltype(_impl_.start_village_id_){}
+    , decltype(_impl_.completion_village_id_){}
+    , decltype(_impl_.completion_village_name_){}
+    , decltype(_impl_.can_accept_){}
+    , decltype(_impl_.can_claim_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.quest_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.quest_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_quest_id().empty()) {
+    _this->_impl_.quest_id_.Set(from._internal_quest_id(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.display_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.display_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_display_name().empty()) {
+    _this->_impl_.display_name_.Set(from._internal_display_name(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.description_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.description_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_description().empty()) {
+    _this->_impl_.description_.Set(from._internal_description(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.status_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.status_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_status().empty()) {
+    _this->_impl_.status_.Set(from._internal_status(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.start_village_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.start_village_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_start_village_id().empty()) {
+    _this->_impl_.start_village_id_.Set(from._internal_start_village_id(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.completion_village_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.completion_village_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_completion_village_id().empty()) {
+    _this->_impl_.completion_village_id_.Set(from._internal_completion_village_id(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.completion_village_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.completion_village_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_completion_village_name().empty()) {
+    _this->_impl_.completion_village_name_.Set(from._internal_completion_village_name(), 
+      _this->GetArenaForAllocation());
+  }
+  ::memcpy(&_impl_.can_accept_, &from._impl_.can_accept_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.can_claim_) -
+    reinterpret_cast<char*>(&_impl_.can_accept_)) + sizeof(_impl_.can_claim_));
+  // @@protoc_insertion_point(copy_constructor:Protocol.VillageQuestInfo)
+}
+
+inline void VillageQuestInfo::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.objectives_){arena}
+    , decltype(_impl_.reward_descriptions_){arena}
+    , decltype(_impl_.quest_id_){}
+    , decltype(_impl_.display_name_){}
+    , decltype(_impl_.description_){}
+    , decltype(_impl_.status_){}
+    , decltype(_impl_.start_village_id_){}
+    , decltype(_impl_.completion_village_id_){}
+    , decltype(_impl_.completion_village_name_){}
+    , decltype(_impl_.can_accept_){false}
+    , decltype(_impl_.can_claim_){false}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.quest_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.quest_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.display_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.display_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.description_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.description_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.status_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.status_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.start_village_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.start_village_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.completion_village_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.completion_village_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.completion_village_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.completion_village_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+VillageQuestInfo::~VillageQuestInfo() {
+  // @@protoc_insertion_point(destructor:Protocol.VillageQuestInfo)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void VillageQuestInfo::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.objectives_.~RepeatedPtrField();
+  _impl_.reward_descriptions_.~RepeatedPtrField();
+  _impl_.quest_id_.Destroy();
+  _impl_.display_name_.Destroy();
+  _impl_.description_.Destroy();
+  _impl_.status_.Destroy();
+  _impl_.start_village_id_.Destroy();
+  _impl_.completion_village_id_.Destroy();
+  _impl_.completion_village_name_.Destroy();
+}
+
+void VillageQuestInfo::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void VillageQuestInfo::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.VillageQuestInfo)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.objectives_.Clear();
+  _impl_.reward_descriptions_.Clear();
+  _impl_.quest_id_.ClearToEmpty();
+  _impl_.display_name_.ClearToEmpty();
+  _impl_.description_.ClearToEmpty();
+  _impl_.status_.ClearToEmpty();
+  _impl_.start_village_id_.ClearToEmpty();
+  _impl_.completion_village_id_.ClearToEmpty();
+  _impl_.completion_village_name_.ClearToEmpty();
+  ::memset(&_impl_.can_accept_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.can_claim_) -
+      reinterpret_cast<char*>(&_impl_.can_accept_)) + sizeof(_impl_.can_claim_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* VillageQuestInfo::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string quest_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_quest_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.VillageQuestInfo.quest_id"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string display_name = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_display_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.VillageQuestInfo.display_name"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string description = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          auto str = _internal_mutable_description();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.VillageQuestInfo.description"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string status = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          auto str = _internal_mutable_status();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.VillageQuestInfo.status"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string start_village_id = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
+          auto str = _internal_mutable_start_village_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.VillageQuestInfo.start_village_id"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string completion_village_id = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+          auto str = _internal_mutable_completion_village_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.VillageQuestInfo.completion_village_id"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string completion_village_name = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
+          auto str = _internal_mutable_completion_village_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.VillageQuestInfo.completion_village_name"));
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .Protocol.QuestObjectiveProgressInfo objectives = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_objectives(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<66>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated string reward_descriptions = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 74)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_reward_descriptions();
+            ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+            CHK_(ptr);
+            CHK_(::_pbi::VerifyUTF8(str, "Protocol.VillageQuestInfo.reward_descriptions"));
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<74>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // bool can_accept = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 80)) {
+          _impl_.can_accept_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool can_claim = 11;
+      case 11:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 88)) {
+          _impl_.can_claim_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* VillageQuestInfo::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.VillageQuestInfo)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string quest_id = 1;
+  if (!this->_internal_quest_id().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_quest_id().data(), static_cast<int>(this->_internal_quest_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.VillageQuestInfo.quest_id");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_quest_id(), target);
+  }
+
+  // string display_name = 2;
+  if (!this->_internal_display_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_display_name().data(), static_cast<int>(this->_internal_display_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.VillageQuestInfo.display_name");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_display_name(), target);
+  }
+
+  // string description = 3;
+  if (!this->_internal_description().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_description().data(), static_cast<int>(this->_internal_description().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.VillageQuestInfo.description");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_description(), target);
+  }
+
+  // string status = 4;
+  if (!this->_internal_status().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_status().data(), static_cast<int>(this->_internal_status().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.VillageQuestInfo.status");
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_status(), target);
+  }
+
+  // string start_village_id = 5;
+  if (!this->_internal_start_village_id().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_start_village_id().data(), static_cast<int>(this->_internal_start_village_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.VillageQuestInfo.start_village_id");
+    target = stream->WriteStringMaybeAliased(
+        5, this->_internal_start_village_id(), target);
+  }
+
+  // string completion_village_id = 6;
+  if (!this->_internal_completion_village_id().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_completion_village_id().data(), static_cast<int>(this->_internal_completion_village_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.VillageQuestInfo.completion_village_id");
+    target = stream->WriteStringMaybeAliased(
+        6, this->_internal_completion_village_id(), target);
+  }
+
+  // string completion_village_name = 7;
+  if (!this->_internal_completion_village_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_completion_village_name().data(), static_cast<int>(this->_internal_completion_village_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.VillageQuestInfo.completion_village_name");
+    target = stream->WriteStringMaybeAliased(
+        7, this->_internal_completion_village_name(), target);
+  }
+
+  // repeated .Protocol.QuestObjectiveProgressInfo objectives = 8;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_objectives_size()); i < n; i++) {
+    const auto& repfield = this->_internal_objectives(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(8, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
+  // repeated string reward_descriptions = 9;
+  for (int i = 0, n = this->_internal_reward_descriptions_size(); i < n; i++) {
+    const auto& s = this->_internal_reward_descriptions(i);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      s.data(), static_cast<int>(s.length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.VillageQuestInfo.reward_descriptions");
+    target = stream->WriteString(9, s, target);
+  }
+
+  // bool can_accept = 10;
+  if (this->_internal_can_accept() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(10, this->_internal_can_accept(), target);
+  }
+
+  // bool can_claim = 11;
+  if (this->_internal_can_claim() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(11, this->_internal_can_claim(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.VillageQuestInfo)
+  return target;
+}
+
+size_t VillageQuestInfo::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.VillageQuestInfo)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .Protocol.QuestObjectiveProgressInfo objectives = 8;
+  total_size += 1UL * this->_internal_objectives_size();
+  for (const auto& msg : this->_impl_.objectives_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // repeated string reward_descriptions = 9;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(_impl_.reward_descriptions_.size());
+  for (int i = 0, n = _impl_.reward_descriptions_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      _impl_.reward_descriptions_.Get(i));
+  }
+
+  // string quest_id = 1;
+  if (!this->_internal_quest_id().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_quest_id());
+  }
+
+  // string display_name = 2;
+  if (!this->_internal_display_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_display_name());
+  }
+
+  // string description = 3;
+  if (!this->_internal_description().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_description());
+  }
+
+  // string status = 4;
+  if (!this->_internal_status().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_status());
+  }
+
+  // string start_village_id = 5;
+  if (!this->_internal_start_village_id().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_start_village_id());
+  }
+
+  // string completion_village_id = 6;
+  if (!this->_internal_completion_village_id().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_completion_village_id());
+  }
+
+  // string completion_village_name = 7;
+  if (!this->_internal_completion_village_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_completion_village_name());
+  }
+
+  // bool can_accept = 10;
+  if (this->_internal_can_accept() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool can_claim = 11;
+  if (this->_internal_can_claim() != 0) {
+    total_size += 1 + 1;
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData VillageQuestInfo::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    VillageQuestInfo::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*VillageQuestInfo::GetClassData() const { return &_class_data_; }
+
+
+void VillageQuestInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<VillageQuestInfo*>(&to_msg);
+  auto& from = static_cast<const VillageQuestInfo&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.VillageQuestInfo)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  _this->_impl_.objectives_.MergeFrom(from._impl_.objectives_);
+  _this->_impl_.reward_descriptions_.MergeFrom(from._impl_.reward_descriptions_);
+  if (!from._internal_quest_id().empty()) {
+    _this->_internal_set_quest_id(from._internal_quest_id());
+  }
+  if (!from._internal_display_name().empty()) {
+    _this->_internal_set_display_name(from._internal_display_name());
+  }
+  if (!from._internal_description().empty()) {
+    _this->_internal_set_description(from._internal_description());
+  }
+  if (!from._internal_status().empty()) {
+    _this->_internal_set_status(from._internal_status());
+  }
+  if (!from._internal_start_village_id().empty()) {
+    _this->_internal_set_start_village_id(from._internal_start_village_id());
+  }
+  if (!from._internal_completion_village_id().empty()) {
+    _this->_internal_set_completion_village_id(from._internal_completion_village_id());
+  }
+  if (!from._internal_completion_village_name().empty()) {
+    _this->_internal_set_completion_village_name(from._internal_completion_village_name());
+  }
+  if (from._internal_can_accept() != 0) {
+    _this->_internal_set_can_accept(from._internal_can_accept());
+  }
+  if (from._internal_can_claim() != 0) {
+    _this->_internal_set_can_claim(from._internal_can_claim());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void VillageQuestInfo::CopyFrom(const VillageQuestInfo& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.VillageQuestInfo)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool VillageQuestInfo::IsInitialized() const {
+  return true;
+}
+
+void VillageQuestInfo::InternalSwap(VillageQuestInfo* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _impl_.objectives_.InternalSwap(&other->_impl_.objectives_);
+  _impl_.reward_descriptions_.InternalSwap(&other->_impl_.reward_descriptions_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.quest_id_, lhs_arena,
+      &other->_impl_.quest_id_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.display_name_, lhs_arena,
+      &other->_impl_.display_name_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.description_, lhs_arena,
+      &other->_impl_.description_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.status_, lhs_arena,
+      &other->_impl_.status_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.start_village_id_, lhs_arena,
+      &other->_impl_.start_village_id_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.completion_village_id_, lhs_arena,
+      &other->_impl_.completion_village_id_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.completion_village_name_, lhs_arena,
+      &other->_impl_.completion_village_name_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(VillageQuestInfo, _impl_.can_claim_)
+      + sizeof(VillageQuestInfo::_impl_.can_claim_)
+      - PROTOBUF_FIELD_OFFSET(VillageQuestInfo, _impl_.can_accept_)>(
+          reinterpret_cast<char*>(&_impl_.can_accept_),
+          reinterpret_cast<char*>(&other->_impl_.can_accept_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata VillageQuestInfo::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[45]);
+}
+
+// ===================================================================
+
+class C_VILLAGE_QUEST_BOARD_OPEN::_Internal {
+ public:
+};
+
+C_VILLAGE_QUEST_BOARD_OPEN::C_VILLAGE_QUEST_BOARD_OPEN(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:Protocol.C_VILLAGE_QUEST_BOARD_OPEN)
+}
+C_VILLAGE_QUEST_BOARD_OPEN::C_VILLAGE_QUEST_BOARD_OPEN(const C_VILLAGE_QUEST_BOARD_OPEN& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  C_VILLAGE_QUEST_BOARD_OPEN* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.village_id_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.village_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.village_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_village_id().empty()) {
+    _this->_impl_.village_id_.Set(from._internal_village_id(), 
+      _this->GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:Protocol.C_VILLAGE_QUEST_BOARD_OPEN)
+}
+
+inline void C_VILLAGE_QUEST_BOARD_OPEN::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.village_id_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.village_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.village_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+C_VILLAGE_QUEST_BOARD_OPEN::~C_VILLAGE_QUEST_BOARD_OPEN() {
+  // @@protoc_insertion_point(destructor:Protocol.C_VILLAGE_QUEST_BOARD_OPEN)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void C_VILLAGE_QUEST_BOARD_OPEN::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.village_id_.Destroy();
+}
+
+void C_VILLAGE_QUEST_BOARD_OPEN::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void C_VILLAGE_QUEST_BOARD_OPEN::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.C_VILLAGE_QUEST_BOARD_OPEN)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.village_id_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* C_VILLAGE_QUEST_BOARD_OPEN::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string village_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_village_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.C_VILLAGE_QUEST_BOARD_OPEN.village_id"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* C_VILLAGE_QUEST_BOARD_OPEN::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.C_VILLAGE_QUEST_BOARD_OPEN)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string village_id = 1;
+  if (!this->_internal_village_id().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_village_id().data(), static_cast<int>(this->_internal_village_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.C_VILLAGE_QUEST_BOARD_OPEN.village_id");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_village_id(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.C_VILLAGE_QUEST_BOARD_OPEN)
+  return target;
+}
+
+size_t C_VILLAGE_QUEST_BOARD_OPEN::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.C_VILLAGE_QUEST_BOARD_OPEN)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string village_id = 1;
+  if (!this->_internal_village_id().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_village_id());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData C_VILLAGE_QUEST_BOARD_OPEN::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    C_VILLAGE_QUEST_BOARD_OPEN::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C_VILLAGE_QUEST_BOARD_OPEN::GetClassData() const { return &_class_data_; }
+
+
+void C_VILLAGE_QUEST_BOARD_OPEN::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<C_VILLAGE_QUEST_BOARD_OPEN*>(&to_msg);
+  auto& from = static_cast<const C_VILLAGE_QUEST_BOARD_OPEN&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.C_VILLAGE_QUEST_BOARD_OPEN)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_village_id().empty()) {
+    _this->_internal_set_village_id(from._internal_village_id());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void C_VILLAGE_QUEST_BOARD_OPEN::CopyFrom(const C_VILLAGE_QUEST_BOARD_OPEN& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.C_VILLAGE_QUEST_BOARD_OPEN)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool C_VILLAGE_QUEST_BOARD_OPEN::IsInitialized() const {
+  return true;
+}
+
+void C_VILLAGE_QUEST_BOARD_OPEN::InternalSwap(C_VILLAGE_QUEST_BOARD_OPEN* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.village_id_, lhs_arena,
+      &other->_impl_.village_id_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata C_VILLAGE_QUEST_BOARD_OPEN::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[46]);
+}
+
+// ===================================================================
+
+class C_QUEST_ACCEPT::_Internal {
+ public:
+};
+
+C_QUEST_ACCEPT::C_QUEST_ACCEPT(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:Protocol.C_QUEST_ACCEPT)
+}
+C_QUEST_ACCEPT::C_QUEST_ACCEPT(const C_QUEST_ACCEPT& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  C_QUEST_ACCEPT* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.quest_id_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.quest_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.quest_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_quest_id().empty()) {
+    _this->_impl_.quest_id_.Set(from._internal_quest_id(), 
+      _this->GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:Protocol.C_QUEST_ACCEPT)
+}
+
+inline void C_QUEST_ACCEPT::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.quest_id_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.quest_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.quest_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+C_QUEST_ACCEPT::~C_QUEST_ACCEPT() {
+  // @@protoc_insertion_point(destructor:Protocol.C_QUEST_ACCEPT)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void C_QUEST_ACCEPT::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.quest_id_.Destroy();
+}
+
+void C_QUEST_ACCEPT::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void C_QUEST_ACCEPT::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.C_QUEST_ACCEPT)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.quest_id_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* C_QUEST_ACCEPT::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string quest_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_quest_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.C_QUEST_ACCEPT.quest_id"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* C_QUEST_ACCEPT::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.C_QUEST_ACCEPT)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string quest_id = 1;
+  if (!this->_internal_quest_id().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_quest_id().data(), static_cast<int>(this->_internal_quest_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.C_QUEST_ACCEPT.quest_id");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_quest_id(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.C_QUEST_ACCEPT)
+  return target;
+}
+
+size_t C_QUEST_ACCEPT::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.C_QUEST_ACCEPT)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string quest_id = 1;
+  if (!this->_internal_quest_id().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_quest_id());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData C_QUEST_ACCEPT::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    C_QUEST_ACCEPT::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C_QUEST_ACCEPT::GetClassData() const { return &_class_data_; }
+
+
+void C_QUEST_ACCEPT::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<C_QUEST_ACCEPT*>(&to_msg);
+  auto& from = static_cast<const C_QUEST_ACCEPT&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.C_QUEST_ACCEPT)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_quest_id().empty()) {
+    _this->_internal_set_quest_id(from._internal_quest_id());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void C_QUEST_ACCEPT::CopyFrom(const C_QUEST_ACCEPT& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.C_QUEST_ACCEPT)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool C_QUEST_ACCEPT::IsInitialized() const {
+  return true;
+}
+
+void C_QUEST_ACCEPT::InternalSwap(C_QUEST_ACCEPT* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.quest_id_, lhs_arena,
+      &other->_impl_.quest_id_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata C_QUEST_ACCEPT::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[47]);
+}
+
+// ===================================================================
+
+class C_QUEST_CLAIM_REWARD::_Internal {
+ public:
+};
+
+C_QUEST_CLAIM_REWARD::C_QUEST_CLAIM_REWARD(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:Protocol.C_QUEST_CLAIM_REWARD)
+}
+C_QUEST_CLAIM_REWARD::C_QUEST_CLAIM_REWARD(const C_QUEST_CLAIM_REWARD& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  C_QUEST_CLAIM_REWARD* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.quest_id_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.quest_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.quest_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_quest_id().empty()) {
+    _this->_impl_.quest_id_.Set(from._internal_quest_id(), 
+      _this->GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:Protocol.C_QUEST_CLAIM_REWARD)
+}
+
+inline void C_QUEST_CLAIM_REWARD::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.quest_id_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.quest_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.quest_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+C_QUEST_CLAIM_REWARD::~C_QUEST_CLAIM_REWARD() {
+  // @@protoc_insertion_point(destructor:Protocol.C_QUEST_CLAIM_REWARD)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void C_QUEST_CLAIM_REWARD::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.quest_id_.Destroy();
+}
+
+void C_QUEST_CLAIM_REWARD::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void C_QUEST_CLAIM_REWARD::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.C_QUEST_CLAIM_REWARD)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.quest_id_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* C_QUEST_CLAIM_REWARD::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string quest_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_quest_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.C_QUEST_CLAIM_REWARD.quest_id"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* C_QUEST_CLAIM_REWARD::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.C_QUEST_CLAIM_REWARD)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string quest_id = 1;
+  if (!this->_internal_quest_id().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_quest_id().data(), static_cast<int>(this->_internal_quest_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.C_QUEST_CLAIM_REWARD.quest_id");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_quest_id(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.C_QUEST_CLAIM_REWARD)
+  return target;
+}
+
+size_t C_QUEST_CLAIM_REWARD::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.C_QUEST_CLAIM_REWARD)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string quest_id = 1;
+  if (!this->_internal_quest_id().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_quest_id());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData C_QUEST_CLAIM_REWARD::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    C_QUEST_CLAIM_REWARD::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C_QUEST_CLAIM_REWARD::GetClassData() const { return &_class_data_; }
+
+
+void C_QUEST_CLAIM_REWARD::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<C_QUEST_CLAIM_REWARD*>(&to_msg);
+  auto& from = static_cast<const C_QUEST_CLAIM_REWARD&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.C_QUEST_CLAIM_REWARD)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_quest_id().empty()) {
+    _this->_internal_set_quest_id(from._internal_quest_id());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void C_QUEST_CLAIM_REWARD::CopyFrom(const C_QUEST_CLAIM_REWARD& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.C_QUEST_CLAIM_REWARD)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool C_QUEST_CLAIM_REWARD::IsInitialized() const {
+  return true;
+}
+
+void C_QUEST_CLAIM_REWARD::InternalSwap(C_QUEST_CLAIM_REWARD* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.quest_id_, lhs_arena,
+      &other->_impl_.quest_id_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata C_QUEST_CLAIM_REWARD::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[48]);
+}
+
+// ===================================================================
+
+class S_VILLAGE_QUEST_STATE::_Internal {
+ public:
+  static const ::Protocol::S_EXPEDITION_STATE& expedition(const S_VILLAGE_QUEST_STATE* msg);
+};
+
+const ::Protocol::S_EXPEDITION_STATE&
+S_VILLAGE_QUEST_STATE::_Internal::expedition(const S_VILLAGE_QUEST_STATE* msg) {
+  return *msg->_impl_.expedition_;
+}
+S_VILLAGE_QUEST_STATE::S_VILLAGE_QUEST_STATE(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:Protocol.S_VILLAGE_QUEST_STATE)
+}
+S_VILLAGE_QUEST_STATE::S_VILLAGE_QUEST_STATE(const S_VILLAGE_QUEST_STATE& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  S_VILLAGE_QUEST_STATE* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.quests_){from._impl_.quests_}
+    , decltype(_impl_.reason_){}
+    , decltype(_impl_.action_){}
+    , decltype(_impl_.village_id_){}
+    , decltype(_impl_.expedition_){nullptr}
+    , decltype(_impl_.success_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.reason_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.reason_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_reason().empty()) {
+    _this->_impl_.reason_.Set(from._internal_reason(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.action_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.action_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_action().empty()) {
+    _this->_impl_.action_.Set(from._internal_action(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.village_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.village_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_village_id().empty()) {
+    _this->_impl_.village_id_.Set(from._internal_village_id(), 
+      _this->GetArenaForAllocation());
+  }
+  if (from._internal_has_expedition()) {
+    _this->_impl_.expedition_ = new ::Protocol::S_EXPEDITION_STATE(*from._impl_.expedition_);
+  }
+  _this->_impl_.success_ = from._impl_.success_;
+  // @@protoc_insertion_point(copy_constructor:Protocol.S_VILLAGE_QUEST_STATE)
+}
+
+inline void S_VILLAGE_QUEST_STATE::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.quests_){arena}
+    , decltype(_impl_.reason_){}
+    , decltype(_impl_.action_){}
+    , decltype(_impl_.village_id_){}
+    , decltype(_impl_.expedition_){nullptr}
+    , decltype(_impl_.success_){false}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.reason_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.reason_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.action_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.action_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.village_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.village_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+S_VILLAGE_QUEST_STATE::~S_VILLAGE_QUEST_STATE() {
+  // @@protoc_insertion_point(destructor:Protocol.S_VILLAGE_QUEST_STATE)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void S_VILLAGE_QUEST_STATE::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.quests_.~RepeatedPtrField();
+  _impl_.reason_.Destroy();
+  _impl_.action_.Destroy();
+  _impl_.village_id_.Destroy();
+  if (this != internal_default_instance()) delete _impl_.expedition_;
+}
+
+void S_VILLAGE_QUEST_STATE::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void S_VILLAGE_QUEST_STATE::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.S_VILLAGE_QUEST_STATE)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.quests_.Clear();
+  _impl_.reason_.ClearToEmpty();
+  _impl_.action_.ClearToEmpty();
+  _impl_.village_id_.ClearToEmpty();
+  if (GetArenaForAllocation() == nullptr && _impl_.expedition_ != nullptr) {
+    delete _impl_.expedition_;
+  }
+  _impl_.expedition_ = nullptr;
+  _impl_.success_ = false;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* S_VILLAGE_QUEST_STATE::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // bool success = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.success_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string reason = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_reason();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.S_VILLAGE_QUEST_STATE.reason"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string action = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          auto str = _internal_mutable_action();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.S_VILLAGE_QUEST_STATE.action"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string village_id = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          auto str = _internal_mutable_village_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.S_VILLAGE_QUEST_STATE.village_id"));
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .Protocol.VillageQuestInfo quests = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_quests(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<42>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // .Protocol.S_EXPEDITION_STATE expedition = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+          ptr = ctx->ParseMessage(_internal_mutable_expedition(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* S_VILLAGE_QUEST_STATE::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.S_VILLAGE_QUEST_STATE)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // bool success = 1;
+  if (this->_internal_success() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(1, this->_internal_success(), target);
+  }
+
+  // string reason = 2;
+  if (!this->_internal_reason().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_reason().data(), static_cast<int>(this->_internal_reason().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.S_VILLAGE_QUEST_STATE.reason");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_reason(), target);
+  }
+
+  // string action = 3;
+  if (!this->_internal_action().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_action().data(), static_cast<int>(this->_internal_action().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.S_VILLAGE_QUEST_STATE.action");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_action(), target);
+  }
+
+  // string village_id = 4;
+  if (!this->_internal_village_id().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_village_id().data(), static_cast<int>(this->_internal_village_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.S_VILLAGE_QUEST_STATE.village_id");
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_village_id(), target);
+  }
+
+  // repeated .Protocol.VillageQuestInfo quests = 5;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_quests_size()); i < n; i++) {
+    const auto& repfield = this->_internal_quests(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(5, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
+  // .Protocol.S_EXPEDITION_STATE expedition = 6;
+  if (this->_internal_has_expedition()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(6, _Internal::expedition(this),
+        _Internal::expedition(this).GetCachedSize(), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.S_VILLAGE_QUEST_STATE)
+  return target;
+}
+
+size_t S_VILLAGE_QUEST_STATE::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.S_VILLAGE_QUEST_STATE)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .Protocol.VillageQuestInfo quests = 5;
+  total_size += 1UL * this->_internal_quests_size();
+  for (const auto& msg : this->_impl_.quests_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // string reason = 2;
+  if (!this->_internal_reason().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_reason());
+  }
+
+  // string action = 3;
+  if (!this->_internal_action().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_action());
+  }
+
+  // string village_id = 4;
+  if (!this->_internal_village_id().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_village_id());
+  }
+
+  // .Protocol.S_EXPEDITION_STATE expedition = 6;
+  if (this->_internal_has_expedition()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.expedition_);
+  }
+
+  // bool success = 1;
+  if (this->_internal_success() != 0) {
+    total_size += 1 + 1;
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData S_VILLAGE_QUEST_STATE::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    S_VILLAGE_QUEST_STATE::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*S_VILLAGE_QUEST_STATE::GetClassData() const { return &_class_data_; }
+
+
+void S_VILLAGE_QUEST_STATE::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<S_VILLAGE_QUEST_STATE*>(&to_msg);
+  auto& from = static_cast<const S_VILLAGE_QUEST_STATE&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.S_VILLAGE_QUEST_STATE)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  _this->_impl_.quests_.MergeFrom(from._impl_.quests_);
+  if (!from._internal_reason().empty()) {
+    _this->_internal_set_reason(from._internal_reason());
+  }
+  if (!from._internal_action().empty()) {
+    _this->_internal_set_action(from._internal_action());
+  }
+  if (!from._internal_village_id().empty()) {
+    _this->_internal_set_village_id(from._internal_village_id());
+  }
+  if (from._internal_has_expedition()) {
+    _this->_internal_mutable_expedition()->::Protocol::S_EXPEDITION_STATE::MergeFrom(
+        from._internal_expedition());
+  }
+  if (from._internal_success() != 0) {
+    _this->_internal_set_success(from._internal_success());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void S_VILLAGE_QUEST_STATE::CopyFrom(const S_VILLAGE_QUEST_STATE& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.S_VILLAGE_QUEST_STATE)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool S_VILLAGE_QUEST_STATE::IsInitialized() const {
+  return true;
+}
+
+void S_VILLAGE_QUEST_STATE::InternalSwap(S_VILLAGE_QUEST_STATE* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _impl_.quests_.InternalSwap(&other->_impl_.quests_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.reason_, lhs_arena,
+      &other->_impl_.reason_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.action_, lhs_arena,
+      &other->_impl_.action_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.village_id_, lhs_arena,
+      &other->_impl_.village_id_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(S_VILLAGE_QUEST_STATE, _impl_.success_)
+      + sizeof(S_VILLAGE_QUEST_STATE::_impl_.success_)
+      - PROTOBUF_FIELD_OFFSET(S_VILLAGE_QUEST_STATE, _impl_.expedition_)>(
+          reinterpret_cast<char*>(&_impl_.expedition_),
+          reinterpret_cast<char*>(&other->_impl_.expedition_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata S_VILLAGE_QUEST_STATE::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[49]);
+}
+
+// ===================================================================
+
+class C_QUEST_TRACKER_OPEN::_Internal {
+ public:
+};
+
+C_QUEST_TRACKER_OPEN::C_QUEST_TRACKER_OPEN(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:Protocol.C_QUEST_TRACKER_OPEN)
+}
+C_QUEST_TRACKER_OPEN::C_QUEST_TRACKER_OPEN(const C_QUEST_TRACKER_OPEN& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  C_QUEST_TRACKER_OPEN* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:Protocol.C_QUEST_TRACKER_OPEN)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData C_QUEST_TRACKER_OPEN::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C_QUEST_TRACKER_OPEN::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata C_QUEST_TRACKER_OPEN::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[50]);
+}
+
+// ===================================================================
+
+class S_QUEST_TRACKER_STATE::_Internal {
+ public:
+  static const ::Protocol::S_EXPEDITION_STATE& expedition(const S_QUEST_TRACKER_STATE* msg);
+};
+
+const ::Protocol::S_EXPEDITION_STATE&
+S_QUEST_TRACKER_STATE::_Internal::expedition(const S_QUEST_TRACKER_STATE* msg) {
+  return *msg->_impl_.expedition_;
+}
+S_QUEST_TRACKER_STATE::S_QUEST_TRACKER_STATE(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:Protocol.S_QUEST_TRACKER_STATE)
+}
+S_QUEST_TRACKER_STATE::S_QUEST_TRACKER_STATE(const S_QUEST_TRACKER_STATE& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  S_QUEST_TRACKER_STATE* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.quests_){from._impl_.quests_}
+    , decltype(_impl_.reason_){}
+    , decltype(_impl_.expedition_){nullptr}
+    , decltype(_impl_.success_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.reason_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.reason_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_reason().empty()) {
+    _this->_impl_.reason_.Set(from._internal_reason(), 
+      _this->GetArenaForAllocation());
+  }
+  if (from._internal_has_expedition()) {
+    _this->_impl_.expedition_ = new ::Protocol::S_EXPEDITION_STATE(*from._impl_.expedition_);
+  }
+  _this->_impl_.success_ = from._impl_.success_;
+  // @@protoc_insertion_point(copy_constructor:Protocol.S_QUEST_TRACKER_STATE)
+}
+
+inline void S_QUEST_TRACKER_STATE::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.quests_){arena}
+    , decltype(_impl_.reason_){}
+    , decltype(_impl_.expedition_){nullptr}
+    , decltype(_impl_.success_){false}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.reason_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.reason_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+S_QUEST_TRACKER_STATE::~S_QUEST_TRACKER_STATE() {
+  // @@protoc_insertion_point(destructor:Protocol.S_QUEST_TRACKER_STATE)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void S_QUEST_TRACKER_STATE::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.quests_.~RepeatedPtrField();
+  _impl_.reason_.Destroy();
+  if (this != internal_default_instance()) delete _impl_.expedition_;
+}
+
+void S_QUEST_TRACKER_STATE::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void S_QUEST_TRACKER_STATE::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.S_QUEST_TRACKER_STATE)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.quests_.Clear();
+  _impl_.reason_.ClearToEmpty();
+  if (GetArenaForAllocation() == nullptr && _impl_.expedition_ != nullptr) {
+    delete _impl_.expedition_;
+  }
+  _impl_.expedition_ = nullptr;
+  _impl_.success_ = false;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* S_QUEST_TRACKER_STATE::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // bool success = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.success_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string reason = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_reason();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.S_QUEST_TRACKER_STATE.reason"));
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .Protocol.VillageQuestInfo quests = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_quests(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // .Protocol.S_EXPEDITION_STATE expedition = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          ptr = ctx->ParseMessage(_internal_mutable_expedition(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* S_QUEST_TRACKER_STATE::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.S_QUEST_TRACKER_STATE)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // bool success = 1;
+  if (this->_internal_success() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(1, this->_internal_success(), target);
+  }
+
+  // string reason = 2;
+  if (!this->_internal_reason().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_reason().data(), static_cast<int>(this->_internal_reason().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.S_QUEST_TRACKER_STATE.reason");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_reason(), target);
+  }
+
+  // repeated .Protocol.VillageQuestInfo quests = 3;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_quests_size()); i < n; i++) {
+    const auto& repfield = this->_internal_quests(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(3, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
+  // .Protocol.S_EXPEDITION_STATE expedition = 4;
+  if (this->_internal_has_expedition()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(4, _Internal::expedition(this),
+        _Internal::expedition(this).GetCachedSize(), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.S_QUEST_TRACKER_STATE)
+  return target;
+}
+
+size_t S_QUEST_TRACKER_STATE::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.S_QUEST_TRACKER_STATE)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .Protocol.VillageQuestInfo quests = 3;
+  total_size += 1UL * this->_internal_quests_size();
+  for (const auto& msg : this->_impl_.quests_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // string reason = 2;
+  if (!this->_internal_reason().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_reason());
+  }
+
+  // .Protocol.S_EXPEDITION_STATE expedition = 4;
+  if (this->_internal_has_expedition()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.expedition_);
+  }
+
+  // bool success = 1;
+  if (this->_internal_success() != 0) {
+    total_size += 1 + 1;
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData S_QUEST_TRACKER_STATE::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    S_QUEST_TRACKER_STATE::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*S_QUEST_TRACKER_STATE::GetClassData() const { return &_class_data_; }
+
+
+void S_QUEST_TRACKER_STATE::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<S_QUEST_TRACKER_STATE*>(&to_msg);
+  auto& from = static_cast<const S_QUEST_TRACKER_STATE&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.S_QUEST_TRACKER_STATE)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  _this->_impl_.quests_.MergeFrom(from._impl_.quests_);
+  if (!from._internal_reason().empty()) {
+    _this->_internal_set_reason(from._internal_reason());
+  }
+  if (from._internal_has_expedition()) {
+    _this->_internal_mutable_expedition()->::Protocol::S_EXPEDITION_STATE::MergeFrom(
+        from._internal_expedition());
+  }
+  if (from._internal_success() != 0) {
+    _this->_internal_set_success(from._internal_success());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void S_QUEST_TRACKER_STATE::CopyFrom(const S_QUEST_TRACKER_STATE& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.S_QUEST_TRACKER_STATE)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool S_QUEST_TRACKER_STATE::IsInitialized() const {
+  return true;
+}
+
+void S_QUEST_TRACKER_STATE::InternalSwap(S_QUEST_TRACKER_STATE* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _impl_.quests_.InternalSwap(&other->_impl_.quests_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.reason_, lhs_arena,
+      &other->_impl_.reason_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(S_QUEST_TRACKER_STATE, _impl_.success_)
+      + sizeof(S_QUEST_TRACKER_STATE::_impl_.success_)
+      - PROTOBUF_FIELD_OFFSET(S_QUEST_TRACKER_STATE, _impl_.expedition_)>(
+          reinterpret_cast<char*>(&_impl_.expedition_),
+          reinterpret_cast<char*>(&other->_impl_.expedition_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata S_QUEST_TRACKER_STATE::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[51]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
@@ -13934,6 +16649,38 @@ Arena::CreateMaybeMessage< ::Protocol::C_RESET_PLAYER_DATA >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::Protocol::S_RESET_PLAYER_DATA*
 Arena::CreateMaybeMessage< ::Protocol::S_RESET_PLAYER_DATA >(Arena* arena) {
   return Arena::CreateMessageInternal< ::Protocol::S_RESET_PLAYER_DATA >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::QuestObjectiveProgressInfo*
+Arena::CreateMaybeMessage< ::Protocol::QuestObjectiveProgressInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::QuestObjectiveProgressInfo >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::VillageQuestInfo*
+Arena::CreateMaybeMessage< ::Protocol::VillageQuestInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::VillageQuestInfo >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::C_VILLAGE_QUEST_BOARD_OPEN*
+Arena::CreateMaybeMessage< ::Protocol::C_VILLAGE_QUEST_BOARD_OPEN >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::C_VILLAGE_QUEST_BOARD_OPEN >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::C_QUEST_ACCEPT*
+Arena::CreateMaybeMessage< ::Protocol::C_QUEST_ACCEPT >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::C_QUEST_ACCEPT >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::C_QUEST_CLAIM_REWARD*
+Arena::CreateMaybeMessage< ::Protocol::C_QUEST_CLAIM_REWARD >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::C_QUEST_CLAIM_REWARD >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::S_VILLAGE_QUEST_STATE*
+Arena::CreateMaybeMessage< ::Protocol::S_VILLAGE_QUEST_STATE >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::S_VILLAGE_QUEST_STATE >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::C_QUEST_TRACKER_OPEN*
+Arena::CreateMaybeMessage< ::Protocol::C_QUEST_TRACKER_OPEN >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::C_QUEST_TRACKER_OPEN >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::S_QUEST_TRACKER_STATE*
+Arena::CreateMaybeMessage< ::Protocol::S_QUEST_TRACKER_STATE >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::S_QUEST_TRACKER_STATE >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

@@ -185,6 +185,8 @@
 	<ClCompile Include="VillageDataManager.cpp" />
 	<ClCompile Include="EconomyDataManager.cpp" />
 	<ClCompile Include="EconomyService.cpp" />
+	<ClCompile Include="QuestDataManager.cpp" />
+	<ClCompile Include="QuestService.cpp" />
 	<ClCompile Include="DatabaseManager.cpp" />
 	<ClCompile Include="GoogleAuthService.cpp" />
     <ClCompile Include="GameServer.cpp" />
@@ -243,6 +245,8 @@
 	<ClInclude Include="VillageDataManager.h" />
 	<ClInclude Include="EconomyDataManager.h" />
 	<ClInclude Include="EconomyService.h" />
+	<ClInclude Include="QuestDataManager.h" />
+	<ClInclude Include="QuestService.h" />
 	<ClInclude Include="DatabaseManager.h" />
 	<ClInclude Include="GoogleAuthService.h" />
     <ClInclude Include="GameSession.h" />

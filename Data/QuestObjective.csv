@@ -1,0 +1,5 @@
+QuestId,ObjectiveIndex,ObjectiveType,TargetVillageId,TargetItemId,RequiredCount
+string,int,enum,string,string,int
+quest_pool_route_scout,1,VISIT_VILLAGE,$DESTINATION,,1
+quest_pool_food_delivery,1,DELIVER_ITEM,$DESTINATION,$ORIGIN_FOOD,5
+quest_pool_trade_delivery,1,SELL_TRADE_GOOD,$DESTINATION,$ORIGIN_TRADE,3

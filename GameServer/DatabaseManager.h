@@ -9,6 +9,7 @@ public:
 	// server keeps its existing in-memory behavior; enabled=true must connect.
 	bool Initialize();
 	bool IsEnabled() const { return _enabled; }
+	bool IsPlayerDataResetAllowed() const { return _allowPlayerDataReset; }
 
 	bool FindOrCreateGoogleAccount(const string& googleSubject, const string& email,
 		const string& displayName, uint64& outAccountId);
@@ -30,6 +31,7 @@ private:
 	struct Impl;
 	unique_ptr<Impl> _impl;
 	bool _enabled = false;
+	bool _allowPlayerDataReset = false;
 	uint64 _autosaveIntervalMs = 5000;
 	mutable mutex _mutex;
 };

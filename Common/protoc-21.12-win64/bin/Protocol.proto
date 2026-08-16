@@ -333,3 +333,61 @@ message S_RESET_PLAYER_DATA {
 	bool success = 1;
 	string reason = 2;
 }
+
+message QuestObjectiveProgressInfo {
+	uint32 objective_index = 1;
+	string description = 2;
+	int32 progress = 3;
+	int32 required_count = 4;
+	bool completed = 5;
+	string objective_type = 6;
+	string target_village_name = 7;
+	string target_item_name = 8;
+}
+
+message VillageQuestInfo {
+	string quest_id = 1;
+	string display_name = 2;
+	string description = 3;
+	string status = 4;
+	string start_village_id = 5;
+	string completion_village_id = 6;
+	string completion_village_name = 7;
+	repeated QuestObjectiveProgressInfo objectives = 8;
+	repeated string reward_descriptions = 9;
+	bool can_accept = 10;
+	bool can_claim = 11;
+}
+
+message C_VILLAGE_QUEST_BOARD_OPEN {
+	string village_id = 1;
+}
+
+message C_QUEST_ACCEPT {
+	string quest_id = 1;
+}
+
+message C_QUEST_CLAIM_REWARD {
+	string quest_id = 1;
+}
+
+message S_VILLAGE_QUEST_STATE {
+	bool success = 1;
+	string reason = 2;
+	string action = 3;
+	string village_id = 4;
+	repeated VillageQuestInfo quests = 5;
+	S_EXPEDITION_STATE expedition = 6;
+}
+
+// Opens the field HUD's personal quest tracker. Unlike a village board this
+// has no location requirement and exposes only currently active objectives.
+message C_QUEST_TRACKER_OPEN {
+}
+
+message S_QUEST_TRACKER_STATE {
+	bool success = 1;
+	string reason = 2;
+	repeated VillageQuestInfo quests = 3;
+	S_EXPEDITION_STATE expedition = 4;
+}

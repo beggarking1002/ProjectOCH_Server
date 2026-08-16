@@ -16,6 +16,7 @@
 #include "VillageDataManager.h"
 #include "EconomyDataManager.h"
 #include "EconomyService.h"
+#include "QuestDataManager.h"
 #include "DatabaseManager.h"
 #include "GoogleAuthService.h"
 
@@ -58,6 +59,7 @@ int main(int argc, char* argv[])
 	ASSERT_CRASH(GBattleTemplates.Load());
 	ASSERT_CRASH(GVillageData.Load());
 	ASSERT_CRASH(GEconomyData.Load());
+	ASSERT_CRASH(GQuestData.Load());
 	ASSERT_CRASH(GDatabase.Initialize());
 	ASSERT_CRASH(GGoogleAuth.Initialize(allowDevelopmentLogin));
 	ASSERT_CRASH(GEconomyService.Initialize(::GetTickCount64()));

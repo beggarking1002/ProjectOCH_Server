@@ -1,0 +1,5 @@
+QuestId,RewardIndex,RewardType,TargetId,Amount
+string,int,enum,string,int
+quest_pool_route_scout,1,GOLD,,50
+quest_pool_food_delivery,1,GOLD,,80
+quest_pool_trade_delivery,1,GOLD,,120

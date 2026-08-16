@@ -211,6 +211,50 @@ bool Handle_C_VILLAGE_SHOP_SELL(PacketSessionRef& session, Protocol::C_VILLAGE_S
 	return true;
 }
 
+bool Handle_C_VILLAGE_QUEST_BOARD_OPEN(PacketSessionRef& session, Protocol::C_VILLAGE_QUEST_BOARD_OPEN& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->player.load();
+	if (player == nullptr) return false;
+	RoomRef room = player->room.load().lock();
+	if (room == nullptr) return false;
+	room->DoAsync(&Room::HandleVillageQuestBoardOpen, gameSession, pkt);
+	return true;
+}
+
+bool Handle_C_QUEST_TRACKER_OPEN(PacketSessionRef& session, Protocol::C_QUEST_TRACKER_OPEN& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->player.load();
+	if (player == nullptr) return false;
+	RoomRef room = player->room.load().lock();
+	if (room == nullptr) return false;
+	room->DoAsync(&Room::HandleQuestTrackerOpen, gameSession, pkt);
+	return true;
+}
+
+bool Handle_C_QUEST_ACCEPT(PacketSessionRef& session, Protocol::C_QUEST_ACCEPT& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->player.load();
+	if (player == nullptr) return false;
+	RoomRef room = player->room.load().lock();
+	if (room == nullptr) return false;
+	room->DoAsync(&Room::HandleQuestAccept, gameSession, pkt);
+	return true;
+}
+
+bool Handle_C_QUEST_CLAIM_REWARD(PacketSessionRef& session, Protocol::C_QUEST_CLAIM_REWARD& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->player.load();
+	if (player == nullptr) return false;
+	RoomRef room = player->room.load().lock();
+	if (room == nullptr) return false;
+	room->DoAsync(&Room::HandleQuestClaimReward, gameSession, pkt);
+	return true;
+}
+
 bool Handle_C_CHAT(PacketSessionRef& session, Protocol::C_CHAT& pkt)
 {
 	return true;

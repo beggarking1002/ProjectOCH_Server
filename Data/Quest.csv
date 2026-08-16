@@ -1,0 +1,5 @@
+QuestId,DisplayName,Description,Category,StartVillageId,CompletionVillageId,PrerequisiteQuestId,Enabled,SortOrder
+string,string,string,string,string,string,string,bool,int
+quest_pool_route_scout,교역로 답사,{origin}에서 출발해 {destination}의 교역 상황을 확인한다.,VISIT,$ORIGIN,$DESTINATION,,1,10
+quest_pool_food_delivery,{destination} 식량 보급,{destination}에 {item} {count}개를 전달한다.,DELIVERY,$ORIGIN,$DESTINATION,,1,20
+quest_pool_trade_delivery,{destination} 판로 개척,{destination}에서 {item} {count}개를 판매하고 보고한다.,TRADE,$ORIGIN,$DESTINATION,,1,30

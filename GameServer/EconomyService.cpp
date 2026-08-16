@@ -6,6 +6,7 @@
 #include "GameSession.h"
 #include "ServerPacketHandler.h"
 #include "DatabaseManager.h"
+#include "QuestService.h"
 
 #include <limits>
 
@@ -115,6 +116,7 @@ void EconomyService::HandleShopBuy(GameSessionRef session, PlayerRef player, con
 		SendShopState(session, player, villageId, "buy", false, "inventory update failed");
 		return;
 	}
+	GQuestService.OnItemPurchased(player, villageId, itemId, quantity);
 	if (!PersistPlayerMutation(player, previousState, nowMs, reason))
 	{
 		SendShopState(session, player, villageId, "buy", false, reason);
@@ -178,6 +180,7 @@ void EconomyService::HandleShopSell(GameSessionRef session, PlayerRef player, co
 
 	const int32 totalPrice = static_cast<int32>(totalPrice64);
 	player->AddGold(totalPrice);
+	GQuestService.OnTradeGoodSold(player, villageId, itemId, quantity);
 	if (!PersistPlayerMutation(player, previousState, nowMs, reason))
 	{
 		SendShopState(session, player, villageId, "sell", false, reason);
