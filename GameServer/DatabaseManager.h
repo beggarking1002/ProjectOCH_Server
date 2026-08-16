@@ -20,7 +20,8 @@ public:
 private:
 	bool LoadConfig();
 	bool Connect();
-	bool EnsureSchema();
+	bool RunMigrations();
+	bool EnsureMigrationTable();
 	bool Execute(const string& sql);
 	string Escape(const string& value) const;
 	void Disconnect();

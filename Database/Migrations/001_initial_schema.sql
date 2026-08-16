@@ -1,6 +1,6 @@
--- The game server also creates these tables on boot. This file is for manual
--- provisioning and review. Create the database and its least-privilege user
--- separately; do not put credentials in this repository.
+-- Initial persistent account, expedition economy, inventory, and player-scoped
+-- village stock schema. Statements must remain safe to retry because MySQL DDL
+-- can commit implicitly before the migration history row is recorded.
 
 CREATE TABLE IF NOT EXISTS accounts (
     account_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -47,8 +47,7 @@ CREATE TABLE IF NOT EXISTS player_inventory_stacks (
         REFERENCES player_profiles(player_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Created now because the next iteration will move village stock from the
--- global in-memory map to player_id + village_id scoped rows.
+-- Reserved for the player-scoped village stock implementation.
 CREATE TABLE IF NOT EXISTS player_village_shop_stock (
     player_id BIGINT UNSIGNED NOT NULL,
     village_id VARCHAR(64) NOT NULL,

@@ -45,6 +45,8 @@ enum : uint16
 	PKT_C_VILLAGE_SHOP_BUY = 1036,
 	PKT_C_VILLAGE_SHOP_SELL = 1037,
 	PKT_S_VILLAGE_SHOP_STATE = 1038,
+	PKT_C_RESET_PLAYER_DATA = 1039,
+	PKT_S_RESET_PLAYER_DATA = 1040,
 };
 
 // Custom Handlers
@@ -66,6 +68,7 @@ bool Handle_C_ENTER_VILLAGE(PacketSessionRef& session, Protocol::C_ENTER_VILLAGE
 bool Handle_C_VILLAGE_SHOP_OPEN(PacketSessionRef& session, Protocol::C_VILLAGE_SHOP_OPEN& pkt);
 bool Handle_C_VILLAGE_SHOP_BUY(PacketSessionRef& session, Protocol::C_VILLAGE_SHOP_BUY& pkt);
 bool Handle_C_VILLAGE_SHOP_SELL(PacketSessionRef& session, Protocol::C_VILLAGE_SHOP_SELL& pkt);
+bool Handle_C_RESET_PLAYER_DATA(PacketSessionRef& session, Protocol::C_RESET_PLAYER_DATA& pkt);
 
 class ServerPacketHandler
 {
@@ -91,6 +94,7 @@ public:
 		GPacketHandler[PKT_C_VILLAGE_SHOP_OPEN] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_VILLAGE_SHOP_OPEN>(Handle_C_VILLAGE_SHOP_OPEN, session, buffer, len); };
 		GPacketHandler[PKT_C_VILLAGE_SHOP_BUY] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_VILLAGE_SHOP_BUY>(Handle_C_VILLAGE_SHOP_BUY, session, buffer, len); };
 		GPacketHandler[PKT_C_VILLAGE_SHOP_SELL] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_VILLAGE_SHOP_SELL>(Handle_C_VILLAGE_SHOP_SELL, session, buffer, len); };
+		GPacketHandler[PKT_C_RESET_PLAYER_DATA] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_RESET_PLAYER_DATA>(Handle_C_RESET_PLAYER_DATA, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len)
@@ -120,6 +124,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::S_ENTER_VILLAGE& pkt) { return MakeSendBuffer(pkt, PKT_S_ENTER_VILLAGE); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_EXPEDITION_STATE& pkt) { return MakeSendBuffer(pkt, PKT_S_EXPEDITION_STATE); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_VILLAGE_SHOP_STATE& pkt) { return MakeSendBuffer(pkt, PKT_S_VILLAGE_SHOP_STATE); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_RESET_PLAYER_DATA& pkt) { return MakeSendBuffer(pkt, PKT_S_RESET_PLAYER_DATA); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

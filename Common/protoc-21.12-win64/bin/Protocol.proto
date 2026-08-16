@@ -322,3 +322,14 @@ message S_VILLAGE_SHOP_STATE {
 	uint32 stock_reset_remaining_seconds = 7;
 	repeated VillageTradeBuyOfferInfo trade_buy_offers = 8;
 }
+
+// Development-only self-service reset. The server always derives the target
+// player from the authenticated session and never accepts a player id here.
+message C_RESET_PLAYER_DATA {
+	string confirmation = 1;
+}
+
+message S_RESET_PLAYER_DATA {
+	bool success = 1;
+	string reason = 2;
+}

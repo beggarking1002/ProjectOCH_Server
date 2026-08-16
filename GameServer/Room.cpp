@@ -9,6 +9,7 @@
 #include "VillageDataManager.h"
 #include "EconomyService.h"
 #include "GameSessionManager.h"
+#include "DatabaseManager.h"
 
 RoomRef GRoom = make_shared<Room>();
 namespace
@@ -351,6 +352,56 @@ void Room::HandleVillageShopSell(GameSessionRef session, Protocol::C_VILLAGE_SHO
 	PlayerRef player = GetPlayerInRoom(session);
 	GEconomyService.HandleShopSell(session, player, pkt.village_id(), pkt.stack_id(), pkt.quantity());
 }
+
+void Room::HandleResetPlayerData(GameSessionRef session, Protocol::C_RESET_PLAYER_DATA pkt)
+{
+	Protocol::S_RESET_PLAYER_DATA response;
+	auto sendResponse = [&](bool success, const string& reason)
+	{
+		response.set_success(success);
+		response.set_reason(reason);
+		session->Send(ServerPacketHandler::MakeSendBuffer(response));
+	};
+
+#if !defined(_DEBUG)
+	sendResponse(false, "player data reset is available only in development builds");
+	return;
+#else
+	if (pkt.confirmation() != "RESET")
+	{
+		sendResponse(false, "reset confirmation is invalid");
+		return;
+	}
+
+	PlayerRef player = GetPlayerInRoom(session);
+	if (player == nullptr)
+	{
+		sendResponse(false, "player must be in the field");
+		return;
+	}
+	if (!player->hasPersistentIdentity || !GDatabase.IsEnabled())
+	{
+		sendResponse(false, "persistent player data is unavailable");
+		return;
+	}
+
+	const uint64 nowMs = ::GetTickCount64();
+	const PersistentPlayerEconomyState previousState = player->ExportEconomyState();
+	player->ResetEconomyProgress(nowMs);
+	if (!GDatabase.SavePlayerEconomy(player->objectInfo->object_id(), player->ExportEconomyState()))
+	{
+		player->RestoreEconomyState(previousState, nowMs);
+		player->MarkEconomyDirty();
+		sendResponse(false, "failed to reset persistent player data");
+		return;
+	}
+
+	player->MarkEconomyPersisted(nowMs);
+	cout << "PLAYER_DATA_RESET player_id=" << player->objectInfo->object_id() << endl;
+	sendResponse(true, "");
+	GEconomyService.SendExpeditionState(player);
+#endif
+}
 void Room::HandleBattleInvite(GameSessionRef session, Protocol::C_BATTLE_INVITE pkt)
 {
 	PlayerRef requester = GetPlayerInRoom(session);
@@ -663,7 +714,6 @@ void Room::HandleBattleClassSelection(GameSessionRef session, Protocol::C_BATTLE
 void Room::UpdateTick()
 {
 	const uint64 nowMs = ::GetTickCount64();
-	GEconomyService.UpdateTick(nowMs);
 	GSessionManager.UpdateEconomy(nowMs);
 
 	DoTimer(100, &Room::UpdateTick);

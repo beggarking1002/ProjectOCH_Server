@@ -45,8 +45,21 @@ void Player::InitializeEconomy(uint64 nowMs)
 	_gold = GEconomyData.GetConfigValue("expedition_starting_gold", 0);
 	_lastEconomyTickMs = nowMs;
 	_satietyDrainNumerator = 0;
+	_shopRestockElapsedMs = 0;
+	_shopStockGeneration = 1;
+	ResetVillageShopStock();
 	_economyInitialized = true;
 	_economyDirty = true;
+}
+
+void Player::ResetEconomyProgress(uint64 nowMs)
+{
+	_economyInitialized = false;
+	_inventory.clear();
+	_nextInventoryStackId = 1;
+	_nextAcquiredSequence = 1;
+	_lastEconomyPersistedMs = 0;
+	InitializeEconomy(nowMs);
 }
 
 void Player::RestoreEconomyState(const PersistentPlayerEconomyState& state, uint64 nowMs)
@@ -73,6 +86,23 @@ void Player::RestoreEconomyState(const PersistentPlayerEconomyState& state, uint
 
 	_nextInventoryStackId = (max)(state.nextInventoryStackId, maxStackId + 1);
 	_nextAcquiredSequence = (max)(state.nextAcquiredSequence, maxAcquiredSequence + 1);
+	const uint64 stockResetMinutes = static_cast<uint64>(GEconomyData.GetConfigValue("village_stock_reset_interval_real_minutes", 70));
+	const uint64 stockResetIntervalMs = stockResetMinutes * 60 * 1000;
+	_shopRestockElapsedMs = stockResetIntervalMs > 0 ? state.shopRestockElapsedMs % stockResetIntervalMs : 0;
+	_shopStockGeneration = (max)(uint64{ 1 }, state.shopStockGeneration);
+	ResetVillageShopStock();
+	for (const PlayerVillageShopStockState& stock : state.shopStock)
+	{
+		if (stock.stockGeneration != _shopStockGeneration)
+			continue;
+		auto villageIt = _shopStockByVillageId.find(stock.villageId);
+		if (villageIt == _shopStockByVillageId.end())
+			continue;
+		auto itemIt = villageIt->second.find(stock.itemId);
+		if (itemIt == villageIt->second.end())
+			continue;
+		itemIt->second = (max)(0, (min)(stock.stock, itemIt->second));
+	}
 	_lastEconomyTickMs = nowMs;
 	_economyInitialized = true;
 	_economyDirty = false;
@@ -91,6 +121,20 @@ PersistentPlayerEconomyState Player::ExportEconomyState() const
 	state.nextInventoryStackId = _nextInventoryStackId;
 	state.nextAcquiredSequence = _nextAcquiredSequence;
 	state.inventory = _inventory;
+	state.shopRestockElapsedMs = _shopRestockElapsedMs;
+	state.shopStockGeneration = _shopStockGeneration;
+	for (const auto& villagePair : _shopStockByVillageId)
+	{
+		for (const auto& itemPair : villagePair.second)
+		{
+			PlayerVillageShopStockState stock;
+			stock.villageId = villagePair.first;
+			stock.itemId = itemPair.first;
+			stock.stock = itemPair.second;
+			stock.stockGeneration = _shopStockGeneration;
+			state.shopStock.push_back(move(stock));
+		}
+	}
 	return state;
 }
 
@@ -115,6 +159,7 @@ bool Player::AdvanceEconomy(uint64 nowMs, vector<string>& autoConsumedItemIds, v
 	const uint64 elapsedMs = nowMs - _lastEconomyTickMs;
 	_lastEconomyTickMs = nowMs;
 	bool changed = false;
+	AdvanceShopRestock(elapsedMs);
 
 	for (ExpeditionItemStackState& stack : _inventory)
 	{
@@ -165,25 +210,23 @@ bool Player::AddInventoryItem(const EconomyItemTemplate& item, int32 quantity, v
 		return false;
 
 	const int64 shelfLifeMs = GetShelfLifeMs(item);
-	for (auto it = _inventory.begin(); it != _inventory.end();)
+	// Perishable goods are purchase batches: a later purchase must not inherit
+	// the earlier stack's remaining shelf life. Non-perishable goods still stack.
+	if (shelfLifeMs < 0)
 	{
-		if (it->itemId != item.itemId)
+		for (auto it = _inventory.begin(); it != _inventory.end(); ++it)
 		{
-			++it;
-			continue;
+			if (it->itemId != item.itemId || it->remainingShelfLifeMs >= 0)
+				continue;
+
+			if (it->quantity > (numeric_limits<int32>::max)() - quantity)
+				return false;
+
+			it->quantity += quantity;
+			TryAutoConsume(autoConsumedItemIds);
+			_economyDirty = true;
+			return true;
 		}
-
-		if (it->quantity > (numeric_limits<int32>::max)() - quantity)
-			return false;
-
-		// Stack identical items even when they are perishable.  Keeping the earliest
-		// expiry prevents a newly acquired item from extending an existing stack.
-		it->quantity += quantity;
-		if (shelfLifeMs >= 0 && (it->remainingShelfLifeMs < 0 || shelfLifeMs < it->remainingShelfLifeMs))
-			it->remainingShelfLifeMs = shelfLifeMs;
-		TryAutoConsume(autoConsumedItemIds);
-		_economyDirty = true;
-		return true;
 	}
 
 	ExpeditionItemStackState stack;
@@ -224,6 +267,42 @@ bool Player::RemoveInventoryItem(uint64 stackId, int32 quantity)
 		_inventory.erase(it);
 	_economyDirty = true;
 	return true;
+}
+
+int32 Player::GetVillageShopStock(const string& villageId, const string& itemId) const
+{
+	const auto villageIt = _shopStockByVillageId.find(villageId);
+	if (villageIt == _shopStockByVillageId.end())
+		return -1;
+	const auto itemIt = villageIt->second.find(itemId);
+	return itemIt != villageIt->second.end() ? itemIt->second : -1;
+}
+
+bool Player::SpendVillageShopStock(const string& villageId, const string& itemId, int32 quantity)
+{
+	if (quantity <= 0)
+		return false;
+	auto villageIt = _shopStockByVillageId.find(villageId);
+	if (villageIt == _shopStockByVillageId.end())
+		return false;
+	auto itemIt = villageIt->second.find(itemId);
+	if (itemIt == villageIt->second.end() || itemIt->second < quantity)
+		return false;
+	itemIt->second -= quantity;
+	_economyDirty = true;
+	return true;
+}
+
+uint32 Player::GetShopRestockRemainingSeconds(uint64 intervalMs) const
+{
+	if (intervalMs == 0)
+		return 0;
+	const uint64 elapsed = _shopRestockElapsedMs % intervalMs;
+	const uint64 remainingMs = intervalMs - elapsed;
+	const uint64 remainingSeconds = (remainingMs + 999) / 1000;
+	return remainingSeconds > (numeric_limits<uint32>::max)()
+		? (numeric_limits<uint32>::max)()
+		: static_cast<uint32>(remainingSeconds);
 }
 
 bool Player::SpendGold(int32 amount)
@@ -329,4 +408,39 @@ int64 Player::GetShelfLifeMs(const EconomyItemTemplate& item) const
 
 	const int64 realMinutesPerGameDay = GEconomyData.GetConfigValue("real_minutes_per_game_day", 10);
 	return static_cast<int64>(item.shelfLifeDays) * realMinutesPerGameDay * 60 * 1000;
+}
+
+void Player::ResetVillageShopStock()
+{
+	_shopStockByVillageId.clear();
+	for (const auto& villagePair : GEconomyData.GetAllVillageShopStock())
+	{
+		for (const VillageShopStockTemplate& stock : villagePair.second)
+			_shopStockByVillageId[villagePair.first][stock.itemId] = stock.maxStock;
+	}
+}
+
+void Player::AdvanceShopRestock(uint64 elapsedMs)
+{
+	const int32 resetMinutes = GEconomyData.GetConfigValue("village_stock_reset_interval_real_minutes", 0);
+	if (resetMinutes <= 0 || elapsedMs == 0)
+		return;
+	const uint64 intervalMs = static_cast<uint64>(resetMinutes) * 60 * 1000;
+	const uint64 elapsedBefore = _shopRestockElapsedMs % intervalMs;
+	const uint64 completeIntervals = elapsedMs / intervalMs;
+	const uint64 remainder = elapsedMs % intervalMs;
+	const bool crossedBoundary = completeIntervals > 0 || elapsedBefore >= intervalMs - remainder;
+	const uint64 crossedIntervals = completeIntervals + (elapsedBefore >= intervalMs - remainder ? 1 : 0);
+	_shopRestockElapsedMs = (elapsedBefore + remainder) % intervalMs;
+	_economyDirty = true;
+
+	if (!crossedBoundary)
+		return;
+	if (_shopStockGeneration > (numeric_limits<uint64>::max)() - crossedIntervals)
+		_shopStockGeneration = 1;
+	else
+		_shopStockGeneration += crossedIntervals;
+	ResetVillageShopStock();
+	cout << "PLAYER_SHOP_STOCK_RESET player_id=" << objectInfo->object_id()
+		<< " generation=" << _shopStockGeneration << endl;
 }

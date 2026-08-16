@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "GameSession.h"
 #include "ServerPacketHandler.h"
+#include "DatabaseManager.h"
 
 #include <limits>
 
@@ -12,6 +13,7 @@ EconomyService GEconomyService;
 
 bool EconomyService::Initialize(uint64 nowMs)
 {
+	(void)nowMs;
 	if (_initialized)
 		return true;
 
@@ -20,27 +22,11 @@ bool EconomyService::Initialize(uint64 nowMs)
 		return false;
 
 	_stockResetIntervalMs = static_cast<uint64>(resetMinutes) * 60 * 1000;
-	_nextStockResetMs = nowMs + _stockResetIntervalMs;
-	ResetAllStock();
-	_initialized = !_currentStockByVillageId.empty();
+	_initialized = !GEconomyData.GetAllVillageShopStock().empty();
 	cout << "[EconomyService] Initialize " << (_initialized ? "success" : "failed")
-		<< " villages=" << _currentStockByVillageId.size()
-		<< " reset_minutes=" << resetMinutes << endl;
+		<< " villages=" << GEconomyData.GetAllVillageShopStock().size()
+		<< " reset_minutes=" << resetMinutes << " player_scoped=1" << endl;
 	return _initialized;
-}
-
-void EconomyService::UpdateTick(uint64 nowMs)
-{
-	if (!_initialized || nowMs < _nextStockResetMs)
-		return;
-
-	ResetAllStock();
-	do
-	{
-		_nextStockResetMs += _stockResetIntervalMs;
-	} while (nowMs >= _nextStockResetMs);
-
-	cout << "[EconomyService] Village stock fully reset" << endl;
 }
 
 void EconomyService::SendExpeditionState(const PlayerRef& player,
@@ -93,13 +79,13 @@ void EconomyService::HandleShopBuy(GameSessionRef session, PlayerRef player, con
 			}
 		}
 	}
-	int32* currentStock = FindRuntimeStock(villageId, itemId);
-	if (item == nullptr || stockTemplate == nullptr || currentStock == nullptr)
+	const int32 currentStock = player != nullptr ? player->GetVillageShopStock(villageId, itemId) : -1;
+	if (item == nullptr || stockTemplate == nullptr || currentStock < 0)
 	{
 		SendShopState(session, player, villageId, "buy", false, "item is not sold here");
 		return;
 	}
-	if (*currentStock < quantity)
+	if (currentStock < quantity)
 	{
 		SendShopState(session, player, villageId, "buy", false, "not enough village stock");
 		return;
@@ -112,6 +98,8 @@ void EconomyService::HandleShopBuy(GameSessionRef session, PlayerRef player, con
 		return;
 	}
 	const int32 totalPrice = static_cast<int32>(totalPrice64);
+	const uint64 nowMs = ::GetTickCount64();
+	const PersistentPlayerEconomyState previousState = player->ExportEconomyState();
 	if (!player->SpendGold(totalPrice))
 	{
 		SendShopState(session, player, villageId, "buy", false, "not enough gold");
@@ -119,14 +107,20 @@ void EconomyService::HandleShopBuy(GameSessionRef session, PlayerRef player, con
 	}
 
 	vector<string> autoConsumedItemIds;
-	if (!player->AddInventoryItem(*item, quantity, autoConsumedItemIds))
+	if (!player->AddInventoryItem(*item, quantity, autoConsumedItemIds) ||
+		!player->SpendVillageShopStock(villageId, itemId, quantity))
 	{
-		player->AddGold(totalPrice);
+		player->RestoreEconomyState(previousState, nowMs);
+		player->MarkEconomyDirty();
 		SendShopState(session, player, villageId, "buy", false, "inventory update failed");
 		return;
 	}
+	if (!PersistPlayerMutation(player, previousState, nowMs, reason))
+	{
+		SendShopState(session, player, villageId, "buy", false, reason);
+		return;
+	}
 
-	*currentStock -= quantity;
 	cout << "VILLAGE_SHOP_BUY player_id=" << player->objectInfo->object_id()
 		<< " village_id=" << villageId << " item_id=" << itemId
 		<< " quantity=" << quantity << " total_price=" << totalPrice << endl;
@@ -174,6 +168,8 @@ void EconomyService::HandleShopSell(GameSessionRef session, PlayerRef player, co
 		SendShopState(session, player, villageId, "sell", false, "invalid total price");
 		return;
 	}
+	const uint64 nowMs = ::GetTickCount64();
+	const PersistentPlayerEconomyState previousState = player->ExportEconomyState();
 	if (!player->RemoveInventoryItem(stackId, quantity))
 	{
 		SendShopState(session, player, villageId, "sell", false, "inventory update failed");
@@ -182,6 +178,11 @@ void EconomyService::HandleShopSell(GameSessionRef session, PlayerRef player, co
 
 	const int32 totalPrice = static_cast<int32>(totalPrice64);
 	player->AddGold(totalPrice);
+	if (!PersistPlayerMutation(player, previousState, nowMs, reason))
+	{
+		SendShopState(session, player, villageId, "sell", false, reason);
+		return;
+	}
 	cout << "VILLAGE_SHOP_SELL player_id=" << player->objectInfo->object_id()
 		<< " village_id=" << villageId << " item_id=" << itemId
 		<< " quantity=" << quantity << " total_price=" << totalPrice << endl;
@@ -209,16 +210,6 @@ bool EconomyService::ValidateShopAccess(const PlayerRef& player, const string& v
 	return true;
 }
 
-void EconomyService::ResetAllStock()
-{
-	_currentStockByVillageId.clear();
-	for (const auto& villagePair : GEconomyData.GetAllVillageShopStock())
-	{
-		for (const VillageShopStockTemplate& stock : villagePair.second)
-			_currentStockByVillageId[villagePair.first][stock.itemId] = stock.maxStock;
-	}
-}
-
 void EconomyService::SendShopState(GameSessionRef session, const PlayerRef& player, const string& villageId,
 	const string& action, bool success, const string& reason,
 	const vector<string>& autoConsumedItemIds, const vector<string>& expiredItemIds) const
@@ -242,15 +233,7 @@ void EconomyService::SendShopState(GameSessionRef session, const PlayerRef& play
 			listing->set_item_id(row.itemId);
 			listing->set_max_stock(row.maxStock);
 			listing->set_unit_sell_price(row.unitSellPrice);
-			int32 currentStock = 0;
-			const auto villageIt = _currentStockByVillageId.find(villageId);
-			if (villageIt != _currentStockByVillageId.end())
-			{
-				const auto itemIt = villageIt->second.find(row.itemId);
-				if (itemIt != villageIt->second.end())
-					currentStock = itemIt->second;
-			}
-			listing->set_stock(currentStock);
+			listing->set_stock(player != nullptr ? (max)(0, player->GetVillageShopStock(villageId, row.itemId)) : 0);
 		}
 	}
 	if (player != nullptr)
@@ -266,26 +249,25 @@ void EconomyService::SendShopState(GameSessionRef session, const PlayerRef& play
 			offer->set_unit_buy_price(unitBuyPrice);
 		}
 	}
-	packet.set_stock_reset_remaining_seconds(GetStockResetRemainingSeconds(::GetTickCount64()));
+	packet.set_stock_reset_remaining_seconds(player != nullptr
+		? player->GetShopRestockRemainingSeconds(_stockResetIntervalMs)
+		: 0);
 	session->Send(ServerPacketHandler::MakeSendBuffer(packet));
 }
 
-int32* EconomyService::FindRuntimeStock(const string& villageId, const string& itemId)
+bool EconomyService::PersistPlayerMutation(const PlayerRef& player,
+	const PersistentPlayerEconomyState& previousState, uint64 nowMs, string& reason) const
 {
-	auto villageIt = _currentStockByVillageId.find(villageId);
-	if (villageIt == _currentStockByVillageId.end())
-		return nullptr;
-	auto itemIt = villageIt->second.find(itemId);
-	return itemIt != villageIt->second.end() ? &itemIt->second : nullptr;
-}
+	if (player == nullptr || !player->hasPersistentIdentity || !GDatabase.IsEnabled())
+		return true;
+	if (GDatabase.SavePlayerEconomy(player->objectInfo->object_id(), player->ExportEconomyState()))
+	{
+		player->MarkEconomyPersisted(nowMs);
+		return true;
+	}
 
-uint32 EconomyService::GetStockResetRemainingSeconds(uint64 nowMs) const
-{
-	if (!_initialized || nowMs >= _nextStockResetMs)
-		return 0;
-	const uint64 remainingMs = _nextStockResetMs - nowMs;
-	const uint64 remainingSeconds = (remainingMs + 999) / 1000;
-	return remainingSeconds > (numeric_limits<uint32>::max)()
-		? (numeric_limits<uint32>::max)()
-		: static_cast<uint32>(remainingSeconds);
+	player->RestoreEconomyState(previousState, nowMs);
+	player->MarkEconomyDirty();
+	reason = "failed to persist shop transaction";
+	return false;
 }

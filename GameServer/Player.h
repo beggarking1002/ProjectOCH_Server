@@ -15,6 +15,14 @@ struct ExpeditionItemStackState
 	uint64 acquiredSequence = 0;
 };
 
+struct PlayerVillageShopStockState
+{
+	string villageId;
+	string itemId;
+	int32 stock = 0;
+	uint64 stockGeneration = 1;
+};
+
 // Runtime state stays owned by Player. Storage implementations serialize this
 // value object, keeping gameplay code independent from a database client.
 struct PersistentPlayerEconomyState
@@ -28,6 +36,9 @@ struct PersistentPlayerEconomyState
 	uint64 nextInventoryStackId = 1;
 	uint64 nextAcquiredSequence = 1;
 	vector<ExpeditionItemStackState> inventory;
+	uint64 shopRestockElapsedMs = 0;
+	uint64 shopStockGeneration = 1;
+	vector<PlayerVillageShopStockState> shopStock;
 };
 
 class Player : public Creature
@@ -47,14 +58,19 @@ public:
 	void SetBattlePawnClasses(const vector<Protocol::PawnClass>& pawnClasses, int32 level = 1);
 
 	void InitializeEconomy(uint64 nowMs);
+	void ResetEconomyProgress(uint64 nowMs);
 	void RestoreEconomyState(const PersistentPlayerEconomyState& state, uint64 nowMs);
 	PersistentPlayerEconomyState ExportEconomyState() const;
 	bool NeedsEconomyPersistence(uint64 nowMs, uint64 minimumIntervalMs) const;
 	void MarkEconomyPersisted(uint64 nowMs);
+	void MarkEconomyDirty() { _economyDirty = true; }
 	bool AdvanceEconomy(uint64 nowMs, vector<string>& autoConsumedItemIds, vector<string>& expiredItemIds);
 	bool AddInventoryItem(const EconomyItemTemplate& item, int32 quantity, vector<string>& autoConsumedItemIds);
 	const ExpeditionItemStackState* FindInventoryStack(uint64 stackId) const;
 	bool RemoveInventoryItem(uint64 stackId, int32 quantity);
+	int32 GetVillageShopStock(const string& villageId, const string& itemId) const;
+	bool SpendVillageShopStock(const string& villageId, const string& itemId, int32 quantity);
+	uint32 GetShopRestockRemainingSeconds(uint64 intervalMs) const;
 	bool SpendGold(int32 amount);
 	void AddGold(int32 amount);
 	int32 Gold() const { return _gold; }
@@ -69,6 +85,8 @@ public:
 private:
 	bool TryAutoConsume(vector<string>& autoConsumedItemIds);
 	int64 GetShelfLifeMs(const EconomyItemTemplate& item) const;
+	void ResetVillageShopStock();
+	void AdvanceShopRestock(uint64 elapsedMs);
 
 private:
 	bool _economyInitialized = false;
@@ -82,6 +100,9 @@ private:
 	uint64 _nextInventoryStackId = 1;
 	uint64 _nextAcquiredSequence = 1;
 	vector<ExpeditionItemStackState> _inventory;
+	uint64 _shopRestockElapsedMs = 0;
+	uint64 _shopStockGeneration = 1;
+	unordered_map<string, unordered_map<string, int32>> _shopStockByVillageId;
 	bool _economyDirty = false;
 	uint64 _lastEconomyPersistedMs = 0;
 };

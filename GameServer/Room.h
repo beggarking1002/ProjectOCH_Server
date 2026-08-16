@@ -19,6 +19,7 @@ public:
 	void HandleVillageShopOpen(GameSessionRef session, Protocol::C_VILLAGE_SHOP_OPEN pkt);
 	void HandleVillageShopBuy(GameSessionRef session, Protocol::C_VILLAGE_SHOP_BUY pkt);
 	void HandleVillageShopSell(GameSessionRef session, Protocol::C_VILLAGE_SHOP_SELL pkt);
+	void HandleResetPlayerData(GameSessionRef session, Protocol::C_RESET_PLAYER_DATA pkt);
 	void HandleBattleInvite(GameSessionRef session, Protocol::C_BATTLE_INVITE pkt);
 	void HandleBattleInviteResponse(GameSessionRef session, Protocol::C_BATTLE_INVITE_RESPONSE pkt);
 	void HandleDebugBattleSelectionStart(GameSessionRef session);

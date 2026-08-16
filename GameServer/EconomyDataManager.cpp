@@ -255,7 +255,8 @@ bool EconomyDataManager::TryGetTradeBuyPrice(const string& itemId, const string&
 	if (marginPercent < 0)
 		return false;
 
-	const int64 calculated = static_cast<int64>(originPrice) * (100 + marginPercent) / 100;
+	// Gold is integral. Round to the nearest gold and round exact .5 values up.
+	const int64 calculated = (static_cast<int64>(originPrice) * (100 + marginPercent) + 50) / 100;
 	if (calculated <= 0 || calculated > (numeric_limits<int32>::max)())
 		return false;
 

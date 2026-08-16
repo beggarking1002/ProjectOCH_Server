@@ -131,6 +131,13 @@ bool Handle_C_LEAVE_GAME(PacketSessionRef& session, Protocol::C_LEAVE_GAME& pkt)
 	return true;
 }
 
+bool Handle_C_RESET_PLAYER_DATA(PacketSessionRef& session, Protocol::C_RESET_PLAYER_DATA& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+	GRoom->DoAsync(&Room::HandleResetPlayerData, gameSession, pkt);
+	return true;
+}
+
 bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 {
 	auto gameSession = static_pointer_cast<GameSession>(session);

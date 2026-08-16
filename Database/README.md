@@ -13,9 +13,22 @@ FLUSH PRIVILEGES;
 2. Copy `Data/Database.json.example` to `Data/Database.json`, then insert the
    same password. `Data/Database.json` is intentionally ignored by Git.
 
-3. Start the server. It connects first and creates the tables from
-   `001_initial_schema.sql` if they do not exist. The SQL file is also provided
-   for manual database provisioning/review.
+3. Start the server. It applies pending SQL files from `Database/Migrations`
+   in numeric version order and records each applied version in the
+   `schema_migrations` table. Existing databases are adopted safely because
+   migration `001` uses `CREATE TABLE IF NOT EXISTS`.
+
+## Schema migrations
+
+- Name files `NNN_description.sql`, for example `002_player_shop_stock.sql`.
+- Never edit or rename a migration after it has been applied. The server stores
+  its SHA-256 checksum and refuses to start when history and files differ.
+- Keep every migration safe to retry. MySQL DDL can commit implicitly before
+  the server records the migration as applied.
+- The runner supports ordinary semicolon-delimited SQL. Do not use client-only
+  `DELIMITER` directives or stored routine bodies in these files.
+- A failed statement aborts server startup. Fix the migration and restart only
+  if that version has not yet been recorded in `schema_migrations`.
 
 Development login is opt-in. Start the server with `-developmentLogin`, then
 start each client with `-developmentLogin` and a different non-zero

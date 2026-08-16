@@ -2,14 +2,27 @@
 #include "DatabaseManager.h"
 
 #include <fstream>
+#include <filesystem>
+#include <iomanip>
+#include <map>
 #include <regex>
 #include <sstream>
+#include <wincrypt.h>
 
 #include <mysql.h>
 
 namespace
 {
 	constexpr const char* kDatabaseConfigPath = "C:\\ProjectOCH\\Server\\Data\\Database.json";
+	constexpr const char* kMigrationDirectoryName = "Database\\Migrations";
+
+	struct MigrationFile
+	{
+		uint32 version = 0;
+		string name;
+		string sql;
+		string checksum;
+	};
 
 	bool ReadAllText(const string& path, string& outText)
 	{
@@ -60,6 +73,156 @@ namespace
 	int64 ToInt64(const char* value)
 	{
 		return value != nullptr ? static_cast<int64>(strtoll(value, nullptr, 10)) : 0;
+	}
+
+	string Trim(string value)
+	{
+		const size_t first = value.find_first_not_of(" \t\r\n");
+		if (first == string::npos)
+			return {};
+		const size_t last = value.find_last_not_of(" \t\r\n");
+		return value.substr(first, last - first + 1);
+	}
+
+	filesystem::path ResolveMigrationDirectory()
+	{
+		array<wchar_t, 32768> executablePath{};
+		const DWORD length = GetModuleFileNameW(nullptr, executablePath.data(), static_cast<DWORD>(executablePath.size()));
+		if (length > 0 && length < executablePath.size())
+		{
+			const filesystem::path serverRoot = filesystem::path(executablePath.data()).parent_path().parent_path().parent_path();
+			const filesystem::path candidate = serverRoot / kMigrationDirectoryName;
+			if (filesystem::is_directory(candidate))
+				return candidate;
+		}
+
+		return filesystem::current_path() / kMigrationDirectoryName;
+	}
+
+	bool ComputeSha256(const string& value, string& outChecksum)
+	{
+		HCRYPTPROV provider = 0;
+		HCRYPTHASH hash = 0;
+		if (!CryptAcquireContextW(&provider, nullptr, nullptr, PROV_RSA_AES, CRYPT_VERIFYCONTEXT) ||
+			!CryptCreateHash(provider, CALG_SHA_256, 0, 0, &hash))
+		{
+			if (hash != 0) CryptDestroyHash(hash);
+			if (provider != 0) CryptReleaseContext(provider, 0);
+			return false;
+		}
+
+		bool success = CryptHashData(hash, reinterpret_cast<const BYTE*>(value.data()),
+			static_cast<DWORD>(value.size()), 0) != FALSE;
+		array<BYTE, 32> digest{};
+		DWORD digestSize = static_cast<DWORD>(digest.size());
+		if (success)
+			success = CryptGetHashParam(hash, HP_HASHVAL, digest.data(), &digestSize, 0) != FALSE;
+
+		CryptDestroyHash(hash);
+		CryptReleaseContext(provider, 0);
+		if (!success)
+			return false;
+
+		ostringstream stream;
+		stream << hex << setfill('0');
+		for (DWORD i = 0; i < digestSize; ++i)
+			stream << setw(2) << static_cast<int>(digest[i]);
+		outChecksum = stream.str();
+		return true;
+	}
+
+	bool SplitSqlStatements(const string& script, vector<string>& outStatements, string& outReason)
+	{
+		string current;
+		char quote = '\0';
+		bool lineComment = false;
+		bool blockComment = false;
+
+		for (size_t i = 0; i < script.size(); ++i)
+		{
+			const char ch = script[i];
+			const char next = i + 1 < script.size() ? script[i + 1] : '\0';
+
+			if (lineComment)
+			{
+				if (ch == '\n')
+				{
+					lineComment = false;
+					current.push_back(' ');
+				}
+				continue;
+			}
+			if (blockComment)
+			{
+				if (ch == '*' && next == '/')
+				{
+					blockComment = false;
+					current.push_back(' ');
+					++i;
+				}
+				continue;
+			}
+			if (quote != '\0')
+			{
+				current.push_back(ch);
+				if (ch == '\\' && next != '\0')
+				{
+					current.push_back(next);
+					++i;
+				}
+				else if (ch == quote)
+				{
+					if (next == quote)
+					{
+						current.push_back(next);
+						++i;
+					}
+					else
+					{
+						quote = '\0';
+					}
+				}
+				continue;
+			}
+
+			if ((ch == '-' && next == '-' && (i + 2 >= script.size() || isspace(static_cast<unsigned char>(script[i + 2])))) || ch == '#')
+			{
+				lineComment = true;
+				if (ch == '-') ++i;
+				continue;
+			}
+			if (ch == '/' && next == '*')
+			{
+				blockComment = true;
+				++i;
+				continue;
+			}
+			if (ch == '\'' || ch == '"' || ch == '`')
+			{
+				quote = ch;
+				current.push_back(ch);
+				continue;
+			}
+			if (ch == ';')
+			{
+				string statement = Trim(move(current));
+				current.clear();
+				if (!statement.empty())
+					outStatements.push_back(move(statement));
+				continue;
+			}
+			current.push_back(ch);
+		}
+
+		if (quote != '\0' || blockComment)
+		{
+			outReason = "unterminated quote or block comment";
+			return false;
+		}
+		string statement = Trim(move(current));
+		if (!statement.empty())
+			outStatements.push_back(move(statement));
+		return true;
 	}
 }
 
@@ -141,7 +304,7 @@ bool DatabaseManager::Initialize()
 		cout << "[Database] Persistence is disabled by configuration." << endl;
 		return true;
 	}
-	if (!Connect() || !EnsureSchema())
+	if (!Connect() || !RunMigrations())
 	{
 		Disconnect();
 		return false;
@@ -233,38 +396,157 @@ bool DatabaseManager::Connect()
 	return true;
 }
 
-bool DatabaseManager::EnsureSchema()
+bool DatabaseManager::EnsureMigrationTable()
 {
 	return Execute(
-		"CREATE TABLE IF NOT EXISTS accounts ("
-		"account_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, email VARCHAR(320) NOT NULL DEFAULT '', "
-		"display_name VARCHAR(128) NOT NULL DEFAULT 'Player', created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-		"last_login_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB AUTO_INCREMENT=1000000000000 DEFAULT CHARSET=utf8mb4") &&
-		Execute(
-		"CREATE TABLE IF NOT EXISTS account_identities ("
-		"account_id BIGINT UNSIGNED NOT NULL, provider VARCHAR(32) NOT NULL, provider_subject VARCHAR(255) NOT NULL, "
-		"created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (provider, provider_subject), "
-		"KEY idx_account_identities_account (account_id), CONSTRAINT fk_account_identity_account FOREIGN KEY (account_id) "
-		"REFERENCES accounts(account_id) ON DELETE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4") &&
-		Execute(
-		"CREATE TABLE IF NOT EXISTS player_profiles ("
-		"player_id BIGINT UNSIGNED NOT NULL PRIMARY KEY, gold INT NOT NULL, satiety INT NOT NULL, max_satiety INT NOT NULL, "
-		"thirst INT NOT NULL, max_thirst INT NOT NULL, satiety_drain_numerator BIGINT NOT NULL, "
-		"next_inventory_stack_id BIGINT UNSIGNED NOT NULL, next_acquired_sequence BIGINT UNSIGNED NOT NULL, "
-		"created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) "
-		"ENGINE=InnoDB DEFAULT CHARSET=utf8mb4") &&
-		Execute(
-		"CREATE TABLE IF NOT EXISTS player_inventory_stacks ("
-		"player_id BIGINT UNSIGNED NOT NULL, stack_id BIGINT UNSIGNED NOT NULL, item_id VARCHAR(64) NOT NULL, quantity INT NOT NULL, "
-		"remaining_shelf_life_ms BIGINT NOT NULL, acquired_sequence BIGINT UNSIGNED NOT NULL, "
-		"PRIMARY KEY (player_id, stack_id), CONSTRAINT fk_player_inventory_profile FOREIGN KEY (player_id) "
-		"REFERENCES player_profiles(player_id) ON DELETE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4") &&
-		Execute(
-		"CREATE TABLE IF NOT EXISTS player_village_shop_stock ("
-		"player_id BIGINT UNSIGNED NOT NULL, village_id VARCHAR(64) NOT NULL, item_id VARCHAR(64) NOT NULL, stock INT NOT NULL, "
-		"stock_generation BIGINT UNSIGNED NOT NULL DEFAULT 0, updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, "
-		"PRIMARY KEY (player_id, village_id, item_id), CONSTRAINT fk_player_shop_profile FOREIGN KEY (player_id) "
-		"REFERENCES player_profiles(player_id) ON DELETE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+		"CREATE TABLE IF NOT EXISTS schema_migrations ("
+		"version INT UNSIGNED NOT NULL PRIMARY KEY, name VARCHAR(255) NOT NULL, checksum CHAR(64) NOT NULL, "
+		"applied_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+}
+
+bool DatabaseManager::RunMigrations()
+{
+	const filesystem::path migrationDirectory = ResolveMigrationDirectory();
+	if (!filesystem::is_directory(migrationDirectory))
+	{
+		cout << "[Database] Migration directory is unavailable: " << migrationDirectory.string() << endl;
+		return false;
+	}
+
+	const regex filePattern(R"(^(\d+)_([A-Za-z0-9][A-Za-z0-9_-]*)\.sql$)");
+	vector<MigrationFile> migrations;
+	for (const filesystem::directory_entry& entry : filesystem::directory_iterator(migrationDirectory))
+	{
+		if (!entry.is_regular_file() || entry.path().extension() != ".sql")
+			continue;
+
+		const string fileName = entry.path().filename().string();
+		smatch match;
+		if (!regex_match(fileName, match, filePattern))
+		{
+			cout << "[Database] Invalid migration file name: " << fileName << endl;
+			return false;
+		}
+
+		MigrationFile migration;
+		try
+		{
+			const unsigned long parsedVersion = stoul(match[1].str());
+			if (parsedVersion == 0 || parsedVersion > (numeric_limits<uint32>::max)())
+				throw out_of_range("migration version");
+			migration.version = static_cast<uint32>(parsedVersion);
+		}
+		catch (const exception&)
+		{
+			cout << "[Database] Invalid migration version: " << fileName << endl;
+			return false;
+		}
+		migration.name = fileName;
+		if (!ReadAllText(entry.path().string(), migration.sql) || !ComputeSha256(migration.sql, migration.checksum))
+		{
+			cout << "[Database] Failed to read or hash migration: " << fileName << endl;
+			return false;
+		}
+		migrations.push_back(move(migration));
+	}
+
+	sort(migrations.begin(), migrations.end(), [](const MigrationFile& left, const MigrationFile& right)
+		{
+			return left.version < right.version;
+		});
+	if (migrations.empty())
+	{
+		cout << "[Database] No migration files were found." << endl;
+		return false;
+	}
+	for (size_t i = 1; i < migrations.size(); ++i)
+	{
+		if (migrations[i - 1].version == migrations[i].version)
+		{
+			cout << "[Database] Duplicate migration version=" << migrations[i].version << endl;
+			return false;
+		}
+	}
+
+	if (!EnsureMigrationTable() || !Execute("SELECT version,name,checksum FROM schema_migrations ORDER BY version"))
+		return false;
+	MYSQL_RES* result = _impl->mysqlStoreResult(_impl->connection);
+	if (result == nullptr)
+	{
+		cout << "[Database] Failed to read migration history: " << _impl->mysqlError(_impl->connection) << endl;
+		return false;
+	}
+	map<uint32, pair<string, string>> applied;
+	while (MYSQL_ROW row = _impl->mysqlFetchRow(result))
+	{
+		const uint64 version = ToUInt64(row[0]);
+		if (version == 0 || version > (numeric_limits<uint32>::max)())
+		{
+			_impl->mysqlFreeResult(result);
+			cout << "[Database] Migration history contains an invalid version." << endl;
+			return false;
+		}
+		applied[static_cast<uint32>(version)] = {
+			row[1] != nullptr ? row[1] : "",
+			row[2] != nullptr ? row[2] : ""
+		};
+	}
+	_impl->mysqlFreeResult(result);
+
+	for (const auto& [version, history] : applied)
+	{
+		const auto migrationIt = find_if(migrations.begin(), migrations.end(), [version](const MigrationFile& migration)
+			{
+				return migration.version == version;
+			});
+		if (migrationIt == migrations.end())
+		{
+			cout << "[Database] Applied migration file is missing version=" << version << endl;
+			return false;
+		}
+		if (history.first != migrationIt->name || history.second != migrationIt->checksum)
+		{
+			cout << "[Database] Applied migration was modified version=" << version
+				<< " expected_name=" << history.first << " actual_name=" << migrationIt->name << endl;
+			return false;
+		}
+	}
+
+	uint32 currentVersion = applied.empty() ? 0 : applied.rbegin()->first;
+	for (const MigrationFile& migration : migrations)
+	{
+		if (applied.contains(migration.version))
+			continue;
+
+		vector<string> statements;
+		string splitReason;
+		if (!SplitSqlStatements(migration.sql, statements, splitReason) || statements.empty())
+		{
+			cout << "[Database] Invalid migration version=" << migration.version
+				<< " reason=" << (splitReason.empty() ? "no statements" : splitReason) << endl;
+			return false;
+		}
+
+		cout << "[Database] Applying migration version=" << migration.version
+			<< " name=" << migration.name << endl;
+		for (const string& statement : statements)
+		{
+			if (!Execute(statement))
+			{
+				cout << "[Database] Migration failed version=" << migration.version << endl;
+				return false;
+			}
+		}
+		const string historySql = "INSERT INTO schema_migrations (version,name,checksum) VALUES (" +
+			to_string(migration.version) + ",'" + Escape(migration.name) + "','" + migration.checksum + "')";
+		if (!Execute(historySql))
+			return false;
+		currentVersion = migration.version;
+		cout << "[Database] Applied migration version=" << migration.version << endl;
+	}
+
+	cout << "[Database] Migrations current_version=" << currentVersion << endl;
+	return true;
 }
 
 bool DatabaseManager::FindOrCreateGoogleAccount(const string& googleSubject, const string& email,
@@ -381,6 +663,45 @@ bool DatabaseManager::LoadPlayerEconomy(uint64 playerId, PersistentPlayerEconomy
 		outState.inventory.push_back(move(stack));
 	}
 	_impl->mysqlFreeResult(inventoryResult);
+
+	const string shopStateSql = "SELECT active_elapsed_ms,stock_generation FROM player_shop_states WHERE player_id=" +
+		to_string(playerId);
+	if (!Execute(shopStateSql))
+		return false;
+	MYSQL_RES* shopStateResult = _impl->mysqlStoreResult(_impl->connection);
+	if (shopStateResult == nullptr)
+	{
+		cout << "[Database] Shop state query returned no result: " << _impl->mysqlError(_impl->connection) << endl;
+		return false;
+	}
+	if (MYSQL_ROW shopStateRow = _impl->mysqlFetchRow(shopStateResult))
+	{
+		outState.shopRestockElapsedMs = ToUInt64(shopStateRow[0]);
+		outState.shopStockGeneration = (max)(uint64{ 1 }, ToUInt64(shopStateRow[1]));
+	}
+	_impl->mysqlFreeResult(shopStateResult);
+
+	const string shopStockSql = "SELECT village_id,item_id,stock,stock_generation FROM player_village_shop_stock WHERE player_id=" +
+		to_string(playerId) + " ORDER BY village_id,item_id";
+	if (!Execute(shopStockSql))
+		return false;
+	MYSQL_RES* shopStockResult = _impl->mysqlStoreResult(_impl->connection);
+	if (shopStockResult == nullptr)
+	{
+		cout << "[Database] Shop stock query returned no result: " << _impl->mysqlError(_impl->connection) << endl;
+		return false;
+	}
+	outState.shopStock.clear();
+	while (MYSQL_ROW row = _impl->mysqlFetchRow(shopStockResult))
+	{
+		PlayerVillageShopStockState stock;
+		stock.villageId = row[0] != nullptr ? row[0] : "";
+		stock.itemId = row[1] != nullptr ? row[1] : "";
+		stock.stock = static_cast<int32>(ToInt64(row[2]));
+		stock.stockGeneration = (max)(uint64{ 1 }, ToUInt64(row[3]));
+		outState.shopStock.push_back(move(stock));
+	}
+	_impl->mysqlFreeResult(shopStockResult);
 	return true;
 }
 
@@ -403,7 +724,12 @@ bool DatabaseManager::SavePlayerEconomy(uint64 playerId, const PersistentPlayerE
 		to_string(state.nextInventoryStackId) + "," + to_string(state.nextAcquiredSequence) + ") ON DUPLICATE KEY UPDATE " +
 		"gold=VALUES(gold),satiety=VALUES(satiety),max_satiety=VALUES(max_satiety),thirst=VALUES(thirst),max_thirst=VALUES(max_thirst)," +
 		"satiety_drain_numerator=VALUES(satiety_drain_numerator),next_inventory_stack_id=VALUES(next_inventory_stack_id),next_acquired_sequence=VALUES(next_acquired_sequence)";
-	bool success = Execute(profileSql) && Execute("DELETE FROM player_inventory_stacks WHERE player_id=" + to_string(playerId));
+	const string shopStateSql = "INSERT INTO player_shop_states (player_id,active_elapsed_ms,stock_generation) VALUES (" +
+		to_string(playerId) + "," + to_string(state.shopRestockElapsedMs) + "," +
+		to_string((max)(uint64{ 1 }, state.shopStockGeneration)) + ") ON DUPLICATE KEY UPDATE " +
+		"active_elapsed_ms=VALUES(active_elapsed_ms),stock_generation=VALUES(stock_generation)";
+	bool success = Execute(profileSql) && Execute(shopStateSql) &&
+		Execute("DELETE FROM player_inventory_stacks WHERE player_id=" + to_string(playerId));
 	for (const ExpeditionItemStackState& stack : state.inventory)
 	{
 		if (!success)
@@ -412,6 +738,22 @@ bool DatabaseManager::SavePlayerEconomy(uint64 playerId, const PersistentPlayerE
 			to_string(playerId) + "," + to_string(stack.stackId) + ",\'" + Escape(stack.itemId) + "\'," + to_string(stack.quantity) + "," +
 			to_string(stack.remainingShelfLifeMs) + "," + to_string(stack.acquiredSequence) + ")";
 		success = Execute(inventorySql);
+	}
+	if (success)
+		success = Execute("DELETE FROM player_village_shop_stock WHERE player_id=" + to_string(playerId));
+	for (const PlayerVillageShopStockState& stock : state.shopStock)
+	{
+		if (!success)
+			break;
+		if (stock.villageId.empty() || stock.itemId.empty() || stock.stock < 0)
+		{
+			success = false;
+			break;
+		}
+		const string stockSql = "INSERT INTO player_village_shop_stock (player_id,village_id,item_id,stock,stock_generation) VALUES (" +
+			to_string(playerId) + ",'" + Escape(stock.villageId) + "','" + Escape(stock.itemId) + "'," +
+			to_string(stock.stock) + "," + to_string((max)(uint64{ 1 }, stock.stockGeneration)) + ")";
+		success = Execute(stockSql);
 	}
 	if (success)
 	{
