@@ -46,6 +46,64 @@ void Player::InitializeEconomy(uint64 nowMs)
 	_lastEconomyTickMs = nowMs;
 	_satietyDrainNumerator = 0;
 	_economyInitialized = true;
+	_economyDirty = true;
+}
+
+void Player::RestoreEconomyState(const PersistentPlayerEconomyState& state, uint64 nowMs)
+{
+	_maxSatiety = (max)(1, state.maxSatiety);
+	_satiety = (max)(0, (min)(state.satiety, _maxSatiety));
+	_maxThirst = (max)(1, state.maxThirst);
+	_thirst = (max)(0, (min)(state.thirst, _maxThirst));
+	_gold = (max)(0, state.gold);
+	_satietyDrainNumerator = (max)(int64{ 0 }, state.satietyDrainNumerator);
+	_inventory.clear();
+	_inventory.reserve(state.inventory.size());
+
+	uint64 maxStackId = 0;
+	uint64 maxAcquiredSequence = 0;
+	for (const ExpeditionItemStackState& stack : state.inventory)
+	{
+		if (stack.stackId == 0 || stack.itemId.empty() || stack.quantity <= 0)
+			continue;
+		_inventory.push_back(stack);
+		maxStackId = (max)(maxStackId, stack.stackId);
+		maxAcquiredSequence = (max)(maxAcquiredSequence, stack.acquiredSequence);
+	}
+
+	_nextInventoryStackId = (max)(state.nextInventoryStackId, maxStackId + 1);
+	_nextAcquiredSequence = (max)(state.nextAcquiredSequence, maxAcquiredSequence + 1);
+	_lastEconomyTickMs = nowMs;
+	_economyInitialized = true;
+	_economyDirty = false;
+	_lastEconomyPersistedMs = nowMs;
+}
+
+PersistentPlayerEconomyState Player::ExportEconomyState() const
+{
+	PersistentPlayerEconomyState state;
+	state.gold = _gold;
+	state.satiety = _satiety;
+	state.maxSatiety = _maxSatiety;
+	state.thirst = _thirst;
+	state.maxThirst = _maxThirst;
+	state.satietyDrainNumerator = _satietyDrainNumerator;
+	state.nextInventoryStackId = _nextInventoryStackId;
+	state.nextAcquiredSequence = _nextAcquiredSequence;
+	state.inventory = _inventory;
+	return state;
+}
+
+bool Player::NeedsEconomyPersistence(uint64 nowMs, uint64 minimumIntervalMs) const
+{
+	return _economyDirty && nowMs >= _lastEconomyPersistedMs &&
+		nowMs - _lastEconomyPersistedMs >= minimumIntervalMs;
+}
+
+void Player::MarkEconomyPersisted(uint64 nowMs)
+{
+	_economyDirty = false;
+	_lastEconomyPersistedMs = nowMs;
 }
 
 bool Player::AdvanceEconomy(uint64 nowMs, vector<string>& autoConsumedItemIds, vector<string>& expiredItemIds)
@@ -96,6 +154,8 @@ bool Player::AdvanceEconomy(uint64 nowMs, vector<string>& autoConsumedItemIds, v
 
 	if (TryAutoConsume(autoConsumedItemIds))
 		changed = true;
+	if (changed)
+		_economyDirty = true;
 	return changed;
 }
 
@@ -122,6 +182,7 @@ bool Player::AddInventoryItem(const EconomyItemTemplate& item, int32 quantity, v
 		if (shelfLifeMs >= 0 && (it->remainingShelfLifeMs < 0 || shelfLifeMs < it->remainingShelfLifeMs))
 			it->remainingShelfLifeMs = shelfLifeMs;
 		TryAutoConsume(autoConsumedItemIds);
+		_economyDirty = true;
 		return true;
 	}
 
@@ -133,6 +194,7 @@ bool Player::AddInventoryItem(const EconomyItemTemplate& item, int32 quantity, v
 	stack.acquiredSequence = _nextAcquiredSequence++;
 	_inventory.push_back(move(stack));
 	TryAutoConsume(autoConsumedItemIds);
+	_economyDirty = true;
 	return true;
 }
 
@@ -160,6 +222,7 @@ bool Player::RemoveInventoryItem(uint64 stackId, int32 quantity)
 	it->quantity -= quantity;
 	if (it->quantity == 0)
 		_inventory.erase(it);
+	_economyDirty = true;
 	return true;
 }
 
@@ -168,6 +231,7 @@ bool Player::SpendGold(int32 amount)
 	if (amount < 0 || _gold < amount)
 		return false;
 	_gold -= amount;
+	_economyDirty = true;
 	return true;
 }
 
@@ -178,6 +242,7 @@ void Player::AddGold(int32 amount)
 	_gold = amount > (numeric_limits<int32>::max)() - _gold
 		? (numeric_limits<int32>::max)()
 		: _gold + amount;
+	_economyDirty = true;
 }
 
 void Player::FillExpeditionState(Protocol::S_EXPEDITION_STATE& packet,

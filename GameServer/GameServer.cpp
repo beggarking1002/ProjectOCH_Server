@@ -16,6 +16,8 @@
 #include "VillageDataManager.h"
 #include "EconomyDataManager.h"
 #include "EconomyService.h"
+#include "DatabaseManager.h"
+#include "GoogleAuthService.h"
 
 enum
 {
@@ -39,13 +41,25 @@ void DoWorkerJob(ServerServiceRef& service)
 	}
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+	bool allowDevelopmentLogin = false;
+	for (int i = 1; i < argc; ++i)
+	{
+		if (string(argv[i]) == "-developmentLogin")
+		{
+			allowDevelopmentLogin = true;
+			break;
+		}
+	}
+
 	ASSERT_CRASH(GFieldWalkMapData.LoadFromFile("C:\\ProjectOCH\\Server\\Data\\Maps\\Field_001.walkmap.json"));
 	ASSERT_CRASH(GBattleMapData.LoadFromFile("C:\\ProjectOCH\\Server\\Data\\Maps\\BattleField_001.walkmap.json"));
 	ASSERT_CRASH(GBattleTemplates.Load());
 	ASSERT_CRASH(GVillageData.Load());
 	ASSERT_CRASH(GEconomyData.Load());
+	ASSERT_CRASH(GDatabase.Initialize());
+	ASSERT_CRASH(GGoogleAuth.Initialize(allowDevelopmentLogin));
 	ASSERT_CRASH(GEconomyService.Initialize(::GetTickCount64()));
 
 	ServerPacketHandler::Init();

@@ -18,4 +18,6 @@ public:
 
 public:
 	atomic<shared_ptr<Player>> player;
+	atomic<uint64> authenticatedAccountId = 0;
+	atomic<bool> developmentAuthenticated = false;
 };

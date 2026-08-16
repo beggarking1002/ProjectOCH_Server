@@ -6,16 +6,22 @@ import "Struct.proto";
 
 message C_LOGIN
 {
-
+	string google_authorization_code = 1;
+	string google_code_verifier = 2;
+	string google_redirect_uri = 3;
 }
 
 message S_LOGIN
 {
 	bool success = 1;
+	string reason = 2;
+	uint64 account_id = 3;
+	string display_name = 4;
 }
 
 message C_ENTER_GAME
 {
+	// Deprecated development identity. The server uses the authenticated account.
 	uint64 playerIndex = 1;
 }
 

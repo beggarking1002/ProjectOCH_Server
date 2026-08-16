@@ -22,7 +22,11 @@ namespace _pbi = _pb::internal;
 
 namespace Protocol {
 PROTOBUF_CONSTEXPR C_LOGIN::C_LOGIN(
-    ::_pbi::ConstantInitialized) {}
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.google_authorization_code_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.google_code_verifier_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.google_redirect_uri_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
 struct C_LOGINDefaultTypeInternal {
   PROTOBUF_CONSTEXPR C_LOGINDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -34,7 +38,10 @@ struct C_LOGINDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C_LOGINDefaultTypeInternal _C_LOGIN_default_instance_;
 PROTOBUF_CONSTEXPR S_LOGIN::S_LOGIN(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.success_)*/false
+    /*decltype(_impl_.reason_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.display_name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.account_id_)*/uint64_t{0u}
+  , /*decltype(_impl_.success_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct S_LOGINDefaultTypeInternal {
   PROTOBUF_CONSTEXPR S_LOGINDefaultTypeInternal()
@@ -705,6 +712,9 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_LOGIN, _impl_.google_authorization_code_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_LOGIN, _impl_.google_code_verifier_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_LOGIN, _impl_.google_redirect_uri_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_LOGIN, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -712,6 +722,9 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_LOGIN, _impl_.success_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_LOGIN, _impl_.reason_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_LOGIN, _impl_.account_id_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_LOGIN, _impl_.display_name_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::C_ENTER_GAME, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1116,47 +1129,47 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::C_LOGIN)},
-  { 6, -1, -1, sizeof(::Protocol::S_LOGIN)},
-  { 13, -1, -1, sizeof(::Protocol::C_ENTER_GAME)},
-  { 20, -1, -1, sizeof(::Protocol::S_ENTER_GAME)},
-  { 28, -1, -1, sizeof(::Protocol::C_LEAVE_GAME)},
-  { 34, -1, -1, sizeof(::Protocol::S_LEAVE_GAME)},
-  { 40, -1, -1, sizeof(::Protocol::S_SPAWN)},
-  { 47, -1, -1, sizeof(::Protocol::S_DESPAWN)},
-  { 54, -1, -1, sizeof(::Protocol::C_MOVE)},
-  { 61, -1, -1, sizeof(::Protocol::S_MOVE)},
-  { 72, -1, -1, sizeof(::Protocol::C_CHAT)},
-  { 79, -1, -1, sizeof(::Protocol::S_CHAT)},
-  { 87, -1, -1, sizeof(::Protocol::C_ENTER_BATTLE)},
-  { 93, -1, -1, sizeof(::Protocol::S_ENTER_BATTLE)},
-  { 109, -1, -1, sizeof(::Protocol::C_BATTLE_MOVE)},
-  { 118, -1, -1, sizeof(::Protocol::S_BATTLE_MOVE)},
-  { 139, -1, -1, sizeof(::Protocol::C_BATTLE_SKILL)},
-  { 152, -1, -1, sizeof(::Protocol::S_BATTLE_SKILL)},
-  { 178, -1, -1, sizeof(::Protocol::C_BATTLE_END_TURN)},
-  { 186, -1, -1, sizeof(::Protocol::S_BATTLE_END_TURN)},
-  { 207, -1, -1, sizeof(::Protocol::C_BATTLE_INVITE)},
-  { 214, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_REQUEST)},
-  { 224, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_RECEIVED)},
-  { 231, -1, -1, sizeof(::Protocol::C_BATTLE_INVITE_RESPONSE)},
-  { 239, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_RESULT)},
-  { 249, -1, -1, sizeof(::Protocol::S_BATTLE_PAWN_DEAD)},
-  { 258, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT)},
-  { 266, -1, -1, sizeof(::Protocol::C_BATTLE_RESULT_ACK)},
-  { 273, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT_ACK)},
-  { 282, -1, -1, sizeof(::Protocol::S_BATTLE_CLASS_SELECTION_START)},
-  { 294, -1, -1, sizeof(::Protocol::C_BATTLE_CLASS_SELECTION)},
-  { 301, -1, -1, sizeof(::Protocol::S_BATTLE_CLASS_SELECTION_RESULT)},
-  { 312, -1, -1, sizeof(::Protocol::C_ENTER_VILLAGE)},
-  { 321, -1, -1, sizeof(::Protocol::S_ENTER_VILLAGE)},
-  { 332, -1, -1, sizeof(::Protocol::ExpeditionItemStackInfo)},
-  { 342, -1, -1, sizeof(::Protocol::VillageShopListingInfo)},
-  { 352, -1, -1, sizeof(::Protocol::VillageTradeBuyOfferInfo)},
-  { 361, -1, -1, sizeof(::Protocol::S_EXPEDITION_STATE)},
-  { 375, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_OPEN)},
-  { 382, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_BUY)},
-  { 391, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_SELL)},
-  { 400, -1, -1, sizeof(::Protocol::S_VILLAGE_SHOP_STATE)},
+  { 9, -1, -1, sizeof(::Protocol::S_LOGIN)},
+  { 19, -1, -1, sizeof(::Protocol::C_ENTER_GAME)},
+  { 26, -1, -1, sizeof(::Protocol::S_ENTER_GAME)},
+  { 34, -1, -1, sizeof(::Protocol::C_LEAVE_GAME)},
+  { 40, -1, -1, sizeof(::Protocol::S_LEAVE_GAME)},
+  { 46, -1, -1, sizeof(::Protocol::S_SPAWN)},
+  { 53, -1, -1, sizeof(::Protocol::S_DESPAWN)},
+  { 60, -1, -1, sizeof(::Protocol::C_MOVE)},
+  { 67, -1, -1, sizeof(::Protocol::S_MOVE)},
+  { 78, -1, -1, sizeof(::Protocol::C_CHAT)},
+  { 85, -1, -1, sizeof(::Protocol::S_CHAT)},
+  { 93, -1, -1, sizeof(::Protocol::C_ENTER_BATTLE)},
+  { 99, -1, -1, sizeof(::Protocol::S_ENTER_BATTLE)},
+  { 115, -1, -1, sizeof(::Protocol::C_BATTLE_MOVE)},
+  { 124, -1, -1, sizeof(::Protocol::S_BATTLE_MOVE)},
+  { 145, -1, -1, sizeof(::Protocol::C_BATTLE_SKILL)},
+  { 158, -1, -1, sizeof(::Protocol::S_BATTLE_SKILL)},
+  { 184, -1, -1, sizeof(::Protocol::C_BATTLE_END_TURN)},
+  { 192, -1, -1, sizeof(::Protocol::S_BATTLE_END_TURN)},
+  { 213, -1, -1, sizeof(::Protocol::C_BATTLE_INVITE)},
+  { 220, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_REQUEST)},
+  { 230, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_RECEIVED)},
+  { 237, -1, -1, sizeof(::Protocol::C_BATTLE_INVITE_RESPONSE)},
+  { 245, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_RESULT)},
+  { 255, -1, -1, sizeof(::Protocol::S_BATTLE_PAWN_DEAD)},
+  { 264, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT)},
+  { 272, -1, -1, sizeof(::Protocol::C_BATTLE_RESULT_ACK)},
+  { 279, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT_ACK)},
+  { 288, -1, -1, sizeof(::Protocol::S_BATTLE_CLASS_SELECTION_START)},
+  { 300, -1, -1, sizeof(::Protocol::C_BATTLE_CLASS_SELECTION)},
+  { 307, -1, -1, sizeof(::Protocol::S_BATTLE_CLASS_SELECTION_RESULT)},
+  { 318, -1, -1, sizeof(::Protocol::C_ENTER_VILLAGE)},
+  { 327, -1, -1, sizeof(::Protocol::S_ENTER_VILLAGE)},
+  { 338, -1, -1, sizeof(::Protocol::ExpeditionItemStackInfo)},
+  { 348, -1, -1, sizeof(::Protocol::VillageShopListingInfo)},
+  { 358, -1, -1, sizeof(::Protocol::VillageTradeBuyOfferInfo)},
+  { 367, -1, -1, sizeof(::Protocol::S_EXPEDITION_STATE)},
+  { 381, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_OPEN)},
+  { 388, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_BUY)},
+  { 397, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_SELL)},
+  { 406, -1, -1, sizeof(::Protocol::S_VILLAGE_SHOP_STATE)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -1206,135 +1219,139 @@ static const ::_pb::Message* const file_default_instances[] = {
 
 const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\016Protocol.proto\022\010Protocol\032\nEnum.proto\032\014"
-  "Struct.proto\"\t\n\007C_LOGIN\"\032\n\007S_LOGIN\022\017\n\007su"
-  "ccess\030\001 \001(\010\"#\n\014C_ENTER_GAME\022\023\n\013playerInd"
-  "ex\030\001 \001(\004\"E\n\014S_ENTER_GAME\022\017\n\007success\030\001 \001("
-  "\010\022$\n\006player\030\002 \001(\0132\024.Protocol.ObjectInfo\""
-  "\016\n\014C_LEAVE_GAME\"\016\n\014S_LEAVE_GAME\"0\n\007S_SPA"
-  "WN\022%\n\007players\030\001 \003(\0132\024.Protocol.ObjectInf"
-  "o\"\037\n\tS_DESPAWN\022\022\n\nobject_ids\030\001 \003(\004\"-\n\006C_"
-  "MOVE\022#\n\006target\030\001 \001(\0132\023.Protocol.Vec2Fixe"
-  "d\"\234\001\n\006S_MOVE\022\021\n\tobject_id\030\001 \001(\004\022\"\n\005start"
-  "\030\002 \001(\0132\023.Protocol.Vec2Fixed\022#\n\006target\030\003 "
-  "\001(\0132\023.Protocol.Vec2Fixed\022\023\n\013duration_ms\030"
-  "\004 \001(\r\022!\n\004path\030\005 \003(\0132\023.Protocol.Vec2Fixed"
-  "\"\025\n\006C_CHAT\022\013\n\003msg\030\001 \001(\t\"\'\n\006S_CHAT\022\020\n\010pla"
-  "yerId\030\001 \001(\004\022\013\n\003msg\030\002 \001(\t\"\020\n\016C_ENTER_BATT"
-  "LE\"\270\002\n\016S_ENTER_BATTLE\022\017\n\007success\030\001 \001(\010\022\021"
-  "\n\tbattle_id\030\002 \001(\004\022\016\n\006map_id\030\003 \001(\t\022.\n\014all"
-  "ied_pawns\030\004 \003(\0132\030.Protocol.BattlePawnInf"
-  "o\022-\n\013enemy_pawns\030\005 \003(\0132\030.Protocol.Battle"
-  "PawnInfo\022\034\n\024current_turn_pawn_id\030\006 \001(\004\022\016"
-  "\n\006reason\030\007 \001(\t\022\034\n\024battle_state_version\030\010"
-  " \001(\004\022\'\n\005tiles\030\t \003(\0132\030.Protocol.BattleTil"
-  "eInfo\022\036\n\026upcoming_turn_pawn_ids\030\n \003(\004\"Y\n"
-  "\rC_BATTLE_MOVE\022\021\n\tbattle_id\030\001 \001(\004\022\017\n\007paw"
-  "n_id\030\002 \001(\004\022$\n\006target\030\003 \001(\0132\024.Protocol.Ax"
-  "ialCoord\"\320\003\n\rS_BATTLE_MOVE\022\017\n\007success\030\001 "
-  "\001(\010\022\021\n\tbattle_id\030\002 \001(\004\022\017\n\007pawn_id\030\003 \001(\004\022"
-  "#\n\005start\030\004 \001(\0132\024.Protocol.AxialCoord\022$\n\006"
-  "target\030\005 \001(\0132\024.Protocol.AxialCoord\022\031\n\021ne"
-  "xt_turn_pawn_id\030\006 \001(\004\022*\n\006result\030\007 \001(\0162\032."
-  "Protocol.BattleMoveResult\022\016\n\006reason\030\010 \001("
-  "\t\022\020\n\010can_move\030\n \001(\010\022.\n\013pawn_deltas\030\013 \003(\013"
-  "2\031.Protocol.BattlePawnDelta\022\'\n\004logs\030\014 \003("
-  "\0132\031.Protocol.BattleActionLog\022\034\n\024battle_s"
-  "tate_version\030\r \001(\004\022\033\n\023turn_queue_resynce"
-  "d\030\016 \001(\010\022\036\n\026upcoming_turn_pawn_ids\030\017 \003(\004\022"
-  "\"\n\004path\030\020 \003(\0132\024.Protocol.AxialCoord\"\357\001\n\016"
-  "C_BATTLE_SKILL\022\021\n\tbattle_id\030\001 \001(\004\022\026\n\016cas"
-  "ter_pawn_id\030\002 \001(\004\022\022\n\nskill_slot\030\003 \001(\005\022\026\n"
-  "\016target_pawn_id\030\004 \001(\004\022*\n\014target_axial\030\005 "
-  "\001(\0132\024.Protocol.AxialCoord\0222\n\024line_direct"
-  "ion_axial\030\006 \001(\0132\024.Protocol.AxialCoord\022&\n"
-  "\036request_optional_position_swap\030\007 \001(\010\"\267\004"
-  "\n\016S_BATTLE_SKILL\022\017\n\007success\030\001 \001(\010\022\021\n\tbat"
-  "tle_id\030\002 \001(\004\022\026\n\016caster_pawn_id\030\003 \001(\004\022\022\n\n"
-  "skill_slot\030\004 \001(\005\022\026\n\016target_pawn_id\030\005 \001(\004"
-  "\022*\n\014target_axial\030\006 \001(\0132\024.Protocol.AxialC"
-  "oord\022\016\n\006damage\030\007 \001(\005\022\021\n\ttarget_hp\030\010 \001(\005\022"
-  "\031\n\021next_turn_pawn_id\030\t \001(\004\022\016\n\006reason\030\n \001"
-  "(\t\022\020\n\010can_move\030\014 \001(\010\022!\n\031used_sub_action_"
-  "this_turn\030\r \001(\010\022\025\n\rused_ultimate\030\016 \001(\010\022\024"
-  "\n\014target_armor\030\017 \001(\005\022.\n\013pawn_deltas\030\020 \003("
-  "\0132\031.Protocol.BattlePawnDelta\022\'\n\004logs\030\021 \003"
-  "(\0132\031.Protocol.BattleActionLog\022\034\n\024battle_"
-  "state_version\030\022 \001(\004\022-\n\013tile_deltas\030\023 \003(\013"
-  "2\030.Protocol.BattleTileInfo\022\033\n\023turn_queue"
-  "_resynced\030\024 \001(\010\022\036\n\026upcoming_turn_pawn_id"
-  "s\030\025 \003(\004\"7\n\021C_BATTLE_END_TURN\022\021\n\tbattle_i"
-  "d\030\001 \001(\004\022\017\n\007pawn_id\030\002 \001(\004\"\301\003\n\021S_BATTLE_EN"
-  "D_TURN\022\017\n\007success\030\001 \001(\010\022\021\n\tbattle_id\030\002 \001"
-  "(\004\022\017\n\007pawn_id\030\003 \001(\004\022\031\n\021next_turn_pawn_id"
-  "\030\004 \001(\004\022\016\n\006reason\030\005 \001(\t\022\020\n\010can_move\030\007 \001(\010"
-  "\022!\n\031used_sub_action_this_turn\030\010 \001(\010\022\025\n\ru"
-  "sed_ultimate\030\t \001(\010\022.\n\013pawn_deltas\030\n \003(\0132"
-  "\031.Protocol.BattlePawnDelta\022\'\n\004logs\030\013 \003(\013"
-  "2\031.Protocol.BattleActionLog\022\034\n\024battle_st"
-  "ate_version\030\014 \001(\004\022-\n\013tile_deltas\030\r \003(\0132\030"
-  ".Protocol.BattleTileInfo\022\035\n\025entering_tur"
-  "n_pawn_id\030\016 \001(\004\022\033\n\023turn_queue_resynced\030\017"
-  " \001(\010\022\036\n\026upcoming_turn_pawn_ids\030\020 \003(\004\"+\n\017"
-  "C_BATTLE_INVITE\022\030\n\020target_player_id\030\001 \001("
-  "\004\"q\n\027S_BATTLE_INVITE_REQUEST\022\017\n\007success\030"
-  "\001 \001(\010\022\033\n\023requester_player_id\030\002 \001(\004\022\030\n\020ta"
-  "rget_player_id\030\003 \001(\004\022\016\n\006reason\030\004 \001(\t\"7\n\030"
-  "S_BATTLE_INVITE_RECEIVED\022\033\n\023requester_pl"
-  "ayer_id\030\001 \001(\004\"G\n\030C_BATTLE_INVITE_RESPONS"
-  "E\022\033\n\023requester_player_id\030\001 \001(\004\022\016\n\006accept"
-  "\030\002 \001(\010\"q\n\026S_BATTLE_INVITE_RESULT\022\020\n\010acce"
-  "pted\030\001 \001(\010\022\033\n\023requester_player_id\030\002 \001(\004\022"
-  "\030\n\020target_player_id\030\003 \001(\004\022\016\n\006reason\030\004 \001("
-  "\t\"P\n\022S_BATTLE_PAWN_DEAD\022\021\n\tbattle_id\030\001 \001"
-  "(\004\022\017\n\007pawn_id\030\002 \001(\004\022\026\n\016killer_pawn_id\030\003 "
-  "\001(\004\"5\n\017S_BATTLE_RESULT\022\021\n\tbattle_id\030\001 \001("
-  "\004\022\017\n\007victory\030\002 \001(\010\"(\n\023C_BATTLE_RESULT_AC"
-  "K\022\021\n\tbattle_id\030\001 \001(\004\"I\n\023S_BATTLE_RESULT_"
-  "ACK\022\017\n\007success\030\001 \001(\010\022\021\n\tbattle_id\030\002 \001(\004\022"
-  "\016\n\006reason\030\003 \001(\t\"\207\002\n\036S_BATTLE_CLASS_SELEC"
-  "TION_START\022\033\n\023requester_player_id\030\001 \001(\004\022"
-  "\030\n\020target_player_id\030\002 \001(\004\022)\n\014suen_option"
-  "s\030\003 \003(\0162\023.Protocol.PawnClass\022*\n\rbeige_op"
-  "tions\030\004 \003(\0162\023.Protocol.PawnClass\022)\n\014alen"
-  "_options\030\005 \003(\0162\023.Protocol.PawnClass\022,\n\017z"
-  "illian_options\030\006 \003(\0162\023.Protocol.PawnClas"
-  "s\"N\n\030C_BATTLE_CLASS_SELECTION\0222\n\025selecte"
-  "d_pawn_classes\030\001 \003(\0162\023.Protocol.PawnClas"
-  "s\"\227\001\n\037S_BATTLE_CLASS_SELECTION_RESULT\022\017\n"
-  "\007success\030\001 \001(\010\022\034\n\024waiting_for_opponent\030\002"
-  " \001(\010\022\033\n\023requester_player_id\030\003 \001(\004\022\030\n\020tar"
-  "get_player_id\030\004 \001(\004\022\016\n\006reason\030\005 \001(\t\"A\n\017C"
-  "_ENTER_VILLAGE\022\016\n\006map_id\030\001 \001(\t\022\016\n\006cell_x"
-  "\030\002 \001(\021\022\016\n\006cell_y\030\003 \001(\021\"y\n\017S_ENTER_VILLAG"
-  "E\022\017\n\007success\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\022\022\n\nvi"
-  "llage_id\030\003 \001(\t\022\024\n\014village_name\030\004 \001(\t\022\033\n\023"
-  "village_description\030\005 \001(\t\"t\n\027ExpeditionI"
-  "temStackInfo\022\020\n\010stack_id\030\001 \001(\004\022\017\n\007item_i"
-  "d\030\002 \001(\t\022\020\n\010quantity\030\003 \001(\005\022$\n\034remaining_s"
-  "helf_life_seconds\030\004 \001(\003\"d\n\026VillageShopLi"
-  "stingInfo\022\017\n\007item_id\030\001 \001(\t\022\r\n\005stock\030\002 \001("
-  "\005\022\021\n\tmax_stock\030\003 \001(\005\022\027\n\017unit_sell_price\030"
-  "\004 \001(\005\"U\n\030VillageTradeBuyOfferInfo\022\020\n\010sta"
-  "ck_id\030\001 \001(\004\022\017\n\007item_id\030\002 \001(\t\022\026\n\016unit_buy"
-  "_price\030\003 \001(\005\"\334\001\n\022S_EXPEDITION_STATE\022\014\n\004g"
-  "old\030\001 \001(\005\022\017\n\007satiety\030\002 \001(\005\022\023\n\013max_satiet"
-  "y\030\003 \001(\005\0224\n\tinventory\030\004 \003(\0132!.Protocol.Ex"
-  "peditionItemStackInfo\022\036\n\026auto_consumed_i"
-  "tem_ids\030\005 \003(\t\022\030\n\020expired_item_ids\030\006 \003(\t\022"
-  "\016\n\006thirst\030\007 \001(\005\022\022\n\nmax_thirst\030\010 \001(\005\")\n\023C"
-  "_VILLAGE_SHOP_OPEN\022\022\n\nvillage_id\030\001 \001(\t\"K"
-  "\n\022C_VILLAGE_SHOP_BUY\022\022\n\nvillage_id\030\001 \001(\t"
-  "\022\017\n\007item_id\030\002 \001(\t\022\020\n\010quantity\030\003 \001(\005\"M\n\023C"
-  "_VILLAGE_SHOP_SELL\022\022\n\nvillage_id\030\001 \001(\t\022\020"
-  "\n\010stack_id\030\002 \001(\004\022\020\n\010quantity\030\003 \001(\005\"\246\002\n\024S"
-  "_VILLAGE_SHOP_STATE\022\017\n\007success\030\001 \001(\010\022\016\n\006"
-  "reason\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\022\n\nvillage_"
-  "id\030\004 \001(\t\0222\n\010listings\030\005 \003(\0132 .Protocol.Vi"
-  "llageShopListingInfo\0220\n\nexpedition\030\006 \001(\013"
-  "2\034.Protocol.S_EXPEDITION_STATE\022%\n\035stock_"
-  "reset_remaining_seconds\030\007 \001(\r\022<\n\020trade_b"
-  "uy_offers\030\010 \003(\0132\".Protocol.VillageTradeB"
-  "uyOfferInfob\006proto3"
+  "Struct.proto\"g\n\007C_LOGIN\022!\n\031google_author"
+  "ization_code\030\001 \001(\t\022\034\n\024google_code_verifi"
+  "er\030\002 \001(\t\022\033\n\023google_redirect_uri\030\003 \001(\t\"T\n"
+  "\007S_LOGIN\022\017\n\007success\030\001 \001(\010\022\016\n\006reason\030\002 \001("
+  "\t\022\022\n\naccount_id\030\003 \001(\004\022\024\n\014display_name\030\004 "
+  "\001(\t\"#\n\014C_ENTER_GAME\022\023\n\013playerIndex\030\001 \001(\004"
+  "\"E\n\014S_ENTER_GAME\022\017\n\007success\030\001 \001(\010\022$\n\006pla"
+  "yer\030\002 \001(\0132\024.Protocol.ObjectInfo\"\016\n\014C_LEA"
+  "VE_GAME\"\016\n\014S_LEAVE_GAME\"0\n\007S_SPAWN\022%\n\007pl"
+  "ayers\030\001 \003(\0132\024.Protocol.ObjectInfo\"\037\n\tS_D"
+  "ESPAWN\022\022\n\nobject_ids\030\001 \003(\004\"-\n\006C_MOVE\022#\n\006"
+  "target\030\001 \001(\0132\023.Protocol.Vec2Fixed\"\234\001\n\006S_"
+  "MOVE\022\021\n\tobject_id\030\001 \001(\004\022\"\n\005start\030\002 \001(\0132\023"
+  ".Protocol.Vec2Fixed\022#\n\006target\030\003 \001(\0132\023.Pr"
+  "otocol.Vec2Fixed\022\023\n\013duration_ms\030\004 \001(\r\022!\n"
+  "\004path\030\005 \003(\0132\023.Protocol.Vec2Fixed\"\025\n\006C_CH"
+  "AT\022\013\n\003msg\030\001 \001(\t\"\'\n\006S_CHAT\022\020\n\010playerId\030\001 "
+  "\001(\004\022\013\n\003msg\030\002 \001(\t\"\020\n\016C_ENTER_BATTLE\"\270\002\n\016S"
+  "_ENTER_BATTLE\022\017\n\007success\030\001 \001(\010\022\021\n\tbattle"
+  "_id\030\002 \001(\004\022\016\n\006map_id\030\003 \001(\t\022.\n\014allied_pawn"
+  "s\030\004 \003(\0132\030.Protocol.BattlePawnInfo\022-\n\013ene"
+  "my_pawns\030\005 \003(\0132\030.Protocol.BattlePawnInfo"
+  "\022\034\n\024current_turn_pawn_id\030\006 \001(\004\022\016\n\006reason"
+  "\030\007 \001(\t\022\034\n\024battle_state_version\030\010 \001(\004\022\'\n\005"
+  "tiles\030\t \003(\0132\030.Protocol.BattleTileInfo\022\036\n"
+  "\026upcoming_turn_pawn_ids\030\n \003(\004\"Y\n\rC_BATTL"
+  "E_MOVE\022\021\n\tbattle_id\030\001 \001(\004\022\017\n\007pawn_id\030\002 \001"
+  "(\004\022$\n\006target\030\003 \001(\0132\024.Protocol.AxialCoord"
+  "\"\320\003\n\rS_BATTLE_MOVE\022\017\n\007success\030\001 \001(\010\022\021\n\tb"
+  "attle_id\030\002 \001(\004\022\017\n\007pawn_id\030\003 \001(\004\022#\n\005start"
+  "\030\004 \001(\0132\024.Protocol.AxialCoord\022$\n\006target\030\005"
+  " \001(\0132\024.Protocol.AxialCoord\022\031\n\021next_turn_"
+  "pawn_id\030\006 \001(\004\022*\n\006result\030\007 \001(\0162\032.Protocol"
+  ".BattleMoveResult\022\016\n\006reason\030\010 \001(\t\022\020\n\010can"
+  "_move\030\n \001(\010\022.\n\013pawn_deltas\030\013 \003(\0132\031.Proto"
+  "col.BattlePawnDelta\022\'\n\004logs\030\014 \003(\0132\031.Prot"
+  "ocol.BattleActionLog\022\034\n\024battle_state_ver"
+  "sion\030\r \001(\004\022\033\n\023turn_queue_resynced\030\016 \001(\010\022"
+  "\036\n\026upcoming_turn_pawn_ids\030\017 \003(\004\022\"\n\004path\030"
+  "\020 \003(\0132\024.Protocol.AxialCoord\"\357\001\n\016C_BATTLE"
+  "_SKILL\022\021\n\tbattle_id\030\001 \001(\004\022\026\n\016caster_pawn"
+  "_id\030\002 \001(\004\022\022\n\nskill_slot\030\003 \001(\005\022\026\n\016target_"
+  "pawn_id\030\004 \001(\004\022*\n\014target_axial\030\005 \001(\0132\024.Pr"
+  "otocol.AxialCoord\0222\n\024line_direction_axia"
+  "l\030\006 \001(\0132\024.Protocol.AxialCoord\022&\n\036request"
+  "_optional_position_swap\030\007 \001(\010\"\267\004\n\016S_BATT"
+  "LE_SKILL\022\017\n\007success\030\001 \001(\010\022\021\n\tbattle_id\030\002"
+  " \001(\004\022\026\n\016caster_pawn_id\030\003 \001(\004\022\022\n\nskill_sl"
+  "ot\030\004 \001(\005\022\026\n\016target_pawn_id\030\005 \001(\004\022*\n\014targ"
+  "et_axial\030\006 \001(\0132\024.Protocol.AxialCoord\022\016\n\006"
+  "damage\030\007 \001(\005\022\021\n\ttarget_hp\030\010 \001(\005\022\031\n\021next_"
+  "turn_pawn_id\030\t \001(\004\022\016\n\006reason\030\n \001(\t\022\020\n\010ca"
+  "n_move\030\014 \001(\010\022!\n\031used_sub_action_this_tur"
+  "n\030\r \001(\010\022\025\n\rused_ultimate\030\016 \001(\010\022\024\n\014target"
+  "_armor\030\017 \001(\005\022.\n\013pawn_deltas\030\020 \003(\0132\031.Prot"
+  "ocol.BattlePawnDelta\022\'\n\004logs\030\021 \003(\0132\031.Pro"
+  "tocol.BattleActionLog\022\034\n\024battle_state_ve"
+  "rsion\030\022 \001(\004\022-\n\013tile_deltas\030\023 \003(\0132\030.Proto"
+  "col.BattleTileInfo\022\033\n\023turn_queue_resynce"
+  "d\030\024 \001(\010\022\036\n\026upcoming_turn_pawn_ids\030\025 \003(\004\""
+  "7\n\021C_BATTLE_END_TURN\022\021\n\tbattle_id\030\001 \001(\004\022"
+  "\017\n\007pawn_id\030\002 \001(\004\"\301\003\n\021S_BATTLE_END_TURN\022\017"
+  "\n\007success\030\001 \001(\010\022\021\n\tbattle_id\030\002 \001(\004\022\017\n\007pa"
+  "wn_id\030\003 \001(\004\022\031\n\021next_turn_pawn_id\030\004 \001(\004\022\016"
+  "\n\006reason\030\005 \001(\t\022\020\n\010can_move\030\007 \001(\010\022!\n\031used"
+  "_sub_action_this_turn\030\010 \001(\010\022\025\n\rused_ulti"
+  "mate\030\t \001(\010\022.\n\013pawn_deltas\030\n \003(\0132\031.Protoc"
+  "ol.BattlePawnDelta\022\'\n\004logs\030\013 \003(\0132\031.Proto"
+  "col.BattleActionLog\022\034\n\024battle_state_vers"
+  "ion\030\014 \001(\004\022-\n\013tile_deltas\030\r \003(\0132\030.Protoco"
+  "l.BattleTileInfo\022\035\n\025entering_turn_pawn_i"
+  "d\030\016 \001(\004\022\033\n\023turn_queue_resynced\030\017 \001(\010\022\036\n\026"
+  "upcoming_turn_pawn_ids\030\020 \003(\004\"+\n\017C_BATTLE"
+  "_INVITE\022\030\n\020target_player_id\030\001 \001(\004\"q\n\027S_B"
+  "ATTLE_INVITE_REQUEST\022\017\n\007success\030\001 \001(\010\022\033\n"
+  "\023requester_player_id\030\002 \001(\004\022\030\n\020target_pla"
+  "yer_id\030\003 \001(\004\022\016\n\006reason\030\004 \001(\t\"7\n\030S_BATTLE"
+  "_INVITE_RECEIVED\022\033\n\023requester_player_id\030"
+  "\001 \001(\004\"G\n\030C_BATTLE_INVITE_RESPONSE\022\033\n\023req"
+  "uester_player_id\030\001 \001(\004\022\016\n\006accept\030\002 \001(\010\"q"
+  "\n\026S_BATTLE_INVITE_RESULT\022\020\n\010accepted\030\001 \001"
+  "(\010\022\033\n\023requester_player_id\030\002 \001(\004\022\030\n\020targe"
+  "t_player_id\030\003 \001(\004\022\016\n\006reason\030\004 \001(\t\"P\n\022S_B"
+  "ATTLE_PAWN_DEAD\022\021\n\tbattle_id\030\001 \001(\004\022\017\n\007pa"
+  "wn_id\030\002 \001(\004\022\026\n\016killer_pawn_id\030\003 \001(\004\"5\n\017S"
+  "_BATTLE_RESULT\022\021\n\tbattle_id\030\001 \001(\004\022\017\n\007vic"
+  "tory\030\002 \001(\010\"(\n\023C_BATTLE_RESULT_ACK\022\021\n\tbat"
+  "tle_id\030\001 \001(\004\"I\n\023S_BATTLE_RESULT_ACK\022\017\n\007s"
+  "uccess\030\001 \001(\010\022\021\n\tbattle_id\030\002 \001(\004\022\016\n\006reaso"
+  "n\030\003 \001(\t\"\207\002\n\036S_BATTLE_CLASS_SELECTION_STA"
+  "RT\022\033\n\023requester_player_id\030\001 \001(\004\022\030\n\020targe"
+  "t_player_id\030\002 \001(\004\022)\n\014suen_options\030\003 \003(\0162"
+  "\023.Protocol.PawnClass\022*\n\rbeige_options\030\004 "
+  "\003(\0162\023.Protocol.PawnClass\022)\n\014alen_options"
+  "\030\005 \003(\0162\023.Protocol.PawnClass\022,\n\017zillian_o"
+  "ptions\030\006 \003(\0162\023.Protocol.PawnClass\"N\n\030C_B"
+  "ATTLE_CLASS_SELECTION\0222\n\025selected_pawn_c"
+  "lasses\030\001 \003(\0162\023.Protocol.PawnClass\"\227\001\n\037S_"
+  "BATTLE_CLASS_SELECTION_RESULT\022\017\n\007success"
+  "\030\001 \001(\010\022\034\n\024waiting_for_opponent\030\002 \001(\010\022\033\n\023"
+  "requester_player_id\030\003 \001(\004\022\030\n\020target_play"
+  "er_id\030\004 \001(\004\022\016\n\006reason\030\005 \001(\t\"A\n\017C_ENTER_V"
+  "ILLAGE\022\016\n\006map_id\030\001 \001(\t\022\016\n\006cell_x\030\002 \001(\021\022\016"
+  "\n\006cell_y\030\003 \001(\021\"y\n\017S_ENTER_VILLAGE\022\017\n\007suc"
+  "cess\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\022\022\n\nvillage_id"
+  "\030\003 \001(\t\022\024\n\014village_name\030\004 \001(\t\022\033\n\023village_"
+  "description\030\005 \001(\t\"t\n\027ExpeditionItemStack"
+  "Info\022\020\n\010stack_id\030\001 \001(\004\022\017\n\007item_id\030\002 \001(\t\022"
+  "\020\n\010quantity\030\003 \001(\005\022$\n\034remaining_shelf_lif"
+  "e_seconds\030\004 \001(\003\"d\n\026VillageShopListingInf"
+  "o\022\017\n\007item_id\030\001 \001(\t\022\r\n\005stock\030\002 \001(\005\022\021\n\tmax"
+  "_stock\030\003 \001(\005\022\027\n\017unit_sell_price\030\004 \001(\005\"U\n"
+  "\030VillageTradeBuyOfferInfo\022\020\n\010stack_id\030\001 "
+  "\001(\004\022\017\n\007item_id\030\002 \001(\t\022\026\n\016unit_buy_price\030\003"
+  " \001(\005\"\334\001\n\022S_EXPEDITION_STATE\022\014\n\004gold\030\001 \001("
+  "\005\022\017\n\007satiety\030\002 \001(\005\022\023\n\013max_satiety\030\003 \001(\005\022"
+  "4\n\tinventory\030\004 \003(\0132!.Protocol.Expedition"
+  "ItemStackInfo\022\036\n\026auto_consumed_item_ids\030"
+  "\005 \003(\t\022\030\n\020expired_item_ids\030\006 \003(\t\022\016\n\006thirs"
+  "t\030\007 \001(\005\022\022\n\nmax_thirst\030\010 \001(\005\")\n\023C_VILLAGE"
+  "_SHOP_OPEN\022\022\n\nvillage_id\030\001 \001(\t\"K\n\022C_VILL"
+  "AGE_SHOP_BUY\022\022\n\nvillage_id\030\001 \001(\t\022\017\n\007item"
+  "_id\030\002 \001(\t\022\020\n\010quantity\030\003 \001(\005\"M\n\023C_VILLAGE"
+  "_SHOP_SELL\022\022\n\nvillage_id\030\001 \001(\t\022\020\n\010stack_"
+  "id\030\002 \001(\004\022\020\n\010quantity\030\003 \001(\005\"\246\002\n\024S_VILLAGE"
+  "_SHOP_STATE\022\017\n\007success\030\001 \001(\010\022\016\n\006reason\030\002"
+  " \001(\t\022\016\n\006action\030\003 \001(\t\022\022\n\nvillage_id\030\004 \001(\t"
+  "\0222\n\010listings\030\005 \003(\0132 .Protocol.VillageSho"
+  "pListingInfo\0220\n\nexpedition\030\006 \001(\0132\034.Proto"
+  "col.S_EXPEDITION_STATE\022%\n\035stock_reset_re"
+  "maining_seconds\030\007 \001(\r\022<\n\020trade_buy_offer"
+  "s\030\010 \003(\0132\".Protocol.VillageTradeBuyOfferI"
+  "nfob\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -1342,7 +1359,7 @@ static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_de
 };
 static ::_pbi::once_flag descriptor_table_Protocol_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Protocol_2eproto = {
-    false, false, 5179, descriptor_table_protodef_Protocol_2eproto,
+    false, false, 5331, descriptor_table_protodef_Protocol_2eproto,
     "Protocol.proto",
     &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 42,
     schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
@@ -1365,31 +1382,294 @@ class C_LOGIN::_Internal {
 
 C_LOGIN::C_LOGIN(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
   // @@protoc_insertion_point(arena_constructor:Protocol.C_LOGIN)
 }
 C_LOGIN::C_LOGIN(const C_LOGIN& from)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
   C_LOGIN* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.google_authorization_code_){}
+    , decltype(_impl_.google_code_verifier_){}
+    , decltype(_impl_.google_redirect_uri_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.google_authorization_code_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.google_authorization_code_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_google_authorization_code().empty()) {
+    _this->_impl_.google_authorization_code_.Set(from._internal_google_authorization_code(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.google_code_verifier_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.google_code_verifier_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_google_code_verifier().empty()) {
+    _this->_impl_.google_code_verifier_.Set(from._internal_google_code_verifier(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.google_redirect_uri_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.google_redirect_uri_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_google_redirect_uri().empty()) {
+    _this->_impl_.google_redirect_uri_.Set(from._internal_google_redirect_uri(), 
+      _this->GetArenaForAllocation());
+  }
   // @@protoc_insertion_point(copy_constructor:Protocol.C_LOGIN)
 }
 
+inline void C_LOGIN::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.google_authorization_code_){}
+    , decltype(_impl_.google_code_verifier_){}
+    , decltype(_impl_.google_redirect_uri_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.google_authorization_code_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.google_authorization_code_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.google_code_verifier_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.google_code_verifier_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.google_redirect_uri_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.google_redirect_uri_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
 
+C_LOGIN::~C_LOGIN() {
+  // @@protoc_insertion_point(destructor:Protocol.C_LOGIN)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
 
+inline void C_LOGIN::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.google_authorization_code_.Destroy();
+  _impl_.google_code_verifier_.Destroy();
+  _impl_.google_redirect_uri_.Destroy();
+}
 
+void C_LOGIN::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void C_LOGIN::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.C_LOGIN)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.google_authorization_code_.ClearToEmpty();
+  _impl_.google_code_verifier_.ClearToEmpty();
+  _impl_.google_redirect_uri_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* C_LOGIN::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string google_authorization_code = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_google_authorization_code();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.C_LOGIN.google_authorization_code"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string google_code_verifier = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_google_code_verifier();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.C_LOGIN.google_code_verifier"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string google_redirect_uri = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          auto str = _internal_mutable_google_redirect_uri();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.C_LOGIN.google_redirect_uri"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* C_LOGIN::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.C_LOGIN)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string google_authorization_code = 1;
+  if (!this->_internal_google_authorization_code().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_google_authorization_code().data(), static_cast<int>(this->_internal_google_authorization_code().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.C_LOGIN.google_authorization_code");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_google_authorization_code(), target);
+  }
+
+  // string google_code_verifier = 2;
+  if (!this->_internal_google_code_verifier().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_google_code_verifier().data(), static_cast<int>(this->_internal_google_code_verifier().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.C_LOGIN.google_code_verifier");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_google_code_verifier(), target);
+  }
+
+  // string google_redirect_uri = 3;
+  if (!this->_internal_google_redirect_uri().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_google_redirect_uri().data(), static_cast<int>(this->_internal_google_redirect_uri().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.C_LOGIN.google_redirect_uri");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_google_redirect_uri(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.C_LOGIN)
+  return target;
+}
+
+size_t C_LOGIN::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.C_LOGIN)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string google_authorization_code = 1;
+  if (!this->_internal_google_authorization_code().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_google_authorization_code());
+  }
+
+  // string google_code_verifier = 2;
+  if (!this->_internal_google_code_verifier().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_google_code_verifier());
+  }
+
+  // string google_redirect_uri = 3;
+  if (!this->_internal_google_redirect_uri().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_google_redirect_uri());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData C_LOGIN::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    C_LOGIN::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C_LOGIN::GetClassData() const { return &_class_data_; }
 
 
+void C_LOGIN::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<C_LOGIN*>(&to_msg);
+  auto& from = static_cast<const C_LOGIN&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.C_LOGIN)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
 
+  if (!from._internal_google_authorization_code().empty()) {
+    _this->_internal_set_google_authorization_code(from._internal_google_authorization_code());
+  }
+  if (!from._internal_google_code_verifier().empty()) {
+    _this->_internal_set_google_code_verifier(from._internal_google_code_verifier());
+  }
+  if (!from._internal_google_redirect_uri().empty()) {
+    _this->_internal_set_google_redirect_uri(from._internal_google_redirect_uri());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
 
+void C_LOGIN::CopyFrom(const C_LOGIN& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.C_LOGIN)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
 
+bool C_LOGIN::IsInitialized() const {
+  return true;
+}
 
+void C_LOGIN::InternalSwap(C_LOGIN* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.google_authorization_code_, lhs_arena,
+      &other->_impl_.google_authorization_code_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.google_code_verifier_, lhs_arena,
+      &other->_impl_.google_code_verifier_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.google_redirect_uri_, lhs_arena,
+      &other->_impl_.google_redirect_uri_, rhs_arena
+  );
+}
 
 ::PROTOBUF_NAMESPACE_ID::Metadata C_LOGIN::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
@@ -1413,11 +1693,32 @@ S_LOGIN::S_LOGIN(const S_LOGIN& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   S_LOGIN* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.success_){}
+      decltype(_impl_.reason_){}
+    , decltype(_impl_.display_name_){}
+    , decltype(_impl_.account_id_){}
+    , decltype(_impl_.success_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _this->_impl_.success_ = from._impl_.success_;
+  _impl_.reason_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.reason_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_reason().empty()) {
+    _this->_impl_.reason_.Set(from._internal_reason(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.display_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.display_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_display_name().empty()) {
+    _this->_impl_.display_name_.Set(from._internal_display_name(), 
+      _this->GetArenaForAllocation());
+  }
+  ::memcpy(&_impl_.account_id_, &from._impl_.account_id_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.success_) -
+    reinterpret_cast<char*>(&_impl_.account_id_)) + sizeof(_impl_.success_));
   // @@protoc_insertion_point(copy_constructor:Protocol.S_LOGIN)
 }
 
@@ -1426,9 +1727,20 @@ inline void S_LOGIN::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.success_){false}
+      decltype(_impl_.reason_){}
+    , decltype(_impl_.display_name_){}
+    , decltype(_impl_.account_id_){uint64_t{0u}}
+    , decltype(_impl_.success_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
+  _impl_.reason_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.reason_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.display_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.display_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 S_LOGIN::~S_LOGIN() {
@@ -1442,6 +1754,8 @@ S_LOGIN::~S_LOGIN() {
 
 inline void S_LOGIN::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.reason_.Destroy();
+  _impl_.display_name_.Destroy();
 }
 
 void S_LOGIN::SetCachedSize(int size) const {
@@ -1454,7 +1768,11 @@ void S_LOGIN::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.success_ = false;
+  _impl_.reason_.ClearToEmpty();
+  _impl_.display_name_.ClearToEmpty();
+  ::memset(&_impl_.account_id_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.success_) -
+      reinterpret_cast<char*>(&_impl_.account_id_)) + sizeof(_impl_.success_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1469,6 +1787,34 @@ const char* S_LOGIN::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
           _impl_.success_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string reason = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_reason();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.S_LOGIN.reason"));
+        } else
+          goto handle_unusual;
+        continue;
+      // uint64 account_id = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _impl_.account_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string display_name = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          auto str = _internal_mutable_display_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.S_LOGIN.display_name"));
         } else
           goto handle_unusual;
         continue;
@@ -1507,6 +1853,32 @@ uint8_t* S_LOGIN::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteBoolToArray(1, this->_internal_success(), target);
   }
 
+  // string reason = 2;
+  if (!this->_internal_reason().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_reason().data(), static_cast<int>(this->_internal_reason().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.S_LOGIN.reason");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_reason(), target);
+  }
+
+  // uint64 account_id = 3;
+  if (this->_internal_account_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(3, this->_internal_account_id(), target);
+  }
+
+  // string display_name = 4;
+  if (!this->_internal_display_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_display_name().data(), static_cast<int>(this->_internal_display_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.S_LOGIN.display_name");
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_display_name(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1522,6 +1894,25 @@ size_t S_LOGIN::ByteSizeLong() const {
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // string reason = 2;
+  if (!this->_internal_reason().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_reason());
+  }
+
+  // string display_name = 4;
+  if (!this->_internal_display_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_display_name());
+  }
+
+  // uint64 account_id = 3;
+  if (this->_internal_account_id() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_account_id());
+  }
 
   // bool success = 1;
   if (this->_internal_success() != 0) {
@@ -1546,6 +1937,15 @@ void S_LOGIN::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOB
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from._internal_reason().empty()) {
+    _this->_internal_set_reason(from._internal_reason());
+  }
+  if (!from._internal_display_name().empty()) {
+    _this->_internal_set_display_name(from._internal_display_name());
+  }
+  if (from._internal_account_id() != 0) {
+    _this->_internal_set_account_id(from._internal_account_id());
+  }
   if (from._internal_success() != 0) {
     _this->_internal_set_success(from._internal_success());
   }
@@ -1565,8 +1965,23 @@ bool S_LOGIN::IsInitialized() const {
 
 void S_LOGIN::InternalSwap(S_LOGIN* other) {
   using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_.success_, other->_impl_.success_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.reason_, lhs_arena,
+      &other->_impl_.reason_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.display_name_, lhs_arena,
+      &other->_impl_.display_name_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(S_LOGIN, _impl_.success_)
+      + sizeof(S_LOGIN::_impl_.success_)
+      - PROTOBUF_FIELD_OFFSET(S_LOGIN, _impl_.account_id_)>(
+          reinterpret_cast<char*>(&_impl_.account_id_),
+          reinterpret_cast<char*>(&other->_impl_.account_id_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata S_LOGIN::GetMetadata() const {

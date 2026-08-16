@@ -3,6 +3,7 @@
 #include "GameSession.h"
 #include "Player.h"
 #include "EconomyService.h"
+#include "DatabaseManager.h"
 
 GameSessionManager GSessionManager;
 
@@ -16,6 +17,29 @@ void GameSessionManager::Remove(GameSessionRef session)
 {
 	WRITE_LOCK;
 	_sessions.erase(session);
+}
+
+bool GameSessionManager::TryBindAuthenticatedAccount(GameSessionRef session, uint64 accountId)
+{
+	if (session == nullptr || accountId == 0)
+		return false;
+
+	WRITE_LOCK;
+	const uint64 currentAccountId = session->authenticatedAccountId.load();
+	if (currentAccountId != 0 && currentAccountId != accountId)
+		return false;
+
+	for (const GameSessionRef& activeSession : _sessions)
+	{
+		if (activeSession != nullptr && activeSession != session &&
+			activeSession->authenticatedAccountId.load() == accountId)
+		{
+			return false;
+		}
+	}
+
+	session->authenticatedAccountId.store(accountId);
+	return true;
 }
 
 void GameSessionManager::Broadcast(SendBufferRef sendBuffer)
@@ -40,5 +64,6 @@ void GameSessionManager::UpdateEconomy(uint64 nowMs)
 		vector<string> expiredItemIds;
 		if (player->AdvanceEconomy(nowMs, autoConsumedItemIds, expiredItemIds))
 			GEconomyService.SendExpeditionState(player, autoConsumedItemIds, expiredItemIds);
+		GDatabase.SavePlayerEconomyIfDue(player, nowMs);
 	}
 }

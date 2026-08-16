@@ -64,6 +64,8 @@ coverage*.info
 .env
 .env.*
 !.env.example
+/Data/Database.json
+/Data/GoogleAuth.json
 .DS_Store
 Thumbs.db
 Desktop.ini

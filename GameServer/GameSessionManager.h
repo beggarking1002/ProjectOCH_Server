@@ -9,6 +9,7 @@ class GameSessionManager
 public:
 	void Add(GameSessionRef session);
 	void Remove(GameSessionRef session);
+	bool TryBindAuthenticatedAccount(GameSessionRef session, uint64 accountId);
 	void Broadcast(SendBufferRef sendBuffer);
 	void UpdateEconomy(uint64 nowMs);
 

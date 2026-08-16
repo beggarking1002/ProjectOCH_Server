@@ -5,6 +5,7 @@
 #include "Room.h"
 #include "BattleRoom.h"
 #include "Player.h"
+#include "DatabaseManager.h"
 
 void GameSession::OnConnected()
 {
@@ -18,6 +19,7 @@ void GameSession::OnDisconnected()
 	PlayerRef player = session->player.load();
 	if (player)
 	{
+		GDatabase.SavePlayerEconomyOnDisconnect(player, ::GetTickCount64());
 		GBattleRoom->DoAsync(&BattleRoom::HandleLeaveBattle, player->objectInfo->object_id(), string("disconnect"));
 
 		RoomRef room = player->room.load().lock();

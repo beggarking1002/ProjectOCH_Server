@@ -15,6 +15,21 @@ struct ExpeditionItemStackState
 	uint64 acquiredSequence = 0;
 };
 
+// Runtime state stays owned by Player. Storage implementations serialize this
+// value object, keeping gameplay code independent from a database client.
+struct PersistentPlayerEconomyState
+{
+	int32 gold = 0;
+	int32 satiety = 100;
+	int32 maxSatiety = 100;
+	int32 thirst = 100;
+	int32 maxThirst = 100;
+	int64 satietyDrainNumerator = 0;
+	uint64 nextInventoryStackId = 1;
+	uint64 nextAcquiredSequence = 1;
+	vector<ExpeditionItemStackState> inventory;
+};
+
 class Player : public Creature
 {
 public:
@@ -25,12 +40,17 @@ public:
 	weak_ptr<GameSession> session;
 	vector<PawnRef> battlePawns;
 	string activeVillageId;
+	bool hasPersistentIdentity = false;
 
 public:
 	PawnRef AddBattlePawn(Protocol::PawnClass pawnClass, int32 level = 1);
 	void SetBattlePawnClasses(const vector<Protocol::PawnClass>& pawnClasses, int32 level = 1);
 
 	void InitializeEconomy(uint64 nowMs);
+	void RestoreEconomyState(const PersistentPlayerEconomyState& state, uint64 nowMs);
+	PersistentPlayerEconomyState ExportEconomyState() const;
+	bool NeedsEconomyPersistence(uint64 nowMs, uint64 minimumIntervalMs) const;
+	void MarkEconomyPersisted(uint64 nowMs);
 	bool AdvanceEconomy(uint64 nowMs, vector<string>& autoConsumedItemIds, vector<string>& expiredItemIds);
 	bool AddInventoryItem(const EconomyItemTemplate& item, int32 quantity, vector<string>& autoConsumedItemIds);
 	const ExpeditionItemStackState* FindInventoryStack(uint64 stackId) const;
@@ -62,5 +82,7 @@ private:
 	uint64 _nextInventoryStackId = 1;
 	uint64 _nextAcquiredSequence = 1;
 	vector<ExpeditionItemStackState> _inventory;
+	bool _economyDirty = false;
+	uint64 _lastEconomyPersistedMs = 0;
 };
 

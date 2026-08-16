@@ -69,7 +69,10 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="UserMacros">
+    <!-- Override from a local .props file if MySQL is installed elsewhere. -->
+    <MySqlClientRoot Condition="'$(MySqlClientRoot)'==''">C:\Program Files\MySQL\MySQL Server 8.0</MySqlClientRoot>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Binaries\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -110,7 +113,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)ServerCore\;$(SolutionDir)Libraries\Include\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ServerCore\;$(SolutionDir)Libraries\Include\;$(MySqlClientRoot)\include\;</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -132,7 +135,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)ServerCore\;$(SolutionDir)Libraries\Include\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ServerCore\;$(SolutionDir)Libraries\Include\;$(MySqlClientRoot)\include\;</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -182,6 +185,8 @@
 	<ClCompile Include="VillageDataManager.cpp" />
 	<ClCompile Include="EconomyDataManager.cpp" />
 	<ClCompile Include="EconomyService.cpp" />
+	<ClCompile Include="DatabaseManager.cpp" />
+	<ClCompile Include="GoogleAuthService.cpp" />
     <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="GameSession.cpp" />
     <ClCompile Include="GameSessionManager.cpp" />
@@ -238,6 +243,8 @@
 	<ClInclude Include="VillageDataManager.h" />
 	<ClInclude Include="EconomyDataManager.h" />
 	<ClInclude Include="EconomyService.h" />
+	<ClInclude Include="DatabaseManager.h" />
+	<ClInclude Include="GoogleAuthService.h" />
     <ClInclude Include="GameSession.h" />
     <ClInclude Include="GameSessionManager.h" />
     <ClInclude Include="Monster.h" />
