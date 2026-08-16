@@ -53,6 +53,7 @@ enum : uint16
 	PKT_S_VILLAGE_QUEST_STATE = 1044,
 	PKT_C_QUEST_TRACKER_OPEN = 1045,
 	PKT_S_QUEST_TRACKER_STATE = 1046,
+	PKT_C_QUEST_ABANDON = 1047,
 };
 
 // Custom Handlers
@@ -79,6 +80,7 @@ bool Handle_C_VILLAGE_QUEST_BOARD_OPEN(PacketSessionRef& session, Protocol::C_VI
 bool Handle_C_QUEST_ACCEPT(PacketSessionRef& session, Protocol::C_QUEST_ACCEPT& pkt);
 bool Handle_C_QUEST_CLAIM_REWARD(PacketSessionRef& session, Protocol::C_QUEST_CLAIM_REWARD& pkt);
 bool Handle_C_QUEST_TRACKER_OPEN(PacketSessionRef& session, Protocol::C_QUEST_TRACKER_OPEN& pkt);
+bool Handle_C_QUEST_ABANDON(PacketSessionRef& session, Protocol::C_QUEST_ABANDON& pkt);
 
 class ServerPacketHandler
 {
@@ -109,6 +111,7 @@ public:
 		GPacketHandler[PKT_C_QUEST_ACCEPT] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_QUEST_ACCEPT>(Handle_C_QUEST_ACCEPT, session, buffer, len); };
 		GPacketHandler[PKT_C_QUEST_CLAIM_REWARD] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_QUEST_CLAIM_REWARD>(Handle_C_QUEST_CLAIM_REWARD, session, buffer, len); };
 		GPacketHandler[PKT_C_QUEST_TRACKER_OPEN] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_QUEST_TRACKER_OPEN>(Handle_C_QUEST_TRACKER_OPEN, session, buffer, len); };
+		GPacketHandler[PKT_C_QUEST_ABANDON] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_QUEST_ABANDON>(Handle_C_QUEST_ABANDON, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len)

@@ -90,6 +90,9 @@ extern C_LOGINDefaultTypeInternal _C_LOGIN_default_instance_;
 class C_MOVE;
 struct C_MOVEDefaultTypeInternal;
 extern C_MOVEDefaultTypeInternal _C_MOVE_default_instance_;
+class C_QUEST_ABANDON;
+struct C_QUEST_ABANDONDefaultTypeInternal;
+extern C_QUEST_ABANDONDefaultTypeInternal _C_QUEST_ABANDON_default_instance_;
 class C_QUEST_ACCEPT;
 struct C_QUEST_ACCEPTDefaultTypeInternal;
 extern C_QUEST_ACCEPTDefaultTypeInternal _C_QUEST_ACCEPT_default_instance_;
@@ -220,6 +223,7 @@ template<> ::Protocol::C_ENTER_VILLAGE* Arena::CreateMaybeMessage<::Protocol::C_
 template<> ::Protocol::C_LEAVE_GAME* Arena::CreateMaybeMessage<::Protocol::C_LEAVE_GAME>(Arena*);
 template<> ::Protocol::C_LOGIN* Arena::CreateMaybeMessage<::Protocol::C_LOGIN>(Arena*);
 template<> ::Protocol::C_MOVE* Arena::CreateMaybeMessage<::Protocol::C_MOVE>(Arena*);
+template<> ::Protocol::C_QUEST_ABANDON* Arena::CreateMaybeMessage<::Protocol::C_QUEST_ABANDON>(Arena*);
 template<> ::Protocol::C_QUEST_ACCEPT* Arena::CreateMaybeMessage<::Protocol::C_QUEST_ACCEPT>(Arena*);
 template<> ::Protocol::C_QUEST_CLAIM_REWARD* Arena::CreateMaybeMessage<::Protocol::C_QUEST_CLAIM_REWARD>(Arena*);
 template<> ::Protocol::C_QUEST_TRACKER_OPEN* Arena::CreateMaybeMessage<::Protocol::C_QUEST_TRACKER_OPEN>(Arena*);
@@ -7450,6 +7454,7 @@ class S_EXPEDITION_STATE final :
     kMaxSatietyFieldNumber = 3,
     kThirstFieldNumber = 7,
     kMaxThirstFieldNumber = 8,
+    kFameFieldNumber = 9,
   };
   // repeated .Protocol.ExpeditionItemStackInfo inventory = 4;
   int inventory_size() const;
@@ -7562,6 +7567,15 @@ class S_EXPEDITION_STATE final :
   void _internal_set_max_thirst(int32_t value);
   public:
 
+  // int32 fame = 9;
+  void clear_fame();
+  int32_t fame() const;
+  void set_fame(int32_t value);
+  private:
+  int32_t _internal_fame() const;
+  void _internal_set_fame(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_EXPEDITION_STATE)
  private:
   class _Internal;
@@ -7578,6 +7592,7 @@ class S_EXPEDITION_STATE final :
     int32_t max_satiety_;
     int32_t thirst_;
     int32_t max_thirst_;
+    int32_t fame_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -9054,6 +9069,8 @@ class VillageQuestInfo final :
     kCompletionVillageNameFieldNumber = 7,
     kCanAcceptFieldNumber = 10,
     kCanClaimFieldNumber = 11,
+    kAbandonGoldPenaltyFieldNumber = 12,
+    kAbandonFamePenaltyFieldNumber = 13,
   };
   // repeated .Protocol.QuestObjectiveProgressInfo objectives = 8;
   int objectives_size() const;
@@ -9213,6 +9230,24 @@ class VillageQuestInfo final :
   void _internal_set_can_claim(bool value);
   public:
 
+  // int32 abandon_gold_penalty = 12;
+  void clear_abandon_gold_penalty();
+  int32_t abandon_gold_penalty() const;
+  void set_abandon_gold_penalty(int32_t value);
+  private:
+  int32_t _internal_abandon_gold_penalty() const;
+  void _internal_set_abandon_gold_penalty(int32_t value);
+  public:
+
+  // int32 abandon_fame_penalty = 13;
+  void clear_abandon_fame_penalty();
+  int32_t abandon_fame_penalty() const;
+  void set_abandon_fame_penalty(int32_t value);
+  private:
+  int32_t _internal_abandon_fame_penalty() const;
+  void _internal_set_abandon_fame_penalty(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.VillageQuestInfo)
  private:
   class _Internal;
@@ -9232,6 +9267,8 @@ class VillageQuestInfo final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr completion_village_name_;
     bool can_accept_;
     bool can_claim_;
+    int32_t abandon_gold_penalty_;
+    int32_t abandon_fame_penalty_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -10175,8 +10212,11 @@ class S_QUEST_TRACKER_STATE final :
   enum : int {
     kQuestsFieldNumber = 3,
     kReasonFieldNumber = 2,
+    kActionFieldNumber = 5,
     kExpeditionFieldNumber = 4,
     kSuccessFieldNumber = 1,
+    kGoldPenaltyFieldNumber = 6,
+    kFamePenaltyFieldNumber = 7,
   };
   // repeated .Protocol.VillageQuestInfo quests = 3;
   int quests_size() const;
@@ -10210,6 +10250,20 @@ class S_QUEST_TRACKER_STATE final :
   std::string* _internal_mutable_reason();
   public:
 
+  // string action = 5;
+  void clear_action();
+  const std::string& action() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_action(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_action();
+  PROTOBUF_NODISCARD std::string* release_action();
+  void set_allocated_action(std::string* action);
+  private:
+  const std::string& _internal_action() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_action(const std::string& value);
+  std::string* _internal_mutable_action();
+  public:
+
   // .Protocol.S_EXPEDITION_STATE expedition = 4;
   bool has_expedition() const;
   private:
@@ -10237,6 +10291,24 @@ class S_QUEST_TRACKER_STATE final :
   void _internal_set_success(bool value);
   public:
 
+  // int32 gold_penalty = 6;
+  void clear_gold_penalty();
+  int32_t gold_penalty() const;
+  void set_gold_penalty(int32_t value);
+  private:
+  int32_t _internal_gold_penalty() const;
+  void _internal_set_gold_penalty(int32_t value);
+  public:
+
+  // int32 fame_penalty = 7;
+  void clear_fame_penalty();
+  int32_t fame_penalty() const;
+  void set_fame_penalty(int32_t value);
+  private:
+  int32_t _internal_fame_penalty() const;
+  void _internal_set_fame_penalty(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_QUEST_TRACKER_STATE)
  private:
   class _Internal;
@@ -10247,8 +10319,164 @@ class S_QUEST_TRACKER_STATE final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::VillageQuestInfo > quests_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr action_;
     ::Protocol::S_EXPEDITION_STATE* expedition_;
     bool success_;
+    int32_t gold_penalty_;
+    int32_t fame_penalty_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class C_QUEST_ABANDON final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.C_QUEST_ABANDON) */ {
+ public:
+  inline C_QUEST_ABANDON() : C_QUEST_ABANDON(nullptr) {}
+  ~C_QUEST_ABANDON() override;
+  explicit PROTOBUF_CONSTEXPR C_QUEST_ABANDON(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  C_QUEST_ABANDON(const C_QUEST_ABANDON& from);
+  C_QUEST_ABANDON(C_QUEST_ABANDON&& from) noexcept
+    : C_QUEST_ABANDON() {
+    *this = ::std::move(from);
+  }
+
+  inline C_QUEST_ABANDON& operator=(const C_QUEST_ABANDON& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline C_QUEST_ABANDON& operator=(C_QUEST_ABANDON&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const C_QUEST_ABANDON& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const C_QUEST_ABANDON* internal_default_instance() {
+    return reinterpret_cast<const C_QUEST_ABANDON*>(
+               &_C_QUEST_ABANDON_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    52;
+
+  friend void swap(C_QUEST_ABANDON& a, C_QUEST_ABANDON& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(C_QUEST_ABANDON* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(C_QUEST_ABANDON* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  C_QUEST_ABANDON* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C_QUEST_ABANDON>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const C_QUEST_ABANDON& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const C_QUEST_ABANDON& from) {
+    C_QUEST_ABANDON::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(C_QUEST_ABANDON* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.C_QUEST_ABANDON";
+  }
+  protected:
+  explicit C_QUEST_ABANDON(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kQuestIdFieldNumber = 1,
+  };
+  // string quest_id = 1;
+  void clear_quest_id();
+  const std::string& quest_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_quest_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_quest_id();
+  PROTOBUF_NODISCARD std::string* release_quest_id();
+  void set_allocated_quest_id(std::string* quest_id);
+  private:
+  const std::string& _internal_quest_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_quest_id(const std::string& value);
+  std::string* _internal_mutable_quest_id();
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.C_QUEST_ABANDON)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr quest_id_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -15461,6 +15689,26 @@ inline void S_EXPEDITION_STATE::set_max_thirst(int32_t value) {
   // @@protoc_insertion_point(field_set:Protocol.S_EXPEDITION_STATE.max_thirst)
 }
 
+// int32 fame = 9;
+inline void S_EXPEDITION_STATE::clear_fame() {
+  _impl_.fame_ = 0;
+}
+inline int32_t S_EXPEDITION_STATE::_internal_fame() const {
+  return _impl_.fame_;
+}
+inline int32_t S_EXPEDITION_STATE::fame() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_EXPEDITION_STATE.fame)
+  return _internal_fame();
+}
+inline void S_EXPEDITION_STATE::_internal_set_fame(int32_t value) {
+  
+  _impl_.fame_ = value;
+}
+inline void S_EXPEDITION_STATE::set_fame(int32_t value) {
+  _internal_set_fame(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_EXPEDITION_STATE.fame)
+}
+
 // -------------------------------------------------------------------
 
 // C_VILLAGE_SHOP_OPEN
@@ -17018,6 +17266,46 @@ inline void VillageQuestInfo::set_can_claim(bool value) {
   // @@protoc_insertion_point(field_set:Protocol.VillageQuestInfo.can_claim)
 }
 
+// int32 abandon_gold_penalty = 12;
+inline void VillageQuestInfo::clear_abandon_gold_penalty() {
+  _impl_.abandon_gold_penalty_ = 0;
+}
+inline int32_t VillageQuestInfo::_internal_abandon_gold_penalty() const {
+  return _impl_.abandon_gold_penalty_;
+}
+inline int32_t VillageQuestInfo::abandon_gold_penalty() const {
+  // @@protoc_insertion_point(field_get:Protocol.VillageQuestInfo.abandon_gold_penalty)
+  return _internal_abandon_gold_penalty();
+}
+inline void VillageQuestInfo::_internal_set_abandon_gold_penalty(int32_t value) {
+  
+  _impl_.abandon_gold_penalty_ = value;
+}
+inline void VillageQuestInfo::set_abandon_gold_penalty(int32_t value) {
+  _internal_set_abandon_gold_penalty(value);
+  // @@protoc_insertion_point(field_set:Protocol.VillageQuestInfo.abandon_gold_penalty)
+}
+
+// int32 abandon_fame_penalty = 13;
+inline void VillageQuestInfo::clear_abandon_fame_penalty() {
+  _impl_.abandon_fame_penalty_ = 0;
+}
+inline int32_t VillageQuestInfo::_internal_abandon_fame_penalty() const {
+  return _impl_.abandon_fame_penalty_;
+}
+inline int32_t VillageQuestInfo::abandon_fame_penalty() const {
+  // @@protoc_insertion_point(field_get:Protocol.VillageQuestInfo.abandon_fame_penalty)
+  return _internal_abandon_fame_penalty();
+}
+inline void VillageQuestInfo::_internal_set_abandon_fame_penalty(int32_t value) {
+  
+  _impl_.abandon_fame_penalty_ = value;
+}
+inline void VillageQuestInfo::set_abandon_fame_penalty(int32_t value) {
+  _internal_set_abandon_fame_penalty(value);
+  // @@protoc_insertion_point(field_set:Protocol.VillageQuestInfo.abandon_fame_penalty)
+}
+
 // -------------------------------------------------------------------
 
 // C_VILLAGE_QUEST_BOARD_OPEN
@@ -17692,9 +17980,155 @@ inline void S_QUEST_TRACKER_STATE::set_allocated_expedition(::Protocol::S_EXPEDI
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_QUEST_TRACKER_STATE.expedition)
 }
 
+// string action = 5;
+inline void S_QUEST_TRACKER_STATE::clear_action() {
+  _impl_.action_.ClearToEmpty();
+}
+inline const std::string& S_QUEST_TRACKER_STATE::action() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_QUEST_TRACKER_STATE.action)
+  return _internal_action();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void S_QUEST_TRACKER_STATE::set_action(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.action_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.S_QUEST_TRACKER_STATE.action)
+}
+inline std::string* S_QUEST_TRACKER_STATE::mutable_action() {
+  std::string* _s = _internal_mutable_action();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_QUEST_TRACKER_STATE.action)
+  return _s;
+}
+inline const std::string& S_QUEST_TRACKER_STATE::_internal_action() const {
+  return _impl_.action_.Get();
+}
+inline void S_QUEST_TRACKER_STATE::_internal_set_action(const std::string& value) {
+  
+  _impl_.action_.Set(value, GetArenaForAllocation());
+}
+inline std::string* S_QUEST_TRACKER_STATE::_internal_mutable_action() {
+  
+  return _impl_.action_.Mutable(GetArenaForAllocation());
+}
+inline std::string* S_QUEST_TRACKER_STATE::release_action() {
+  // @@protoc_insertion_point(field_release:Protocol.S_QUEST_TRACKER_STATE.action)
+  return _impl_.action_.Release();
+}
+inline void S_QUEST_TRACKER_STATE::set_allocated_action(std::string* action) {
+  if (action != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.action_.SetAllocated(action, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.action_.IsDefault()) {
+    _impl_.action_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_QUEST_TRACKER_STATE.action)
+}
+
+// int32 gold_penalty = 6;
+inline void S_QUEST_TRACKER_STATE::clear_gold_penalty() {
+  _impl_.gold_penalty_ = 0;
+}
+inline int32_t S_QUEST_TRACKER_STATE::_internal_gold_penalty() const {
+  return _impl_.gold_penalty_;
+}
+inline int32_t S_QUEST_TRACKER_STATE::gold_penalty() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_QUEST_TRACKER_STATE.gold_penalty)
+  return _internal_gold_penalty();
+}
+inline void S_QUEST_TRACKER_STATE::_internal_set_gold_penalty(int32_t value) {
+  
+  _impl_.gold_penalty_ = value;
+}
+inline void S_QUEST_TRACKER_STATE::set_gold_penalty(int32_t value) {
+  _internal_set_gold_penalty(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_QUEST_TRACKER_STATE.gold_penalty)
+}
+
+// int32 fame_penalty = 7;
+inline void S_QUEST_TRACKER_STATE::clear_fame_penalty() {
+  _impl_.fame_penalty_ = 0;
+}
+inline int32_t S_QUEST_TRACKER_STATE::_internal_fame_penalty() const {
+  return _impl_.fame_penalty_;
+}
+inline int32_t S_QUEST_TRACKER_STATE::fame_penalty() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_QUEST_TRACKER_STATE.fame_penalty)
+  return _internal_fame_penalty();
+}
+inline void S_QUEST_TRACKER_STATE::_internal_set_fame_penalty(int32_t value) {
+  
+  _impl_.fame_penalty_ = value;
+}
+inline void S_QUEST_TRACKER_STATE::set_fame_penalty(int32_t value) {
+  _internal_set_fame_penalty(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_QUEST_TRACKER_STATE.fame_penalty)
+}
+
+// -------------------------------------------------------------------
+
+// C_QUEST_ABANDON
+
+// string quest_id = 1;
+inline void C_QUEST_ABANDON::clear_quest_id() {
+  _impl_.quest_id_.ClearToEmpty();
+}
+inline const std::string& C_QUEST_ABANDON::quest_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_QUEST_ABANDON.quest_id)
+  return _internal_quest_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void C_QUEST_ABANDON::set_quest_id(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.quest_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.C_QUEST_ABANDON.quest_id)
+}
+inline std::string* C_QUEST_ABANDON::mutable_quest_id() {
+  std::string* _s = _internal_mutable_quest_id();
+  // @@protoc_insertion_point(field_mutable:Protocol.C_QUEST_ABANDON.quest_id)
+  return _s;
+}
+inline const std::string& C_QUEST_ABANDON::_internal_quest_id() const {
+  return _impl_.quest_id_.Get();
+}
+inline void C_QUEST_ABANDON::_internal_set_quest_id(const std::string& value) {
+  
+  _impl_.quest_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* C_QUEST_ABANDON::_internal_mutable_quest_id() {
+  
+  return _impl_.quest_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* C_QUEST_ABANDON::release_quest_id() {
+  // @@protoc_insertion_point(field_release:Protocol.C_QUEST_ABANDON.quest_id)
+  return _impl_.quest_id_.Release();
+}
+inline void C_QUEST_ABANDON::set_allocated_quest_id(std::string* quest_id) {
+  if (quest_id != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.quest_id_.SetAllocated(quest_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.quest_id_.IsDefault()) {
+    _impl_.quest_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.C_QUEST_ABANDON.quest_id)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

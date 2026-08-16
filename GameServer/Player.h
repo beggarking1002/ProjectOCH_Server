@@ -29,6 +29,7 @@ enum class PlayerQuestStatus
 	Active,
 	Ready,
 	Completed,
+	Abandoned,
 };
 
 struct PlayerQuestObjectiveState
@@ -73,6 +74,7 @@ struct PlayerQuestState
 struct PersistentPlayerEconomyState
 {
 	int32 gold = 0;
+	int32 fame = 0;
 	int32 satiety = 100;
 	int32 maxSatiety = 100;
 	int32 thirst = 100;
@@ -125,7 +127,9 @@ public:
 	uint32 GetShopRestockRemainingSeconds(uint64 intervalMs) const;
 	bool SpendGold(int32 amount);
 	void AddGold(int32 amount);
+	void ModifyFame(int32 amount);
 	int32 Gold() const { return _gold; }
+	int32 Fame() const { return _fame; }
 	int32 Satiety() const { return _satiety; }
 	int32 MaxSatiety() const { return _maxSatiety; }
 	int32 Thirst() const { return _thirst; }
@@ -143,6 +147,7 @@ private:
 private:
 	bool _economyInitialized = false;
 	int32 _gold = 0;
+	int32 _fame = 0;
 	int32 _satiety = 100;
 	int32 _maxSatiety = 100;
 	int32 _thirst = 100;

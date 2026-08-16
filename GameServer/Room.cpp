@@ -365,6 +365,11 @@ void Room::HandleQuestTrackerOpen(GameSessionRef session, Protocol::C_QUEST_TRAC
 	GQuestService.HandleTrackerOpen(session, GetPlayerInRoom(session));
 }
 
+void Room::HandleQuestAbandon(GameSessionRef session, Protocol::C_QUEST_ABANDON pkt)
+{
+	GQuestService.HandleAbandon(session, GetPlayerInRoom(session), pkt.quest_id());
+}
+
 void Room::HandleQuestAccept(GameSessionRef session, Protocol::C_QUEST_ACCEPT pkt)
 {
 	GQuestService.HandleAccept(session, GetPlayerInRoom(session), pkt.quest_id());

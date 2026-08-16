@@ -5,6 +5,9 @@
 #include "BattleTemplateManager.h"
 #include "BattleCoordinate.h"
 #include "BattleMapData.h"
+#include "DatabaseManager.h"
+#include "EconomyDataManager.h"
+#include "EconomyService.h"
 #include "GameSession.h"
 #include "Player.h"
 #include "Room.h"
@@ -1892,6 +1895,45 @@ bool BattleRoom::TryFinishBattle(BattleState& battle, uint64 fallbackWinnerOwner
 		battle.winnerOwnerId = battle.opponentOwnerId;
 
 	battle.loserOwnerId = (battle.winnerOwnerId == battle.ownerId) ? battle.opponentOwnerId : battle.ownerId;
+
+	GameSessionRef winnerSession = battle.winnerOwnerId == battle.ownerId
+		? battle.ownerSession.lock()
+		: battle.opponentSession.lock();
+	PlayerRef winner = winnerSession != nullptr ? winnerSession->player.load() : nullptr;
+	if (winner != nullptr && winner->objectInfo != nullptr &&
+		winner->objectInfo->object_id() == battle.winnerOwnerId)
+	{
+		const int32 fameReward = max(0, GEconomyData.GetConfigValue("battle_victory_fame", 10));
+		if (fameReward > 0)
+		{
+			const uint64 nowMs = ::GetTickCount64();
+			const PersistentPlayerEconomyState previous = winner->ExportEconomyState();
+			winner->ModifyFame(fameReward);
+			winner->MarkEconomyDirty();
+
+			bool persisted = true;
+			if (winner->hasPersistentIdentity && GDatabase.IsEnabled())
+				persisted = GDatabase.SavePlayerEconomy(winner->objectInfo->object_id(), winner->ExportEconomyState());
+
+			if (!persisted)
+			{
+				winner->RestoreEconomyState(previous, nowMs);
+				winner->MarkEconomyDirty();
+				cout << "BATTLE_VICTORY_FAME_FAIL battle_id=" << battle.battleId
+					<< " player_id=" << battle.winnerOwnerId
+					<< " reason=\"failed to persist fame reward\"" << endl;
+			}
+			else
+			{
+				winner->MarkEconomyPersisted(nowMs);
+				cout << "BATTLE_VICTORY_FAME battle_id=" << battle.battleId
+					<< " player_id=" << battle.winnerOwnerId
+					<< " amount=" << fameReward
+					<< " fame=" << winner->Fame() << endl;
+				GEconomyService.SendExpeditionState(winner);
+			}
+		}
+	}
 
 	cout << "BATTLE_RESULT"
 		<< " battle_id=" << battle.battleId

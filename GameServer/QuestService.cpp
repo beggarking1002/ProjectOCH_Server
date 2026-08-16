@@ -73,7 +73,9 @@ namespace
 
 	const char* RewardTypeName(QuestRewardType type)
 	{
-		return type == QuestRewardType::Item ? "ITEM" : "GOLD";
+		if (type == QuestRewardType::Item) return "ITEM";
+		if (type == QuestRewardType::Fame) return "FAME";
+		return "GOLD";
 	}
 
 	PlayerQuestObjectiveState* FindObjective(PlayerQuestState& state, uint32 objectiveIndex)
@@ -105,6 +107,22 @@ namespace
 		{
 			return quest.status == PlayerQuestStatus::Active || quest.status == PlayerQuestStatus::Ready;
 		}));
+	}
+
+	bool TryCalculateAbandonPenalty(const PlayerQuestState& quest, int32& outGold, int32& outFame)
+	{
+		int64 gold = 0;
+		int64 fame = 0;
+		for (const PlayerQuestRewardState& reward : quest.rewards)
+		{
+			if (reward.rewardType == "GOLD") gold += static_cast<int64>(reward.amount) * 2;
+			else if (reward.rewardType == "FAME") fame += static_cast<int64>(reward.amount) * 2;
+		}
+		if (gold < 0 || fame < 0 || gold > (numeric_limits<int32>::max)() || fame > (numeric_limits<int32>::max)())
+			return false;
+		outGold = static_cast<int32>(gold);
+		outFame = static_cast<int32>(fame);
+		return true;
 	}
 }
 
@@ -220,6 +238,8 @@ void QuestService::HandleClaimReward(GameSessionRef session, const PlayerRef& pl
 	{
 		if (reward.rewardType == "GOLD")
 			player->AddGold(reward.amount);
+		else if (reward.rewardType == "FAME")
+			player->ModifyFame(reward.amount);
 		else
 		{
 			const EconomyItemTemplate* item = GEconomyData.GetItem(reward.targetId);
@@ -255,6 +275,56 @@ void QuestService::HandleClaimReward(GameSessionRef session, const PlayerRef& pl
 	SendBoardState(session, player, villageId, "claim", true, "");
 }
 
+void QuestService::HandleAbandon(GameSessionRef session, const PlayerRef& player, const string& questId)
+{
+	PlayerQuestState* quest = player != nullptr ? player->FindQuestState(questId) : nullptr;
+	int32 goldPenalty = 0;
+	int32 famePenalty = 0;
+	string reason;
+	if (player == nullptr)
+		reason = "player must be in the field";
+	else if (quest == nullptr || (quest->status != PlayerQuestStatus::Active && quest->status != PlayerQuestStatus::Ready))
+		reason = "quest cannot be abandoned";
+	else if (!TryCalculateAbandonPenalty(*quest, goldPenalty, famePenalty))
+		reason = "quest abandon penalty is invalid";
+	else if (player->Gold() < goldPenalty)
+		reason = "not enough gold to pay the abandon penalty";
+	if (!reason.empty())
+	{
+		SendTrackerState(session, player, false, reason, "abandon", goldPenalty, famePenalty);
+		return;
+	}
+
+	const uint64 nowTickMs = ::GetTickCount64();
+	const PersistentPlayerEconomyState previous = player->ExportEconomyState();
+	const string originVillageId = quest->startVillageId;
+	if (!player->SpendGold(goldPenalty))
+	{
+		SendTrackerState(session, player, false, "failed to pay the abandon penalty", "abandon", goldPenalty, famePenalty);
+		return;
+	}
+	player->ModifyFame(-famePenalty);
+	quest = player->FindQuestState(questId);
+	quest->status = PlayerQuestStatus::Abandoned;
+	quest->boardSlot = -1;
+	player->MarkEconomyDirty();
+	EnsureBoardFilled(player, originVillageId);
+
+	if (player->hasPersistentIdentity && GDatabase.IsEnabled() &&
+		!GDatabase.SavePlayerEconomy(player->objectInfo->object_id(), player->ExportEconomyState()))
+	{
+		player->RestoreEconomyState(previous, nowTickMs);
+		player->MarkEconomyDirty();
+		SendTrackerState(session, player, false, "failed to persist abandoned quest", "abandon", goldPenalty, famePenalty);
+		return;
+	}
+	player->MarkEconomyPersisted(nowTickMs);
+	cout << "QUEST_ABANDON player_id=" << player->objectInfo->object_id() << " quest_id=" << questId
+		<< " gold_penalty=" << goldPenalty << " fame_penalty=" << famePenalty << endl;
+	GEconomyService.SendExpeditionState(player);
+	SendTrackerState(session, player, true, "", "abandon", goldPenalty, famePenalty);
+}
+
 bool QuestService::OnVillageVisited(const PlayerRef& player, const string& villageId)
 {
 	return AdvanceMatchingObjectives(player, villageId, "", 1, kVisitEvent);
@@ -279,7 +349,8 @@ bool QuestService::ReevaluateInventoryObjectives(const PlayerRef& player)
 	for (const PlayerQuestState& value : player->QuestStates())
 	{
 		PlayerQuestState* state = player->FindQuestState(value.questId);
-		if (state != nullptr && state->status != PlayerQuestStatus::Available && state->status != PlayerQuestStatus::Completed)
+		if (state != nullptr && state->status != PlayerQuestStatus::Available && state->status != PlayerQuestStatus::Completed &&
+			state->status != PlayerQuestStatus::Abandoned)
 			changed = ReevaluateQuest(player, *state) || changed;
 	}
 	return changed;
@@ -310,7 +381,8 @@ bool QuestService::EnsureBoardFilled(const PlayerRef& player, const string& vill
 	for (int32 slot = 0; slot < kBoardSlotCount; ++slot)
 	{
 		const bool occupied = any_of(player->QuestStates().begin(), player->QuestStates().end(), [&villageId, slot](const PlayerQuestState& quest)
-			{ return quest.status != PlayerQuestStatus::Completed && quest.startVillageId == villageId && quest.boardSlot == slot; });
+			{ return quest.status != PlayerQuestStatus::Completed && quest.status != PlayerQuestStatus::Abandoned &&
+				quest.startVillageId == villageId && quest.boardSlot == slot; });
 		if (!occupied)
 			changed = GenerateQuestInstance(player, villageId, slot) || changed;
 	}
@@ -394,7 +466,8 @@ bool QuestService::GenerateQuestInstance(const PlayerRef& player, const string& 
 		const string targetItemId = FirstTargetItemId(generated);
 		const bool duplicate = any_of(player->QuestStates().begin(), player->QuestStates().end(), [&generated, &targetItemId](const PlayerQuestState& existing)
 		{
-			return existing.status != PlayerQuestStatus::Completed && existing.templateId == generated.templateId &&
+			return existing.status != PlayerQuestStatus::Completed && existing.status != PlayerQuestStatus::Abandoned &&
+				existing.templateId == generated.templateId &&
 				existing.startVillageId == generated.startVillageId && existing.completionVillageId == generated.completionVillageId &&
 				FirstTargetItemId(existing) == targetItemId;
 		});
@@ -419,7 +492,8 @@ bool QuestService::GenerateQuestInstance(const PlayerRef& player, const string& 
 
 bool QuestService::ReevaluateQuest(const PlayerRef& player, PlayerQuestState& state)
 {
-	if (state.status == PlayerQuestStatus::Available || state.status == PlayerQuestStatus::Completed) return false;
+	if (state.status == PlayerQuestStatus::Available || state.status == PlayerQuestStatus::Completed ||
+		state.status == PlayerQuestStatus::Abandoned) return false;
 	bool changed = false;
 	bool allComplete = true;
 	for (PlayerQuestObjectiveState& objective : state.objectives)
@@ -449,7 +523,8 @@ bool QuestService::AdvanceMatchingObjectives(const PlayerRef& player, const stri
 	for (const PlayerQuestState& value : player->QuestStates())
 	{
 		PlayerQuestState* state = player->FindQuestState(value.questId);
-		if (state == nullptr || state->status == PlayerQuestStatus::Available || state->status == PlayerQuestStatus::Completed) continue;
+		if (state == nullptr || state->status == PlayerQuestStatus::Available || state->status == PlayerQuestStatus::Completed ||
+			state->status == PlayerQuestStatus::Abandoned) continue;
 		for (PlayerQuestObjectiveState& objective : state->objectives)
 		{
 			const bool typeMatches = (eventKind == kVisitEvent && objective.objectiveType == "VISIT_VILLAGE") ||
@@ -484,7 +559,7 @@ void QuestService::SendBoardState(GameSessionRef session, const PlayerRef& playe
 	{
 		for (const PlayerQuestState& quest : player->QuestStates())
 		{
-			if (quest.status == PlayerQuestStatus::Completed) continue;
+			if (quest.status == PlayerQuestStatus::Completed || quest.status == PlayerQuestStatus::Abandoned) continue;
 			const bool atOrigin = quest.startVillageId == villageId;
 			const bool atDestination = quest.status != PlayerQuestStatus::Available && quest.completionVillageId == villageId;
 			if (atOrigin || atDestination) visible.push_back(&quest);
@@ -522,6 +597,13 @@ void QuestService::SendBoardState(GameSessionRef session, const PlayerRef& playe
 		info->set_can_accept(!activeQuestLimitReached && quest->status == PlayerQuestStatus::Available && quest->startVillageId == villageId &&
 			IsPrerequisiteComplete(player, quest->prerequisiteTemplateId));
 		info->set_can_claim(quest->status == PlayerQuestStatus::Ready && quest->completionVillageId == villageId);
+		int32 abandonGoldPenalty = 0;
+		int32 abandonFamePenalty = 0;
+		if (TryCalculateAbandonPenalty(*quest, abandonGoldPenalty, abandonFamePenalty))
+		{
+			info->set_abandon_gold_penalty(abandonGoldPenalty);
+			info->set_abandon_fame_penalty(abandonFamePenalty);
+		}
 		for (const PlayerQuestObjectiveState& objective : quest->objectives)
 		{
 			const VillageTemplate* targetVillage = GVillageData.GetVillage(objective.targetVillageId);
@@ -545,6 +627,7 @@ void QuestService::SendBoardState(GameSessionRef session, const PlayerRef& playe
 		for (const PlayerQuestRewardState& reward : quest->rewards)
 		{
 			if (reward.rewardType == "GOLD") info->add_reward_descriptions(to_string(reward.amount) + "G");
+			else if (reward.rewardType == "FAME") info->add_reward_descriptions("Fame +" + to_string(reward.amount));
 			else
 			{
 				const EconomyItemTemplate* item = GEconomyData.GetItem(reward.targetId);
@@ -555,12 +638,16 @@ void QuestService::SendBoardState(GameSessionRef session, const PlayerRef& playe
 	session->Send(ServerPacketHandler::MakeSendBuffer(packet));
 }
 
-void QuestService::SendTrackerState(GameSessionRef session, const PlayerRef& player, bool success, const string& reason) const
+void QuestService::SendTrackerState(GameSessionRef session, const PlayerRef& player, bool success, const string& reason,
+	const string& action, int32 goldPenalty, int32 famePenalty) const
 {
 	if (session == nullptr) return;
 	Protocol::S_QUEST_TRACKER_STATE packet;
 	packet.set_success(success);
 	packet.set_reason(reason);
+	packet.set_action(action);
+	packet.set_gold_penalty(goldPenalty);
+	packet.set_fame_penalty(famePenalty);
 	if (player != nullptr) player->FillExpeditionState(*packet.mutable_expedition());
 
 	if (success && player != nullptr)
@@ -579,9 +666,16 @@ void QuestService::SendTrackerState(GameSessionRef session, const PlayerRef& pla
 			info->set_completion_village_id(quest.completionVillageId);
 			const VillageTemplate* completionVillage = GVillageData.GetVillage(quest.completionVillageId);
 			info->set_completion_village_name(completionVillage != nullptr ? completionVillage->name : quest.completionVillageId);
-			// Claims remain village-authoritative; the tracker is read-only.
+			// Claims remain village-authoritative; the tracker only exposes abandonment.
 			info->set_can_accept(false);
 			info->set_can_claim(false);
+			int32 abandonGoldPenalty = 0;
+			int32 abandonFamePenalty = 0;
+			if (TryCalculateAbandonPenalty(quest, abandonGoldPenalty, abandonFamePenalty))
+			{
+				info->set_abandon_gold_penalty(abandonGoldPenalty);
+				info->set_abandon_fame_penalty(abandonFamePenalty);
+			}
 			for (const PlayerQuestObjectiveState& objective : quest.objectives)
 			{
 				const VillageTemplate* targetVillage = GVillageData.GetVillage(objective.targetVillageId);
@@ -605,6 +699,7 @@ void QuestService::SendTrackerState(GameSessionRef session, const PlayerRef& pla
 			for (const PlayerQuestRewardState& reward : quest.rewards)
 			{
 				if (reward.rewardType == "GOLD") info->add_reward_descriptions(to_string(reward.amount) + "G");
+				else if (reward.rewardType == "FAME") info->add_reward_descriptions("Fame +" + to_string(reward.amount));
 				else
 				{
 					const EconomyItemTemplate* item = GEconomyData.GetItem(reward.targetId);

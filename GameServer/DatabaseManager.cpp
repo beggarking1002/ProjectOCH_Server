@@ -616,7 +616,7 @@ bool DatabaseManager::LoadPlayerEconomy(uint64 playerId, PersistentPlayerEconomy
 		return false;
 	}
 
-	const string profileSql = "SELECT gold,satiety,max_satiety,thirst,max_thirst,satiety_drain_numerator,"
+	const string profileSql = "SELECT gold,fame,satiety,max_satiety,thirst,max_thirst,satiety_drain_numerator,"
 		"next_inventory_stack_id,next_acquired_sequence FROM player_profiles WHERE player_id=" + to_string(playerId);
 	if (!Execute(profileSql))
 		return false;
@@ -634,13 +634,14 @@ bool DatabaseManager::LoadPlayerEconomy(uint64 playerId, PersistentPlayerEconomy
 	}
 	outFound = true;
 	outState.gold = static_cast<int32>(ToInt64(profile[0]));
-	outState.satiety = static_cast<int32>(ToInt64(profile[1]));
-	outState.maxSatiety = static_cast<int32>(ToInt64(profile[2]));
-	outState.thirst = static_cast<int32>(ToInt64(profile[3]));
-	outState.maxThirst = static_cast<int32>(ToInt64(profile[4]));
-	outState.satietyDrainNumerator = ToInt64(profile[5]);
-	outState.nextInventoryStackId = ToUInt64(profile[6]);
-	outState.nextAcquiredSequence = ToUInt64(profile[7]);
+	outState.fame = static_cast<int32>(ToInt64(profile[1]));
+	outState.satiety = static_cast<int32>(ToInt64(profile[2]));
+	outState.maxSatiety = static_cast<int32>(ToInt64(profile[3]));
+	outState.thirst = static_cast<int32>(ToInt64(profile[4]));
+	outState.maxThirst = static_cast<int32>(ToInt64(profile[5]));
+	outState.satietyDrainNumerator = ToInt64(profile[6]);
+	outState.nextInventoryStackId = ToUInt64(profile[7]);
+	outState.nextAcquiredSequence = ToUInt64(profile[8]);
 	_impl->mysqlFreeResult(profileResult);
 
 	const string inventorySql = "SELECT stack_id,item_id,quantity,remaining_shelf_life_ms,acquired_sequence "
@@ -722,7 +723,8 @@ bool DatabaseManager::LoadPlayerEconomy(uint64 playerId, PersistentPlayerEconomy
 		const string status = row[2] != nullptr ? row[2] : "AVAILABLE";
 		quest.status = status == "COMPLETED" ? PlayerQuestStatus::Completed :
 			(status == "READY" ? PlayerQuestStatus::Ready :
-				(status == "ACTIVE" ? PlayerQuestStatus::Active : PlayerQuestStatus::Available));
+				(status == "ACTIVE" ? PlayerQuestStatus::Active :
+					(status == "ABANDONED" ? PlayerQuestStatus::Abandoned : PlayerQuestStatus::Available)));
 		quest.displayName = row[3] != nullptr ? row[3] : "";
 		quest.description = row[4] != nullptr ? row[4] : "";
 		quest.category = row[5] != nullptr ? row[5] : "";
@@ -801,11 +803,11 @@ bool DatabaseManager::SavePlayerEconomy(uint64 playerId, const PersistentPlayerE
 	if (_impl->mysqlAutocommit(_impl->connection, false) != 0)
 		return false;
 
-	const string profileSql = "INSERT INTO player_profiles (player_id,gold,satiety,max_satiety,thirst,max_thirst,satiety_drain_numerator,next_inventory_stack_id,next_acquired_sequence) VALUES (" +
-		to_string(playerId) + "," + to_string(state.gold) + "," + to_string(state.satiety) + "," + to_string(state.maxSatiety) + "," +
+	const string profileSql = "INSERT INTO player_profiles (player_id,gold,fame,satiety,max_satiety,thirst,max_thirst,satiety_drain_numerator,next_inventory_stack_id,next_acquired_sequence) VALUES (" +
+		to_string(playerId) + "," + to_string(state.gold) + "," + to_string(state.fame) + "," + to_string(state.satiety) + "," + to_string(state.maxSatiety) + "," +
 		to_string(state.thirst) + "," + to_string(state.maxThirst) + "," + to_string(state.satietyDrainNumerator) + "," +
 		to_string(state.nextInventoryStackId) + "," + to_string(state.nextAcquiredSequence) + ") ON DUPLICATE KEY UPDATE " +
-		"gold=VALUES(gold),satiety=VALUES(satiety),max_satiety=VALUES(max_satiety),thirst=VALUES(thirst),max_thirst=VALUES(max_thirst)," +
+		"gold=VALUES(gold),fame=VALUES(fame),satiety=VALUES(satiety),max_satiety=VALUES(max_satiety),thirst=VALUES(thirst),max_thirst=VALUES(max_thirst)," +
 		"satiety_drain_numerator=VALUES(satiety_drain_numerator),next_inventory_stack_id=VALUES(next_inventory_stack_id),next_acquired_sequence=VALUES(next_acquired_sequence)";
 	const string shopStateSql = "INSERT INTO player_shop_states (player_id,active_elapsed_ms,stock_generation) VALUES (" +
 		to_string(playerId) + "," + to_string(state.shopRestockElapsedMs) + "," +
@@ -851,7 +853,8 @@ bool DatabaseManager::SavePlayerEconomy(uint64 playerId, const PersistentPlayerE
 		}
 		const string status = quest.status == PlayerQuestStatus::Completed ? "COMPLETED" :
 			(quest.status == PlayerQuestStatus::Ready ? "READY" :
-				(quest.status == PlayerQuestStatus::Active ? "ACTIVE" : "AVAILABLE"));
+				(quest.status == PlayerQuestStatus::Active ? "ACTIVE" :
+					(quest.status == PlayerQuestStatus::Abandoned ? "ABANDONED" : "AVAILABLE")));
 		const string playerQuestSql = "INSERT INTO player_quest_instances (player_id,quest_id,template_id,status,display_name,description,category,"
 			"start_village_id,completion_village_id,prerequisite_template_id,board_slot,accepted_at_ms,ready_at_ms,completed_at_ms) VALUES (" +
 			to_string(playerId) + ",'" + Escape(quest.questId) + "','" + Escape(quest.templateId) + "','" + status + "','" +

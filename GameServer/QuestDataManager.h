@@ -12,6 +12,7 @@ enum class QuestObjectiveType
 enum class QuestRewardType
 {
 	Gold,
+	Fame,
 	Item,
 };
 

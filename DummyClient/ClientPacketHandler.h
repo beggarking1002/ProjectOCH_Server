@@ -53,6 +53,7 @@ enum : uint16
 	PKT_S_VILLAGE_QUEST_STATE = 1044,
 	PKT_C_QUEST_TRACKER_OPEN = 1045,
 	PKT_S_QUEST_TRACKER_STATE = 1046,
+	PKT_C_QUEST_ABANDON = 1047,
 };
 
 // Custom Handlers
@@ -144,6 +145,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::C_QUEST_ACCEPT& pkt) { return MakeSendBuffer(pkt, PKT_C_QUEST_ACCEPT); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_QUEST_CLAIM_REWARD& pkt) { return MakeSendBuffer(pkt, PKT_C_QUEST_CLAIM_REWARD); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_QUEST_TRACKER_OPEN& pkt) { return MakeSendBuffer(pkt, PKT_C_QUEST_TRACKER_OPEN); }
+	static SendBufferRef MakeSendBuffer(Protocol::C_QUEST_ABANDON& pkt) { return MakeSendBuffer(pkt, PKT_C_QUEST_ABANDON); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

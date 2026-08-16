@@ -43,6 +43,7 @@ void Player::InitializeEconomy(uint64 nowMs)
 	_maxThirst = 100;
 	_thirst = _maxThirst;
 	_gold = GEconomyData.GetConfigValue("expedition_starting_gold", 0);
+	_fame = 0;
 	_lastEconomyTickMs = nowMs;
 	_satietyDrainNumerator = 0;
 	_shopRestockElapsedMs = 0;
@@ -70,6 +71,7 @@ void Player::RestoreEconomyState(const PersistentPlayerEconomyState& state, uint
 	_maxThirst = (max)(1, state.maxThirst);
 	_thirst = (max)(0, (min)(state.thirst, _maxThirst));
 	_gold = (max)(0, state.gold);
+	_fame = state.fame;
 	_satietyDrainNumerator = (max)(int64{ 0 }, state.satietyDrainNumerator);
 	_inventory.clear();
 	_inventory.reserve(state.inventory.size());
@@ -121,6 +123,7 @@ PersistentPlayerEconomyState Player::ExportEconomyState() const
 {
 	PersistentPlayerEconomyState state;
 	state.gold = _gold;
+	state.fame = _fame;
 	state.satiety = _satiety;
 	state.maxSatiety = _maxSatiety;
 	state.thirst = _thirst;
@@ -401,10 +404,21 @@ void Player::AddGold(int32 amount)
 	_economyDirty = true;
 }
 
+void Player::ModifyFame(int32 amount)
+{
+	if (amount == 0)
+		return;
+	const int64 next = static_cast<int64>(_fame) + amount;
+	_fame = static_cast<int32>((max)(static_cast<int64>((numeric_limits<int32>::min)()),
+		(min)(static_cast<int64>((numeric_limits<int32>::max)()), next)));
+	_economyDirty = true;
+}
+
 void Player::FillExpeditionState(Protocol::S_EXPEDITION_STATE& packet,
 	const vector<string>& autoConsumedItemIds, const vector<string>& expiredItemIds) const
 {
 	packet.set_gold(_gold);
+	packet.set_fame(_fame);
 	packet.set_satiety(_satiety);
 	packet.set_max_satiety(_maxSatiety);
 	packet.set_thirst(_thirst);

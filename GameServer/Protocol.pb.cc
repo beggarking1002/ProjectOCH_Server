@@ -627,6 +627,7 @@ PROTOBUF_CONSTEXPR S_EXPEDITION_STATE::S_EXPEDITION_STATE(
   , /*decltype(_impl_.max_satiety_)*/0
   , /*decltype(_impl_.thirst_)*/0
   , /*decltype(_impl_.max_thirst_)*/0
+  , /*decltype(_impl_.fame_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct S_EXPEDITION_STATEDefaultTypeInternal {
   PROTOBUF_CONSTEXPR S_EXPEDITION_STATEDefaultTypeInternal()
@@ -760,6 +761,8 @@ PROTOBUF_CONSTEXPR VillageQuestInfo::VillageQuestInfo(
   , /*decltype(_impl_.completion_village_name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.can_accept_)*/false
   , /*decltype(_impl_.can_claim_)*/false
+  , /*decltype(_impl_.abandon_gold_penalty_)*/0
+  , /*decltype(_impl_.abandon_fame_penalty_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct VillageQuestInfoDefaultTypeInternal {
   PROTOBUF_CONSTEXPR VillageQuestInfoDefaultTypeInternal()
@@ -842,8 +845,11 @@ PROTOBUF_CONSTEXPR S_QUEST_TRACKER_STATE::S_QUEST_TRACKER_STATE(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.quests_)*/{}
   , /*decltype(_impl_.reason_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.action_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.expedition_)*/nullptr
   , /*decltype(_impl_.success_)*/false
+  , /*decltype(_impl_.gold_penalty_)*/0
+  , /*decltype(_impl_.fame_penalty_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct S_QUEST_TRACKER_STATEDefaultTypeInternal {
   PROTOBUF_CONSTEXPR S_QUEST_TRACKER_STATEDefaultTypeInternal()
@@ -854,8 +860,21 @@ struct S_QUEST_TRACKER_STATEDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S_QUEST_TRACKER_STATEDefaultTypeInternal _S_QUEST_TRACKER_STATE_default_instance_;
+PROTOBUF_CONSTEXPR C_QUEST_ABANDON::C_QUEST_ABANDON(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.quest_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct C_QUEST_ABANDONDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR C_QUEST_ABANDONDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~C_QUEST_ABANDONDefaultTypeInternal() {}
+  union {
+    C_QUEST_ABANDON _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C_QUEST_ABANDONDefaultTypeInternal _C_QUEST_ABANDON_default_instance_;
 }  // namespace Protocol
-static ::_pb::Metadata file_level_metadata_Protocol_2eproto[52];
+static ::_pb::Metadata file_level_metadata_Protocol_2eproto[53];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_Protocol_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Protocol_2eproto = nullptr;
 
@@ -1241,6 +1260,7 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   PROTOBUF_FIELD_OFFSET(::Protocol::S_EXPEDITION_STATE, _impl_.expired_item_ids_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_EXPEDITION_STATE, _impl_.thirst_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_EXPEDITION_STATE, _impl_.max_thirst_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_EXPEDITION_STATE, _impl_.fame_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::C_VILLAGE_SHOP_OPEN, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1326,6 +1346,8 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.reward_descriptions_),
   PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.can_accept_),
   PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.can_claim_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.abandon_gold_penalty_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::VillageQuestInfo, _impl_.abandon_fame_penalty_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::C_VILLAGE_QUEST_BOARD_OPEN, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1375,6 +1397,16 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   PROTOBUF_FIELD_OFFSET(::Protocol::S_QUEST_TRACKER_STATE, _impl_.reason_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_QUEST_TRACKER_STATE, _impl_.quests_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_QUEST_TRACKER_STATE, _impl_.expedition_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_QUEST_TRACKER_STATE, _impl_.action_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_QUEST_TRACKER_STATE, _impl_.gold_penalty_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_QUEST_TRACKER_STATE, _impl_.fame_penalty_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_QUEST_ABANDON, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_QUEST_ABANDON, _impl_.quest_id_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::C_LOGIN)},
@@ -1415,20 +1447,21 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 348, -1, -1, sizeof(::Protocol::VillageShopListingInfo)},
   { 358, -1, -1, sizeof(::Protocol::VillageTradeBuyOfferInfo)},
   { 367, -1, -1, sizeof(::Protocol::S_EXPEDITION_STATE)},
-  { 381, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_OPEN)},
-  { 388, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_BUY)},
-  { 397, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_SELL)},
-  { 406, -1, -1, sizeof(::Protocol::S_VILLAGE_SHOP_STATE)},
-  { 420, -1, -1, sizeof(::Protocol::C_RESET_PLAYER_DATA)},
-  { 427, -1, -1, sizeof(::Protocol::S_RESET_PLAYER_DATA)},
-  { 435, -1, -1, sizeof(::Protocol::QuestObjectiveProgressInfo)},
-  { 449, -1, -1, sizeof(::Protocol::VillageQuestInfo)},
-  { 466, -1, -1, sizeof(::Protocol::C_VILLAGE_QUEST_BOARD_OPEN)},
-  { 473, -1, -1, sizeof(::Protocol::C_QUEST_ACCEPT)},
-  { 480, -1, -1, sizeof(::Protocol::C_QUEST_CLAIM_REWARD)},
-  { 487, -1, -1, sizeof(::Protocol::S_VILLAGE_QUEST_STATE)},
-  { 499, -1, -1, sizeof(::Protocol::C_QUEST_TRACKER_OPEN)},
-  { 505, -1, -1, sizeof(::Protocol::S_QUEST_TRACKER_STATE)},
+  { 382, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_OPEN)},
+  { 389, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_BUY)},
+  { 398, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_SELL)},
+  { 407, -1, -1, sizeof(::Protocol::S_VILLAGE_SHOP_STATE)},
+  { 421, -1, -1, sizeof(::Protocol::C_RESET_PLAYER_DATA)},
+  { 428, -1, -1, sizeof(::Protocol::S_RESET_PLAYER_DATA)},
+  { 436, -1, -1, sizeof(::Protocol::QuestObjectiveProgressInfo)},
+  { 450, -1, -1, sizeof(::Protocol::VillageQuestInfo)},
+  { 469, -1, -1, sizeof(::Protocol::C_VILLAGE_QUEST_BOARD_OPEN)},
+  { 476, -1, -1, sizeof(::Protocol::C_QUEST_ACCEPT)},
+  { 483, -1, -1, sizeof(::Protocol::C_QUEST_CLAIM_REWARD)},
+  { 490, -1, -1, sizeof(::Protocol::S_VILLAGE_QUEST_STATE)},
+  { 502, -1, -1, sizeof(::Protocol::C_QUEST_TRACKER_OPEN)},
+  { 508, -1, -1, sizeof(::Protocol::S_QUEST_TRACKER_STATE)},
+  { 521, -1, -1, sizeof(::Protocol::C_QUEST_ABANDON)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -1484,6 +1517,7 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::Protocol::_S_VILLAGE_QUEST_STATE_default_instance_._instance,
   &::Protocol::_C_QUEST_TRACKER_OPEN_default_instance_._instance,
   &::Protocol::_S_QUEST_TRACKER_STATE_default_instance_._instance,
+  &::Protocol::_C_QUEST_ABANDON_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -1602,53 +1636,57 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "_stock\030\003 \001(\005\022\027\n\017unit_sell_price\030\004 \001(\005\"U\n"
   "\030VillageTradeBuyOfferInfo\022\020\n\010stack_id\030\001 "
   "\001(\004\022\017\n\007item_id\030\002 \001(\t\022\026\n\016unit_buy_price\030\003"
-  " \001(\005\"\334\001\n\022S_EXPEDITION_STATE\022\014\n\004gold\030\001 \001("
+  " \001(\005\"\352\001\n\022S_EXPEDITION_STATE\022\014\n\004gold\030\001 \001("
   "\005\022\017\n\007satiety\030\002 \001(\005\022\023\n\013max_satiety\030\003 \001(\005\022"
   "4\n\tinventory\030\004 \003(\0132!.Protocol.Expedition"
   "ItemStackInfo\022\036\n\026auto_consumed_item_ids\030"
   "\005 \003(\t\022\030\n\020expired_item_ids\030\006 \003(\t\022\016\n\006thirs"
-  "t\030\007 \001(\005\022\022\n\nmax_thirst\030\010 \001(\005\")\n\023C_VILLAGE"
-  "_SHOP_OPEN\022\022\n\nvillage_id\030\001 \001(\t\"K\n\022C_VILL"
-  "AGE_SHOP_BUY\022\022\n\nvillage_id\030\001 \001(\t\022\017\n\007item"
-  "_id\030\002 \001(\t\022\020\n\010quantity\030\003 \001(\005\"M\n\023C_VILLAGE"
-  "_SHOP_SELL\022\022\n\nvillage_id\030\001 \001(\t\022\020\n\010stack_"
-  "id\030\002 \001(\004\022\020\n\010quantity\030\003 \001(\005\"\246\002\n\024S_VILLAGE"
-  "_SHOP_STATE\022\017\n\007success\030\001 \001(\010\022\016\n\006reason\030\002"
-  " \001(\t\022\016\n\006action\030\003 \001(\t\022\022\n\nvillage_id\030\004 \001(\t"
-  "\0222\n\010listings\030\005 \003(\0132 .Protocol.VillageSho"
-  "pListingInfo\0220\n\nexpedition\030\006 \001(\0132\034.Proto"
-  "col.S_EXPEDITION_STATE\022%\n\035stock_reset_re"
-  "maining_seconds\030\007 \001(\r\022<\n\020trade_buy_offer"
-  "s\030\010 \003(\0132\".Protocol.VillageTradeBuyOfferI"
-  "nfo\"+\n\023C_RESET_PLAYER_DATA\022\024\n\014confirmati"
-  "on\030\001 \001(\t\"6\n\023S_RESET_PLAYER_DATA\022\017\n\007succe"
-  "ss\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\"\326\001\n\032QuestObject"
-  "iveProgressInfo\022\027\n\017objective_index\030\001 \001(\r"
-  "\022\023\n\013description\030\002 \001(\t\022\020\n\010progress\030\003 \001(\005\022"
-  "\026\n\016required_count\030\004 \001(\005\022\021\n\tcompleted\030\005 \001"
-  "(\010\022\026\n\016objective_type\030\006 \001(\t\022\033\n\023target_vil"
-  "lage_name\030\007 \001(\t\022\030\n\020target_item_name\030\010 \001("
-  "\t\"\267\002\n\020VillageQuestInfo\022\020\n\010quest_id\030\001 \001(\t"
-  "\022\024\n\014display_name\030\002 \001(\t\022\023\n\013description\030\003 "
-  "\001(\t\022\016\n\006status\030\004 \001(\t\022\030\n\020start_village_id\030"
-  "\005 \001(\t\022\035\n\025completion_village_id\030\006 \001(\t\022\037\n\027"
-  "completion_village_name\030\007 \001(\t\0228\n\nobjecti"
-  "ves\030\010 \003(\0132$.Protocol.QuestObjectiveProgr"
-  "essInfo\022\033\n\023reward_descriptions\030\t \003(\t\022\022\n\n"
-  "can_accept\030\n \001(\010\022\021\n\tcan_claim\030\013 \001(\010\"0\n\032C"
-  "_VILLAGE_QUEST_BOARD_OPEN\022\022\n\nvillage_id\030"
-  "\001 \001(\t\"\"\n\016C_QUEST_ACCEPT\022\020\n\010quest_id\030\001 \001("
-  "\t\"(\n\024C_QUEST_CLAIM_REWARD\022\020\n\010quest_id\030\001 "
-  "\001(\t\"\272\001\n\025S_VILLAGE_QUEST_STATE\022\017\n\007success"
-  "\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\022"
-  "\n\nvillage_id\030\004 \001(\t\022*\n\006quests\030\005 \003(\0132\032.Pro"
-  "tocol.VillageQuestInfo\0220\n\nexpedition\030\006 \001"
-  "(\0132\034.Protocol.S_EXPEDITION_STATE\"\026\n\024C_QU"
-  "EST_TRACKER_OPEN\"\226\001\n\025S_QUEST_TRACKER_STA"
-  "TE\022\017\n\007success\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\022*\n\006q"
-  "uests\030\003 \003(\0132\032.Protocol.VillageQuestInfo\022"
-  "0\n\nexpedition\030\004 \001(\0132\034.Protocol.S_EXPEDIT"
-  "ION_STATEb\006proto3"
+  "t\030\007 \001(\005\022\022\n\nmax_thirst\030\010 \001(\005\022\014\n\004fame\030\t \001("
+  "\005\")\n\023C_VILLAGE_SHOP_OPEN\022\022\n\nvillage_id\030\001"
+  " \001(\t\"K\n\022C_VILLAGE_SHOP_BUY\022\022\n\nvillage_id"
+  "\030\001 \001(\t\022\017\n\007item_id\030\002 \001(\t\022\020\n\010quantity\030\003 \001("
+  "\005\"M\n\023C_VILLAGE_SHOP_SELL\022\022\n\nvillage_id\030\001"
+  " \001(\t\022\020\n\010stack_id\030\002 \001(\004\022\020\n\010quantity\030\003 \001(\005"
+  "\"\246\002\n\024S_VILLAGE_SHOP_STATE\022\017\n\007success\030\001 \001"
+  "(\010\022\016\n\006reason\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\022\n\nvi"
+  "llage_id\030\004 \001(\t\0222\n\010listings\030\005 \003(\0132 .Proto"
+  "col.VillageShopListingInfo\0220\n\nexpedition"
+  "\030\006 \001(\0132\034.Protocol.S_EXPEDITION_STATE\022%\n\035"
+  "stock_reset_remaining_seconds\030\007 \001(\r\022<\n\020t"
+  "rade_buy_offers\030\010 \003(\0132\".Protocol.Village"
+  "TradeBuyOfferInfo\"+\n\023C_RESET_PLAYER_DATA"
+  "\022\024\n\014confirmation\030\001 \001(\t\"6\n\023S_RESET_PLAYER"
+  "_DATA\022\017\n\007success\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\"\326"
+  "\001\n\032QuestObjectiveProgressInfo\022\027\n\017objecti"
+  "ve_index\030\001 \001(\r\022\023\n\013description\030\002 \001(\t\022\020\n\010p"
+  "rogress\030\003 \001(\005\022\026\n\016required_count\030\004 \001(\005\022\021\n"
+  "\tcompleted\030\005 \001(\010\022\026\n\016objective_type\030\006 \001(\t"
+  "\022\033\n\023target_village_name\030\007 \001(\t\022\030\n\020target_"
+  "item_name\030\010 \001(\t\"\363\002\n\020VillageQuestInfo\022\020\n\010"
+  "quest_id\030\001 \001(\t\022\024\n\014display_name\030\002 \001(\t\022\023\n\013"
+  "description\030\003 \001(\t\022\016\n\006status\030\004 \001(\t\022\030\n\020sta"
+  "rt_village_id\030\005 \001(\t\022\035\n\025completion_villag"
+  "e_id\030\006 \001(\t\022\037\n\027completion_village_name\030\007 "
+  "\001(\t\0228\n\nobjectives\030\010 \003(\0132$.Protocol.Quest"
+  "ObjectiveProgressInfo\022\033\n\023reward_descript"
+  "ions\030\t \003(\t\022\022\n\ncan_accept\030\n \001(\010\022\021\n\tcan_cl"
+  "aim\030\013 \001(\010\022\034\n\024abandon_gold_penalty\030\014 \001(\005\022"
+  "\034\n\024abandon_fame_penalty\030\r \001(\005\"0\n\032C_VILLA"
+  "GE_QUEST_BOARD_OPEN\022\022\n\nvillage_id\030\001 \001(\t\""
+  "\"\n\016C_QUEST_ACCEPT\022\020\n\010quest_id\030\001 \001(\t\"(\n\024C"
+  "_QUEST_CLAIM_REWARD\022\020\n\010quest_id\030\001 \001(\t\"\272\001"
+  "\n\025S_VILLAGE_QUEST_STATE\022\017\n\007success\030\001 \001(\010"
+  "\022\016\n\006reason\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\022\n\nvill"
+  "age_id\030\004 \001(\t\022*\n\006quests\030\005 \003(\0132\032.Protocol."
+  "VillageQuestInfo\0220\n\nexpedition\030\006 \001(\0132\034.P"
+  "rotocol.S_EXPEDITION_STATE\"\026\n\024C_QUEST_TR"
+  "ACKER_OPEN\"\322\001\n\025S_QUEST_TRACKER_STATE\022\017\n\007"
+  "success\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\022*\n\006quests\030"
+  "\003 \003(\0132\032.Protocol.VillageQuestInfo\0220\n\nexp"
+  "edition\030\004 \001(\0132\034.Protocol.S_EXPEDITION_ST"
+  "ATE\022\016\n\006action\030\005 \001(\t\022\024\n\014gold_penalty\030\006 \001("
+  "\005\022\024\n\014fame_penalty\030\007 \001(\005\"#\n\017C_QUEST_ABAND"
+  "ON\022\020\n\010quest_id\030\001 \001(\tb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -1656,9 +1694,9 @@ static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_de
 };
 static ::_pbi::once_flag descriptor_table_Protocol_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Protocol_2eproto = {
-    false, false, 6457, descriptor_table_protodef_Protocol_2eproto,
+    false, false, 6628, descriptor_table_protodef_Protocol_2eproto,
     "Protocol.proto",
-    &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 52,
+    &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 53,
     schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
     file_level_metadata_Protocol_2eproto, file_level_enum_descriptors_Protocol_2eproto,
     file_level_service_descriptors_Protocol_2eproto,
@@ -11983,12 +12021,13 @@ S_EXPEDITION_STATE::S_EXPEDITION_STATE(const S_EXPEDITION_STATE& from)
     , decltype(_impl_.max_satiety_){}
     , decltype(_impl_.thirst_){}
     , decltype(_impl_.max_thirst_){}
+    , decltype(_impl_.fame_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&_impl_.gold_, &from._impl_.gold_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.max_thirst_) -
-    reinterpret_cast<char*>(&_impl_.gold_)) + sizeof(_impl_.max_thirst_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.fame_) -
+    reinterpret_cast<char*>(&_impl_.gold_)) + sizeof(_impl_.fame_));
   // @@protoc_insertion_point(copy_constructor:Protocol.S_EXPEDITION_STATE)
 }
 
@@ -12005,6 +12044,7 @@ inline void S_EXPEDITION_STATE::SharedCtor(
     , decltype(_impl_.max_satiety_){0}
     , decltype(_impl_.thirst_){0}
     , decltype(_impl_.max_thirst_){0}
+    , decltype(_impl_.fame_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -12039,8 +12079,8 @@ void S_EXPEDITION_STATE::Clear() {
   _impl_.auto_consumed_item_ids_.Clear();
   _impl_.expired_item_ids_.Clear();
   ::memset(&_impl_.gold_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.max_thirst_) -
-      reinterpret_cast<char*>(&_impl_.gold_)) + sizeof(_impl_.max_thirst_));
+      reinterpret_cast<char*>(&_impl_.fame_) -
+      reinterpret_cast<char*>(&_impl_.gold_)) + sizeof(_impl_.fame_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -12133,6 +12173,14 @@ const char* S_EXPEDITION_STATE::_InternalParse(const char* ptr, ::_pbi::ParseCon
         } else
           goto handle_unusual;
         continue;
+      // int32 fame = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 72)) {
+          _impl_.fame_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -12220,6 +12268,12 @@ uint8_t* S_EXPEDITION_STATE::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(8, this->_internal_max_thirst(), target);
   }
 
+  // int32 fame = 9;
+  if (this->_internal_fame() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(9, this->_internal_fame(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -12284,6 +12338,11 @@ size_t S_EXPEDITION_STATE::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_max_thirst());
   }
 
+  // int32 fame = 9;
+  if (this->_internal_fame() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_fame());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -12320,6 +12379,9 @@ void S_EXPEDITION_STATE::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, con
   if (from._internal_max_thirst() != 0) {
     _this->_internal_set_max_thirst(from._internal_max_thirst());
   }
+  if (from._internal_fame() != 0) {
+    _this->_internal_set_fame(from._internal_fame());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -12341,8 +12403,8 @@ void S_EXPEDITION_STATE::InternalSwap(S_EXPEDITION_STATE* other) {
   _impl_.auto_consumed_item_ids_.InternalSwap(&other->_impl_.auto_consumed_item_ids_);
   _impl_.expired_item_ids_.InternalSwap(&other->_impl_.expired_item_ids_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(S_EXPEDITION_STATE, _impl_.max_thirst_)
-      + sizeof(S_EXPEDITION_STATE::_impl_.max_thirst_)
+      PROTOBUF_FIELD_OFFSET(S_EXPEDITION_STATE, _impl_.fame_)
+      + sizeof(S_EXPEDITION_STATE::_impl_.fame_)
       - PROTOBUF_FIELD_OFFSET(S_EXPEDITION_STATE, _impl_.gold_)>(
           reinterpret_cast<char*>(&_impl_.gold_),
           reinterpret_cast<char*>(&other->_impl_.gold_));
@@ -14493,6 +14555,8 @@ VillageQuestInfo::VillageQuestInfo(const VillageQuestInfo& from)
     , decltype(_impl_.completion_village_name_){}
     , decltype(_impl_.can_accept_){}
     , decltype(_impl_.can_claim_){}
+    , decltype(_impl_.abandon_gold_penalty_){}
+    , decltype(_impl_.abandon_fame_penalty_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -14553,8 +14617,8 @@ VillageQuestInfo::VillageQuestInfo(const VillageQuestInfo& from)
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.can_accept_, &from._impl_.can_accept_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.can_claim_) -
-    reinterpret_cast<char*>(&_impl_.can_accept_)) + sizeof(_impl_.can_claim_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.abandon_fame_penalty_) -
+    reinterpret_cast<char*>(&_impl_.can_accept_)) + sizeof(_impl_.abandon_fame_penalty_));
   // @@protoc_insertion_point(copy_constructor:Protocol.VillageQuestInfo)
 }
 
@@ -14574,6 +14638,8 @@ inline void VillageQuestInfo::SharedCtor(
     , decltype(_impl_.completion_village_name_){}
     , decltype(_impl_.can_accept_){false}
     , decltype(_impl_.can_claim_){false}
+    , decltype(_impl_.abandon_gold_penalty_){0}
+    , decltype(_impl_.abandon_fame_penalty_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.quest_id_.InitDefault();
@@ -14648,8 +14714,8 @@ void VillageQuestInfo::Clear() {
   _impl_.completion_village_id_.ClearToEmpty();
   _impl_.completion_village_name_.ClearToEmpty();
   ::memset(&_impl_.can_accept_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.can_claim_) -
-      reinterpret_cast<char*>(&_impl_.can_accept_)) + sizeof(_impl_.can_claim_));
+      reinterpret_cast<char*>(&_impl_.abandon_fame_penalty_) -
+      reinterpret_cast<char*>(&_impl_.can_accept_)) + sizeof(_impl_.abandon_fame_penalty_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -14769,6 +14835,22 @@ const char* VillageQuestInfo::_InternalParse(const char* ptr, ::_pbi::ParseConte
       case 11:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 88)) {
           _impl_.can_claim_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 abandon_gold_penalty = 12;
+      case 12:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 96)) {
+          _impl_.abandon_gold_penalty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 abandon_fame_penalty = 13;
+      case 13:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 104)) {
+          _impl_.abandon_fame_penalty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -14902,6 +14984,18 @@ uint8_t* VillageQuestInfo::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteBoolToArray(11, this->_internal_can_claim(), target);
   }
 
+  // int32 abandon_gold_penalty = 12;
+  if (this->_internal_abandon_gold_penalty() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(12, this->_internal_abandon_gold_penalty(), target);
+  }
+
+  // int32 abandon_fame_penalty = 13;
+  if (this->_internal_abandon_fame_penalty() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(13, this->_internal_abandon_fame_penalty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -14992,6 +15086,16 @@ size_t VillageQuestInfo::ByteSizeLong() const {
     total_size += 1 + 1;
   }
 
+  // int32 abandon_gold_penalty = 12;
+  if (this->_internal_abandon_gold_penalty() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_abandon_gold_penalty());
+  }
+
+  // int32 abandon_fame_penalty = 13;
+  if (this->_internal_abandon_fame_penalty() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_abandon_fame_penalty());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -15038,6 +15142,12 @@ void VillageQuestInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const
   }
   if (from._internal_can_claim() != 0) {
     _this->_internal_set_can_claim(from._internal_can_claim());
+  }
+  if (from._internal_abandon_gold_penalty() != 0) {
+    _this->_internal_set_abandon_gold_penalty(from._internal_abandon_gold_penalty());
+  }
+  if (from._internal_abandon_fame_penalty() != 0) {
+    _this->_internal_set_abandon_fame_penalty(from._internal_abandon_fame_penalty());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -15089,8 +15199,8 @@ void VillageQuestInfo::InternalSwap(VillageQuestInfo* other) {
       &other->_impl_.completion_village_name_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(VillageQuestInfo, _impl_.can_claim_)
-      + sizeof(VillageQuestInfo::_impl_.can_claim_)
+      PROTOBUF_FIELD_OFFSET(VillageQuestInfo, _impl_.abandon_fame_penalty_)
+      + sizeof(VillageQuestInfo::_impl_.abandon_fame_penalty_)
       - PROTOBUF_FIELD_OFFSET(VillageQuestInfo, _impl_.can_accept_)>(
           reinterpret_cast<char*>(&_impl_.can_accept_),
           reinterpret_cast<char*>(&other->_impl_.can_accept_));
@@ -16184,8 +16294,11 @@ S_QUEST_TRACKER_STATE::S_QUEST_TRACKER_STATE(const S_QUEST_TRACKER_STATE& from)
   new (&_impl_) Impl_{
       decltype(_impl_.quests_){from._impl_.quests_}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.action_){}
     , decltype(_impl_.expedition_){nullptr}
     , decltype(_impl_.success_){}
+    , decltype(_impl_.gold_penalty_){}
+    , decltype(_impl_.fame_penalty_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -16197,10 +16310,20 @@ S_QUEST_TRACKER_STATE::S_QUEST_TRACKER_STATE(const S_QUEST_TRACKER_STATE& from)
     _this->_impl_.reason_.Set(from._internal_reason(), 
       _this->GetArenaForAllocation());
   }
+  _impl_.action_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.action_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_action().empty()) {
+    _this->_impl_.action_.Set(from._internal_action(), 
+      _this->GetArenaForAllocation());
+  }
   if (from._internal_has_expedition()) {
     _this->_impl_.expedition_ = new ::Protocol::S_EXPEDITION_STATE(*from._impl_.expedition_);
   }
-  _this->_impl_.success_ = from._impl_.success_;
+  ::memcpy(&_impl_.success_, &from._impl_.success_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.fame_penalty_) -
+    reinterpret_cast<char*>(&_impl_.success_)) + sizeof(_impl_.fame_penalty_));
   // @@protoc_insertion_point(copy_constructor:Protocol.S_QUEST_TRACKER_STATE)
 }
 
@@ -16211,13 +16334,20 @@ inline void S_QUEST_TRACKER_STATE::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_.quests_){arena}
     , decltype(_impl_.reason_){}
+    , decltype(_impl_.action_){}
     , decltype(_impl_.expedition_){nullptr}
     , decltype(_impl_.success_){false}
+    , decltype(_impl_.gold_penalty_){0}
+    , decltype(_impl_.fame_penalty_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.reason_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.reason_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.action_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.action_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
@@ -16234,6 +16364,7 @@ inline void S_QUEST_TRACKER_STATE::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.quests_.~RepeatedPtrField();
   _impl_.reason_.Destroy();
+  _impl_.action_.Destroy();
   if (this != internal_default_instance()) delete _impl_.expedition_;
 }
 
@@ -16249,11 +16380,14 @@ void S_QUEST_TRACKER_STATE::Clear() {
 
   _impl_.quests_.Clear();
   _impl_.reason_.ClearToEmpty();
+  _impl_.action_.ClearToEmpty();
   if (GetArenaForAllocation() == nullptr && _impl_.expedition_ != nullptr) {
     delete _impl_.expedition_;
   }
   _impl_.expedition_ = nullptr;
-  _impl_.success_ = false;
+  ::memset(&_impl_.success_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.fame_penalty_) -
+      reinterpret_cast<char*>(&_impl_.success_)) + sizeof(_impl_.fame_penalty_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -16298,6 +16432,32 @@ const char* S_QUEST_TRACKER_STATE::_InternalParse(const char* ptr, ::_pbi::Parse
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_expedition(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string action = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
+          auto str = _internal_mutable_action();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.S_QUEST_TRACKER_STATE.action"));
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 gold_penalty = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+          _impl_.gold_penalty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 fame_penalty = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+          _impl_.fame_penalty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -16362,6 +16522,28 @@ uint8_t* S_QUEST_TRACKER_STATE::_InternalSerialize(
         _Internal::expedition(this).GetCachedSize(), target, stream);
   }
 
+  // string action = 5;
+  if (!this->_internal_action().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_action().data(), static_cast<int>(this->_internal_action().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.S_QUEST_TRACKER_STATE.action");
+    target = stream->WriteStringMaybeAliased(
+        5, this->_internal_action(), target);
+  }
+
+  // int32 gold_penalty = 6;
+  if (this->_internal_gold_penalty() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(6, this->_internal_gold_penalty(), target);
+  }
+
+  // int32 fame_penalty = 7;
+  if (this->_internal_fame_penalty() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(7, this->_internal_fame_penalty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -16392,6 +16574,13 @@ size_t S_QUEST_TRACKER_STATE::ByteSizeLong() const {
         this->_internal_reason());
   }
 
+  // string action = 5;
+  if (!this->_internal_action().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_action());
+  }
+
   // .Protocol.S_EXPEDITION_STATE expedition = 4;
   if (this->_internal_has_expedition()) {
     total_size += 1 +
@@ -16402,6 +16591,16 @@ size_t S_QUEST_TRACKER_STATE::ByteSizeLong() const {
   // bool success = 1;
   if (this->_internal_success() != 0) {
     total_size += 1 + 1;
+  }
+
+  // int32 gold_penalty = 6;
+  if (this->_internal_gold_penalty() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_gold_penalty());
+  }
+
+  // int32 fame_penalty = 7;
+  if (this->_internal_fame_penalty() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_fame_penalty());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -16426,12 +16625,21 @@ void S_QUEST_TRACKER_STATE::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, 
   if (!from._internal_reason().empty()) {
     _this->_internal_set_reason(from._internal_reason());
   }
+  if (!from._internal_action().empty()) {
+    _this->_internal_set_action(from._internal_action());
+  }
   if (from._internal_has_expedition()) {
     _this->_internal_mutable_expedition()->::Protocol::S_EXPEDITION_STATE::MergeFrom(
         from._internal_expedition());
   }
   if (from._internal_success() != 0) {
     _this->_internal_set_success(from._internal_success());
+  }
+  if (from._internal_gold_penalty() != 0) {
+    _this->_internal_set_gold_penalty(from._internal_gold_penalty());
+  }
+  if (from._internal_fame_penalty() != 0) {
+    _this->_internal_set_fame_penalty(from._internal_fame_penalty());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -16457,9 +16665,13 @@ void S_QUEST_TRACKER_STATE::InternalSwap(S_QUEST_TRACKER_STATE* other) {
       &_impl_.reason_, lhs_arena,
       &other->_impl_.reason_, rhs_arena
   );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.action_, lhs_arena,
+      &other->_impl_.action_, rhs_arena
+  );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(S_QUEST_TRACKER_STATE, _impl_.success_)
-      + sizeof(S_QUEST_TRACKER_STATE::_impl_.success_)
+      PROTOBUF_FIELD_OFFSET(S_QUEST_TRACKER_STATE, _impl_.fame_penalty_)
+      + sizeof(S_QUEST_TRACKER_STATE::_impl_.fame_penalty_)
       - PROTOBUF_FIELD_OFFSET(S_QUEST_TRACKER_STATE, _impl_.expedition_)>(
           reinterpret_cast<char*>(&_impl_.expedition_),
           reinterpret_cast<char*>(&other->_impl_.expedition_));
@@ -16469,6 +16681,209 @@ void S_QUEST_TRACKER_STATE::InternalSwap(S_QUEST_TRACKER_STATE* other) {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
       file_level_metadata_Protocol_2eproto[51]);
+}
+
+// ===================================================================
+
+class C_QUEST_ABANDON::_Internal {
+ public:
+};
+
+C_QUEST_ABANDON::C_QUEST_ABANDON(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:Protocol.C_QUEST_ABANDON)
+}
+C_QUEST_ABANDON::C_QUEST_ABANDON(const C_QUEST_ABANDON& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  C_QUEST_ABANDON* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.quest_id_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.quest_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.quest_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_quest_id().empty()) {
+    _this->_impl_.quest_id_.Set(from._internal_quest_id(), 
+      _this->GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:Protocol.C_QUEST_ABANDON)
+}
+
+inline void C_QUEST_ABANDON::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.quest_id_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.quest_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.quest_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+C_QUEST_ABANDON::~C_QUEST_ABANDON() {
+  // @@protoc_insertion_point(destructor:Protocol.C_QUEST_ABANDON)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void C_QUEST_ABANDON::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.quest_id_.Destroy();
+}
+
+void C_QUEST_ABANDON::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void C_QUEST_ABANDON::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.C_QUEST_ABANDON)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.quest_id_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* C_QUEST_ABANDON::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string quest_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_quest_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.C_QUEST_ABANDON.quest_id"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* C_QUEST_ABANDON::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.C_QUEST_ABANDON)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string quest_id = 1;
+  if (!this->_internal_quest_id().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_quest_id().data(), static_cast<int>(this->_internal_quest_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.C_QUEST_ABANDON.quest_id");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_quest_id(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.C_QUEST_ABANDON)
+  return target;
+}
+
+size_t C_QUEST_ABANDON::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.C_QUEST_ABANDON)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string quest_id = 1;
+  if (!this->_internal_quest_id().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_quest_id());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData C_QUEST_ABANDON::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    C_QUEST_ABANDON::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C_QUEST_ABANDON::GetClassData() const { return &_class_data_; }
+
+
+void C_QUEST_ABANDON::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<C_QUEST_ABANDON*>(&to_msg);
+  auto& from = static_cast<const C_QUEST_ABANDON&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.C_QUEST_ABANDON)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_quest_id().empty()) {
+    _this->_internal_set_quest_id(from._internal_quest_id());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void C_QUEST_ABANDON::CopyFrom(const C_QUEST_ABANDON& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.C_QUEST_ABANDON)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool C_QUEST_ABANDON::IsInitialized() const {
+  return true;
+}
+
+void C_QUEST_ABANDON::InternalSwap(C_QUEST_ABANDON* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.quest_id_, lhs_arena,
+      &other->_impl_.quest_id_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata C_QUEST_ABANDON::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[52]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -16681,6 +17096,10 @@ Arena::CreateMaybeMessage< ::Protocol::C_QUEST_TRACKER_OPEN >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::Protocol::S_QUEST_TRACKER_STATE*
 Arena::CreateMaybeMessage< ::Protocol::S_QUEST_TRACKER_STATE >(Arena* arena) {
   return Arena::CreateMessageInternal< ::Protocol::S_QUEST_TRACKER_STATE >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::C_QUEST_ABANDON*
+Arena::CreateMaybeMessage< ::Protocol::C_QUEST_ABANDON >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::C_QUEST_ABANDON >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

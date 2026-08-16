@@ -21,6 +21,7 @@ public:
 	void HandleVillageShopSell(GameSessionRef session, Protocol::C_VILLAGE_SHOP_SELL pkt);
 	void HandleVillageQuestBoardOpen(GameSessionRef session, Protocol::C_VILLAGE_QUEST_BOARD_OPEN pkt);
 	void HandleQuestTrackerOpen(GameSessionRef session, Protocol::C_QUEST_TRACKER_OPEN pkt);
+	void HandleQuestAbandon(GameSessionRef session, Protocol::C_QUEST_ABANDON pkt);
 	void HandleQuestAccept(GameSessionRef session, Protocol::C_QUEST_ACCEPT pkt);
 	void HandleQuestClaimReward(GameSessionRef session, Protocol::C_QUEST_CLAIM_REWARD pkt);
 	void HandleResetPlayerData(GameSessionRef session, Protocol::C_RESET_PLAYER_DATA pkt);

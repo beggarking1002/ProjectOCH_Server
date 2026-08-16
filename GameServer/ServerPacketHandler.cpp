@@ -233,6 +233,17 @@ bool Handle_C_QUEST_TRACKER_OPEN(PacketSessionRef& session, Protocol::C_QUEST_TR
 	return true;
 }
 
+bool Handle_C_QUEST_ABANDON(PacketSessionRef& session, Protocol::C_QUEST_ABANDON& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->player.load();
+	if (player == nullptr) return false;
+	RoomRef room = player->room.load().lock();
+	if (room == nullptr) return false;
+	room->DoAsync(&Room::HandleQuestAbandon, gameSession, pkt);
+	return true;
+}
+
 bool Handle_C_QUEST_ACCEPT(PacketSessionRef& session, Protocol::C_QUEST_ACCEPT& pkt)
 {
 	auto gameSession = static_pointer_cast<GameSession>(session);

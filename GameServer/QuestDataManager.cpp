@@ -94,6 +94,7 @@ namespace
 	bool ParseRewardType(const string& value, QuestRewardType& out)
 	{
 		if (value == "GOLD") out = QuestRewardType::Gold;
+		else if (value == "FAME") out = QuestRewardType::Fame;
 		else if (value == "ITEM") out = QuestRewardType::Item;
 		else return false;
 		return true;

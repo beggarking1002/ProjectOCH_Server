@@ -294,6 +294,7 @@ message S_EXPEDITION_STATE {
 	repeated string expired_item_ids = 6;
 	int32 thirst = 7;
 	int32 max_thirst = 8;
+	int32 fame = 9;
 }
 
 message C_VILLAGE_SHOP_OPEN {
@@ -357,6 +358,8 @@ message VillageQuestInfo {
 	repeated string reward_descriptions = 9;
 	bool can_accept = 10;
 	bool can_claim = 11;
+	int32 abandon_gold_penalty = 12;
+	int32 abandon_fame_penalty = 13;
 }
 
 message C_VILLAGE_QUEST_BOARD_OPEN {
@@ -390,4 +393,11 @@ message S_QUEST_TRACKER_STATE {
 	string reason = 2;
 	repeated VillageQuestInfo quests = 3;
 	S_EXPEDITION_STATE expedition = 4;
+	string action = 5;
+	int32 gold_penalty = 6;
+	int32 fame_penalty = 7;
+}
+
+message C_QUEST_ABANDON {
+	string quest_id = 1;
 }

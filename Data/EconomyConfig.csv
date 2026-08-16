@@ -9,3 +9,4 @@ village_stock_reset_interval_real_minutes,70,minutes
 trade_premium_margin_percent,50,percent
 trade_other_margin_percent,10,percent
 expedition_starting_gold,1000,gold
+battle_victory_fame,10,fame
