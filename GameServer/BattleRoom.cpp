@@ -8,6 +8,7 @@
 #include "DatabaseManager.h"
 #include "EconomyDataManager.h"
 #include "EconomyService.h"
+#include "QuestService.h"
 #include "GameSession.h"
 #include "Player.h"
 #include "Room.h"
@@ -1150,6 +1151,7 @@ BattleRoom::BattleState BattleRoom::CreateBattle(PlayerRef ownerPlayer)
 	}
 
 	ExecuteBattleStartEffects(battle);
+	ApplyExpeditionStartPenalties(ownerPlayer, battle.alliedPawns);
 	BuildTurnQueue(battle);
 	if (BattlePawn* currentPawn = FindPawn(battle, battle.currentTurnPawnId))
 		StartTurn(battle, *currentPawn);
@@ -1172,6 +1174,8 @@ BattleRoom::BattleState BattleRoom::CreatePvpBattle(PlayerRef ownerPlayer, Playe
 	AddOwnedBattlePawns(battle.enemyPawns, opponentPlayer, 2, -1);
 
 	ExecuteBattleStartEffects(battle);
+	ApplyExpeditionStartPenalties(ownerPlayer, battle.alliedPawns);
+	ApplyExpeditionStartPenalties(opponentPlayer, battle.enemyPawns);
 	BuildTurnQueue(battle);
 	if (BattlePawn* currentPawn = FindPawn(battle, battle.currentTurnPawnId))
 		StartTurn(battle, *currentPawn);
@@ -1309,6 +1313,136 @@ void BattleRoom::InitializeBattleTiles(BattleState& battle)
 	{
 		battle.tileStates.emplace(MakeTileKey(axial), BattleTileState());
 	}
+}
+
+void BattleRoom::ApplyExpeditionStartPenalties(const PlayerRef& player, vector<BattlePawnRef>& pawns) const
+{
+	if (player == nullptr)
+		return;
+	lock_guard economyLock(player->EconomyMutex());
+
+	const int32 hungryThreshold = GEconomyData.GetConfigValue("battle_satiety_hungry_threshold", 50);
+	const int32 hungryHpLossPercent = clamp(GEconomyData.GetConfigValue("battle_satiety_hungry_hp_loss_percent", 30), 0, 99);
+	const int32 criticalThreshold = GEconomyData.GetConfigValue("battle_satiety_critical_threshold", 20);
+	const int32 criticalHpLossPercent = clamp(GEconomyData.GetConfigValue("battle_satiety_critical_hp_loss_percent", 50), 0, 99);
+	const int32 moralePercent = clamp(GEconomyData.GetConfigValue("battle_negative_fame_morale_percent", 50), 0, 100);
+
+	int32 hpLossPercent = 0;
+	if (player->Satiety() <= criticalThreshold)
+		hpLossPercent = criticalHpLossPercent;
+	else if (player->Satiety() <= hungryThreshold)
+		hpLossPercent = hungryHpLossPercent;
+
+	for (const BattlePawnRef& pawn : pawns)
+	{
+		if (pawn == nullptr)
+			continue;
+		if (hpLossPercent > 0)
+		{
+			const int32 hpLoss = static_cast<int32>(static_cast<int64>(pawn->maxHp) * hpLossPercent / 100);
+			pawn->hp = max(1, pawn->maxHp - hpLoss);
+		}
+		if (player->Fame() < 0)
+		{
+			auto maxMoraleIt = pawn->maxResources.find(Protocol::BATTLE_RESOURCE_TYPE_MORALE);
+			if (maxMoraleIt != pawn->maxResources.end())
+				pawn->resources[Protocol::BATTLE_RESOURCE_TYPE_MORALE] = maxMoraleIt->second * moralePercent / 100;
+		}
+	}
+
+	if (hpLossPercent > 0 || player->Fame() < 0)
+	{
+		cout << "BATTLE_EXPEDITION_PENALTY player_id=" << player->objectInfo->object_id()
+			<< " satiety=" << player->Satiety()
+			<< " fame=" << player->Fame()
+			<< " hp_loss_percent=" << hpLossPercent
+			<< " morale_percent=" << (player->Fame() < 0 ? moralePercent : 100)
+			<< " pawn_count=" << pawns.size() << endl;
+	}
+}
+
+bool BattleRoom::ApplyVictoryRewards(BattleState& battle, const PlayerRef& winner, const PlayerRef& loser)
+{
+	if (winner == nullptr || loser == nullptr || winner->objectInfo == nullptr || loser->objectInfo == nullptr)
+		return false;
+	scoped_lock economyLocks(winner->EconomyMutex(), loser->EconomyMutex());
+
+	const uint64 nowMs = ::GetTickCount64();
+	const PersistentPlayerEconomyState previousWinner = winner->ExportEconomyState();
+	const PersistentPlayerEconomyState previousLoser = loser->ExportEconomyState();
+	const int32 fameReward = max(0, GEconomyData.GetConfigValue("battle_victory_fame", 10));
+	map<string, int64> lootQuantities;
+	for (const ExpeditionItemStackState& stack : loser->Inventory())
+	{
+		const EconomyItemTemplate* item = GEconomyData.GetItem(stack.itemId);
+		if (item != nullptr && item->itemType == EconomyItemType::Trade && stack.quantity > 0)
+			lootQuantities[stack.itemId] += stack.quantity;
+	}
+
+	vector<BattleLootItem> lootItems;
+	vector<string> unusedAutoConsumed;
+	bool mutationSucceeded = true;
+	for (const auto& [itemId, rawQuantity] : lootQuantities)
+	{
+		const EconomyItemTemplate* item = GEconomyData.GetItem(itemId);
+		if (item == nullptr || rawQuantity <= 0 || rawQuantity > (numeric_limits<int32>::max)())
+		{
+			mutationSucceeded = false;
+			break;
+		}
+		const int32 quantity = static_cast<int32>(rawQuantity);
+		if (!winner->AddInventoryItem(*item, quantity, unusedAutoConsumed) ||
+			!loser->RemoveInventoryItemFefo(itemId, quantity))
+		{
+			mutationSucceeded = false;
+			break;
+		}
+		lootItems.push_back({ itemId, item->displayName, quantity });
+	}
+	if (mutationSucceeded && fameReward > 0)
+		winner->ModifyFame(fameReward);
+	if (mutationSucceeded)
+	{
+		GQuestService.ReevaluateInventoryObjectives(winner);
+		GQuestService.ReevaluateInventoryObjectives(loser);
+	}
+
+	bool persisted = mutationSucceeded;
+	if (persisted && GDatabase.IsEnabled())
+	{
+		if (!winner->hasPersistentIdentity || !loser->hasPersistentIdentity)
+			persisted = false;
+		else
+			persisted = GDatabase.SavePlayerEconomiesAtomically(
+				winner->objectInfo->object_id(), winner->ExportEconomyState(),
+				loser->objectInfo->object_id(), loser->ExportEconomyState());
+	}
+
+	if (!persisted)
+	{
+		winner->RestoreEconomyState(previousWinner, nowMs);
+		loser->RestoreEconomyState(previousLoser, nowMs);
+		winner->MarkEconomyDirty();
+		loser->MarkEconomyDirty();
+		cout << "BATTLE_VICTORY_REWARD_FAIL battle_id=" << battle.battleId
+			<< " winner_player_id=" << winner->objectInfo->object_id()
+			<< " loser_player_id=" << loser->objectInfo->object_id()
+			<< " reason=\"failed to transfer or persist rewards\"" << endl;
+		return false;
+	}
+
+	winner->MarkEconomyPersisted(nowMs);
+	loser->MarkEconomyPersisted(nowMs);
+	battle.fameReward = fameReward;
+	battle.lootItems = move(lootItems);
+	cout << "BATTLE_VICTORY_REWARD battle_id=" << battle.battleId
+		<< " winner_player_id=" << winner->objectInfo->object_id()
+		<< " loser_player_id=" << loser->objectInfo->object_id()
+		<< " fame=" << fameReward
+		<< " loot_type_count=" << battle.lootItems.size() << endl;
+	GEconomyService.SendExpeditionState(winner);
+	GEconomyService.SendExpeditionState(loser);
+	return true;
 }
 
 Protocol::BattleTileType BattleRoom::GetBaseTileType(const BattleState& battle, const Protocol::AxialCoord& axial) const
@@ -1899,41 +2033,14 @@ bool BattleRoom::TryFinishBattle(BattleState& battle, uint64 fallbackWinnerOwner
 	GameSessionRef winnerSession = battle.winnerOwnerId == battle.ownerId
 		? battle.ownerSession.lock()
 		: battle.opponentSession.lock();
+	GameSessionRef loserSession = battle.loserOwnerId == battle.ownerId
+		? battle.ownerSession.lock()
+		: battle.opponentSession.lock();
 	PlayerRef winner = winnerSession != nullptr ? winnerSession->player.load() : nullptr;
-	if (winner != nullptr && winner->objectInfo != nullptr &&
-		winner->objectInfo->object_id() == battle.winnerOwnerId)
-	{
-		const int32 fameReward = max(0, GEconomyData.GetConfigValue("battle_victory_fame", 10));
-		if (fameReward > 0)
-		{
-			const uint64 nowMs = ::GetTickCount64();
-			const PersistentPlayerEconomyState previous = winner->ExportEconomyState();
-			winner->ModifyFame(fameReward);
-			winner->MarkEconomyDirty();
-
-			bool persisted = true;
-			if (winner->hasPersistentIdentity && GDatabase.IsEnabled())
-				persisted = GDatabase.SavePlayerEconomy(winner->objectInfo->object_id(), winner->ExportEconomyState());
-
-			if (!persisted)
-			{
-				winner->RestoreEconomyState(previous, nowMs);
-				winner->MarkEconomyDirty();
-				cout << "BATTLE_VICTORY_FAME_FAIL battle_id=" << battle.battleId
-					<< " player_id=" << battle.winnerOwnerId
-					<< " reason=\"failed to persist fame reward\"" << endl;
-			}
-			else
-			{
-				winner->MarkEconomyPersisted(nowMs);
-				cout << "BATTLE_VICTORY_FAME battle_id=" << battle.battleId
-					<< " player_id=" << battle.winnerOwnerId
-					<< " amount=" << fameReward
-					<< " fame=" << winner->Fame() << endl;
-				GEconomyService.SendExpeditionState(winner);
-			}
-		}
-	}
+	PlayerRef loser = loserSession != nullptr ? loserSession->player.load() : nullptr;
+	if (winner != nullptr && loser != nullptr && winner->objectInfo != nullptr && loser->objectInfo != nullptr &&
+		winner->objectInfo->object_id() == battle.winnerOwnerId && loser->objectInfo->object_id() == battle.loserOwnerId)
+		ApplyVictoryRewards(battle, winner, loser);
 
 	cout << "BATTLE_RESULT"
 		<< " battle_id=" << battle.battleId
@@ -2827,6 +2934,14 @@ void BattleRoom::SendBattleResult(GameSessionRef session, const BattleState& bat
 	Protocol::S_BATTLE_RESULT resultPkt;
 	resultPkt.set_battle_id(battle.battleId);
 	resultPkt.set_victory(victory);
+	resultPkt.set_fame_reward(victory ? battle.fameReward : 0);
+	for (const BattleLootItem& item : battle.lootItems)
+	{
+		Protocol::BattleLootItemInfo* loot = resultPkt.add_loot_items();
+		loot->set_item_id(item.itemId);
+		loot->set_display_name(item.displayName);
+		loot->set_quantity(item.quantity);
+	}
 
 	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(resultPkt);
 	session->Send(sendBuffer);

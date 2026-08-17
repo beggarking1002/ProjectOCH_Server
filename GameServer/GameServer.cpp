@@ -25,9 +25,25 @@ enum
 	WORKER_TICK = 64
 };
 
+namespace
+{
+	atomic<bool> GServerRunning = true;
+
+	BOOL WINAPI HandleConsoleControl(DWORD controlType)
+	{
+		if (controlType == CTRL_C_EVENT || controlType == CTRL_BREAK_EVENT || controlType == CTRL_CLOSE_EVENT ||
+			controlType == CTRL_SHUTDOWN_EVENT)
+		{
+			GServerRunning.store(false);
+			return TRUE;
+		}
+		return FALSE;
+	}
+}
+
 void DoWorkerJob(ServerServiceRef& service)
 {
-	while (true)
+	while (GServerRunning.load())
 	{
 		LEndTickCount = ::GetTickCount64() + WORKER_TICK;
 
@@ -44,6 +60,7 @@ void DoWorkerJob(ServerServiceRef& service)
 
 int main(int argc, char* argv[])
 {
+	SetConsoleCtrlHandler(HandleConsoleControl, TRUE);
 	bool allowDevelopmentLogin = false;
 	for (int i = 1; i < argc; ++i)
 	{
@@ -87,7 +104,7 @@ int main(int argc, char* argv[])
 
 	GRoom->DoAsync(&Room::UpdateTick);
 
-	while (true)
+	while (GServerRunning.load())
 	{
 		//Protocol::S_CHAT pkt;
 		//pkt.set_msg("HelloWorld");
@@ -97,5 +114,9 @@ int main(int argc, char* argv[])
 		this_thread::sleep_for(0.1s);
 	}
 
+	cout << "[GameServer] Graceful shutdown requested." << endl;
+	GSessionManager.SaveAllEconomies(::GetTickCount64());
+	service->CloseService();
 	GThreadManager->Join();
+	cout << "[GameServer] Shutdown complete." << endl;
 }

@@ -215,9 +215,17 @@ message S_BATTLE_PAWN_DEAD {
 	uint64 killer_pawn_id = 3;
 }
 
+message BattleLootItemInfo {
+	string item_id = 1;
+	string display_name = 2;
+	int32 quantity = 3;
+}
+
 message S_BATTLE_RESULT {
 	uint64 battle_id = 1;
 	bool victory = 2;
+	repeated BattleLootItemInfo loot_items = 3;
+	int32 fame_reward = 4;
 }
 
 message C_BATTLE_RESULT_ACK {

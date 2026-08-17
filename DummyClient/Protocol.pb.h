@@ -48,6 +48,9 @@ struct TableStruct_Protocol_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Protocol_2eproto;
 namespace Protocol {
+class BattleLootItemInfo;
+struct BattleLootItemInfoDefaultTypeInternal;
+extern BattleLootItemInfoDefaultTypeInternal _BattleLootItemInfo_default_instance_;
 class C_BATTLE_CLASS_SELECTION;
 struct C_BATTLE_CLASS_SELECTIONDefaultTypeInternal;
 extern C_BATTLE_CLASS_SELECTIONDefaultTypeInternal _C_BATTLE_CLASS_SELECTION_default_instance_;
@@ -209,6 +212,7 @@ struct VillageTradeBuyOfferInfoDefaultTypeInternal;
 extern VillageTradeBuyOfferInfoDefaultTypeInternal _VillageTradeBuyOfferInfo_default_instance_;
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
+template<> ::Protocol::BattleLootItemInfo* Arena::CreateMaybeMessage<::Protocol::BattleLootItemInfo>(Arena*);
 template<> ::Protocol::C_BATTLE_CLASS_SELECTION* Arena::CreateMaybeMessage<::Protocol::C_BATTLE_CLASS_SELECTION>(Arena*);
 template<> ::Protocol::C_BATTLE_END_TURN* Arena::CreateMaybeMessage<::Protocol::C_BATTLE_END_TURN>(Arena*);
 template<> ::Protocol::C_BATTLE_INVITE* Arena::CreateMaybeMessage<::Protocol::C_BATTLE_INVITE>(Arena*);
@@ -5316,6 +5320,186 @@ class S_BATTLE_PAWN_DEAD final :
 };
 // -------------------------------------------------------------------
 
+class BattleLootItemInfo final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.BattleLootItemInfo) */ {
+ public:
+  inline BattleLootItemInfo() : BattleLootItemInfo(nullptr) {}
+  ~BattleLootItemInfo() override;
+  explicit PROTOBUF_CONSTEXPR BattleLootItemInfo(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  BattleLootItemInfo(const BattleLootItemInfo& from);
+  BattleLootItemInfo(BattleLootItemInfo&& from) noexcept
+    : BattleLootItemInfo() {
+    *this = ::std::move(from);
+  }
+
+  inline BattleLootItemInfo& operator=(const BattleLootItemInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline BattleLootItemInfo& operator=(BattleLootItemInfo&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const BattleLootItemInfo& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const BattleLootItemInfo* internal_default_instance() {
+    return reinterpret_cast<const BattleLootItemInfo*>(
+               &_BattleLootItemInfo_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    26;
+
+  friend void swap(BattleLootItemInfo& a, BattleLootItemInfo& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(BattleLootItemInfo* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(BattleLootItemInfo* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  BattleLootItemInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<BattleLootItemInfo>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const BattleLootItemInfo& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const BattleLootItemInfo& from) {
+    BattleLootItemInfo::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BattleLootItemInfo* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.BattleLootItemInfo";
+  }
+  protected:
+  explicit BattleLootItemInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kItemIdFieldNumber = 1,
+    kDisplayNameFieldNumber = 2,
+    kQuantityFieldNumber = 3,
+  };
+  // string item_id = 1;
+  void clear_item_id();
+  const std::string& item_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_item_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_item_id();
+  PROTOBUF_NODISCARD std::string* release_item_id();
+  void set_allocated_item_id(std::string* item_id);
+  private:
+  const std::string& _internal_item_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_item_id(const std::string& value);
+  std::string* _internal_mutable_item_id();
+  public:
+
+  // string display_name = 2;
+  void clear_display_name();
+  const std::string& display_name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_display_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_display_name();
+  PROTOBUF_NODISCARD std::string* release_display_name();
+  void set_allocated_display_name(std::string* display_name);
+  private:
+  const std::string& _internal_display_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_display_name(const std::string& value);
+  std::string* _internal_mutable_display_name();
+  public:
+
+  // int32 quantity = 3;
+  void clear_quantity();
+  int32_t quantity() const;
+  void set_quantity(int32_t value);
+  private:
+  int32_t _internal_quantity() const;
+  void _internal_set_quantity(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.BattleLootItemInfo)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr item_id_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr display_name_;
+    int32_t quantity_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
 class S_BATTLE_RESULT final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_BATTLE_RESULT) */ {
  public:
@@ -5364,7 +5548,7 @@ class S_BATTLE_RESULT final :
                &_S_BATTLE_RESULT_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    26;
+    27;
 
   friend void swap(S_BATTLE_RESULT& a, S_BATTLE_RESULT& b) {
     a.Swap(&b);
@@ -5437,9 +5621,29 @@ class S_BATTLE_RESULT final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kLootItemsFieldNumber = 3,
     kBattleIdFieldNumber = 1,
     kVictoryFieldNumber = 2,
+    kFameRewardFieldNumber = 4,
   };
+  // repeated .Protocol.BattleLootItemInfo loot_items = 3;
+  int loot_items_size() const;
+  private:
+  int _internal_loot_items_size() const;
+  public:
+  void clear_loot_items();
+  ::Protocol::BattleLootItemInfo* mutable_loot_items(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleLootItemInfo >*
+      mutable_loot_items();
+  private:
+  const ::Protocol::BattleLootItemInfo& _internal_loot_items(int index) const;
+  ::Protocol::BattleLootItemInfo* _internal_add_loot_items();
+  public:
+  const ::Protocol::BattleLootItemInfo& loot_items(int index) const;
+  ::Protocol::BattleLootItemInfo* add_loot_items();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleLootItemInfo >&
+      loot_items() const;
+
   // uint64 battle_id = 1;
   void clear_battle_id();
   uint64_t battle_id() const;
@@ -5458,6 +5662,15 @@ class S_BATTLE_RESULT final :
   void _internal_set_victory(bool value);
   public:
 
+  // int32 fame_reward = 4;
+  void clear_fame_reward();
+  int32_t fame_reward() const;
+  void set_fame_reward(int32_t value);
+  private:
+  int32_t _internal_fame_reward() const;
+  void _internal_set_fame_reward(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_BATTLE_RESULT)
  private:
   class _Internal;
@@ -5466,8 +5679,10 @@ class S_BATTLE_RESULT final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleLootItemInfo > loot_items_;
     uint64_t battle_id_;
     bool victory_;
+    int32_t fame_reward_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -5523,7 +5738,7 @@ class C_BATTLE_RESULT_ACK final :
                &_C_BATTLE_RESULT_ACK_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    27;
+    28;
 
   friend void swap(C_BATTLE_RESULT_ACK& a, C_BATTLE_RESULT_ACK& b) {
     a.Swap(&b);
@@ -5671,7 +5886,7 @@ class S_BATTLE_RESULT_ACK final :
                &_S_BATTLE_RESULT_ACK_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    28;
+    29;
 
   friend void swap(S_BATTLE_RESULT_ACK& a, S_BATTLE_RESULT_ACK& b) {
     a.Swap(&b);
@@ -5846,7 +6061,7 @@ class S_BATTLE_CLASS_SELECTION_START final :
                &_S_BATTLE_CLASS_SELECTION_START_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    29;
+    30;
 
   friend void swap(S_BATTLE_CLASS_SELECTION_START& a, S_BATTLE_CLASS_SELECTION_START& b) {
     a.Swap(&b);
@@ -6085,7 +6300,7 @@ class C_BATTLE_CLASS_SELECTION final :
                &_C_BATTLE_CLASS_SELECTION_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    30;
+    31;
 
   friend void swap(C_BATTLE_CLASS_SELECTION& a, C_BATTLE_CLASS_SELECTION& b) {
     a.Swap(&b);
@@ -6242,7 +6457,7 @@ class S_BATTLE_CLASS_SELECTION_RESULT final :
                &_S_BATTLE_CLASS_SELECTION_RESULT_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    31;
+    32;
 
   friend void swap(S_BATTLE_CLASS_SELECTION_RESULT& a, S_BATTLE_CLASS_SELECTION_RESULT& b) {
     a.Swap(&b);
@@ -6439,7 +6654,7 @@ class C_ENTER_VILLAGE final :
                &_C_ENTER_VILLAGE_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    32;
+    33;
 
   friend void swap(C_ENTER_VILLAGE& a, C_ENTER_VILLAGE& b) {
     a.Swap(&b);
@@ -6614,7 +6829,7 @@ class S_ENTER_VILLAGE final :
                &_S_ENTER_VILLAGE_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    33;
+    34;
 
   friend void swap(S_ENTER_VILLAGE& a, S_ENTER_VILLAGE& b) {
     a.Swap(&b);
@@ -6826,7 +7041,7 @@ class ExpeditionItemStackInfo final :
                &_ExpeditionItemStackInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    34;
+    35;
 
   friend void swap(ExpeditionItemStackInfo& a, ExpeditionItemStackInfo& b) {
     a.Swap(&b);
@@ -7012,7 +7227,7 @@ class VillageShopListingInfo final :
                &_VillageShopListingInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    35;
+    36;
 
   friend void swap(VillageShopListingInfo& a, VillageShopListingInfo& b) {
     a.Swap(&b);
@@ -7198,7 +7413,7 @@ class VillageTradeBuyOfferInfo final :
                &_VillageTradeBuyOfferInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    36;
+    37;
 
   friend void swap(VillageTradeBuyOfferInfo& a, VillageTradeBuyOfferInfo& b) {
     a.Swap(&b);
@@ -7373,7 +7588,7 @@ class S_EXPEDITION_STATE final :
                &_S_EXPEDITION_STATE_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    37;
+    38;
 
   friend void swap(S_EXPEDITION_STATE& a, S_EXPEDITION_STATE& b) {
     a.Swap(&b);
@@ -7648,7 +7863,7 @@ class C_VILLAGE_SHOP_OPEN final :
                &_C_VILLAGE_SHOP_OPEN_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    38;
+    39;
 
   friend void swap(C_VILLAGE_SHOP_OPEN& a, C_VILLAGE_SHOP_OPEN& b) {
     a.Swap(&b);
@@ -7801,7 +8016,7 @@ class C_VILLAGE_SHOP_BUY final :
                &_C_VILLAGE_SHOP_BUY_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    39;
+    40;
 
   friend void swap(C_VILLAGE_SHOP_BUY& a, C_VILLAGE_SHOP_BUY& b) {
     a.Swap(&b);
@@ -7981,7 +8196,7 @@ class C_VILLAGE_SHOP_SELL final :
                &_C_VILLAGE_SHOP_SELL_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    40;
+    41;
 
   friend void swap(C_VILLAGE_SHOP_SELL& a, C_VILLAGE_SHOP_SELL& b) {
     a.Swap(&b);
@@ -8156,7 +8371,7 @@ class S_VILLAGE_SHOP_STATE final :
                &_S_VILLAGE_SHOP_STATE_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    41;
+    42;
 
   friend void swap(S_VILLAGE_SHOP_STATE& a, S_VILLAGE_SHOP_STATE& b) {
     a.Swap(&b);
@@ -8423,7 +8638,7 @@ class C_RESET_PLAYER_DATA final :
                &_C_RESET_PLAYER_DATA_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    42;
+    43;
 
   friend void swap(C_RESET_PLAYER_DATA& a, C_RESET_PLAYER_DATA& b) {
     a.Swap(&b);
@@ -8576,7 +8791,7 @@ class S_RESET_PLAYER_DATA final :
                &_S_RESET_PLAYER_DATA_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    43;
+    44;
 
   friend void swap(S_RESET_PLAYER_DATA& a, S_RESET_PLAYER_DATA& b) {
     a.Swap(&b);
@@ -8740,7 +8955,7 @@ class QuestObjectiveProgressInfo final :
                &_QuestObjectiveProgressInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    44;
+    45;
 
   friend void swap(QuestObjectiveProgressInfo& a, QuestObjectiveProgressInfo& b) {
     a.Swap(&b);
@@ -8985,7 +9200,7 @@ class VillageQuestInfo final :
                &_VillageQuestInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    45;
+    46;
 
   friend void swap(VillageQuestInfo& a, VillageQuestInfo& b) {
     a.Swap(&b);
@@ -9324,7 +9539,7 @@ class C_VILLAGE_QUEST_BOARD_OPEN final :
                &_C_VILLAGE_QUEST_BOARD_OPEN_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    46;
+    47;
 
   friend void swap(C_VILLAGE_QUEST_BOARD_OPEN& a, C_VILLAGE_QUEST_BOARD_OPEN& b) {
     a.Swap(&b);
@@ -9477,7 +9692,7 @@ class C_QUEST_ACCEPT final :
                &_C_QUEST_ACCEPT_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    47;
+    48;
 
   friend void swap(C_QUEST_ACCEPT& a, C_QUEST_ACCEPT& b) {
     a.Swap(&b);
@@ -9630,7 +9845,7 @@ class C_QUEST_CLAIM_REWARD final :
                &_C_QUEST_CLAIM_REWARD_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    48;
+    49;
 
   friend void swap(C_QUEST_CLAIM_REWARD& a, C_QUEST_CLAIM_REWARD& b) {
     a.Swap(&b);
@@ -9783,7 +9998,7 @@ class S_VILLAGE_QUEST_STATE final :
                &_S_VILLAGE_QUEST_STATE_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    49;
+    50;
 
   friend void swap(S_VILLAGE_QUEST_STATE& a, S_VILLAGE_QUEST_STATE& b) {
     a.Swap(&b);
@@ -10018,7 +10233,7 @@ class C_QUEST_TRACKER_OPEN final :
                &_C_QUEST_TRACKER_OPEN_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    50;
+    51;
 
   friend void swap(C_QUEST_TRACKER_OPEN& a, C_QUEST_TRACKER_OPEN& b) {
     a.Swap(&b);
@@ -10137,7 +10352,7 @@ class S_QUEST_TRACKER_STATE final :
                &_S_QUEST_TRACKER_STATE_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    51;
+    52;
 
   friend void swap(S_QUEST_TRACKER_STATE& a, S_QUEST_TRACKER_STATE& b) {
     a.Swap(&b);
@@ -10379,7 +10594,7 @@ class C_QUEST_ABANDON final :
                &_C_QUEST_ABANDON_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    52;
+    53;
 
   friend void swap(C_QUEST_ABANDON& a, C_QUEST_ABANDON& b) {
     a.Swap(&b);
@@ -14198,6 +14413,130 @@ inline void S_BATTLE_PAWN_DEAD::set_killer_pawn_id(uint64_t value) {
 
 // -------------------------------------------------------------------
 
+// BattleLootItemInfo
+
+// string item_id = 1;
+inline void BattleLootItemInfo::clear_item_id() {
+  _impl_.item_id_.ClearToEmpty();
+}
+inline const std::string& BattleLootItemInfo::item_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleLootItemInfo.item_id)
+  return _internal_item_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void BattleLootItemInfo::set_item_id(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.item_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.BattleLootItemInfo.item_id)
+}
+inline std::string* BattleLootItemInfo::mutable_item_id() {
+  std::string* _s = _internal_mutable_item_id();
+  // @@protoc_insertion_point(field_mutable:Protocol.BattleLootItemInfo.item_id)
+  return _s;
+}
+inline const std::string& BattleLootItemInfo::_internal_item_id() const {
+  return _impl_.item_id_.Get();
+}
+inline void BattleLootItemInfo::_internal_set_item_id(const std::string& value) {
+  
+  _impl_.item_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* BattleLootItemInfo::_internal_mutable_item_id() {
+  
+  return _impl_.item_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* BattleLootItemInfo::release_item_id() {
+  // @@protoc_insertion_point(field_release:Protocol.BattleLootItemInfo.item_id)
+  return _impl_.item_id_.Release();
+}
+inline void BattleLootItemInfo::set_allocated_item_id(std::string* item_id) {
+  if (item_id != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.item_id_.SetAllocated(item_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.item_id_.IsDefault()) {
+    _impl_.item_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.BattleLootItemInfo.item_id)
+}
+
+// string display_name = 2;
+inline void BattleLootItemInfo::clear_display_name() {
+  _impl_.display_name_.ClearToEmpty();
+}
+inline const std::string& BattleLootItemInfo::display_name() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleLootItemInfo.display_name)
+  return _internal_display_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void BattleLootItemInfo::set_display_name(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.display_name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.BattleLootItemInfo.display_name)
+}
+inline std::string* BattleLootItemInfo::mutable_display_name() {
+  std::string* _s = _internal_mutable_display_name();
+  // @@protoc_insertion_point(field_mutable:Protocol.BattleLootItemInfo.display_name)
+  return _s;
+}
+inline const std::string& BattleLootItemInfo::_internal_display_name() const {
+  return _impl_.display_name_.Get();
+}
+inline void BattleLootItemInfo::_internal_set_display_name(const std::string& value) {
+  
+  _impl_.display_name_.Set(value, GetArenaForAllocation());
+}
+inline std::string* BattleLootItemInfo::_internal_mutable_display_name() {
+  
+  return _impl_.display_name_.Mutable(GetArenaForAllocation());
+}
+inline std::string* BattleLootItemInfo::release_display_name() {
+  // @@protoc_insertion_point(field_release:Protocol.BattleLootItemInfo.display_name)
+  return _impl_.display_name_.Release();
+}
+inline void BattleLootItemInfo::set_allocated_display_name(std::string* display_name) {
+  if (display_name != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.display_name_.SetAllocated(display_name, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.display_name_.IsDefault()) {
+    _impl_.display_name_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.BattleLootItemInfo.display_name)
+}
+
+// int32 quantity = 3;
+inline void BattleLootItemInfo::clear_quantity() {
+  _impl_.quantity_ = 0;
+}
+inline int32_t BattleLootItemInfo::_internal_quantity() const {
+  return _impl_.quantity_;
+}
+inline int32_t BattleLootItemInfo::quantity() const {
+  // @@protoc_insertion_point(field_get:Protocol.BattleLootItemInfo.quantity)
+  return _internal_quantity();
+}
+inline void BattleLootItemInfo::_internal_set_quantity(int32_t value) {
+  
+  _impl_.quantity_ = value;
+}
+inline void BattleLootItemInfo::set_quantity(int32_t value) {
+  _internal_set_quantity(value);
+  // @@protoc_insertion_point(field_set:Protocol.BattleLootItemInfo.quantity)
+}
+
+// -------------------------------------------------------------------
+
 // S_BATTLE_RESULT
 
 // uint64 battle_id = 1;
@@ -14238,6 +14577,66 @@ inline void S_BATTLE_RESULT::_internal_set_victory(bool value) {
 inline void S_BATTLE_RESULT::set_victory(bool value) {
   _internal_set_victory(value);
   // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_RESULT.victory)
+}
+
+// repeated .Protocol.BattleLootItemInfo loot_items = 3;
+inline int S_BATTLE_RESULT::_internal_loot_items_size() const {
+  return _impl_.loot_items_.size();
+}
+inline int S_BATTLE_RESULT::loot_items_size() const {
+  return _internal_loot_items_size();
+}
+inline void S_BATTLE_RESULT::clear_loot_items() {
+  _impl_.loot_items_.Clear();
+}
+inline ::Protocol::BattleLootItemInfo* S_BATTLE_RESULT::mutable_loot_items(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_BATTLE_RESULT.loot_items)
+  return _impl_.loot_items_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleLootItemInfo >*
+S_BATTLE_RESULT::mutable_loot_items() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_BATTLE_RESULT.loot_items)
+  return &_impl_.loot_items_;
+}
+inline const ::Protocol::BattleLootItemInfo& S_BATTLE_RESULT::_internal_loot_items(int index) const {
+  return _impl_.loot_items_.Get(index);
+}
+inline const ::Protocol::BattleLootItemInfo& S_BATTLE_RESULT::loot_items(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_RESULT.loot_items)
+  return _internal_loot_items(index);
+}
+inline ::Protocol::BattleLootItemInfo* S_BATTLE_RESULT::_internal_add_loot_items() {
+  return _impl_.loot_items_.Add();
+}
+inline ::Protocol::BattleLootItemInfo* S_BATTLE_RESULT::add_loot_items() {
+  ::Protocol::BattleLootItemInfo* _add = _internal_add_loot_items();
+  // @@protoc_insertion_point(field_add:Protocol.S_BATTLE_RESULT.loot_items)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::BattleLootItemInfo >&
+S_BATTLE_RESULT::loot_items() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_BATTLE_RESULT.loot_items)
+  return _impl_.loot_items_;
+}
+
+// int32 fame_reward = 4;
+inline void S_BATTLE_RESULT::clear_fame_reward() {
+  _impl_.fame_reward_ = 0;
+}
+inline int32_t S_BATTLE_RESULT::_internal_fame_reward() const {
+  return _impl_.fame_reward_;
+}
+inline int32_t S_BATTLE_RESULT::fame_reward() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_BATTLE_RESULT.fame_reward)
+  return _internal_fame_reward();
+}
+inline void S_BATTLE_RESULT::_internal_set_fame_reward(int32_t value) {
+  
+  _impl_.fame_reward_ = value;
+}
+inline void S_BATTLE_RESULT::set_fame_reward(int32_t value) {
+  _internal_set_fame_reward(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_BATTLE_RESULT.fame_reward)
 }
 
 // -------------------------------------------------------------------
@@ -18127,6 +18526,8 @@ inline void C_QUEST_ABANDON::set_allocated_quest_id(std::string* quest_id) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

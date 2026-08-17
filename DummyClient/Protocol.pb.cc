@@ -443,10 +443,27 @@ struct S_BATTLE_PAWN_DEADDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S_BATTLE_PAWN_DEADDefaultTypeInternal _S_BATTLE_PAWN_DEAD_default_instance_;
+PROTOBUF_CONSTEXPR BattleLootItemInfo::BattleLootItemInfo(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.item_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.display_name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.quantity_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct BattleLootItemInfoDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR BattleLootItemInfoDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~BattleLootItemInfoDefaultTypeInternal() {}
+  union {
+    BattleLootItemInfo _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BattleLootItemInfoDefaultTypeInternal _BattleLootItemInfo_default_instance_;
 PROTOBUF_CONSTEXPR S_BATTLE_RESULT::S_BATTLE_RESULT(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.battle_id_)*/uint64_t{0u}
+    /*decltype(_impl_.loot_items_)*/{}
+  , /*decltype(_impl_.battle_id_)*/uint64_t{0u}
   , /*decltype(_impl_.victory_)*/false
+  , /*decltype(_impl_.fame_reward_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct S_BATTLE_RESULTDefaultTypeInternal {
   PROTOBUF_CONSTEXPR S_BATTLE_RESULTDefaultTypeInternal()
@@ -874,7 +891,7 @@ struct C_QUEST_ABANDONDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C_QUEST_ABANDONDefaultTypeInternal _C_QUEST_ABANDON_default_instance_;
 }  // namespace Protocol
-static ::_pb::Metadata file_level_metadata_Protocol_2eproto[53];
+static ::_pb::Metadata file_level_metadata_Protocol_2eproto[54];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_Protocol_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Protocol_2eproto = nullptr;
 
@@ -1144,6 +1161,15 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_PAWN_DEAD, _impl_.pawn_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_PAWN_DEAD, _impl_.killer_pawn_id_),
   ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleLootItemInfo, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleLootItemInfo, _impl_.item_id_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleLootItemInfo, _impl_.display_name_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::BattleLootItemInfo, _impl_.quantity_),
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_RESULT, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -1151,6 +1177,8 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_RESULT, _impl_.battle_id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_RESULT, _impl_.victory_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_RESULT, _impl_.loot_items_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_BATTLE_RESULT, _impl_.fame_reward_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::C_BATTLE_RESULT_ACK, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1435,33 +1463,34 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 237, -1, -1, sizeof(::Protocol::C_BATTLE_INVITE_RESPONSE)},
   { 245, -1, -1, sizeof(::Protocol::S_BATTLE_INVITE_RESULT)},
   { 255, -1, -1, sizeof(::Protocol::S_BATTLE_PAWN_DEAD)},
-  { 264, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT)},
-  { 272, -1, -1, sizeof(::Protocol::C_BATTLE_RESULT_ACK)},
-  { 279, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT_ACK)},
-  { 288, -1, -1, sizeof(::Protocol::S_BATTLE_CLASS_SELECTION_START)},
-  { 300, -1, -1, sizeof(::Protocol::C_BATTLE_CLASS_SELECTION)},
-  { 307, -1, -1, sizeof(::Protocol::S_BATTLE_CLASS_SELECTION_RESULT)},
-  { 318, -1, -1, sizeof(::Protocol::C_ENTER_VILLAGE)},
-  { 327, -1, -1, sizeof(::Protocol::S_ENTER_VILLAGE)},
-  { 338, -1, -1, sizeof(::Protocol::ExpeditionItemStackInfo)},
-  { 348, -1, -1, sizeof(::Protocol::VillageShopListingInfo)},
-  { 358, -1, -1, sizeof(::Protocol::VillageTradeBuyOfferInfo)},
-  { 367, -1, -1, sizeof(::Protocol::S_EXPEDITION_STATE)},
-  { 382, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_OPEN)},
-  { 389, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_BUY)},
-  { 398, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_SELL)},
-  { 407, -1, -1, sizeof(::Protocol::S_VILLAGE_SHOP_STATE)},
-  { 421, -1, -1, sizeof(::Protocol::C_RESET_PLAYER_DATA)},
-  { 428, -1, -1, sizeof(::Protocol::S_RESET_PLAYER_DATA)},
-  { 436, -1, -1, sizeof(::Protocol::QuestObjectiveProgressInfo)},
-  { 450, -1, -1, sizeof(::Protocol::VillageQuestInfo)},
-  { 469, -1, -1, sizeof(::Protocol::C_VILLAGE_QUEST_BOARD_OPEN)},
-  { 476, -1, -1, sizeof(::Protocol::C_QUEST_ACCEPT)},
-  { 483, -1, -1, sizeof(::Protocol::C_QUEST_CLAIM_REWARD)},
-  { 490, -1, -1, sizeof(::Protocol::S_VILLAGE_QUEST_STATE)},
-  { 502, -1, -1, sizeof(::Protocol::C_QUEST_TRACKER_OPEN)},
-  { 508, -1, -1, sizeof(::Protocol::S_QUEST_TRACKER_STATE)},
-  { 521, -1, -1, sizeof(::Protocol::C_QUEST_ABANDON)},
+  { 264, -1, -1, sizeof(::Protocol::BattleLootItemInfo)},
+  { 273, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT)},
+  { 283, -1, -1, sizeof(::Protocol::C_BATTLE_RESULT_ACK)},
+  { 290, -1, -1, sizeof(::Protocol::S_BATTLE_RESULT_ACK)},
+  { 299, -1, -1, sizeof(::Protocol::S_BATTLE_CLASS_SELECTION_START)},
+  { 311, -1, -1, sizeof(::Protocol::C_BATTLE_CLASS_SELECTION)},
+  { 318, -1, -1, sizeof(::Protocol::S_BATTLE_CLASS_SELECTION_RESULT)},
+  { 329, -1, -1, sizeof(::Protocol::C_ENTER_VILLAGE)},
+  { 338, -1, -1, sizeof(::Protocol::S_ENTER_VILLAGE)},
+  { 349, -1, -1, sizeof(::Protocol::ExpeditionItemStackInfo)},
+  { 359, -1, -1, sizeof(::Protocol::VillageShopListingInfo)},
+  { 369, -1, -1, sizeof(::Protocol::VillageTradeBuyOfferInfo)},
+  { 378, -1, -1, sizeof(::Protocol::S_EXPEDITION_STATE)},
+  { 393, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_OPEN)},
+  { 400, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_BUY)},
+  { 409, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_SELL)},
+  { 418, -1, -1, sizeof(::Protocol::S_VILLAGE_SHOP_STATE)},
+  { 432, -1, -1, sizeof(::Protocol::C_RESET_PLAYER_DATA)},
+  { 439, -1, -1, sizeof(::Protocol::S_RESET_PLAYER_DATA)},
+  { 447, -1, -1, sizeof(::Protocol::QuestObjectiveProgressInfo)},
+  { 461, -1, -1, sizeof(::Protocol::VillageQuestInfo)},
+  { 480, -1, -1, sizeof(::Protocol::C_VILLAGE_QUEST_BOARD_OPEN)},
+  { 487, -1, -1, sizeof(::Protocol::C_QUEST_ACCEPT)},
+  { 494, -1, -1, sizeof(::Protocol::C_QUEST_CLAIM_REWARD)},
+  { 501, -1, -1, sizeof(::Protocol::S_VILLAGE_QUEST_STATE)},
+  { 513, -1, -1, sizeof(::Protocol::C_QUEST_TRACKER_OPEN)},
+  { 519, -1, -1, sizeof(::Protocol::S_QUEST_TRACKER_STATE)},
+  { 532, -1, -1, sizeof(::Protocol::C_QUEST_ABANDON)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -1491,6 +1520,7 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::Protocol::_C_BATTLE_INVITE_RESPONSE_default_instance_._instance,
   &::Protocol::_S_BATTLE_INVITE_RESULT_default_instance_._instance,
   &::Protocol::_S_BATTLE_PAWN_DEAD_default_instance_._instance,
+  &::Protocol::_BattleLootItemInfo_default_instance_._instance,
   &::Protocol::_S_BATTLE_RESULT_default_instance_._instance,
   &::Protocol::_C_BATTLE_RESULT_ACK_default_instance_._instance,
   &::Protocol::_S_BATTLE_RESULT_ACK_default_instance_._instance,
@@ -1606,87 +1636,91 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "(\010\022\033\n\023requester_player_id\030\002 \001(\004\022\030\n\020targe"
   "t_player_id\030\003 \001(\004\022\016\n\006reason\030\004 \001(\t\"P\n\022S_B"
   "ATTLE_PAWN_DEAD\022\021\n\tbattle_id\030\001 \001(\004\022\017\n\007pa"
-  "wn_id\030\002 \001(\004\022\026\n\016killer_pawn_id\030\003 \001(\004\"5\n\017S"
-  "_BATTLE_RESULT\022\021\n\tbattle_id\030\001 \001(\004\022\017\n\007vic"
-  "tory\030\002 \001(\010\"(\n\023C_BATTLE_RESULT_ACK\022\021\n\tbat"
-  "tle_id\030\001 \001(\004\"I\n\023S_BATTLE_RESULT_ACK\022\017\n\007s"
-  "uccess\030\001 \001(\010\022\021\n\tbattle_id\030\002 \001(\004\022\016\n\006reaso"
-  "n\030\003 \001(\t\"\207\002\n\036S_BATTLE_CLASS_SELECTION_STA"
-  "RT\022\033\n\023requester_player_id\030\001 \001(\004\022\030\n\020targe"
-  "t_player_id\030\002 \001(\004\022)\n\014suen_options\030\003 \003(\0162"
-  "\023.Protocol.PawnClass\022*\n\rbeige_options\030\004 "
-  "\003(\0162\023.Protocol.PawnClass\022)\n\014alen_options"
-  "\030\005 \003(\0162\023.Protocol.PawnClass\022,\n\017zillian_o"
-  "ptions\030\006 \003(\0162\023.Protocol.PawnClass\"N\n\030C_B"
-  "ATTLE_CLASS_SELECTION\0222\n\025selected_pawn_c"
-  "lasses\030\001 \003(\0162\023.Protocol.PawnClass\"\227\001\n\037S_"
-  "BATTLE_CLASS_SELECTION_RESULT\022\017\n\007success"
-  "\030\001 \001(\010\022\034\n\024waiting_for_opponent\030\002 \001(\010\022\033\n\023"
-  "requester_player_id\030\003 \001(\004\022\030\n\020target_play"
-  "er_id\030\004 \001(\004\022\016\n\006reason\030\005 \001(\t\"A\n\017C_ENTER_V"
-  "ILLAGE\022\016\n\006map_id\030\001 \001(\t\022\016\n\006cell_x\030\002 \001(\021\022\016"
-  "\n\006cell_y\030\003 \001(\021\"y\n\017S_ENTER_VILLAGE\022\017\n\007suc"
-  "cess\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\022\022\n\nvillage_id"
-  "\030\003 \001(\t\022\024\n\014village_name\030\004 \001(\t\022\033\n\023village_"
-  "description\030\005 \001(\t\"t\n\027ExpeditionItemStack"
-  "Info\022\020\n\010stack_id\030\001 \001(\004\022\017\n\007item_id\030\002 \001(\t\022"
-  "\020\n\010quantity\030\003 \001(\005\022$\n\034remaining_shelf_lif"
-  "e_seconds\030\004 \001(\003\"d\n\026VillageShopListingInf"
-  "o\022\017\n\007item_id\030\001 \001(\t\022\r\n\005stock\030\002 \001(\005\022\021\n\tmax"
-  "_stock\030\003 \001(\005\022\027\n\017unit_sell_price\030\004 \001(\005\"U\n"
-  "\030VillageTradeBuyOfferInfo\022\020\n\010stack_id\030\001 "
-  "\001(\004\022\017\n\007item_id\030\002 \001(\t\022\026\n\016unit_buy_price\030\003"
-  " \001(\005\"\352\001\n\022S_EXPEDITION_STATE\022\014\n\004gold\030\001 \001("
-  "\005\022\017\n\007satiety\030\002 \001(\005\022\023\n\013max_satiety\030\003 \001(\005\022"
-  "4\n\tinventory\030\004 \003(\0132!.Protocol.Expedition"
-  "ItemStackInfo\022\036\n\026auto_consumed_item_ids\030"
-  "\005 \003(\t\022\030\n\020expired_item_ids\030\006 \003(\t\022\016\n\006thirs"
-  "t\030\007 \001(\005\022\022\n\nmax_thirst\030\010 \001(\005\022\014\n\004fame\030\t \001("
-  "\005\")\n\023C_VILLAGE_SHOP_OPEN\022\022\n\nvillage_id\030\001"
-  " \001(\t\"K\n\022C_VILLAGE_SHOP_BUY\022\022\n\nvillage_id"
-  "\030\001 \001(\t\022\017\n\007item_id\030\002 \001(\t\022\020\n\010quantity\030\003 \001("
-  "\005\"M\n\023C_VILLAGE_SHOP_SELL\022\022\n\nvillage_id\030\001"
-  " \001(\t\022\020\n\010stack_id\030\002 \001(\004\022\020\n\010quantity\030\003 \001(\005"
-  "\"\246\002\n\024S_VILLAGE_SHOP_STATE\022\017\n\007success\030\001 \001"
-  "(\010\022\016\n\006reason\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\022\n\nvi"
-  "llage_id\030\004 \001(\t\0222\n\010listings\030\005 \003(\0132 .Proto"
-  "col.VillageShopListingInfo\0220\n\nexpedition"
-  "\030\006 \001(\0132\034.Protocol.S_EXPEDITION_STATE\022%\n\035"
-  "stock_reset_remaining_seconds\030\007 \001(\r\022<\n\020t"
-  "rade_buy_offers\030\010 \003(\0132\".Protocol.Village"
-  "TradeBuyOfferInfo\"+\n\023C_RESET_PLAYER_DATA"
-  "\022\024\n\014confirmation\030\001 \001(\t\"6\n\023S_RESET_PLAYER"
-  "_DATA\022\017\n\007success\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\"\326"
-  "\001\n\032QuestObjectiveProgressInfo\022\027\n\017objecti"
-  "ve_index\030\001 \001(\r\022\023\n\013description\030\002 \001(\t\022\020\n\010p"
-  "rogress\030\003 \001(\005\022\026\n\016required_count\030\004 \001(\005\022\021\n"
-  "\tcompleted\030\005 \001(\010\022\026\n\016objective_type\030\006 \001(\t"
-  "\022\033\n\023target_village_name\030\007 \001(\t\022\030\n\020target_"
-  "item_name\030\010 \001(\t\"\363\002\n\020VillageQuestInfo\022\020\n\010"
-  "quest_id\030\001 \001(\t\022\024\n\014display_name\030\002 \001(\t\022\023\n\013"
-  "description\030\003 \001(\t\022\016\n\006status\030\004 \001(\t\022\030\n\020sta"
-  "rt_village_id\030\005 \001(\t\022\035\n\025completion_villag"
-  "e_id\030\006 \001(\t\022\037\n\027completion_village_name\030\007 "
-  "\001(\t\0228\n\nobjectives\030\010 \003(\0132$.Protocol.Quest"
-  "ObjectiveProgressInfo\022\033\n\023reward_descript"
-  "ions\030\t \003(\t\022\022\n\ncan_accept\030\n \001(\010\022\021\n\tcan_cl"
-  "aim\030\013 \001(\010\022\034\n\024abandon_gold_penalty\030\014 \001(\005\022"
-  "\034\n\024abandon_fame_penalty\030\r \001(\005\"0\n\032C_VILLA"
-  "GE_QUEST_BOARD_OPEN\022\022\n\nvillage_id\030\001 \001(\t\""
-  "\"\n\016C_QUEST_ACCEPT\022\020\n\010quest_id\030\001 \001(\t\"(\n\024C"
-  "_QUEST_CLAIM_REWARD\022\020\n\010quest_id\030\001 \001(\t\"\272\001"
-  "\n\025S_VILLAGE_QUEST_STATE\022\017\n\007success\030\001 \001(\010"
-  "\022\016\n\006reason\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\022\n\nvill"
-  "age_id\030\004 \001(\t\022*\n\006quests\030\005 \003(\0132\032.Protocol."
-  "VillageQuestInfo\0220\n\nexpedition\030\006 \001(\0132\034.P"
-  "rotocol.S_EXPEDITION_STATE\"\026\n\024C_QUEST_TR"
-  "ACKER_OPEN\"\322\001\n\025S_QUEST_TRACKER_STATE\022\017\n\007"
-  "success\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\022*\n\006quests\030"
-  "\003 \003(\0132\032.Protocol.VillageQuestInfo\0220\n\nexp"
-  "edition\030\004 \001(\0132\034.Protocol.S_EXPEDITION_ST"
-  "ATE\022\016\n\006action\030\005 \001(\t\022\024\n\014gold_penalty\030\006 \001("
-  "\005\022\024\n\014fame_penalty\030\007 \001(\005\"#\n\017C_QUEST_ABAND"
-  "ON\022\020\n\010quest_id\030\001 \001(\tb\006proto3"
+  "wn_id\030\002 \001(\004\022\026\n\016killer_pawn_id\030\003 \001(\004\"M\n\022B"
+  "attleLootItemInfo\022\017\n\007item_id\030\001 \001(\t\022\024\n\014di"
+  "splay_name\030\002 \001(\t\022\020\n\010quantity\030\003 \001(\005\"|\n\017S_"
+  "BATTLE_RESULT\022\021\n\tbattle_id\030\001 \001(\004\022\017\n\007vict"
+  "ory\030\002 \001(\010\0220\n\nloot_items\030\003 \003(\0132\034.Protocol"
+  ".BattleLootItemInfo\022\023\n\013fame_reward\030\004 \001(\005"
+  "\"(\n\023C_BATTLE_RESULT_ACK\022\021\n\tbattle_id\030\001 \001"
+  "(\004\"I\n\023S_BATTLE_RESULT_ACK\022\017\n\007success\030\001 \001"
+  "(\010\022\021\n\tbattle_id\030\002 \001(\004\022\016\n\006reason\030\003 \001(\t\"\207\002"
+  "\n\036S_BATTLE_CLASS_SELECTION_START\022\033\n\023requ"
+  "ester_player_id\030\001 \001(\004\022\030\n\020target_player_i"
+  "d\030\002 \001(\004\022)\n\014suen_options\030\003 \003(\0162\023.Protocol"
+  ".PawnClass\022*\n\rbeige_options\030\004 \003(\0162\023.Prot"
+  "ocol.PawnClass\022)\n\014alen_options\030\005 \003(\0162\023.P"
+  "rotocol.PawnClass\022,\n\017zillian_options\030\006 \003"
+  "(\0162\023.Protocol.PawnClass\"N\n\030C_BATTLE_CLAS"
+  "S_SELECTION\0222\n\025selected_pawn_classes\030\001 \003"
+  "(\0162\023.Protocol.PawnClass\"\227\001\n\037S_BATTLE_CLA"
+  "SS_SELECTION_RESULT\022\017\n\007success\030\001 \001(\010\022\034\n\024"
+  "waiting_for_opponent\030\002 \001(\010\022\033\n\023requester_"
+  "player_id\030\003 \001(\004\022\030\n\020target_player_id\030\004 \001("
+  "\004\022\016\n\006reason\030\005 \001(\t\"A\n\017C_ENTER_VILLAGE\022\016\n\006"
+  "map_id\030\001 \001(\t\022\016\n\006cell_x\030\002 \001(\021\022\016\n\006cell_y\030\003"
+  " \001(\021\"y\n\017S_ENTER_VILLAGE\022\017\n\007success\030\001 \001(\010"
+  "\022\016\n\006reason\030\002 \001(\t\022\022\n\nvillage_id\030\003 \001(\t\022\024\n\014"
+  "village_name\030\004 \001(\t\022\033\n\023village_descriptio"
+  "n\030\005 \001(\t\"t\n\027ExpeditionItemStackInfo\022\020\n\010st"
+  "ack_id\030\001 \001(\004\022\017\n\007item_id\030\002 \001(\t\022\020\n\010quantit"
+  "y\030\003 \001(\005\022$\n\034remaining_shelf_life_seconds\030"
+  "\004 \001(\003\"d\n\026VillageShopListingInfo\022\017\n\007item_"
+  "id\030\001 \001(\t\022\r\n\005stock\030\002 \001(\005\022\021\n\tmax_stock\030\003 \001"
+  "(\005\022\027\n\017unit_sell_price\030\004 \001(\005\"U\n\030VillageTr"
+  "adeBuyOfferInfo\022\020\n\010stack_id\030\001 \001(\004\022\017\n\007ite"
+  "m_id\030\002 \001(\t\022\026\n\016unit_buy_price\030\003 \001(\005\"\352\001\n\022S"
+  "_EXPEDITION_STATE\022\014\n\004gold\030\001 \001(\005\022\017\n\007satie"
+  "ty\030\002 \001(\005\022\023\n\013max_satiety\030\003 \001(\005\0224\n\tinvento"
+  "ry\030\004 \003(\0132!.Protocol.ExpeditionItemStackI"
+  "nfo\022\036\n\026auto_consumed_item_ids\030\005 \003(\t\022\030\n\020e"
+  "xpired_item_ids\030\006 \003(\t\022\016\n\006thirst\030\007 \001(\005\022\022\n"
+  "\nmax_thirst\030\010 \001(\005\022\014\n\004fame\030\t \001(\005\")\n\023C_VIL"
+  "LAGE_SHOP_OPEN\022\022\n\nvillage_id\030\001 \001(\t\"K\n\022C_"
+  "VILLAGE_SHOP_BUY\022\022\n\nvillage_id\030\001 \001(\t\022\017\n\007"
+  "item_id\030\002 \001(\t\022\020\n\010quantity\030\003 \001(\005\"M\n\023C_VIL"
+  "LAGE_SHOP_SELL\022\022\n\nvillage_id\030\001 \001(\t\022\020\n\010st"
+  "ack_id\030\002 \001(\004\022\020\n\010quantity\030\003 \001(\005\"\246\002\n\024S_VIL"
+  "LAGE_SHOP_STATE\022\017\n\007success\030\001 \001(\010\022\016\n\006reas"
+  "on\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\022\n\nvillage_id\030\004"
+  " \001(\t\0222\n\010listings\030\005 \003(\0132 .Protocol.Villag"
+  "eShopListingInfo\0220\n\nexpedition\030\006 \001(\0132\034.P"
+  "rotocol.S_EXPEDITION_STATE\022%\n\035stock_rese"
+  "t_remaining_seconds\030\007 \001(\r\022<\n\020trade_buy_o"
+  "ffers\030\010 \003(\0132\".Protocol.VillageTradeBuyOf"
+  "ferInfo\"+\n\023C_RESET_PLAYER_DATA\022\024\n\014confir"
+  "mation\030\001 \001(\t\"6\n\023S_RESET_PLAYER_DATA\022\017\n\007s"
+  "uccess\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\"\326\001\n\032QuestOb"
+  "jectiveProgressInfo\022\027\n\017objective_index\030\001"
+  " \001(\r\022\023\n\013description\030\002 \001(\t\022\020\n\010progress\030\003 "
+  "\001(\005\022\026\n\016required_count\030\004 \001(\005\022\021\n\tcompleted"
+  "\030\005 \001(\010\022\026\n\016objective_type\030\006 \001(\t\022\033\n\023target"
+  "_village_name\030\007 \001(\t\022\030\n\020target_item_name\030"
+  "\010 \001(\t\"\363\002\n\020VillageQuestInfo\022\020\n\010quest_id\030\001"
+  " \001(\t\022\024\n\014display_name\030\002 \001(\t\022\023\n\013descriptio"
+  "n\030\003 \001(\t\022\016\n\006status\030\004 \001(\t\022\030\n\020start_village"
+  "_id\030\005 \001(\t\022\035\n\025completion_village_id\030\006 \001(\t"
+  "\022\037\n\027completion_village_name\030\007 \001(\t\0228\n\nobj"
+  "ectives\030\010 \003(\0132$.Protocol.QuestObjectiveP"
+  "rogressInfo\022\033\n\023reward_descriptions\030\t \003(\t"
+  "\022\022\n\ncan_accept\030\n \001(\010\022\021\n\tcan_claim\030\013 \001(\010\022"
+  "\034\n\024abandon_gold_penalty\030\014 \001(\005\022\034\n\024abandon"
+  "_fame_penalty\030\r \001(\005\"0\n\032C_VILLAGE_QUEST_B"
+  "OARD_OPEN\022\022\n\nvillage_id\030\001 \001(\t\"\"\n\016C_QUEST"
+  "_ACCEPT\022\020\n\010quest_id\030\001 \001(\t\"(\n\024C_QUEST_CLA"
+  "IM_REWARD\022\020\n\010quest_id\030\001 \001(\t\"\272\001\n\025S_VILLAG"
+  "E_QUEST_STATE\022\017\n\007success\030\001 \001(\010\022\016\n\006reason"
+  "\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\022\n\nvillage_id\030\004 \001"
+  "(\t\022*\n\006quests\030\005 \003(\0132\032.Protocol.VillageQue"
+  "stInfo\0220\n\nexpedition\030\006 \001(\0132\034.Protocol.S_"
+  "EXPEDITION_STATE\"\026\n\024C_QUEST_TRACKER_OPEN"
+  "\"\322\001\n\025S_QUEST_TRACKER_STATE\022\017\n\007success\030\001 "
+  "\001(\010\022\016\n\006reason\030\002 \001(\t\022*\n\006quests\030\003 \003(\0132\032.Pr"
+  "otocol.VillageQuestInfo\0220\n\nexpedition\030\004 "
+  "\001(\0132\034.Protocol.S_EXPEDITION_STATE\022\016\n\006act"
+  "ion\030\005 \001(\t\022\024\n\014gold_penalty\030\006 \001(\005\022\024\n\014fame_"
+  "penalty\030\007 \001(\005\"#\n\017C_QUEST_ABANDON\022\020\n\010ques"
+  "t_id\030\001 \001(\tb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -1694,9 +1728,9 @@ static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_de
 };
 static ::_pbi::once_flag descriptor_table_Protocol_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Protocol_2eproto = {
-    false, false, 6628, descriptor_table_protodef_Protocol_2eproto,
+    false, false, 6778, descriptor_table_protodef_Protocol_2eproto,
     "Protocol.proto",
-    &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 53,
+    &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 54,
     schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
     file_level_metadata_Protocol_2eproto, file_level_enum_descriptors_Protocol_2eproto,
     file_level_service_descriptors_Protocol_2eproto,
@@ -8964,6 +8998,286 @@ void S_BATTLE_PAWN_DEAD::InternalSwap(S_BATTLE_PAWN_DEAD* other) {
 
 // ===================================================================
 
+class BattleLootItemInfo::_Internal {
+ public:
+};
+
+BattleLootItemInfo::BattleLootItemInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:Protocol.BattleLootItemInfo)
+}
+BattleLootItemInfo::BattleLootItemInfo(const BattleLootItemInfo& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  BattleLootItemInfo* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.item_id_){}
+    , decltype(_impl_.display_name_){}
+    , decltype(_impl_.quantity_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.item_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.item_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_item_id().empty()) {
+    _this->_impl_.item_id_.Set(from._internal_item_id(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.display_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.display_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_display_name().empty()) {
+    _this->_impl_.display_name_.Set(from._internal_display_name(), 
+      _this->GetArenaForAllocation());
+  }
+  _this->_impl_.quantity_ = from._impl_.quantity_;
+  // @@protoc_insertion_point(copy_constructor:Protocol.BattleLootItemInfo)
+}
+
+inline void BattleLootItemInfo::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.item_id_){}
+    , decltype(_impl_.display_name_){}
+    , decltype(_impl_.quantity_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.item_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.item_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.display_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.display_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+BattleLootItemInfo::~BattleLootItemInfo() {
+  // @@protoc_insertion_point(destructor:Protocol.BattleLootItemInfo)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void BattleLootItemInfo::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.item_id_.Destroy();
+  _impl_.display_name_.Destroy();
+}
+
+void BattleLootItemInfo::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void BattleLootItemInfo::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.BattleLootItemInfo)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.item_id_.ClearToEmpty();
+  _impl_.display_name_.ClearToEmpty();
+  _impl_.quantity_ = 0;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* BattleLootItemInfo::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string item_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_item_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.BattleLootItemInfo.item_id"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string display_name = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_display_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.BattleLootItemInfo.display_name"));
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 quantity = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _impl_.quantity_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* BattleLootItemInfo::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.BattleLootItemInfo)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string item_id = 1;
+  if (!this->_internal_item_id().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_item_id().data(), static_cast<int>(this->_internal_item_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.BattleLootItemInfo.item_id");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_item_id(), target);
+  }
+
+  // string display_name = 2;
+  if (!this->_internal_display_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_display_name().data(), static_cast<int>(this->_internal_display_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.BattleLootItemInfo.display_name");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_display_name(), target);
+  }
+
+  // int32 quantity = 3;
+  if (this->_internal_quantity() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(3, this->_internal_quantity(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.BattleLootItemInfo)
+  return target;
+}
+
+size_t BattleLootItemInfo::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.BattleLootItemInfo)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string item_id = 1;
+  if (!this->_internal_item_id().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_item_id());
+  }
+
+  // string display_name = 2;
+  if (!this->_internal_display_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_display_name());
+  }
+
+  // int32 quantity = 3;
+  if (this->_internal_quantity() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_quantity());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData BattleLootItemInfo::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    BattleLootItemInfo::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*BattleLootItemInfo::GetClassData() const { return &_class_data_; }
+
+
+void BattleLootItemInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<BattleLootItemInfo*>(&to_msg);
+  auto& from = static_cast<const BattleLootItemInfo&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.BattleLootItemInfo)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_item_id().empty()) {
+    _this->_internal_set_item_id(from._internal_item_id());
+  }
+  if (!from._internal_display_name().empty()) {
+    _this->_internal_set_display_name(from._internal_display_name());
+  }
+  if (from._internal_quantity() != 0) {
+    _this->_internal_set_quantity(from._internal_quantity());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void BattleLootItemInfo::CopyFrom(const BattleLootItemInfo& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.BattleLootItemInfo)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool BattleLootItemInfo::IsInitialized() const {
+  return true;
+}
+
+void BattleLootItemInfo::InternalSwap(BattleLootItemInfo* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.item_id_, lhs_arena,
+      &other->_impl_.item_id_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.display_name_, lhs_arena,
+      &other->_impl_.display_name_, rhs_arena
+  );
+  swap(_impl_.quantity_, other->_impl_.quantity_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata BattleLootItemInfo::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[26]);
+}
+
+// ===================================================================
+
 class S_BATTLE_RESULT::_Internal {
  public:
 };
@@ -8978,14 +9292,16 @@ S_BATTLE_RESULT::S_BATTLE_RESULT(const S_BATTLE_RESULT& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   S_BATTLE_RESULT* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.battle_id_){}
+      decltype(_impl_.loot_items_){from._impl_.loot_items_}
+    , decltype(_impl_.battle_id_){}
     , decltype(_impl_.victory_){}
+    , decltype(_impl_.fame_reward_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&_impl_.battle_id_, &from._impl_.battle_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.victory_) -
-    reinterpret_cast<char*>(&_impl_.battle_id_)) + sizeof(_impl_.victory_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.fame_reward_) -
+    reinterpret_cast<char*>(&_impl_.battle_id_)) + sizeof(_impl_.fame_reward_));
   // @@protoc_insertion_point(copy_constructor:Protocol.S_BATTLE_RESULT)
 }
 
@@ -8994,8 +9310,10 @@ inline void S_BATTLE_RESULT::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.battle_id_){uint64_t{0u}}
+      decltype(_impl_.loot_items_){arena}
+    , decltype(_impl_.battle_id_){uint64_t{0u}}
     , decltype(_impl_.victory_){false}
+    , decltype(_impl_.fame_reward_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -9011,6 +9329,7 @@ S_BATTLE_RESULT::~S_BATTLE_RESULT() {
 
 inline void S_BATTLE_RESULT::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.loot_items_.~RepeatedPtrField();
 }
 
 void S_BATTLE_RESULT::SetCachedSize(int size) const {
@@ -9023,9 +9342,10 @@ void S_BATTLE_RESULT::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.loot_items_.Clear();
   ::memset(&_impl_.battle_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.victory_) -
-      reinterpret_cast<char*>(&_impl_.battle_id_)) + sizeof(_impl_.victory_));
+      reinterpret_cast<char*>(&_impl_.fame_reward_) -
+      reinterpret_cast<char*>(&_impl_.battle_id_)) + sizeof(_impl_.fame_reward_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -9047,6 +9367,27 @@ const char* S_BATTLE_RESULT::_InternalParse(const char* ptr, ::_pbi::ParseContex
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
           _impl_.victory_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .Protocol.BattleLootItemInfo loot_items = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_loot_items(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 fame_reward = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+          _impl_.fame_reward_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -9092,6 +9433,20 @@ uint8_t* S_BATTLE_RESULT::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteBoolToArray(2, this->_internal_victory(), target);
   }
 
+  // repeated .Protocol.BattleLootItemInfo loot_items = 3;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_loot_items_size()); i < n; i++) {
+    const auto& repfield = this->_internal_loot_items(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(3, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
+  // int32 fame_reward = 4;
+  if (this->_internal_fame_reward() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(4, this->_internal_fame_reward(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -9108,6 +9463,13 @@ size_t S_BATTLE_RESULT::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  // repeated .Protocol.BattleLootItemInfo loot_items = 3;
+  total_size += 1UL * this->_internal_loot_items_size();
+  for (const auto& msg : this->_impl_.loot_items_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
   // uint64 battle_id = 1;
   if (this->_internal_battle_id() != 0) {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_battle_id());
@@ -9116,6 +9478,11 @@ size_t S_BATTLE_RESULT::ByteSizeLong() const {
   // bool victory = 2;
   if (this->_internal_victory() != 0) {
     total_size += 1 + 1;
+  }
+
+  // int32 fame_reward = 4;
+  if (this->_internal_fame_reward() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_fame_reward());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -9136,11 +9503,15 @@ void S_BATTLE_RESULT::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const 
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  _this->_impl_.loot_items_.MergeFrom(from._impl_.loot_items_);
   if (from._internal_battle_id() != 0) {
     _this->_internal_set_battle_id(from._internal_battle_id());
   }
   if (from._internal_victory() != 0) {
     _this->_internal_set_victory(from._internal_victory());
+  }
+  if (from._internal_fame_reward() != 0) {
+    _this->_internal_set_fame_reward(from._internal_fame_reward());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -9159,9 +9530,10 @@ bool S_BATTLE_RESULT::IsInitialized() const {
 void S_BATTLE_RESULT::InternalSwap(S_BATTLE_RESULT* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _impl_.loot_items_.InternalSwap(&other->_impl_.loot_items_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(S_BATTLE_RESULT, _impl_.victory_)
-      + sizeof(S_BATTLE_RESULT::_impl_.victory_)
+      PROTOBUF_FIELD_OFFSET(S_BATTLE_RESULT, _impl_.fame_reward_)
+      + sizeof(S_BATTLE_RESULT::_impl_.fame_reward_)
       - PROTOBUF_FIELD_OFFSET(S_BATTLE_RESULT, _impl_.battle_id_)>(
           reinterpret_cast<char*>(&_impl_.battle_id_),
           reinterpret_cast<char*>(&other->_impl_.battle_id_));
@@ -9170,7 +9542,7 @@ void S_BATTLE_RESULT::InternalSwap(S_BATTLE_RESULT* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata S_BATTLE_RESULT::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[26]);
+      file_level_metadata_Protocol_2eproto[27]);
 }
 
 // ===================================================================
@@ -9348,7 +9720,7 @@ void C_BATTLE_RESULT_ACK::InternalSwap(C_BATTLE_RESULT_ACK* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata C_BATTLE_RESULT_ACK::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[27]);
+      file_level_metadata_Protocol_2eproto[28]);
 }
 
 // ===================================================================
@@ -9611,7 +9983,7 @@ void S_BATTLE_RESULT_ACK::InternalSwap(S_BATTLE_RESULT_ACK* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata S_BATTLE_RESULT_ACK::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[28]);
+      file_level_metadata_Protocol_2eproto[29]);
 }
 
 // ===================================================================
@@ -10006,7 +10378,7 @@ void S_BATTLE_CLASS_SELECTION_START::InternalSwap(S_BATTLE_CLASS_SELECTION_START
 ::PROTOBUF_NAMESPACE_ID::Metadata S_BATTLE_CLASS_SELECTION_START::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[29]);
+      file_level_metadata_Protocol_2eproto[30]);
 }
 
 // ===================================================================
@@ -10203,7 +10575,7 @@ void C_BATTLE_CLASS_SELECTION::InternalSwap(C_BATTLE_CLASS_SELECTION* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata C_BATTLE_CLASS_SELECTION::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[30]);
+      file_level_metadata_Protocol_2eproto[31]);
 }
 
 // ===================================================================
@@ -10514,7 +10886,7 @@ void S_BATTLE_CLASS_SELECTION_RESULT::InternalSwap(S_BATTLE_CLASS_SELECTION_RESU
 ::PROTOBUF_NAMESPACE_ID::Metadata S_BATTLE_CLASS_SELECTION_RESULT::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[31]);
+      file_level_metadata_Protocol_2eproto[32]);
 }
 
 // ===================================================================
@@ -10777,7 +11149,7 @@ void C_ENTER_VILLAGE::InternalSwap(C_ENTER_VILLAGE* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata C_ENTER_VILLAGE::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[32]);
+      file_level_metadata_Protocol_2eproto[33]);
 }
 
 // ===================================================================
@@ -11157,7 +11529,7 @@ void S_ENTER_VILLAGE::InternalSwap(S_ENTER_VILLAGE* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata S_ENTER_VILLAGE::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[33]);
+      file_level_metadata_Protocol_2eproto[34]);
 }
 
 // ===================================================================
@@ -11444,7 +11816,7 @@ void ExpeditionItemStackInfo::InternalSwap(ExpeditionItemStackInfo* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ExpeditionItemStackInfo::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[34]);
+      file_level_metadata_Protocol_2eproto[35]);
 }
 
 // ===================================================================
@@ -11731,7 +12103,7 @@ void VillageShopListingInfo::InternalSwap(VillageShopListingInfo* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata VillageShopListingInfo::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[35]);
+      file_level_metadata_Protocol_2eproto[36]);
 }
 
 // ===================================================================
@@ -11994,7 +12366,7 @@ void VillageTradeBuyOfferInfo::InternalSwap(VillageTradeBuyOfferInfo* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata VillageTradeBuyOfferInfo::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[36]);
+      file_level_metadata_Protocol_2eproto[37]);
 }
 
 // ===================================================================
@@ -12413,7 +12785,7 @@ void S_EXPEDITION_STATE::InternalSwap(S_EXPEDITION_STATE* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata S_EXPEDITION_STATE::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[37]);
+      file_level_metadata_Protocol_2eproto[38]);
 }
 
 // ===================================================================
@@ -12616,7 +12988,7 @@ void C_VILLAGE_SHOP_OPEN::InternalSwap(C_VILLAGE_SHOP_OPEN* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata C_VILLAGE_SHOP_OPEN::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[38]);
+      file_level_metadata_Protocol_2eproto[39]);
 }
 
 // ===================================================================
@@ -12896,7 +13268,7 @@ void C_VILLAGE_SHOP_BUY::InternalSwap(C_VILLAGE_SHOP_BUY* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata C_VILLAGE_SHOP_BUY::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[39]);
+      file_level_metadata_Protocol_2eproto[40]);
 }
 
 // ===================================================================
@@ -13159,7 +13531,7 @@ void C_VILLAGE_SHOP_SELL::InternalSwap(C_VILLAGE_SHOP_SELL* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata C_VILLAGE_SHOP_SELL::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[40]);
+      file_level_metadata_Protocol_2eproto[41]);
 }
 
 // ===================================================================
@@ -13631,7 +14003,7 @@ void S_VILLAGE_SHOP_STATE::InternalSwap(S_VILLAGE_SHOP_STATE* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata S_VILLAGE_SHOP_STATE::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[41]);
+      file_level_metadata_Protocol_2eproto[42]);
 }
 
 // ===================================================================
@@ -13834,7 +14206,7 @@ void C_RESET_PLAYER_DATA::InternalSwap(C_RESET_PLAYER_DATA* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata C_RESET_PLAYER_DATA::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[42]);
+      file_level_metadata_Protocol_2eproto[43]);
 }
 
 // ===================================================================
@@ -14064,7 +14436,7 @@ void S_RESET_PLAYER_DATA::InternalSwap(S_RESET_PLAYER_DATA* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata S_RESET_PLAYER_DATA::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[43]);
+      file_level_metadata_Protocol_2eproto[44]);
 }
 
 // ===================================================================
@@ -14525,7 +14897,7 @@ void QuestObjectiveProgressInfo::InternalSwap(QuestObjectiveProgressInfo* other)
 ::PROTOBUF_NAMESPACE_ID::Metadata QuestObjectiveProgressInfo::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[44]);
+      file_level_metadata_Protocol_2eproto[45]);
 }
 
 // ===================================================================
@@ -15209,7 +15581,7 @@ void VillageQuestInfo::InternalSwap(VillageQuestInfo* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata VillageQuestInfo::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[45]);
+      file_level_metadata_Protocol_2eproto[46]);
 }
 
 // ===================================================================
@@ -15412,7 +15784,7 @@ void C_VILLAGE_QUEST_BOARD_OPEN::InternalSwap(C_VILLAGE_QUEST_BOARD_OPEN* other)
 ::PROTOBUF_NAMESPACE_ID::Metadata C_VILLAGE_QUEST_BOARD_OPEN::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[46]);
+      file_level_metadata_Protocol_2eproto[47]);
 }
 
 // ===================================================================
@@ -15615,7 +15987,7 @@ void C_QUEST_ACCEPT::InternalSwap(C_QUEST_ACCEPT* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata C_QUEST_ACCEPT::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[47]);
+      file_level_metadata_Protocol_2eproto[48]);
 }
 
 // ===================================================================
@@ -15818,7 +16190,7 @@ void C_QUEST_CLAIM_REWARD::InternalSwap(C_QUEST_CLAIM_REWARD* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata C_QUEST_CLAIM_REWARD::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[48]);
+      file_level_metadata_Protocol_2eproto[49]);
 }
 
 // ===================================================================
@@ -16228,7 +16600,7 @@ void S_VILLAGE_QUEST_STATE::InternalSwap(S_VILLAGE_QUEST_STATE* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata S_VILLAGE_QUEST_STATE::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[49]);
+      file_level_metadata_Protocol_2eproto[50]);
 }
 
 // ===================================================================
@@ -16268,7 +16640,7 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C_QUEST_TRACKER_OPEN::GetClass
 ::PROTOBUF_NAMESPACE_ID::Metadata C_QUEST_TRACKER_OPEN::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[50]);
+      file_level_metadata_Protocol_2eproto[51]);
 }
 
 // ===================================================================
@@ -16680,7 +17052,7 @@ void S_QUEST_TRACKER_STATE::InternalSwap(S_QUEST_TRACKER_STATE* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata S_QUEST_TRACKER_STATE::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[51]);
+      file_level_metadata_Protocol_2eproto[52]);
 }
 
 // ===================================================================
@@ -16883,7 +17255,7 @@ void C_QUEST_ABANDON::InternalSwap(C_QUEST_ABANDON* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata C_QUEST_ABANDON::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
-      file_level_metadata_Protocol_2eproto[52]);
+      file_level_metadata_Protocol_2eproto[53]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -16992,6 +17364,10 @@ Arena::CreateMaybeMessage< ::Protocol::S_BATTLE_INVITE_RESULT >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::Protocol::S_BATTLE_PAWN_DEAD*
 Arena::CreateMaybeMessage< ::Protocol::S_BATTLE_PAWN_DEAD >(Arena* arena) {
   return Arena::CreateMessageInternal< ::Protocol::S_BATTLE_PAWN_DEAD >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::BattleLootItemInfo*
+Arena::CreateMaybeMessage< ::Protocol::BattleLootItemInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::BattleLootItemInfo >(arena);
 }
 template<> PROTOBUF_NOINLINE ::Protocol::S_BATTLE_RESULT*
 Arena::CreateMaybeMessage< ::Protocol::S_BATTLE_RESULT >(Arena* arena) {

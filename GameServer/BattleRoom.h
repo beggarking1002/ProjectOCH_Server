@@ -35,6 +35,13 @@ private:
 		uint64 equipmentOwnerPawnId = 0;
 	};
 
+	struct BattleLootItem
+	{
+		string itemId;
+		string displayName;
+		int32 quantity = 0;
+	};
+
 	struct BattleState
 	{
 		uint64 battleId = 0;
@@ -56,6 +63,8 @@ private:
 		uint64 loserOwnerId = 0;
 		bool ownerResultAcked = false;
 		bool opponentResultAcked = false;
+		int32 fameReward = 0;
+		vector<BattleLootItem> lootItems;
 		vector<uint64> turnStartChangedPawnIds;
 		vector<Protocol::BattleActionLog> turnStartLogs;
 		vector<pair<uint64, uint64>> turnStartDeaths;
@@ -82,6 +91,8 @@ private:
 		int32 maxArmor, Protocol::BattlePawnRole role);
 	BattlePawnRef MakeBattlePawnFromOwnedPawn(PawnRef sourcePawn, int32 cellX, int32 cellY);
 	void AddOwnedBattlePawns(vector<BattlePawnRef>& dst, PlayerRef ownerPlayer, int32 cellX, int32 firstCellY);
+	void ApplyExpeditionStartPenalties(const PlayerRef& player, vector<BattlePawnRef>& pawns) const;
+	bool ApplyVictoryRewards(BattleState& battle, const PlayerRef& winner, const PlayerRef& loser);
 	bool TryGetPawnTemplate(Protocol::PawnClass pawnClass, BattlePawnInitialStats& pawnTemplate);
 	Protocol::AxialCoord MakeAxial(int32 q, int32 r);
 	uint64 MakeTileKey(const Protocol::AxialCoord& axial) const;

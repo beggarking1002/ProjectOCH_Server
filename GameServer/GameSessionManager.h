@@ -12,8 +12,10 @@ public:
 	bool TryBindAuthenticatedAccount(GameSessionRef session, uint64 accountId);
 	void Broadcast(SendBufferRef sendBuffer);
 	void UpdateEconomy(uint64 nowMs);
+	void SaveAllEconomies(uint64 nowMs);
 
 private:
+	vector<GameSessionRef> SnapshotSessions();
 	USE_LOCK;
 	set<GameSessionRef> _sessions;
 };

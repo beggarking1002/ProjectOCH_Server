@@ -208,6 +208,10 @@ bool Room::HandleLeavePlayer(GameSessionRef session)
 	if (player == nullptr)
 		return false;
 
+	{
+		lock_guard economyLock(player->EconomyMutex());
+		GDatabase.SavePlayerEconomyOnDisconnect(player, ::GetTickCount64());
+	}
 	CancelBattleInvitesForPlayer(player->objectInfo->object_id(), "player left field");
 	return LeaveRoom(player);
 }
@@ -332,52 +336,76 @@ void Room::HandleEnterVillage(GameSessionRef session, Protocol::C_ENTER_VILLAGE 
 		<< " cell_y=" << pkt.cell_y()
 		<< " village_id=" << villageId << endl;
 
-	player->activeVillageId = villageId;
-	GQuestService.OnVillageVisited(player, villageId);
+	{
+		lock_guard economyLock(player->EconomyMutex());
+		player->activeVillageId = villageId;
+		GQuestService.OnVillageVisited(player, villageId);
+	}
 	sendResult(true, "", village->villageId, village->name, village->description);
 }
 
 void Room::HandleVillageShopOpen(GameSessionRef session, Protocol::C_VILLAGE_SHOP_OPEN pkt)
 {
 	PlayerRef player = GetPlayerInRoom(session);
+	if (player == nullptr) return;
+	lock_guard economyLock(player->EconomyMutex());
 	GEconomyService.HandleShopOpen(session, player, pkt.village_id());
 }
 
 void Room::HandleVillageShopBuy(GameSessionRef session, Protocol::C_VILLAGE_SHOP_BUY pkt)
 {
 	PlayerRef player = GetPlayerInRoom(session);
+	if (player == nullptr) return;
+	lock_guard economyLock(player->EconomyMutex());
 	GEconomyService.HandleShopBuy(session, player, pkt.village_id(), pkt.item_id(), pkt.quantity());
 }
 
 void Room::HandleVillageShopSell(GameSessionRef session, Protocol::C_VILLAGE_SHOP_SELL pkt)
 {
 	PlayerRef player = GetPlayerInRoom(session);
+	if (player == nullptr) return;
+	lock_guard economyLock(player->EconomyMutex());
 	GEconomyService.HandleShopSell(session, player, pkt.village_id(), pkt.stack_id(), pkt.quantity());
 }
 
 void Room::HandleVillageQuestBoardOpen(GameSessionRef session, Protocol::C_VILLAGE_QUEST_BOARD_OPEN pkt)
 {
-	GQuestService.HandleBoardOpen(session, GetPlayerInRoom(session), pkt.village_id());
+	PlayerRef player = GetPlayerInRoom(session);
+	if (player == nullptr) return;
+	lock_guard economyLock(player->EconomyMutex());
+	GQuestService.HandleBoardOpen(session, player, pkt.village_id());
 }
 
 void Room::HandleQuestTrackerOpen(GameSessionRef session, Protocol::C_QUEST_TRACKER_OPEN pkt)
 {
-	GQuestService.HandleTrackerOpen(session, GetPlayerInRoom(session));
+	PlayerRef player = GetPlayerInRoom(session);
+	if (player == nullptr) return;
+	lock_guard economyLock(player->EconomyMutex());
+	GQuestService.HandleTrackerOpen(session, player);
 }
 
 void Room::HandleQuestAbandon(GameSessionRef session, Protocol::C_QUEST_ABANDON pkt)
 {
-	GQuestService.HandleAbandon(session, GetPlayerInRoom(session), pkt.quest_id());
+	PlayerRef player = GetPlayerInRoom(session);
+	if (player == nullptr) return;
+	lock_guard economyLock(player->EconomyMutex());
+	GQuestService.HandleAbandon(session, player, pkt.quest_id());
 }
 
 void Room::HandleQuestAccept(GameSessionRef session, Protocol::C_QUEST_ACCEPT pkt)
 {
-	GQuestService.HandleAccept(session, GetPlayerInRoom(session), pkt.quest_id());
+	PlayerRef player = GetPlayerInRoom(session);
+	if (player == nullptr) return;
+	lock_guard economyLock(player->EconomyMutex());
+	GQuestService.HandleAccept(session, player, pkt.quest_id());
 }
 
 void Room::HandleQuestClaimReward(GameSessionRef session, Protocol::C_QUEST_CLAIM_REWARD pkt)
 {
-	GQuestService.HandleClaimReward(session, GetPlayerInRoom(session), pkt.quest_id());
+	PlayerRef player = GetPlayerInRoom(session);
+	if (player == nullptr) return;
+	lock_guard economyLock(player->EconomyMutex());
+	GQuestService.HandleClaimReward(session, player, pkt.quest_id());
 }
 
 void Room::HandleResetPlayerData(GameSessionRef session, Protocol::C_RESET_PLAYER_DATA pkt)
@@ -414,6 +442,7 @@ void Room::HandleResetPlayerData(GameSessionRef session, Protocol::C_RESET_PLAYE
 		sendResponse(false, "persistent player data is unavailable");
 		return;
 	}
+	lock_guard economyLock(player->EconomyMutex());
 
 	const uint64 nowMs = ::GetTickCount64();
 	const PersistentPlayerEconomyState previousState = player->ExportEconomyState();

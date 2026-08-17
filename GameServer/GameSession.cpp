@@ -19,14 +19,17 @@ void GameSession::OnDisconnected()
 	PlayerRef player = session->player.load();
 	if (player)
 	{
-		GDatabase.SavePlayerEconomyOnDisconnect(player, ::GetTickCount64());
 		GBattleRoom->DoAsync(&BattleRoom::HandleLeaveBattle, player->objectInfo->object_id(), string("disconnect"));
 
 		RoomRef room = player->room.load().lock();
 		if (room)
 			room->DoAsync(&Room::HandleLeavePlayer, session);
 		else
+		{
+			lock_guard economyLock(player->EconomyMutex());
+			GDatabase.SavePlayerEconomyOnDisconnect(player, ::GetTickCount64());
 			session->player.store(nullptr);
+		}
 	}
 
 	GSessionManager.Remove(session);

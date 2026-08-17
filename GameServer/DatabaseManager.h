@@ -15,6 +15,8 @@ public:
 		const string& displayName, uint64& outAccountId);
 	bool LoadPlayerEconomy(uint64 playerId, PersistentPlayerEconomyState& outState, bool& outFound);
 	bool SavePlayerEconomy(uint64 playerId, const PersistentPlayerEconomyState& state);
+	bool SavePlayerEconomiesAtomically(uint64 firstPlayerId, const PersistentPlayerEconomyState& firstState,
+		uint64 secondPlayerId, const PersistentPlayerEconomyState& secondState);
 	bool SavePlayerEconomyIfDue(const PlayerRef& player, uint64 nowMs);
 	void SavePlayerEconomyOnDisconnect(const PlayerRef& player, uint64 nowMs);
 
@@ -23,6 +25,7 @@ private:
 	bool Connect();
 	bool RunMigrations();
 	bool EnsureMigrationTable();
+	bool WritePlayerEconomyState(uint64 playerId, const PersistentPlayerEconomyState& state);
 	bool Execute(const string& sql);
 	string Escape(const string& value) const;
 	void Disconnect();

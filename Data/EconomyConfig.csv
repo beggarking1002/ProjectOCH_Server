@@ -10,3 +10,8 @@ trade_premium_margin_percent,50,percent
 trade_other_margin_percent,10,percent
 expedition_starting_gold,1000,gold
 battle_victory_fame,10,fame
+battle_satiety_hungry_threshold,50,satiety
+battle_satiety_hungry_hp_loss_percent,30,percent
+battle_satiety_critical_threshold,20,satiety
+battle_satiety_critical_hp_loss_percent,50,percent
+battle_negative_fame_morale_percent,50,percent

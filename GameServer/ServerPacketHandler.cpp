@@ -102,6 +102,15 @@ bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 	}
 	if (!GGoogleAuth.IsEnabled())
 		persistentPlayerId = pkt.playerindex();
+	if (persistentPlayerId == 0 || !GSessionManager.TryBindAuthenticatedAccount(gameSession, persistentPlayerId))
+	{
+		Protocol::S_ENTER_GAME enterGamePkt;
+		enterGamePkt.set_success(false);
+		SEND_PACKET(enterGamePkt);
+		cout << "ENTER_GAME_REJECTED player_id=" << persistentPlayerId
+			<< " reason=\"identity is invalid or already connected\"" << endl;
+		return true;
+	}
 
 	PlayerRef player = gameSession->player.load();
 	if (player == nullptr)

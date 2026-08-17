@@ -54,12 +54,12 @@ void GameSessionManager::Broadcast(SendBufferRef sendBuffer)
 
 void GameSessionManager::UpdateEconomy(uint64 nowMs)
 {
-	WRITE_LOCK;
-	for (const GameSessionRef& session : _sessions)
+	for (const GameSessionRef& session : SnapshotSessions())
 	{
 		PlayerRef player = session != nullptr ? session->player.load() : nullptr;
 		if (player == nullptr)
 			continue;
+		lock_guard economyLock(player->EconomyMutex());
 
 		vector<string> autoConsumedItemIds;
 		vector<string> expiredItemIds;
@@ -70,4 +70,23 @@ void GameSessionManager::UpdateEconomy(uint64 nowMs)
 		}
 		GDatabase.SavePlayerEconomyIfDue(player, nowMs);
 	}
+}
+
+void GameSessionManager::SaveAllEconomies(uint64 nowMs)
+{
+	for (const GameSessionRef& session : SnapshotSessions())
+	{
+		PlayerRef player = session != nullptr ? session->player.load() : nullptr;
+		if (player != nullptr)
+		{
+			lock_guard economyLock(player->EconomyMutex());
+			GDatabase.SavePlayerEconomyOnDisconnect(player, nowMs);
+		}
+	}
+}
+
+vector<GameSessionRef> GameSessionManager::SnapshotSessions()
+{
+	WRITE_LOCK;
+	return vector<GameSessionRef>(_sessions.begin(), _sessions.end());
 }

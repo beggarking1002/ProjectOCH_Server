@@ -468,6 +468,16 @@ bool DatabaseManager::RunMigrations()
 			cout << "[Database] Duplicate migration version=" << migrations[i].version << endl;
 			return false;
 		}
+		if (migrations[i].version != migrations[i - 1].version + 1)
+		{
+			cout << "[Database] Migration version gap after version=" << migrations[i - 1].version << endl;
+			return false;
+		}
+	}
+	if (migrations.front().version != 1)
+	{
+		cout << "[Database] Migration history must begin at version=1" << endl;
+		return false;
 	}
 
 	if (!EnsureMigrationTable() || !Execute("SELECT version,name,checksum FROM schema_migrations ORDER BY version"))
@@ -494,6 +504,15 @@ bool DatabaseManager::RunMigrations()
 		};
 	}
 	_impl->mysqlFreeResult(result);
+	uint32 expectedAppliedVersion = 1;
+	for (const auto& [version, history] : applied)
+	{
+		if (version != expectedAppliedVersion++)
+		{
+			cout << "[Database] Applied migration history has a gap before version=" << version << endl;
+			return false;
+		}
+	}
 
 	for (const auto& [version, history] : applied)
 	{
@@ -803,6 +822,49 @@ bool DatabaseManager::SavePlayerEconomy(uint64 playerId, const PersistentPlayerE
 	if (_impl->mysqlAutocommit(_impl->connection, false) != 0)
 		return false;
 
+	bool success = WritePlayerEconomyState(playerId, state);
+	if (success)
+		success = _impl->mysqlCommit(_impl->connection) == 0;
+	if (!success)
+		_impl->mysqlRollback(_impl->connection);
+	_impl->mysqlAutocommit(_impl->connection, true);
+	if (!success)
+		cout << "[Database] Failed to save player economy: " << _impl->mysqlError(_impl->connection) << endl;
+	return success;
+}
+
+bool DatabaseManager::SavePlayerEconomiesAtomically(uint64 firstPlayerId, const PersistentPlayerEconomyState& firstState,
+	uint64 secondPlayerId, const PersistentPlayerEconomyState& secondState)
+{
+	if (firstPlayerId == 0 || secondPlayerId == 0 || firstPlayerId == secondPlayerId)
+		return false;
+
+	lock_guard lock(_mutex);
+	if (!_enabled || _impl == nullptr || _impl->connection == nullptr)
+		return true;
+	if (_impl->mysqlPing(_impl->connection) != 0)
+	{
+		cout << "[Database] MySQL ping failed: " << _impl->mysqlError(_impl->connection) << endl;
+		return false;
+	}
+	if (_impl->mysqlAutocommit(_impl->connection, false) != 0)
+		return false;
+
+	bool success = WritePlayerEconomyState(firstPlayerId, firstState) &&
+		WritePlayerEconomyState(secondPlayerId, secondState);
+	if (success)
+		success = _impl->mysqlCommit(_impl->connection) == 0;
+	if (!success)
+		_impl->mysqlRollback(_impl->connection);
+	_impl->mysqlAutocommit(_impl->connection, true);
+	if (!success)
+		cout << "[Database] Failed to save two player economies atomically: " << _impl->mysqlError(_impl->connection) << endl;
+	return success;
+}
+
+bool DatabaseManager::WritePlayerEconomyState(uint64 playerId, const PersistentPlayerEconomyState& state)
+{
+
 	const string profileSql = "INSERT INTO player_profiles (player_id,gold,fame,satiety,max_satiety,thirst,max_thirst,satiety_drain_numerator,next_inventory_stack_id,next_acquired_sequence) VALUES (" +
 		to_string(playerId) + "," + to_string(state.gold) + "," + to_string(state.fame) + "," + to_string(state.satiety) + "," + to_string(state.maxSatiety) + "," +
 		to_string(state.thirst) + "," + to_string(state.maxThirst) + "," + to_string(state.satietyDrainNumerator) + "," +
@@ -890,17 +952,6 @@ bool DatabaseManager::SavePlayerEconomy(uint64 playerId, const PersistentPlayerE
 			success = Execute(playerRewardSql);
 		}
 	}
-	if (success)
-	{
-		success = _impl->mysqlCommit(_impl->connection) == 0;
-		if (!success)
-			_impl->mysqlRollback(_impl->connection);
-	}
-	else
-		_impl->mysqlRollback(_impl->connection);
-	_impl->mysqlAutocommit(_impl->connection, true);
-	if (!success)
-		cout << "[Database] Failed to save player economy: " << _impl->mysqlError(_impl->connection) << endl;
 	return success;
 }
 

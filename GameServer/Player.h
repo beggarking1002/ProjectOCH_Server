@@ -135,6 +135,7 @@ public:
 	int32 Thirst() const { return _thirst; }
 	int32 MaxThirst() const { return _maxThirst; }
 	const vector<ExpeditionItemStackState>& Inventory() const { return _inventory; }
+	mutex& EconomyMutex() const { return _economyMutex; }
 	void FillExpeditionState(Protocol::S_EXPEDITION_STATE& packet,
 		const vector<string>& autoConsumedItemIds = {}, const vector<string>& expiredItemIds = {}) const;
 
@@ -163,5 +164,6 @@ private:
 	vector<PlayerQuestState> _quests;
 	bool _economyDirty = false;
 	uint64 _lastEconomyPersistedMs = 0;
+	mutable mutex _economyMutex;
 };
 
