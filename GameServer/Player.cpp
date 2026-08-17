@@ -47,6 +47,8 @@ void Player::InitializeEconomy(uint64 nowMs)
 	_thirst = _maxThirst;
 	_gold = GEconomyData.GetConfigValue("expedition_starting_gold", 0);
 	_fame = 0;
+	_battleWins = 0;
+	_battleLosses = 0;
 	_fieldPawnClass = Protocol::PAWN_CLASS_BEIGE_ICE;
 	objectInfo->set_field_pawn_class(_fieldPawnClass);
 	_lastEconomyTickMs = nowMs;
@@ -81,6 +83,8 @@ void Player::RestoreEconomyState(const PersistentPlayerEconomyState& state, uint
 	_thirst = (max)(0, (min)(state.thirst, _maxThirst));
 	_gold = (max)(0, state.gold);
 	_fame = state.fame;
+	_battleWins = (max)(0, state.battleWins);
+	_battleLosses = (max)(0, state.battleLosses);
 	switch (state.fieldPawnClass)
 	{
 	case Protocol::PAWN_CLASS_SUEN_AXE_SWORD:
@@ -159,6 +163,8 @@ PersistentPlayerEconomyState Player::ExportEconomyState() const
 	PersistentPlayerEconomyState state;
 	state.gold = _gold;
 	state.fame = _fame;
+	state.battleWins = _battleWins;
+	state.battleLosses = _battleLosses;
 	state.fieldPawnClass = _fieldPawnClass;
 	state.satiety = _satiety;
 	state.maxSatiety = _maxSatiety;
@@ -518,6 +524,14 @@ void Player::ModifyFame(int32 amount)
 	_economyDirty = true;
 }
 
+void Player::RecordBattleResult(bool victory)
+{
+	int32& resultCount = victory ? _battleWins : _battleLosses;
+	if (resultCount < (numeric_limits<int32>::max)())
+		++resultCount;
+	_economyDirty = true;
+}
+
 void Player::SetFieldPawnClass(Protocol::PawnClass pawnClass)
 {
 	if (_fieldPawnClass == pawnClass)
@@ -532,6 +546,8 @@ void Player::FillExpeditionState(Protocol::S_EXPEDITION_STATE& packet,
 {
 	packet.set_gold(_gold);
 	packet.set_fame(_fame);
+	packet.set_battle_wins(_battleWins);
+	packet.set_battle_losses(_battleLosses);
 	packet.set_satiety(_satiety);
 	packet.set_max_satiety(_maxSatiety);
 	packet.set_happiness(_happiness);

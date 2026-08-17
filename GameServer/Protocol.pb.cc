@@ -649,6 +649,8 @@ PROTOBUF_CONSTEXPR S_EXPEDITION_STATE::S_EXPEDITION_STATE(
   , /*decltype(_impl_.fame_)*/0
   , /*decltype(_impl_.happiness_)*/0
   , /*decltype(_impl_.max_happiness_)*/0
+  , /*decltype(_impl_.battle_wins_)*/0
+  , /*decltype(_impl_.battle_losses_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct S_EXPEDITION_STATEDefaultTypeInternal {
   PROTOBUF_CONSTEXPR S_EXPEDITION_STATEDefaultTypeInternal()
@@ -1358,6 +1360,8 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   PROTOBUF_FIELD_OFFSET(::Protocol::S_EXPEDITION_STATE, _impl_.fame_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_EXPEDITION_STATE, _impl_.happiness_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_EXPEDITION_STATE, _impl_.max_happiness_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_EXPEDITION_STATE, _impl_.battle_wins_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_EXPEDITION_STATE, _impl_.battle_losses_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::C_VILLAGE_SHOP_OPEN, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1582,25 +1586,25 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 361, -1, -1, sizeof(::Protocol::VillageShopListingInfo)},
   { 371, -1, -1, sizeof(::Protocol::VillageTradeBuyOfferInfo)},
   { 380, -1, -1, sizeof(::Protocol::S_EXPEDITION_STATE)},
-  { 397, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_OPEN)},
-  { 404, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_BUY)},
-  { 413, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_SELL)},
-  { 422, -1, -1, sizeof(::Protocol::S_VILLAGE_SHOP_STATE)},
-  { 436, -1, -1, sizeof(::Protocol::C_RESET_PLAYER_DATA)},
-  { 443, -1, -1, sizeof(::Protocol::S_RESET_PLAYER_DATA)},
-  { 451, -1, -1, sizeof(::Protocol::QuestObjectiveProgressInfo)},
-  { 465, -1, -1, sizeof(::Protocol::VillageQuestInfo)},
-  { 484, -1, -1, sizeof(::Protocol::C_VILLAGE_QUEST_BOARD_OPEN)},
-  { 491, -1, -1, sizeof(::Protocol::C_QUEST_ACCEPT)},
-  { 498, -1, -1, sizeof(::Protocol::C_QUEST_CLAIM_REWARD)},
-  { 505, -1, -1, sizeof(::Protocol::S_VILLAGE_QUEST_STATE)},
-  { 517, -1, -1, sizeof(::Protocol::C_QUEST_TRACKER_OPEN)},
-  { 523, -1, -1, sizeof(::Protocol::S_QUEST_TRACKER_STATE)},
-  { 536, -1, -1, sizeof(::Protocol::C_QUEST_ABANDON)},
-  { 543, -1, -1, sizeof(::Protocol::C_FIELD_PAWN_SELECT)},
-  { 550, -1, -1, sizeof(::Protocol::S_FIELD_PAWN_SELECT)},
-  { 560, -1, -1, sizeof(::Protocol::C_REFILL_WATER)},
-  { 569, -1, -1, sizeof(::Protocol::S_REFILL_WATER)},
+  { 399, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_OPEN)},
+  { 406, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_BUY)},
+  { 415, -1, -1, sizeof(::Protocol::C_VILLAGE_SHOP_SELL)},
+  { 424, -1, -1, sizeof(::Protocol::S_VILLAGE_SHOP_STATE)},
+  { 438, -1, -1, sizeof(::Protocol::C_RESET_PLAYER_DATA)},
+  { 445, -1, -1, sizeof(::Protocol::S_RESET_PLAYER_DATA)},
+  { 453, -1, -1, sizeof(::Protocol::QuestObjectiveProgressInfo)},
+  { 467, -1, -1, sizeof(::Protocol::VillageQuestInfo)},
+  { 486, -1, -1, sizeof(::Protocol::C_VILLAGE_QUEST_BOARD_OPEN)},
+  { 493, -1, -1, sizeof(::Protocol::C_QUEST_ACCEPT)},
+  { 500, -1, -1, sizeof(::Protocol::C_QUEST_CLAIM_REWARD)},
+  { 507, -1, -1, sizeof(::Protocol::S_VILLAGE_QUEST_STATE)},
+  { 519, -1, -1, sizeof(::Protocol::C_QUEST_TRACKER_OPEN)},
+  { 525, -1, -1, sizeof(::Protocol::S_QUEST_TRACKER_STATE)},
+  { 538, -1, -1, sizeof(::Protocol::C_QUEST_ABANDON)},
+  { 545, -1, -1, sizeof(::Protocol::C_FIELD_PAWN_SELECT)},
+  { 552, -1, -1, sizeof(::Protocol::S_FIELD_PAWN_SELECT)},
+  { 562, -1, -1, sizeof(::Protocol::C_REFILL_WATER)},
+  { 571, -1, -1, sizeof(::Protocol::S_REFILL_WATER)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -1785,68 +1789,69 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "ock\030\003 \001(\005\022\027\n\017unit_sell_price\030\004 \001(\005\"U\n\030Vi"
   "llageTradeBuyOfferInfo\022\020\n\010stack_id\030\001 \001(\004"
   "\022\017\n\007item_id\030\002 \001(\t\022\026\n\016unit_buy_price\030\003 \001("
-  "\005\"\224\002\n\022S_EXPEDITION_STATE\022\014\n\004gold\030\001 \001(\005\022\017"
+  "\005\"\300\002\n\022S_EXPEDITION_STATE\022\014\n\004gold\030\001 \001(\005\022\017"
   "\n\007satiety\030\002 \001(\005\022\023\n\013max_satiety\030\003 \001(\005\0224\n\t"
   "inventory\030\004 \003(\0132!.Protocol.ExpeditionIte"
   "mStackInfo\022\036\n\026auto_consumed_item_ids\030\005 \003"
   "(\t\022\030\n\020expired_item_ids\030\006 \003(\t\022\016\n\006thirst\030\007"
   " \001(\005\022\022\n\nmax_thirst\030\010 \001(\005\022\014\n\004fame\030\t \001(\005\022\021"
   "\n\thappiness\030\n \001(\005\022\025\n\rmax_happiness\030\013 \001(\005"
-  "\")\n\023C_VILLAGE_SHOP_OPEN\022\022\n\nvillage_id\030\001 "
-  "\001(\t\"K\n\022C_VILLAGE_SHOP_BUY\022\022\n\nvillage_id\030"
-  "\001 \001(\t\022\017\n\007item_id\030\002 \001(\t\022\020\n\010quantity\030\003 \001(\005"
-  "\"M\n\023C_VILLAGE_SHOP_SELL\022\022\n\nvillage_id\030\001 "
-  "\001(\t\022\020\n\010stack_id\030\002 \001(\004\022\020\n\010quantity\030\003 \001(\005\""
-  "\246\002\n\024S_VILLAGE_SHOP_STATE\022\017\n\007success\030\001 \001("
-  "\010\022\016\n\006reason\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\022\n\nvil"
-  "lage_id\030\004 \001(\t\0222\n\010listings\030\005 \003(\0132 .Protoc"
-  "ol.VillageShopListingInfo\0220\n\nexpedition\030"
-  "\006 \001(\0132\034.Protocol.S_EXPEDITION_STATE\022%\n\035s"
-  "tock_reset_remaining_seconds\030\007 \001(\r\022<\n\020tr"
-  "ade_buy_offers\030\010 \003(\0132\".Protocol.VillageT"
-  "radeBuyOfferInfo\"+\n\023C_RESET_PLAYER_DATA\022"
-  "\024\n\014confirmation\030\001 \001(\t\"6\n\023S_RESET_PLAYER_"
-  "DATA\022\017\n\007success\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\"\326\001"
-  "\n\032QuestObjectiveProgressInfo\022\027\n\017objectiv"
-  "e_index\030\001 \001(\r\022\023\n\013description\030\002 \001(\t\022\020\n\010pr"
-  "ogress\030\003 \001(\005\022\026\n\016required_count\030\004 \001(\005\022\021\n\t"
-  "completed\030\005 \001(\010\022\026\n\016objective_type\030\006 \001(\t\022"
-  "\033\n\023target_village_name\030\007 \001(\t\022\030\n\020target_i"
-  "tem_name\030\010 \001(\t\"\363\002\n\020VillageQuestInfo\022\020\n\010q"
-  "uest_id\030\001 \001(\t\022\024\n\014display_name\030\002 \001(\t\022\023\n\013d"
-  "escription\030\003 \001(\t\022\016\n\006status\030\004 \001(\t\022\030\n\020star"
-  "t_village_id\030\005 \001(\t\022\035\n\025completion_village"
-  "_id\030\006 \001(\t\022\037\n\027completion_village_name\030\007 \001"
-  "(\t\0228\n\nobjectives\030\010 \003(\0132$.Protocol.QuestO"
-  "bjectiveProgressInfo\022\033\n\023reward_descripti"
-  "ons\030\t \003(\t\022\022\n\ncan_accept\030\n \001(\010\022\021\n\tcan_cla"
-  "im\030\013 \001(\010\022\034\n\024abandon_gold_penalty\030\014 \001(\005\022\034"
-  "\n\024abandon_fame_penalty\030\r \001(\005\"0\n\032C_VILLAG"
-  "E_QUEST_BOARD_OPEN\022\022\n\nvillage_id\030\001 \001(\t\"\""
-  "\n\016C_QUEST_ACCEPT\022\020\n\010quest_id\030\001 \001(\t\"(\n\024C_"
-  "QUEST_CLAIM_REWARD\022\020\n\010quest_id\030\001 \001(\t\"\272\001\n"
-  "\025S_VILLAGE_QUEST_STATE\022\017\n\007success\030\001 \001(\010\022"
-  "\016\n\006reason\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\022\n\nvilla"
-  "ge_id\030\004 \001(\t\022*\n\006quests\030\005 \003(\0132\032.Protocol.V"
-  "illageQuestInfo\0220\n\nexpedition\030\006 \001(\0132\034.Pr"
-  "otocol.S_EXPEDITION_STATE\"\026\n\024C_QUEST_TRA"
-  "CKER_OPEN\"\322\001\n\025S_QUEST_TRACKER_STATE\022\017\n\007s"
-  "uccess\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\022*\n\006quests\030\003"
-  " \003(\0132\032.Protocol.VillageQuestInfo\0220\n\nexpe"
-  "dition\030\004 \001(\0132\034.Protocol.S_EXPEDITION_STA"
-  "TE\022\016\n\006action\030\005 \001(\t\022\024\n\014gold_penalty\030\006 \001(\005"
-  "\022\024\n\014fame_penalty\030\007 \001(\005\"#\n\017C_QUEST_ABANDO"
-  "N\022\020\n\010quest_id\030\001 \001(\t\">\n\023C_FIELD_PAWN_SELE"
-  "CT\022\'\n\npawn_class\030\001 \001(\0162\023.Protocol.PawnCl"
-  "ass\"r\n\023S_FIELD_PAWN_SELECT\022\017\n\007success\030\001 "
-  "\001(\010\022\016\n\006reason\030\002 \001(\t\022\021\n\tobject_id\030\003 \001(\004\022\'"
-  "\n\npawn_class\030\004 \001(\0162\023.Protocol.PawnClass\""
-  "@\n\016C_REFILL_WATER\022\016\n\006map_id\030\001 \001(\t\022\016\n\006cel"
-  "l_x\030\002 \001(\021\022\016\n\006cell_y\030\003 \001(\021\"\227\001\n\016S_REFILL_W"
-  "ATER\022\017\n\007success\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\022\035\n"
-  "\025refilled_bottle_count\030\003 \001(\005\022\023\n\013water_ad"
-  "ded\030\004 \001(\005\0220\n\nexpedition\030\005 \001(\0132\034.Protocol"
-  ".S_EXPEDITION_STATEb\006proto3"
+  "\022\023\n\013battle_wins\030\014 \001(\005\022\025\n\rbattle_losses\030\r"
+  " \001(\005\")\n\023C_VILLAGE_SHOP_OPEN\022\022\n\nvillage_i"
+  "d\030\001 \001(\t\"K\n\022C_VILLAGE_SHOP_BUY\022\022\n\nvillage"
+  "_id\030\001 \001(\t\022\017\n\007item_id\030\002 \001(\t\022\020\n\010quantity\030\003"
+  " \001(\005\"M\n\023C_VILLAGE_SHOP_SELL\022\022\n\nvillage_i"
+  "d\030\001 \001(\t\022\020\n\010stack_id\030\002 \001(\004\022\020\n\010quantity\030\003 "
+  "\001(\005\"\246\002\n\024S_VILLAGE_SHOP_STATE\022\017\n\007success\030"
+  "\001 \001(\010\022\016\n\006reason\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\022\n"
+  "\nvillage_id\030\004 \001(\t\0222\n\010listings\030\005 \003(\0132 .Pr"
+  "otocol.VillageShopListingInfo\0220\n\nexpedit"
+  "ion\030\006 \001(\0132\034.Protocol.S_EXPEDITION_STATE\022"
+  "%\n\035stock_reset_remaining_seconds\030\007 \001(\r\022<"
+  "\n\020trade_buy_offers\030\010 \003(\0132\".Protocol.Vill"
+  "ageTradeBuyOfferInfo\"+\n\023C_RESET_PLAYER_D"
+  "ATA\022\024\n\014confirmation\030\001 \001(\t\"6\n\023S_RESET_PLA"
+  "YER_DATA\022\017\n\007success\030\001 \001(\010\022\016\n\006reason\030\002 \001("
+  "\t\"\326\001\n\032QuestObjectiveProgressInfo\022\027\n\017obje"
+  "ctive_index\030\001 \001(\r\022\023\n\013description\030\002 \001(\t\022\020"
+  "\n\010progress\030\003 \001(\005\022\026\n\016required_count\030\004 \001(\005"
+  "\022\021\n\tcompleted\030\005 \001(\010\022\026\n\016objective_type\030\006 "
+  "\001(\t\022\033\n\023target_village_name\030\007 \001(\t\022\030\n\020targ"
+  "et_item_name\030\010 \001(\t\"\363\002\n\020VillageQuestInfo\022"
+  "\020\n\010quest_id\030\001 \001(\t\022\024\n\014display_name\030\002 \001(\t\022"
+  "\023\n\013description\030\003 \001(\t\022\016\n\006status\030\004 \001(\t\022\030\n\020"
+  "start_village_id\030\005 \001(\t\022\035\n\025completion_vil"
+  "lage_id\030\006 \001(\t\022\037\n\027completion_village_name"
+  "\030\007 \001(\t\0228\n\nobjectives\030\010 \003(\0132$.Protocol.Qu"
+  "estObjectiveProgressInfo\022\033\n\023reward_descr"
+  "iptions\030\t \003(\t\022\022\n\ncan_accept\030\n \001(\010\022\021\n\tcan"
+  "_claim\030\013 \001(\010\022\034\n\024abandon_gold_penalty\030\014 \001"
+  "(\005\022\034\n\024abandon_fame_penalty\030\r \001(\005\"0\n\032C_VI"
+  "LLAGE_QUEST_BOARD_OPEN\022\022\n\nvillage_id\030\001 \001"
+  "(\t\"\"\n\016C_QUEST_ACCEPT\022\020\n\010quest_id\030\001 \001(\t\"("
+  "\n\024C_QUEST_CLAIM_REWARD\022\020\n\010quest_id\030\001 \001(\t"
+  "\"\272\001\n\025S_VILLAGE_QUEST_STATE\022\017\n\007success\030\001 "
+  "\001(\010\022\016\n\006reason\030\002 \001(\t\022\016\n\006action\030\003 \001(\t\022\022\n\nv"
+  "illage_id\030\004 \001(\t\022*\n\006quests\030\005 \003(\0132\032.Protoc"
+  "ol.VillageQuestInfo\0220\n\nexpedition\030\006 \001(\0132"
+  "\034.Protocol.S_EXPEDITION_STATE\"\026\n\024C_QUEST"
+  "_TRACKER_OPEN\"\322\001\n\025S_QUEST_TRACKER_STATE\022"
+  "\017\n\007success\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\022*\n\006ques"
+  "ts\030\003 \003(\0132\032.Protocol.VillageQuestInfo\0220\n\n"
+  "expedition\030\004 \001(\0132\034.Protocol.S_EXPEDITION"
+  "_STATE\022\016\n\006action\030\005 \001(\t\022\024\n\014gold_penalty\030\006"
+  " \001(\005\022\024\n\014fame_penalty\030\007 \001(\005\"#\n\017C_QUEST_AB"
+  "ANDON\022\020\n\010quest_id\030\001 \001(\t\">\n\023C_FIELD_PAWN_"
+  "SELECT\022\'\n\npawn_class\030\001 \001(\0162\023.Protocol.Pa"
+  "wnClass\"r\n\023S_FIELD_PAWN_SELECT\022\017\n\007succes"
+  "s\030\001 \001(\010\022\016\n\006reason\030\002 \001(\t\022\021\n\tobject_id\030\003 \001"
+  "(\004\022\'\n\npawn_class\030\004 \001(\0162\023.Protocol.PawnCl"
+  "ass\"@\n\016C_REFILL_WATER\022\016\n\006map_id\030\001 \001(\t\022\016\n"
+  "\006cell_x\030\002 \001(\021\022\016\n\006cell_y\030\003 \001(\021\"\227\001\n\016S_REFI"
+  "LL_WATER\022\017\n\007success\030\001 \001(\010\022\016\n\006reason\030\002 \001("
+  "\t\022\035\n\025refilled_bottle_count\030\003 \001(\005\022\023\n\013wate"
+  "r_added\030\004 \001(\005\0220\n\nexpedition\030\005 \001(\0132\034.Prot"
+  "ocol.S_EXPEDITION_STATEb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -1854,7 +1859,7 @@ static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_de
 };
 static ::_pbi::once_flag descriptor_table_Protocol_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Protocol_2eproto = {
-    false, false, 7267, descriptor_table_protodef_Protocol_2eproto,
+    false, false, 7311, descriptor_table_protodef_Protocol_2eproto,
     "Protocol.proto",
     &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 58,
     schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
@@ -12570,12 +12575,14 @@ S_EXPEDITION_STATE::S_EXPEDITION_STATE(const S_EXPEDITION_STATE& from)
     , decltype(_impl_.fame_){}
     , decltype(_impl_.happiness_){}
     , decltype(_impl_.max_happiness_){}
+    , decltype(_impl_.battle_wins_){}
+    , decltype(_impl_.battle_losses_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&_impl_.gold_, &from._impl_.gold_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.max_happiness_) -
-    reinterpret_cast<char*>(&_impl_.gold_)) + sizeof(_impl_.max_happiness_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.battle_losses_) -
+    reinterpret_cast<char*>(&_impl_.gold_)) + sizeof(_impl_.battle_losses_));
   // @@protoc_insertion_point(copy_constructor:Protocol.S_EXPEDITION_STATE)
 }
 
@@ -12595,6 +12602,8 @@ inline void S_EXPEDITION_STATE::SharedCtor(
     , decltype(_impl_.fame_){0}
     , decltype(_impl_.happiness_){0}
     , decltype(_impl_.max_happiness_){0}
+    , decltype(_impl_.battle_wins_){0}
+    , decltype(_impl_.battle_losses_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -12629,8 +12638,8 @@ void S_EXPEDITION_STATE::Clear() {
   _impl_.auto_consumed_item_ids_.Clear();
   _impl_.expired_item_ids_.Clear();
   ::memset(&_impl_.gold_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.max_happiness_) -
-      reinterpret_cast<char*>(&_impl_.gold_)) + sizeof(_impl_.max_happiness_));
+      reinterpret_cast<char*>(&_impl_.battle_losses_) -
+      reinterpret_cast<char*>(&_impl_.gold_)) + sizeof(_impl_.battle_losses_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -12747,6 +12756,22 @@ const char* S_EXPEDITION_STATE::_InternalParse(const char* ptr, ::_pbi::ParseCon
         } else
           goto handle_unusual;
         continue;
+      // int32 battle_wins = 12;
+      case 12:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 96)) {
+          _impl_.battle_wins_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 battle_losses = 13;
+      case 13:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 104)) {
+          _impl_.battle_losses_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -12852,6 +12877,18 @@ uint8_t* S_EXPEDITION_STATE::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(11, this->_internal_max_happiness(), target);
   }
 
+  // int32 battle_wins = 12;
+  if (this->_internal_battle_wins() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(12, this->_internal_battle_wins(), target);
+  }
+
+  // int32 battle_losses = 13;
+  if (this->_internal_battle_losses() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(13, this->_internal_battle_losses(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -12931,6 +12968,16 @@ size_t S_EXPEDITION_STATE::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_max_happiness());
   }
 
+  // int32 battle_wins = 12;
+  if (this->_internal_battle_wins() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_battle_wins());
+  }
+
+  // int32 battle_losses = 13;
+  if (this->_internal_battle_losses() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_battle_losses());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -12976,6 +13023,12 @@ void S_EXPEDITION_STATE::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, con
   if (from._internal_max_happiness() != 0) {
     _this->_internal_set_max_happiness(from._internal_max_happiness());
   }
+  if (from._internal_battle_wins() != 0) {
+    _this->_internal_set_battle_wins(from._internal_battle_wins());
+  }
+  if (from._internal_battle_losses() != 0) {
+    _this->_internal_set_battle_losses(from._internal_battle_losses());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -12997,8 +13050,8 @@ void S_EXPEDITION_STATE::InternalSwap(S_EXPEDITION_STATE* other) {
   _impl_.auto_consumed_item_ids_.InternalSwap(&other->_impl_.auto_consumed_item_ids_);
   _impl_.expired_item_ids_.InternalSwap(&other->_impl_.expired_item_ids_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(S_EXPEDITION_STATE, _impl_.max_happiness_)
-      + sizeof(S_EXPEDITION_STATE::_impl_.max_happiness_)
+      PROTOBUF_FIELD_OFFSET(S_EXPEDITION_STATE, _impl_.battle_losses_)
+      + sizeof(S_EXPEDITION_STATE::_impl_.battle_losses_)
       - PROTOBUF_FIELD_OFFSET(S_EXPEDITION_STATE, _impl_.gold_)>(
           reinterpret_cast<char*>(&_impl_.gold_),
           reinterpret_cast<char*>(&other->_impl_.gold_));

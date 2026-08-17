@@ -307,6 +307,8 @@ message S_EXPEDITION_STATE {
 	int32 fame = 9;
 	int32 happiness = 10;
 	int32 max_happiness = 11;
+	int32 battle_wins = 12;
+	int32 battle_losses = 13;
 }
 
 message C_VILLAGE_SHOP_OPEN {

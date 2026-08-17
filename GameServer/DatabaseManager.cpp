@@ -635,7 +635,7 @@ bool DatabaseManager::LoadPlayerEconomy(uint64 playerId, PersistentPlayerEconomy
 		return false;
 	}
 
-	const string profileSql = "SELECT gold,fame,field_pawn_class,satiety,max_satiety,happiness,max_happiness,thirst,max_thirst,"
+	const string profileSql = "SELECT gold,fame,battle_wins,battle_losses,field_pawn_class,satiety,max_satiety,happiness,max_happiness,thirst,max_thirst,"
 		"satiety_drain_numerator,happiness_drain_numerator,thirst_drain_numerator,next_inventory_stack_id,next_acquired_sequence "
 		"FROM player_profiles WHERE player_id=" + to_string(playerId);
 	if (!Execute(profileSql))
@@ -655,18 +655,20 @@ bool DatabaseManager::LoadPlayerEconomy(uint64 playerId, PersistentPlayerEconomy
 	outFound = true;
 	outState.gold = static_cast<int32>(ToInt64(profile[0]));
 	outState.fame = static_cast<int32>(ToInt64(profile[1]));
-	outState.fieldPawnClass = static_cast<Protocol::PawnClass>(ToInt64(profile[2]));
-	outState.satiety = static_cast<int32>(ToInt64(profile[3]));
-	outState.maxSatiety = static_cast<int32>(ToInt64(profile[4]));
-	outState.happiness = static_cast<int32>(ToInt64(profile[5]));
-	outState.maxHappiness = static_cast<int32>(ToInt64(profile[6]));
-	outState.thirst = static_cast<int32>(ToInt64(profile[7]));
-	outState.maxThirst = static_cast<int32>(ToInt64(profile[8]));
-	outState.satietyDrainNumerator = ToInt64(profile[9]);
-	outState.happinessDrainNumerator = ToInt64(profile[10]);
-	outState.thirstDrainNumerator = ToInt64(profile[11]);
-	outState.nextInventoryStackId = ToUInt64(profile[12]);
-	outState.nextAcquiredSequence = ToUInt64(profile[13]);
+	outState.battleWins = static_cast<int32>(ToInt64(profile[2]));
+	outState.battleLosses = static_cast<int32>(ToInt64(profile[3]));
+	outState.fieldPawnClass = static_cast<Protocol::PawnClass>(ToInt64(profile[4]));
+	outState.satiety = static_cast<int32>(ToInt64(profile[5]));
+	outState.maxSatiety = static_cast<int32>(ToInt64(profile[6]));
+	outState.happiness = static_cast<int32>(ToInt64(profile[7]));
+	outState.maxHappiness = static_cast<int32>(ToInt64(profile[8]));
+	outState.thirst = static_cast<int32>(ToInt64(profile[9]));
+	outState.maxThirst = static_cast<int32>(ToInt64(profile[10]));
+	outState.satietyDrainNumerator = ToInt64(profile[11]);
+	outState.happinessDrainNumerator = ToInt64(profile[12]);
+	outState.thirstDrainNumerator = ToInt64(profile[13]);
+	outState.nextInventoryStackId = ToUInt64(profile[14]);
+	outState.nextAcquiredSequence = ToUInt64(profile[15]);
 	_impl->mysqlFreeResult(profileResult);
 
 	const string inventorySql = "SELECT stack_id,item_id,quantity,water_charge,remaining_shelf_life_ms,acquired_sequence "
@@ -872,13 +874,13 @@ bool DatabaseManager::SavePlayerEconomiesAtomically(uint64 firstPlayerId, const 
 bool DatabaseManager::WritePlayerEconomyState(uint64 playerId, const PersistentPlayerEconomyState& state)
 {
 
-	const string profileSql = "INSERT INTO player_profiles (player_id,gold,fame,field_pawn_class,satiety,max_satiety,happiness,max_happiness,thirst,max_thirst,"
+	const string profileSql = "INSERT INTO player_profiles (player_id,gold,fame,battle_wins,battle_losses,field_pawn_class,satiety,max_satiety,happiness,max_happiness,thirst,max_thirst,"
 		"satiety_drain_numerator,happiness_drain_numerator,thirst_drain_numerator,next_inventory_stack_id,next_acquired_sequence) VALUES (" +
-		to_string(playerId) + "," + to_string(state.gold) + "," + to_string(state.fame) + "," + to_string(static_cast<int32>(state.fieldPawnClass)) + "," + to_string(state.satiety) + "," + to_string(state.maxSatiety) + "," +
+		to_string(playerId) + "," + to_string(state.gold) + "," + to_string(state.fame) + "," + to_string(state.battleWins) + "," + to_string(state.battleLosses) + "," + to_string(static_cast<int32>(state.fieldPawnClass)) + "," + to_string(state.satiety) + "," + to_string(state.maxSatiety) + "," +
 		to_string(state.happiness) + "," + to_string(state.maxHappiness) + "," + to_string(state.thirst) + "," + to_string(state.maxThirst) + "," +
 		to_string(state.satietyDrainNumerator) + "," + to_string(state.happinessDrainNumerator) + "," + to_string(state.thirstDrainNumerator) + "," +
 		to_string(state.nextInventoryStackId) + "," + to_string(state.nextAcquiredSequence) + ") ON DUPLICATE KEY UPDATE " +
-		"gold=VALUES(gold),fame=VALUES(fame),field_pawn_class=VALUES(field_pawn_class),satiety=VALUES(satiety),max_satiety=VALUES(max_satiety)," +
+		"gold=VALUES(gold),fame=VALUES(fame),battle_wins=VALUES(battle_wins),battle_losses=VALUES(battle_losses),field_pawn_class=VALUES(field_pawn_class),satiety=VALUES(satiety),max_satiety=VALUES(max_satiety)," +
 		"happiness=VALUES(happiness),max_happiness=VALUES(max_happiness),thirst=VALUES(thirst),max_thirst=VALUES(max_thirst)," +
 		"satiety_drain_numerator=VALUES(satiety_drain_numerator),happiness_drain_numerator=VALUES(happiness_drain_numerator)," +
 		"thirst_drain_numerator=VALUES(thirst_drain_numerator),next_inventory_stack_id=VALUES(next_inventory_stack_id),next_acquired_sequence=VALUES(next_acquired_sequence)";

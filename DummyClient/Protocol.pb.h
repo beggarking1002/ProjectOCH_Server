@@ -7710,6 +7710,8 @@ class S_EXPEDITION_STATE final :
     kFameFieldNumber = 9,
     kHappinessFieldNumber = 10,
     kMaxHappinessFieldNumber = 11,
+    kBattleWinsFieldNumber = 12,
+    kBattleLossesFieldNumber = 13,
   };
   // repeated .Protocol.ExpeditionItemStackInfo inventory = 4;
   int inventory_size() const;
@@ -7849,6 +7851,24 @@ class S_EXPEDITION_STATE final :
   void _internal_set_max_happiness(int32_t value);
   public:
 
+  // int32 battle_wins = 12;
+  void clear_battle_wins();
+  int32_t battle_wins() const;
+  void set_battle_wins(int32_t value);
+  private:
+  int32_t _internal_battle_wins() const;
+  void _internal_set_battle_wins(int32_t value);
+  public:
+
+  // int32 battle_losses = 13;
+  void clear_battle_losses();
+  int32_t battle_losses() const;
+  void set_battle_losses(int32_t value);
+  private:
+  int32_t _internal_battle_losses() const;
+  void _internal_set_battle_losses(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_EXPEDITION_STATE)
  private:
   class _Internal;
@@ -7868,6 +7888,8 @@ class S_EXPEDITION_STATE final :
     int32_t fame_;
     int32_t happiness_;
     int32_t max_happiness_;
+    int32_t battle_wins_;
+    int32_t battle_losses_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -16961,6 +16983,46 @@ inline void S_EXPEDITION_STATE::_internal_set_max_happiness(int32_t value) {
 inline void S_EXPEDITION_STATE::set_max_happiness(int32_t value) {
   _internal_set_max_happiness(value);
   // @@protoc_insertion_point(field_set:Protocol.S_EXPEDITION_STATE.max_happiness)
+}
+
+// int32 battle_wins = 12;
+inline void S_EXPEDITION_STATE::clear_battle_wins() {
+  _impl_.battle_wins_ = 0;
+}
+inline int32_t S_EXPEDITION_STATE::_internal_battle_wins() const {
+  return _impl_.battle_wins_;
+}
+inline int32_t S_EXPEDITION_STATE::battle_wins() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_EXPEDITION_STATE.battle_wins)
+  return _internal_battle_wins();
+}
+inline void S_EXPEDITION_STATE::_internal_set_battle_wins(int32_t value) {
+  
+  _impl_.battle_wins_ = value;
+}
+inline void S_EXPEDITION_STATE::set_battle_wins(int32_t value) {
+  _internal_set_battle_wins(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_EXPEDITION_STATE.battle_wins)
+}
+
+// int32 battle_losses = 13;
+inline void S_EXPEDITION_STATE::clear_battle_losses() {
+  _impl_.battle_losses_ = 0;
+}
+inline int32_t S_EXPEDITION_STATE::_internal_battle_losses() const {
+  return _impl_.battle_losses_;
+}
+inline int32_t S_EXPEDITION_STATE::battle_losses() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_EXPEDITION_STATE.battle_losses)
+  return _internal_battle_losses();
+}
+inline void S_EXPEDITION_STATE::_internal_set_battle_losses(int32_t value) {
+  
+  _impl_.battle_losses_ = value;
+}
+inline void S_EXPEDITION_STATE::set_battle_losses(int32_t value) {
+  _internal_set_battle_losses(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_EXPEDITION_STATE.battle_losses)
 }
 
 // -------------------------------------------------------------------

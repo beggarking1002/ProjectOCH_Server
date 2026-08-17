@@ -1431,6 +1431,11 @@ bool BattleRoom::ApplyVictoryRewards(BattleState& battle, const PlayerRef& winne
 		winner->ModifyFame(fameReward);
 	if (mutationSucceeded)
 	{
+		winner->RecordBattleResult(true);
+		loser->RecordBattleResult(false);
+	}
+	if (mutationSucceeded)
+	{
 		GQuestService.ReevaluateInventoryObjectives(winner);
 		GQuestService.ReevaluateInventoryObjectives(loser);
 	}
