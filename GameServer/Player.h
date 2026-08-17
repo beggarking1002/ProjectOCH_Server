@@ -152,6 +152,8 @@ public:
 
 private:
 	bool TryAutoConsume(vector<string>& autoConsumedItemIds);
+	bool TryAutoConsumeForHappiness(vector<string>& autoConsumedItemIds);
+	bool TryAutoConsumeForSatiety(vector<string>& autoConsumedItemIds);
 	bool TryAutoDrink();
 	int64 GetShelfLifeMs(const EconomyItemTemplate& item) const;
 	void ResetVillageShopStock();

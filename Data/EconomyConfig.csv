@@ -7,6 +7,8 @@ expedition_satiety_refill_threshold,60,points
 expedition_satiety_refill_target,80,points
 expedition_happiness_max,100,points
 expedition_happiness_drain_per_real_minute,1,points_per_real_minute
+expedition_happiness_refill_threshold,50,points
+expedition_happiness_refill_target,80,points
 expedition_thirst_max,100,points
 expedition_thirst_drain_per_real_minute,10,points_per_real_minute
 expedition_thirst_refill_threshold,60,points

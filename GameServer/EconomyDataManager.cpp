@@ -486,7 +486,7 @@ bool EconomyDataManager::Validate() const
 		}
 	}
 
-	const array<string, 15> requiredConfigs =
+	const array<string, 17> requiredConfigs =
 	{
 		"real_minutes_per_game_day",
 		"expedition_satiety_max",
@@ -495,6 +495,8 @@ bool EconomyDataManager::Validate() const
 		"expedition_satiety_refill_target",
 		"expedition_happiness_max",
 		"expedition_happiness_drain_per_real_minute",
+		"expedition_happiness_refill_threshold",
+		"expedition_happiness_refill_target",
 		"expedition_thirst_max",
 		"expedition_thirst_drain_per_real_minute",
 		"expedition_thirst_refill_threshold",
@@ -517,12 +519,15 @@ bool EconomyDataManager::Validate() const
 	const int32 threshold = GetConfigValue("expedition_satiety_refill_threshold");
 	const int32 target = GetConfigValue("expedition_satiety_refill_target");
 	const int32 maxHappiness = GetConfigValue("expedition_happiness_max");
+	const int32 happinessThreshold = GetConfigValue("expedition_happiness_refill_threshold");
+	const int32 happinessTarget = GetConfigValue("expedition_happiness_refill_target");
 	const int32 maxThirst = GetConfigValue("expedition_thirst_max");
 	const int32 thirstThreshold = GetConfigValue("expedition_thirst_refill_threshold");
 	const int32 thirstTarget = GetConfigValue("expedition_thirst_refill_target");
 	if (maxSatiety <= 0 || threshold < 0 || threshold >= target || target > maxSatiety ||
 		GetConfigValue("expedition_satiety_drain_per_real_minute") <= 0 ||
-		maxHappiness <= 0 || GetConfigValue("expedition_happiness_drain_per_real_minute") <= 0 ||
+		maxHappiness <= 0 || happinessThreshold < 0 || happinessThreshold >= happinessTarget || happinessTarget > maxHappiness ||
+		GetConfigValue("expedition_happiness_drain_per_real_minute") <= 0 ||
 		maxThirst <= 0 || thirstThreshold < 0 || thirstThreshold >= thirstTarget || thirstTarget > maxThirst ||
 		GetConfigValue("expedition_thirst_drain_per_real_minute") <= 0 ||
 		GetConfigValue("real_minutes_per_game_day") <= 0 ||

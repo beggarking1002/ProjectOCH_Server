@@ -559,6 +559,15 @@ void Player::FillExpeditionState(Protocol::S_EXPEDITION_STATE& packet,
 
 bool Player::TryAutoConsume(vector<string>& autoConsumedItemIds)
 {
+	// When both resources are low, happiness comes first. This preserves the
+	// happiness-specific selection rule instead of letting satiety consume a
+	// lower-happiness food before it can be considered.
+	bool consumedAny = TryAutoConsumeForHappiness(autoConsumedItemIds);
+	return TryAutoConsumeForSatiety(autoConsumedItemIds) || consumedAny;
+}
+
+bool Player::TryAutoConsumeForSatiety(vector<string>& autoConsumedItemIds)
+{
 	const int32 threshold = GEconomyData.GetConfigValue("expedition_satiety_refill_threshold", 60);
 	const int32 target = GEconomyData.GetConfigValue("expedition_satiety_refill_target", 80);
 	if (_satiety > threshold)
@@ -589,6 +598,60 @@ bool Player::TryAutoConsume(vector<string>& autoConsumedItemIds)
 				(candidateExpires == bestExpires && candidateExpires && it->remainingShelfLifeMs < best->remainingShelfLifeMs) ||
 				(candidateExpires == bestExpires && it->remainingShelfLifeMs == best->remainingShelfLifeMs && item->satietyDelta < bestItem->satietyDelta) ||
 				(candidateExpires == bestExpires && it->remainingShelfLifeMs == best->remainingShelfLifeMs && item->satietyDelta == bestItem->satietyDelta && it->acquiredSequence < best->acquiredSequence);
+			if (candidateFirst)
+			{
+				best = it;
+				bestItem = item;
+			}
+		}
+
+		if (best == _inventory.end() || bestItem == nullptr)
+			break;
+
+		_satiety = (min)(_maxSatiety, _satiety + bestItem->satietyDelta);
+		_happiness = (min)(_maxHappiness, _happiness + bestItem->happinessDelta);
+		autoConsumedItemIds.push_back(best->itemId);
+		best->quantity--;
+		if (best->quantity == 0)
+			_inventory.erase(best);
+		consumedAny = true;
+	}
+
+	return consumedAny;
+}
+
+bool Player::TryAutoConsumeForHappiness(vector<string>& autoConsumedItemIds)
+{
+	const int32 threshold = GEconomyData.GetConfigValue("expedition_happiness_refill_threshold", 50);
+	const int32 target = GEconomyData.GetConfigValue("expedition_happiness_refill_target", 80);
+	if (_happiness >= threshold || _happiness >= target)
+		return false;
+
+	bool consumedAny = false;
+	while (_happiness < target)
+	{
+		auto best = _inventory.end();
+		const EconomyItemTemplate* bestItem = nullptr;
+		for (auto it = _inventory.begin(); it != _inventory.end(); ++it)
+		{
+			const EconomyItemTemplate* item = GEconomyData.GetItem(it->itemId);
+			if (item == nullptr || item->itemType != EconomyItemType::Food || item->happinessDelta <= 0 || it->quantity <= 0)
+				continue;
+
+			if (best == _inventory.end())
+			{
+				best = it;
+				bestItem = item;
+				continue;
+			}
+
+			const bool candidateExpires = it->remainingShelfLifeMs >= 0;
+			const bool bestExpires = best->remainingShelfLifeMs >= 0;
+			const bool candidateFirst =
+				(candidateExpires != bestExpires && candidateExpires) ||
+				(candidateExpires == bestExpires && candidateExpires && it->remainingShelfLifeMs < best->remainingShelfLifeMs) ||
+				(candidateExpires == bestExpires && it->remainingShelfLifeMs == best->remainingShelfLifeMs && item->happinessDelta > bestItem->happinessDelta) ||
+				(candidateExpires == bestExpires && it->remainingShelfLifeMs == best->remainingShelfLifeMs && item->happinessDelta == bestItem->happinessDelta && it->acquiredSequence < best->acquiredSequence);
 			if (candidateFirst)
 			{
 				best = it;
