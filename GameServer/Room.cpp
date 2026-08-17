@@ -344,6 +344,79 @@ void Room::HandleEnterVillage(GameSessionRef session, Protocol::C_ENTER_VILLAGE 
 	sendResult(true, "", village->villageId, village->name, village->description);
 }
 
+void Room::HandleRefillWater(GameSessionRef session, Protocol::C_REFILL_WATER pkt)
+{
+	Protocol::S_REFILL_WATER result;
+	auto sendResult = [&]()
+	{
+		session->Send(ServerPacketHandler::MakeSendBuffer(result));
+	};
+
+	PlayerRef player = GetPlayerInRoom(session);
+	if (player == nullptr)
+	{
+		result.set_success(false);
+		result.set_reason("player is not in field");
+		sendResult();
+		return;
+	}
+	if (pkt.map_id() != GFieldWalkMapData.MapId())
+	{
+		result.set_success(false);
+		result.set_reason("requested map is not active");
+		sendResult();
+		return;
+	}
+	string villageId;
+	if (!GFieldWalkMapData.IsWaterCell(pkt.cell_x(), pkt.cell_y()) ||
+		GFieldWalkMapData.TryGetVillageIdAtCell(pkt.cell_x(), pkt.cell_y(), villageId))
+	{
+		result.set_success(false);
+		result.set_reason("target cell is not a water source");
+		sendResult();
+		return;
+	}
+
+	int32 playerCellX = 0;
+	int32 playerCellY = 0;
+	if (!GFieldWalkMapData.TryGetCellFromFixed(*player->position, playerCellX, playerCellY) ||
+		GFieldWalkMapData.GetHexDistanceCells(playerCellX, playerCellY, pkt.cell_x(), pkt.cell_y()) > kVillageInteractionRangeCells)
+	{
+		result.set_success(false);
+		result.set_reason("water source is too far away");
+		sendResult();
+		return;
+	}
+
+	const uint64 nowMs = ::GetTickCount64();
+	lock_guard economyLock(player->EconomyMutex());
+	const PersistentPlayerEconomyState previousState = player->ExportEconomyState();
+	int32 refilledBottleCount = 0;
+	int32 waterAdded = 0;
+	player->RefillWaterAtSource(refilledBottleCount, waterAdded);
+	player->activeVillageId.clear();
+	if (player->hasPersistentIdentity && GDatabase.IsEnabled() &&
+		!GDatabase.SavePlayerEconomy(player->objectInfo->object_id(), player->ExportEconomyState()))
+	{
+		player->RestoreEconomyState(previousState, nowMs);
+		player->MarkEconomyDirty();
+		result.set_success(false);
+		result.set_reason("failed to persist water refill");
+		sendResult();
+		return;
+	}
+	player->MarkEconomyPersisted(nowMs);
+
+	result.set_success(true);
+	result.set_refilled_bottle_count(refilledBottleCount);
+	result.set_water_added(waterAdded);
+	player->FillExpeditionState(*result.mutable_expedition());
+	cout << "FIELD_WATER_REFILL player_id=" << player->objectInfo->object_id()
+		<< " cell_x=" << pkt.cell_x() << " cell_y=" << pkt.cell_y()
+		<< " bottles=" << refilledBottleCount << " water_added=" << waterAdded << endl;
+	sendResult();
+}
+
 void Room::HandleVillageShopOpen(GameSessionRef session, Protocol::C_VILLAGE_SHOP_OPEN pkt)
 {
 	PlayerRef player = GetPlayerInRoom(session);

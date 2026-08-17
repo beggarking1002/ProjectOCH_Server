@@ -196,6 +196,7 @@ bool FieldWalkMapData::LoadFromFile(const string& path)
 	string cellSizeBlock;
 	string originWorldBlock;
 	string walkableRangesBlock;
+	string waterRangesBlock;
 	string villageAreasBlock;
 
 	if (ExtractString(json, "map_id", mapId) == false ||
@@ -203,6 +204,7 @@ bool FieldWalkMapData::LoadFromFile(const string& path)
 		ExtractBlock(json, "cell_size", '{', '}', cellSizeBlock) == false ||
 		ExtractBlock(json, "origin_world", '{', '}', originWorldBlock) == false ||
 		ExtractBlock(json, "walkable_ranges", '[', ']', walkableRangesBlock) == false ||
+		ExtractBlock(json, "water_ranges", '[', ']', waterRangesBlock) == false ||
 		ExtractBlock(json, "village_areas", '[', ']', villageAreasBlock) == false)
 	{
 		cout << "[FieldWalkMapData] Invalid walkmap schema: " << path << endl;
@@ -257,6 +259,24 @@ bool FieldWalkMapData::LoadFromFile(const string& path)
 			});
 	}
 
+	unordered_map<int32, vector<Range>> waterRangesByY;
+	for (sregex_iterator it(waterRangesBlock.begin(), waterRangesBlock.end(), rangePattern), end; it != end; ++it)
+	{
+		const smatch& match = *it;
+		Range range;
+		range.y = stoi(match[1].str());
+		range.xMin = stoi(match[2].str());
+		range.xMax = stoi(match[3].str());
+		if (range.xMax < range.xMin)
+			swap(range.xMin, range.xMax);
+		waterRangesByY[range.y].push_back(range);
+	}
+	if (waterRangesByY.empty())
+	{
+		cout << "[FieldWalkMapData] Empty water_ranges: " << path << endl;
+		return false;
+	}
+
 	vector<VillageArea> villageAreas;
 	for (const string& villageBlock : ExtractObjectBlocks(villageAreasBlock))
 	{
@@ -299,11 +319,13 @@ bool FieldWalkMapData::LoadFromFile(const string& path)
 	_originWorldX = originWorldX;
 	_originWorldY = originWorldY;
 	_walkableRanges = move(rangesByY);
+	_waterRanges = move(waterRangesByY);
 	_villageAreas = move(villageAreas);
 	_loaded = true;
 
 	cout << "[FieldWalkMapData] Loaded " << _mapId
 		<< " rows=" << _walkableRanges.size()
+		<< " water_rows=" << _waterRanges.size()
 		<< " village_areas=" << _villageAreas.size()
 		<< " fixed_point_scale=" << _fixedPointScale
 		<< " cell_size=(" << _cellSizeX << ", " << _cellSizeY << ")" << endl;
@@ -357,6 +379,19 @@ bool FieldWalkMapData::TryGetVillageIdAtCell(int32 cellX, int32 cellY, string& o
 	return false;
 }
 
+bool FieldWalkMapData::IsWaterCell(int32 cellX, int32 cellY) const
+{
+	const auto row = _waterRanges.find(cellY);
+	if (row == _waterRanges.end())
+		return false;
+	for (const Range& range : row->second)
+	{
+		if (cellX >= range.xMin && cellX <= range.xMax)
+			return true;
+	}
+	return false;
+}
+
 int32 FieldWalkMapData::GetHexDistanceCells(int32 fromCellX, int32 fromCellY, int32 toCellX, int32 toCellY) const
 {
 	const FieldCell from{ fromCellX, fromCellY };
@@ -377,7 +412,7 @@ bool FieldWalkMapData::TryGetRandomWalkablePosition(Protocol::Vec2Fixed& positio
 		{
 			for (int32 cellX = range.xMin; cellX <= range.xMax; cellX++)
 			{
-				if (IsVillageCell(cellX, cellY) == false)
+				if (IsVillageCell(cellX, cellY) == false && IsWaterCell(cellX, cellY) == false)
 					spawnableCells.push_back({ cellX, cellY });
 			}
 		}
@@ -517,7 +552,7 @@ bool FieldWalkMapData::TryFindPathFixed(const Protocol::Vec2Fixed& start, const 
 
 bool FieldWalkMapData::IsWalkableCell(int32 cellX, int32 cellY) const
 {
-	if (IsVillageCell(cellX, cellY))
+	if (IsVillageCell(cellX, cellY) || IsWaterCell(cellX, cellY))
 		return false;
 
 	auto findIt = _walkableRanges.find(cellY);

@@ -15,6 +15,7 @@ struct EconomyItemTemplate
 	int32 satietyDelta = 0;
 	int32 happinessDelta = 0;
 	int32 thirstDelta = 0;
+	int32 waterCapacity = 0;
 	int32 shelfLifeDays = -1;
 	int32 basePrice = 0;
 };

@@ -269,7 +269,7 @@ bool EconomyDataManager::LoadItems()
 	CsvTable table;
 	const string path = ResolveDataPath("Item.csv");
 	if (!LoadCsv(path,
-		{ "ItemId", "ItemType", "DisplayName", "SatietyDelta", "HappinessDelta", "ThirstDelta", "ShelfLifeDays", "BasePrice" }, table))
+		{ "ItemId", "ItemType", "DisplayName", "SatietyDelta", "HappinessDelta", "ThirstDelta", "WaterCapacity", "ShelfLifeDays", "BasePrice" }, table))
 		return false;
 
 	int32 lineNumber = 2;
@@ -296,6 +296,7 @@ bool EconomyDataManager::LoadItems()
 			!TryParseInt32(Cell(table, row, "SatietyDelta"), item.satietyDelta) ||
 			!TryParseInt32(Cell(table, row, "HappinessDelta"), item.happinessDelta) ||
 			!TryParseInt32(Cell(table, row, "ThirstDelta"), item.thirstDelta) ||
+			!TryParseInt32(Cell(table, row, "WaterCapacity"), item.waterCapacity) ||
 			!TryParseInt32(Cell(table, row, "ShelfLifeDays"), item.shelfLifeDays) ||
 			!TryParseInt32(Cell(table, row, "BasePrice"), item.basePrice, item.itemType == EconomyItemType::Trade))
 		{
@@ -413,25 +414,28 @@ bool EconomyDataManager::Validate() const
 	for (const auto& pair : _itemsById)
 	{
 		const EconomyItemTemplate& item = pair.second;
-		if (item.satietyDelta < 0 || item.happinessDelta < 0 || item.thirstDelta < 0 || item.shelfLifeDays < -1)
+		if (item.satietyDelta < 0 || item.happinessDelta < 0 || item.thirstDelta < 0 ||
+			item.waterCapacity < 0 || item.shelfLifeDays < -1)
 		{
 			cout << "[EconomyDataManager] Invalid item values item_id=" << item.itemId << endl;
 			return false;
 		}
 		if (item.itemType == EconomyItemType::Food &&
-			(item.basePrice <= 0 || (item.satietyDelta <= 0 && item.happinessDelta <= 0)))
+			(item.basePrice <= 0 || item.waterCapacity != 0 || (item.satietyDelta <= 0 && item.happinessDelta <= 0)))
 		{
 			cout << "[EconomyDataManager] Invalid food values item_id=" << item.itemId << endl;
 			return false;
 		}
 		if (item.itemType == EconomyItemType::Drink &&
-			(item.basePrice <= 0 || item.thirstDelta <= 0 || item.satietyDelta != 0 || item.happinessDelta != 0))
+			(item.basePrice <= 0 || item.waterCapacity <= 0 || item.thirstDelta != 0 ||
+				item.satietyDelta != 0 || item.happinessDelta != 0 || item.shelfLifeDays != -1))
 		{
 			cout << "[EconomyDataManager] Invalid drink values item_id=" << item.itemId << endl;
 			return false;
 		}
 		if (item.itemType == EconomyItemType::Trade &&
-			(item.satietyDelta != 0 || item.happinessDelta != 0 || item.thirstDelta != 0 || item.shelfLifeDays != -1))
+			(item.satietyDelta != 0 || item.happinessDelta != 0 || item.thirstDelta != 0 ||
+				item.waterCapacity != 0 || item.shelfLifeDays != -1))
 		{
 			cout << "[EconomyDataManager] Trade item has food values item_id=" << item.itemId << endl;
 			return false;
@@ -482,13 +486,19 @@ bool EconomyDataManager::Validate() const
 		}
 	}
 
-	const array<string, 9> requiredConfigs =
+	const array<string, 15> requiredConfigs =
 	{
 		"real_minutes_per_game_day",
 		"expedition_satiety_max",
 		"expedition_satiety_drain_per_real_minute",
 		"expedition_satiety_refill_threshold",
 		"expedition_satiety_refill_target",
+		"expedition_happiness_max",
+		"expedition_happiness_drain_per_real_minute",
+		"expedition_thirst_max",
+		"expedition_thirst_drain_per_real_minute",
+		"expedition_thirst_refill_threshold",
+		"expedition_thirst_refill_target",
 		"village_stock_reset_interval_real_minutes",
 		"trade_premium_margin_percent",
 		"trade_other_margin_percent",
@@ -506,8 +516,15 @@ bool EconomyDataManager::Validate() const
 	const int32 maxSatiety = GetConfigValue("expedition_satiety_max");
 	const int32 threshold = GetConfigValue("expedition_satiety_refill_threshold");
 	const int32 target = GetConfigValue("expedition_satiety_refill_target");
+	const int32 maxHappiness = GetConfigValue("expedition_happiness_max");
+	const int32 maxThirst = GetConfigValue("expedition_thirst_max");
+	const int32 thirstThreshold = GetConfigValue("expedition_thirst_refill_threshold");
+	const int32 thirstTarget = GetConfigValue("expedition_thirst_refill_target");
 	if (maxSatiety <= 0 || threshold < 0 || threshold >= target || target > maxSatiety ||
 		GetConfigValue("expedition_satiety_drain_per_real_minute") <= 0 ||
+		maxHappiness <= 0 || GetConfigValue("expedition_happiness_drain_per_real_minute") <= 0 ||
+		maxThirst <= 0 || thirstThreshold < 0 || thirstThreshold >= thirstTarget || thirstTarget > maxThirst ||
+		GetConfigValue("expedition_thirst_drain_per_real_minute") <= 0 ||
 		GetConfigValue("real_minutes_per_game_day") <= 0 ||
 		GetConfigValue("village_stock_reset_interval_real_minutes") <= 0 ||
 		GetConfigValue("trade_premium_margin_percent") < 0 ||

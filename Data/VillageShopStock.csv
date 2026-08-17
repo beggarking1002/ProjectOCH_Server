@@ -10,6 +10,7 @@ village_eastgate,food_chicken_leg,20,20,8
 village_eastgate,food_egg,30,30,3
 village_eastgate,food_cheese,24,24,6
 village_eastgate,food_salt,20,20,2
+village_eastgate,drink_water,20,20,20
 village_eastgate,trade_iron_ingot,12,12,45
 village_eastgate,trade_copper,12,12,50
 village_eastgate,trade_gem,4,4,160
@@ -22,6 +23,7 @@ village_northwatch,food_berry,24,24,4
 village_northwatch,food_potato,40,40,2
 village_northwatch,food_onion,24,24,1
 village_northwatch,food_salt,20,20,2
+village_northwatch,drink_water,20,20,20
 village_northwatch,trade_fur,10,10,75
 village_northwatch,trade_frost_crystal,4,4,130
 village_riverside,food_bread,40,40,4
@@ -33,6 +35,7 @@ village_riverside,food_honey,16,16,8
 village_riverside,food_apple,40,40,3
 village_riverside,food_potato,40,40,2
 village_riverside,food_salt,20,20,2
+village_riverside,drink_water,20,20,20
 village_riverside,trade_leather,10,10,55
 village_riverside,trade_dye,8,8,80
 village_southport,food_bread,50,50,4
@@ -45,6 +48,7 @@ village_southport,food_cheese,24,24,6
 village_southport,food_onion,40,40,1
 village_southport,food_apple,32,32,3
 village_southport,food_salt,60,60,2
+village_southport,drink_water,20,20,20
 village_southport,trade_silk,8,8,130
 village_southport,trade_spice,12,12,95
 village_southport,trade_oil,10,10,60
@@ -60,4 +64,5 @@ village_westfield,food_butter,16,16,5
 village_westfield,food_egg,32,32,3
 village_westfield,food_bean,50,50,3
 village_westfield,food_raw_meat,24,24,5
+village_westfield,drink_water,20,20,20
 village_westfield,trade_wool,12,12,35

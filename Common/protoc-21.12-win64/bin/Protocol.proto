@@ -278,6 +278,8 @@ message ExpeditionItemStackInfo {
 	string item_id = 2;
 	int32 quantity = 3;
 	int64 remaining_shelf_life_seconds = 4;
+	int32 water_charge = 5;
+	int32 water_capacity = 6;
 }
 
 message VillageShopListingInfo {
@@ -303,6 +305,8 @@ message S_EXPEDITION_STATE {
 	int32 thirst = 7;
 	int32 max_thirst = 8;
 	int32 fame = 9;
+	int32 happiness = 10;
+	int32 max_happiness = 11;
 }
 
 message C_VILLAGE_SHOP_OPEN {
@@ -422,4 +426,21 @@ message S_FIELD_PAWN_SELECT {
 	string reason = 2;
 	uint64 object_id = 3;
 	PawnClass pawn_class = 4;
+}
+
+// Water cells are interaction targets just like villages. The server validates
+// map membership and range, restores current thirst, and fills every reusable
+// water container in the authenticated player's inventory.
+message C_REFILL_WATER {
+	string map_id = 1;
+	sint32 cell_x = 2;
+	sint32 cell_y = 3;
+}
+
+message S_REFILL_WATER {
+	bool success = 1;
+	string reason = 2;
+	int32 refilled_bottle_count = 3;
+	int32 water_added = 4;
+	S_EXPEDITION_STATE expedition = 5;
 }

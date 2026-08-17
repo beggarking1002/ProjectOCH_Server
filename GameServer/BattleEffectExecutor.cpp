@@ -1180,11 +1180,11 @@ bool BattleEffectExecutor::RollDizzyStun(const BattleEffectPawnContext& source, 
 	if (sourceTemplate == nullptr || targetTemplate == nullptr)
 		return false;
 
-	const int32 sourceBaseFocus = sourceTemplate->baseFocus;
-	const int32 targetBaseWill = targetTemplate->baseWill;
+	const int32 sourceFocus = GetStatValue(*sourceTemplate, &source, "FOCUS");
+	const int32 targetWill = GetStatValue(*targetTemplate, &target, "WILL");
 	const double chance = GBattleTemplates.GetConfigDouble("DIZZY_STUN_BASE_PERCENT", 40.0) +
-		static_cast<double>(sourceBaseFocus) * GBattleTemplates.GetConfigDouble("DIZZY_STUN_FOCUS_PERCENT_PER_POINT", 5.0) -
-		static_cast<double>(targetBaseWill) * GBattleTemplates.GetConfigDouble("DIZZY_STUN_WILL_PERCENT_PER_POINT", 5.0);
+		static_cast<double>(sourceFocus) * GBattleTemplates.GetConfigDouble("DIZZY_STUN_FOCUS_PERCENT_PER_POINT", 5.0) -
+		static_cast<double>(targetWill) * GBattleTemplates.GetConfigDouble("DIZZY_STUN_WILL_PERCENT_PER_POINT", 5.0);
 	const int32 stunPercent = clamp(static_cast<int32>(floor(chance)),
 		static_cast<int32>(GBattleTemplates.GetConfigDouble("DIZZY_STUN_MIN_PERCENT", 5.0)),
 		static_cast<int32>(GBattleTemplates.GetConfigDouble("DIZZY_STUN_MAX_PERCENT", 95.0)));
@@ -1198,8 +1198,8 @@ bool BattleEffectExecutor::RollDizzyStun(const BattleEffectPawnContext& source, 
 	cout << "BATTLE_DIZZY_CHECK"
 		<< " source_pawn_id=" << source.pawnId
 		<< " target_pawn_id=" << target.pawnId
-		<< " source_base_focus=" << sourceBaseFocus
-		<< " target_base_will=" << targetBaseWill
+		<< " source_focus=" << sourceFocus
+		<< " target_will=" << targetWill
 		<< " stun_percent=" << stunPercent
 		<< " roll=" << roll
 		<< endl;

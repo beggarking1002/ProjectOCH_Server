@@ -1325,13 +1325,30 @@ void BattleRoom::ApplyExpeditionStartPenalties(const PlayerRef& player, vector<B
 	const int32 hungryHpLossPercent = clamp(GEconomyData.GetConfigValue("battle_satiety_hungry_hp_loss_percent", 30), 0, 99);
 	const int32 criticalThreshold = GEconomyData.GetConfigValue("battle_satiety_critical_threshold", 20);
 	const int32 criticalHpLossPercent = clamp(GEconomyData.GetConfigValue("battle_satiety_critical_hp_loss_percent", 50), 0, 99);
-	const int32 moralePercent = clamp(GEconomyData.GetConfigValue("battle_negative_fame_morale_percent", 50), 0, 100);
+	const int32 lowHappinessThreshold = GEconomyData.GetConfigValue("battle_happiness_low_threshold", 50);
+	const int32 lowHappinessMoralePercent = clamp(GEconomyData.GetConfigValue("battle_happiness_low_morale_percent", 70), 0, 100);
+	const int32 criticalHappinessThreshold = GEconomyData.GetConfigValue("battle_happiness_critical_threshold", 20);
+	const int32 criticalHappinessMoralePercent = clamp(GEconomyData.GetConfigValue("battle_happiness_critical_morale_percent", 50), 0, 100);
+	const int32 lowThirstThreshold = GEconomyData.GetConfigValue("battle_thirst_low_threshold", 50);
+	const int32 lowThirstStatLossPercent = clamp(GEconomyData.GetConfigValue("battle_thirst_low_focus_will_loss_percent", 15), 0, 100);
+	const int32 criticalThirstThreshold = GEconomyData.GetConfigValue("battle_thirst_critical_threshold", 20);
+	const int32 criticalThirstStatLossPercent = clamp(GEconomyData.GetConfigValue("battle_thirst_critical_focus_will_loss_percent", 30), 0, 100);
 
 	int32 hpLossPercent = 0;
 	if (player->Satiety() <= criticalThreshold)
 		hpLossPercent = criticalHpLossPercent;
 	else if (player->Satiety() <= hungryThreshold)
 		hpLossPercent = hungryHpLossPercent;
+	int32 moralePercent = 100;
+	if (player->Happiness() <= criticalHappinessThreshold)
+		moralePercent = criticalHappinessMoralePercent;
+	else if (player->Happiness() <= lowHappinessThreshold)
+		moralePercent = lowHappinessMoralePercent;
+	int32 thirstStatLossPercent = 0;
+	if (player->Thirst() <= criticalThirstThreshold)
+		thirstStatLossPercent = criticalThirstStatLossPercent;
+	else if (player->Thirst() <= lowThirstThreshold)
+		thirstStatLossPercent = lowThirstStatLossPercent;
 
 	for (const BattlePawnRef& pawn : pawns)
 	{
@@ -1342,21 +1359,32 @@ void BattleRoom::ApplyExpeditionStartPenalties(const PlayerRef& player, vector<B
 			const int32 hpLoss = static_cast<int32>(static_cast<int64>(pawn->maxHp) * hpLossPercent / 100);
 			pawn->hp = max(1, pawn->maxHp - hpLoss);
 		}
-		if (player->Fame() < 0)
+		if (moralePercent < 100)
 		{
 			auto maxMoraleIt = pawn->maxResources.find(Protocol::BATTLE_RESOURCE_TYPE_MORALE);
 			if (maxMoraleIt != pawn->maxResources.end())
 				pawn->resources[Protocol::BATTLE_RESOURCE_TYPE_MORALE] = maxMoraleIt->second * moralePercent / 100;
 		}
+		if (thirstStatLossPercent > 0)
+		{
+			const BattlePawnClassTemplate* pawnTemplate = GBattleTemplates.GetPawnClassTemplate(pawn->pawnClass);
+			if (pawnTemplate != nullptr)
+			{
+				pawn->statBonuses["FOCUS"] -= (pawnTemplate->baseFocus * thirstStatLossPercent + 50) / 100;
+				pawn->statBonuses["WILL"] -= (pawnTemplate->baseWill * thirstStatLossPercent + 50) / 100;
+			}
+		}
 	}
 
-	if (hpLossPercent > 0 || player->Fame() < 0)
+	if (hpLossPercent > 0 || moralePercent < 100 || thirstStatLossPercent > 0)
 	{
 		cout << "BATTLE_EXPEDITION_PENALTY player_id=" << player->objectInfo->object_id()
 			<< " satiety=" << player->Satiety()
-			<< " fame=" << player->Fame()
+			<< " happiness=" << player->Happiness()
+			<< " thirst=" << player->Thirst()
 			<< " hp_loss_percent=" << hpLossPercent
-			<< " morale_percent=" << (player->Fame() < 0 ? moralePercent : 100)
+			<< " morale_percent=" << moralePercent
+			<< " focus_will_loss_percent=" << thirstStatLossPercent
 			<< " pawn_count=" << pawns.size() << endl;
 	}
 }

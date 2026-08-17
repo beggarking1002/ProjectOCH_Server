@@ -56,6 +56,8 @@ enum : uint16
 	PKT_C_QUEST_ABANDON = 1047,
 	PKT_C_FIELD_PAWN_SELECT = 1048,
 	PKT_S_FIELD_PAWN_SELECT = 1049,
+	PKT_C_REFILL_WATER = 1050,
+	PKT_S_REFILL_WATER = 1051,
 };
 
 // Custom Handlers
@@ -84,6 +86,7 @@ bool Handle_C_QUEST_CLAIM_REWARD(PacketSessionRef& session, Protocol::C_QUEST_CL
 bool Handle_C_QUEST_TRACKER_OPEN(PacketSessionRef& session, Protocol::C_QUEST_TRACKER_OPEN& pkt);
 bool Handle_C_QUEST_ABANDON(PacketSessionRef& session, Protocol::C_QUEST_ABANDON& pkt);
 bool Handle_C_FIELD_PAWN_SELECT(PacketSessionRef& session, Protocol::C_FIELD_PAWN_SELECT& pkt);
+bool Handle_C_REFILL_WATER(PacketSessionRef& session, Protocol::C_REFILL_WATER& pkt);
 
 class ServerPacketHandler
 {
@@ -116,6 +119,7 @@ public:
 		GPacketHandler[PKT_C_QUEST_TRACKER_OPEN] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_QUEST_TRACKER_OPEN>(Handle_C_QUEST_TRACKER_OPEN, session, buffer, len); };
 		GPacketHandler[PKT_C_QUEST_ABANDON] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_QUEST_ABANDON>(Handle_C_QUEST_ABANDON, session, buffer, len); };
 		GPacketHandler[PKT_C_FIELD_PAWN_SELECT] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_FIELD_PAWN_SELECT>(Handle_C_FIELD_PAWN_SELECT, session, buffer, len); };
+		GPacketHandler[PKT_C_REFILL_WATER] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_REFILL_WATER>(Handle_C_REFILL_WATER, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len)
@@ -149,6 +153,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::S_VILLAGE_QUEST_STATE& pkt) { return MakeSendBuffer(pkt, PKT_S_VILLAGE_QUEST_STATE); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_QUEST_TRACKER_STATE& pkt) { return MakeSendBuffer(pkt, PKT_S_QUEST_TRACKER_STATE); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_FIELD_PAWN_SELECT& pkt) { return MakeSendBuffer(pkt, PKT_S_FIELD_PAWN_SELECT); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_REFILL_WATER& pkt) { return MakeSendBuffer(pkt, PKT_S_REFILL_WATER); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

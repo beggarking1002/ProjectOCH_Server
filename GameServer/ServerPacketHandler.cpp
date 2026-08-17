@@ -201,6 +201,19 @@ bool Handle_C_ENTER_VILLAGE(PacketSessionRef& session, Protocol::C_ENTER_VILLAGE
 	return true;
 }
 
+bool Handle_C_REFILL_WATER(PacketSessionRef& session, Protocol::C_REFILL_WATER& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->player.load();
+	if (player == nullptr)
+		return false;
+	RoomRef room = player->room.load().lock();
+	if (room == nullptr)
+		return false;
+	room->DoAsync(&Room::HandleRefillWater, gameSession, pkt);
+	return true;
+}
+
 bool Handle_C_VILLAGE_SHOP_OPEN(PacketSessionRef& session, Protocol::C_VILLAGE_SHOP_OPEN& pkt)
 {
 	auto gameSession = static_pointer_cast<GameSession>(session);

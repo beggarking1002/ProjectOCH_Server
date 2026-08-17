@@ -20,6 +20,7 @@ public:
 	bool IsWalkableFixed(const Protocol::Vec2Fixed& position, int32& cellX, int32& cellY) const;
 	bool TryGetCellFromFixed(const Protocol::Vec2Fixed& position, int32& cellX, int32& cellY) const;
 	bool TryGetVillageIdAtCell(int32 cellX, int32 cellY, string& outVillageId) const;
+	bool IsWaterCell(int32 cellX, int32 cellY) const;
 	int32 GetHexDistanceCells(int32 fromCellX, int32 fromCellY, int32 toCellX, int32 toCellY) const;
 	bool TryGetRandomWalkablePosition(Protocol::Vec2Fixed& position) const;
 	// Builds a shortest traversable route. The returned waypoints exclude start and include target.
@@ -48,6 +49,7 @@ private:
 	double _originWorldX = 0.0;
 	double _originWorldY = 0.0;
 	unordered_map<int32, vector<Range>> _walkableRanges;
+	unordered_map<int32, vector<Range>> _waterRanges;
 	vector<VillageArea> _villageAreas;
 };
 

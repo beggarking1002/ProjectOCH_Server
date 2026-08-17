@@ -11,6 +11,7 @@ struct ExpeditionItemStackState
 	uint64 stackId = 0;
 	string itemId;
 	int32 quantity = 0;
+	int32 waterCharge = 0;
 	int64 remainingShelfLifeMs = -1;
 	uint64 acquiredSequence = 0;
 };
@@ -78,9 +79,13 @@ struct PersistentPlayerEconomyState
 	Protocol::PawnClass fieldPawnClass = Protocol::PAWN_CLASS_BEIGE_ICE;
 	int32 satiety = 100;
 	int32 maxSatiety = 100;
+	int32 happiness = 100;
+	int32 maxHappiness = 100;
 	int32 thirst = 100;
 	int32 maxThirst = 100;
 	int64 satietyDrainNumerator = 0;
+	int64 happinessDrainNumerator = 0;
+	int64 thirstDrainNumerator = 0;
 	uint64 nextInventoryStackId = 1;
 	uint64 nextAcquiredSequence = 1;
 	vector<ExpeditionItemStackState> inventory;
@@ -119,6 +124,7 @@ public:
 	bool RemoveInventoryItem(uint64 stackId, int32 quantity);
 	int32 CountInventoryItem(const string& itemId) const;
 	bool RemoveInventoryItemFefo(const string& itemId, int32 quantity);
+	bool RefillWaterAtSource(int32& outRefilledBottleCount, int32& outWaterAdded);
 	const PlayerQuestState* FindQuestState(const string& questId) const;
 	PlayerQuestState* FindQuestState(const string& questId);
 	bool AddQuestState(PlayerQuestState state);
@@ -135,6 +141,8 @@ public:
 	Protocol::PawnClass FieldPawnClass() const { return _fieldPawnClass; }
 	int32 Satiety() const { return _satiety; }
 	int32 MaxSatiety() const { return _maxSatiety; }
+	int32 Happiness() const { return _happiness; }
+	int32 MaxHappiness() const { return _maxHappiness; }
 	int32 Thirst() const { return _thirst; }
 	int32 MaxThirst() const { return _maxThirst; }
 	const vector<ExpeditionItemStackState>& Inventory() const { return _inventory; }
@@ -144,6 +152,7 @@ public:
 
 private:
 	bool TryAutoConsume(vector<string>& autoConsumedItemIds);
+	bool TryAutoDrink();
 	int64 GetShelfLifeMs(const EconomyItemTemplate& item) const;
 	void ResetVillageShopStock();
 	void AdvanceShopRestock(uint64 elapsedMs);
@@ -155,10 +164,14 @@ private:
 	Protocol::PawnClass _fieldPawnClass = Protocol::PAWN_CLASS_BEIGE_ICE;
 	int32 _satiety = 100;
 	int32 _maxSatiety = 100;
+	int32 _happiness = 100;
+	int32 _maxHappiness = 100;
 	int32 _thirst = 100;
 	int32 _maxThirst = 100;
 	uint64 _lastEconomyTickMs = 0;
 	int64 _satietyDrainNumerator = 0;
+	int64 _happinessDrainNumerator = 0;
+	int64 _thirstDrainNumerator = 0;
 	uint64 _nextInventoryStackId = 1;
 	uint64 _nextAcquiredSequence = 1;
 	vector<ExpeditionItemStackState> _inventory;

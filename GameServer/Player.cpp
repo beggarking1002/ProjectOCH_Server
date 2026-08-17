@@ -41,7 +41,9 @@ void Player::InitializeEconomy(uint64 nowMs)
 
 	_maxSatiety = GEconomyData.GetConfigValue("expedition_satiety_max", 100);
 	_satiety = _maxSatiety;
-	_maxThirst = 100;
+	_maxHappiness = GEconomyData.GetConfigValue("expedition_happiness_max", 100);
+	_happiness = _maxHappiness;
+	_maxThirst = GEconomyData.GetConfigValue("expedition_thirst_max", 100);
 	_thirst = _maxThirst;
 	_gold = GEconomyData.GetConfigValue("expedition_starting_gold", 0);
 	_fame = 0;
@@ -49,6 +51,8 @@ void Player::InitializeEconomy(uint64 nowMs)
 	objectInfo->set_field_pawn_class(_fieldPawnClass);
 	_lastEconomyTickMs = nowMs;
 	_satietyDrainNumerator = 0;
+	_happinessDrainNumerator = 0;
+	_thirstDrainNumerator = 0;
 	_shopRestockElapsedMs = 0;
 	_shopStockGeneration = 1;
 	ResetVillageShopStock();
@@ -71,6 +75,8 @@ void Player::RestoreEconomyState(const PersistentPlayerEconomyState& state, uint
 {
 	_maxSatiety = (max)(1, state.maxSatiety);
 	_satiety = (max)(0, (min)(state.satiety, _maxSatiety));
+	_maxHappiness = (max)(1, state.maxHappiness);
+	_happiness = (max)(0, (min)(state.happiness, _maxHappiness));
 	_maxThirst = (max)(1, state.maxThirst);
 	_thirst = (max)(0, (min)(state.thirst, _maxThirst));
 	_gold = (max)(0, state.gold);
@@ -93,6 +99,8 @@ void Player::RestoreEconomyState(const PersistentPlayerEconomyState& state, uint
 	}
 	objectInfo->set_field_pawn_class(_fieldPawnClass);
 	_satietyDrainNumerator = (max)(int64{ 0 }, state.satietyDrainNumerator);
+	_happinessDrainNumerator = (max)(int64{ 0 }, state.happinessDrainNumerator);
+	_thirstDrainNumerator = (max)(int64{ 0 }, state.thirstDrainNumerator);
 	_inventory.clear();
 	_inventory.reserve(state.inventory.size());
 
@@ -102,7 +110,14 @@ void Player::RestoreEconomyState(const PersistentPlayerEconomyState& state, uint
 	{
 		if (stack.stackId == 0 || stack.itemId.empty() || stack.quantity <= 0)
 			continue;
-		_inventory.push_back(stack);
+		ExpeditionItemStackState restoredStack = stack;
+		const EconomyItemTemplate* item = GEconomyData.GetItem(restoredStack.itemId);
+		const int64 maxWaterCharge = item != nullptr
+			? static_cast<int64>(restoredStack.quantity) * item->waterCapacity
+			: 0;
+		restoredStack.waterCharge = static_cast<int32>((max)(int64{ 0 },
+			(min)(static_cast<int64>(restoredStack.waterCharge), maxWaterCharge)));
+		_inventory.push_back(move(restoredStack));
 		maxStackId = (max)(maxStackId, stack.stackId);
 		maxAcquiredSequence = (max)(maxAcquiredSequence, stack.acquiredSequence);
 	}
@@ -147,9 +162,13 @@ PersistentPlayerEconomyState Player::ExportEconomyState() const
 	state.fieldPawnClass = _fieldPawnClass;
 	state.satiety = _satiety;
 	state.maxSatiety = _maxSatiety;
+	state.happiness = _happiness;
+	state.maxHappiness = _maxHappiness;
 	state.thirst = _thirst;
 	state.maxThirst = _maxThirst;
 	state.satietyDrainNumerator = _satietyDrainNumerator;
+	state.happinessDrainNumerator = _happinessDrainNumerator;
+	state.thirstDrainNumerator = _thirstDrainNumerator;
 	state.nextInventoryStackId = _nextInventoryStackId;
 	state.nextAcquiredSequence = _nextAcquiredSequence;
 	state.inventory = _inventory;
@@ -230,7 +249,35 @@ bool Player::AdvanceEconomy(uint64 nowMs, vector<string>& autoConsumedItemIds, v
 		}
 	}
 
+	const int32 happinessDrainPerMinute = GEconomyData.GetConfigValue("expedition_happiness_drain_per_real_minute", 0);
+	if (happinessDrainPerMinute > 0 && _happiness > 0)
+	{
+		_happinessDrainNumerator += static_cast<int64>(elapsedMs) * happinessDrainPerMinute;
+		const int32 drained = static_cast<int32>(_happinessDrainNumerator / 60000);
+		_happinessDrainNumerator %= 60000;
+		if (drained > 0)
+		{
+			_happiness = (max)(0, _happiness - drained);
+			changed = true;
+		}
+	}
+
+	const int32 thirstDrainPerMinute = GEconomyData.GetConfigValue("expedition_thirst_drain_per_real_minute", 0);
+	if (thirstDrainPerMinute > 0 && _thirst > 0)
+	{
+		_thirstDrainNumerator += static_cast<int64>(elapsedMs) * thirstDrainPerMinute;
+		const int32 drained = static_cast<int32>(_thirstDrainNumerator / 60000);
+		_thirstDrainNumerator %= 60000;
+		if (drained > 0)
+		{
+			_thirst = (max)(0, _thirst - drained);
+			changed = true;
+		}
+	}
+
 	if (TryAutoConsume(autoConsumedItemIds))
+		changed = true;
+	if (TryAutoDrink())
 		changed = true;
 	if (changed)
 		_economyDirty = true;
@@ -298,6 +345,8 @@ bool Player::RemoveInventoryItem(uint64 stackId, int32 quantity)
 	it->quantity -= quantity;
 	if (it->quantity == 0)
 		_inventory.erase(it);
+	else if (const EconomyItemTemplate* item = GEconomyData.GetItem(it->itemId))
+		it->waterCharge = (min)(it->waterCharge, it->quantity * item->waterCapacity);
 	_economyDirty = true;
 	return true;
 }
@@ -345,6 +394,40 @@ bool Player::RemoveInventoryItemFefo(const string& itemId, int32 quantity)
 		if (best->quantity == 0)
 			_inventory.erase(best);
 	}
+	_economyDirty = true;
+	return true;
+}
+
+bool Player::RefillWaterAtSource(int32& outRefilledBottleCount, int32& outWaterAdded)
+{
+	outRefilledBottleCount = 0;
+	outWaterAdded = 0;
+	if (_thirst < _maxThirst)
+	{
+		outWaterAdded += _maxThirst - _thirst;
+		_thirst = _maxThirst;
+	}
+
+	for (ExpeditionItemStackState& stack : _inventory)
+	{
+		const EconomyItemTemplate* item = GEconomyData.GetItem(stack.itemId);
+		if (item == nullptr || item->itemType != EconomyItemType::Drink || item->waterCapacity <= 0)
+			continue;
+		const int64 rawCapacity = static_cast<int64>(stack.quantity) * item->waterCapacity;
+		const int32 capacity = rawCapacity > (numeric_limits<int32>::max)()
+			? (numeric_limits<int32>::max)()
+			: static_cast<int32>(rawCapacity);
+		if (stack.waterCharge >= capacity)
+			continue;
+		const int32 missingWater = capacity - stack.waterCharge;
+		const int32 fullBottleCount = (missingWater + item->waterCapacity - 1) / item->waterCapacity;
+		outRefilledBottleCount += fullBottleCount;
+		outWaterAdded += missingWater;
+		stack.waterCharge = capacity;
+	}
+
+	if (outWaterAdded <= 0)
+		return false;
 	_economyDirty = true;
 	return true;
 }
@@ -451,6 +534,8 @@ void Player::FillExpeditionState(Protocol::S_EXPEDITION_STATE& packet,
 	packet.set_fame(_fame);
 	packet.set_satiety(_satiety);
 	packet.set_max_satiety(_maxSatiety);
+	packet.set_happiness(_happiness);
+	packet.set_max_happiness(_maxHappiness);
 	packet.set_thirst(_thirst);
 	packet.set_max_thirst(_maxThirst);
 	for (const ExpeditionItemStackState& stack : _inventory)
@@ -459,6 +544,9 @@ void Player::FillExpeditionState(Protocol::S_EXPEDITION_STATE& packet,
 		stackInfo->set_stack_id(stack.stackId);
 		stackInfo->set_item_id(stack.itemId);
 		stackInfo->set_quantity(stack.quantity);
+		stackInfo->set_water_charge(stack.waterCharge);
+		if (const EconomyItemTemplate* item = GEconomyData.GetItem(stack.itemId))
+			stackInfo->set_water_capacity(stack.quantity * item->waterCapacity);
 		stackInfo->set_remaining_shelf_life_seconds(stack.remainingShelfLifeMs < 0
 			? -1
 			: (stack.remainingShelfLifeMs + 999) / 1000);
@@ -512,6 +600,7 @@ bool Player::TryAutoConsume(vector<string>& autoConsumedItemIds)
 			break;
 
 		_satiety = (min)(_maxSatiety, _satiety + bestItem->satietyDelta);
+		_happiness = (min)(_maxHappiness, _happiness + bestItem->happinessDelta);
 		autoConsumedItemIds.push_back(best->itemId);
 		best->quantity--;
 		if (best->quantity == 0)
@@ -520,6 +609,29 @@ bool Player::TryAutoConsume(vector<string>& autoConsumedItemIds)
 	}
 
 	return consumedAny;
+}
+
+bool Player::TryAutoDrink()
+{
+	const int32 threshold = GEconomyData.GetConfigValue("expedition_thirst_refill_threshold", 60);
+	const int32 target = GEconomyData.GetConfigValue("expedition_thirst_refill_target", 80);
+	if (_thirst > threshold || _thirst >= target)
+		return false;
+
+	bool drankAny = false;
+	for (ExpeditionItemStackState& stack : _inventory)
+	{
+		const EconomyItemTemplate* item = GEconomyData.GetItem(stack.itemId);
+		if (item == nullptr || item->itemType != EconomyItemType::Drink || stack.waterCharge <= 0)
+			continue;
+		const int32 consumed = (min)(target - _thirst, stack.waterCharge);
+		stack.waterCharge -= consumed;
+		_thirst += consumed;
+		drankAny = drankAny || consumed > 0;
+		if (_thirst >= target)
+			break;
+	}
+	return drankAny;
 }
 
 int64 Player::GetShelfLifeMs(const EconomyItemTemplate& item) const
