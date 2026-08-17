@@ -84,6 +84,9 @@ extern C_ENTER_GAMEDefaultTypeInternal _C_ENTER_GAME_default_instance_;
 class C_ENTER_VILLAGE;
 struct C_ENTER_VILLAGEDefaultTypeInternal;
 extern C_ENTER_VILLAGEDefaultTypeInternal _C_ENTER_VILLAGE_default_instance_;
+class C_FIELD_PAWN_SELECT;
+struct C_FIELD_PAWN_SELECTDefaultTypeInternal;
+extern C_FIELD_PAWN_SELECTDefaultTypeInternal _C_FIELD_PAWN_SELECT_default_instance_;
 class C_LEAVE_GAME;
 struct C_LEAVE_GAMEDefaultTypeInternal;
 extern C_LEAVE_GAMEDefaultTypeInternal _C_LEAVE_GAME_default_instance_;
@@ -177,6 +180,9 @@ extern S_ENTER_VILLAGEDefaultTypeInternal _S_ENTER_VILLAGE_default_instance_;
 class S_EXPEDITION_STATE;
 struct S_EXPEDITION_STATEDefaultTypeInternal;
 extern S_EXPEDITION_STATEDefaultTypeInternal _S_EXPEDITION_STATE_default_instance_;
+class S_FIELD_PAWN_SELECT;
+struct S_FIELD_PAWN_SELECTDefaultTypeInternal;
+extern S_FIELD_PAWN_SELECTDefaultTypeInternal _S_FIELD_PAWN_SELECT_default_instance_;
 class S_LEAVE_GAME;
 struct S_LEAVE_GAMEDefaultTypeInternal;
 extern S_LEAVE_GAMEDefaultTypeInternal _S_LEAVE_GAME_default_instance_;
@@ -224,6 +230,7 @@ template<> ::Protocol::C_CHAT* Arena::CreateMaybeMessage<::Protocol::C_CHAT>(Are
 template<> ::Protocol::C_ENTER_BATTLE* Arena::CreateMaybeMessage<::Protocol::C_ENTER_BATTLE>(Arena*);
 template<> ::Protocol::C_ENTER_GAME* Arena::CreateMaybeMessage<::Protocol::C_ENTER_GAME>(Arena*);
 template<> ::Protocol::C_ENTER_VILLAGE* Arena::CreateMaybeMessage<::Protocol::C_ENTER_VILLAGE>(Arena*);
+template<> ::Protocol::C_FIELD_PAWN_SELECT* Arena::CreateMaybeMessage<::Protocol::C_FIELD_PAWN_SELECT>(Arena*);
 template<> ::Protocol::C_LEAVE_GAME* Arena::CreateMaybeMessage<::Protocol::C_LEAVE_GAME>(Arena*);
 template<> ::Protocol::C_LOGIN* Arena::CreateMaybeMessage<::Protocol::C_LOGIN>(Arena*);
 template<> ::Protocol::C_MOVE* Arena::CreateMaybeMessage<::Protocol::C_MOVE>(Arena*);
@@ -255,6 +262,7 @@ template<> ::Protocol::S_ENTER_BATTLE* Arena::CreateMaybeMessage<::Protocol::S_E
 template<> ::Protocol::S_ENTER_GAME* Arena::CreateMaybeMessage<::Protocol::S_ENTER_GAME>(Arena*);
 template<> ::Protocol::S_ENTER_VILLAGE* Arena::CreateMaybeMessage<::Protocol::S_ENTER_VILLAGE>(Arena*);
 template<> ::Protocol::S_EXPEDITION_STATE* Arena::CreateMaybeMessage<::Protocol::S_EXPEDITION_STATE>(Arena*);
+template<> ::Protocol::S_FIELD_PAWN_SELECT* Arena::CreateMaybeMessage<::Protocol::S_FIELD_PAWN_SELECT>(Arena*);
 template<> ::Protocol::S_LEAVE_GAME* Arena::CreateMaybeMessage<::Protocol::S_LEAVE_GAME>(Arena*);
 template<> ::Protocol::S_LOGIN* Arena::CreateMaybeMessage<::Protocol::S_LOGIN>(Arena*);
 template<> ::Protocol::S_MOVE* Arena::CreateMaybeMessage<::Protocol::S_MOVE>(Arena*);
@@ -10697,6 +10705,340 @@ class C_QUEST_ABANDON final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_Protocol_2eproto;
 };
+// -------------------------------------------------------------------
+
+class C_FIELD_PAWN_SELECT final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.C_FIELD_PAWN_SELECT) */ {
+ public:
+  inline C_FIELD_PAWN_SELECT() : C_FIELD_PAWN_SELECT(nullptr) {}
+  ~C_FIELD_PAWN_SELECT() override;
+  explicit PROTOBUF_CONSTEXPR C_FIELD_PAWN_SELECT(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  C_FIELD_PAWN_SELECT(const C_FIELD_PAWN_SELECT& from);
+  C_FIELD_PAWN_SELECT(C_FIELD_PAWN_SELECT&& from) noexcept
+    : C_FIELD_PAWN_SELECT() {
+    *this = ::std::move(from);
+  }
+
+  inline C_FIELD_PAWN_SELECT& operator=(const C_FIELD_PAWN_SELECT& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline C_FIELD_PAWN_SELECT& operator=(C_FIELD_PAWN_SELECT&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const C_FIELD_PAWN_SELECT& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const C_FIELD_PAWN_SELECT* internal_default_instance() {
+    return reinterpret_cast<const C_FIELD_PAWN_SELECT*>(
+               &_C_FIELD_PAWN_SELECT_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    54;
+
+  friend void swap(C_FIELD_PAWN_SELECT& a, C_FIELD_PAWN_SELECT& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(C_FIELD_PAWN_SELECT* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(C_FIELD_PAWN_SELECT* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  C_FIELD_PAWN_SELECT* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C_FIELD_PAWN_SELECT>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const C_FIELD_PAWN_SELECT& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const C_FIELD_PAWN_SELECT& from) {
+    C_FIELD_PAWN_SELECT::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(C_FIELD_PAWN_SELECT* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.C_FIELD_PAWN_SELECT";
+  }
+  protected:
+  explicit C_FIELD_PAWN_SELECT(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kPawnClassFieldNumber = 1,
+  };
+  // .Protocol.PawnClass pawn_class = 1;
+  void clear_pawn_class();
+  ::Protocol::PawnClass pawn_class() const;
+  void set_pawn_class(::Protocol::PawnClass value);
+  private:
+  ::Protocol::PawnClass _internal_pawn_class() const;
+  void _internal_set_pawn_class(::Protocol::PawnClass value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.C_FIELD_PAWN_SELECT)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int pawn_class_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class S_FIELD_PAWN_SELECT final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_FIELD_PAWN_SELECT) */ {
+ public:
+  inline S_FIELD_PAWN_SELECT() : S_FIELD_PAWN_SELECT(nullptr) {}
+  ~S_FIELD_PAWN_SELECT() override;
+  explicit PROTOBUF_CONSTEXPR S_FIELD_PAWN_SELECT(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_FIELD_PAWN_SELECT(const S_FIELD_PAWN_SELECT& from);
+  S_FIELD_PAWN_SELECT(S_FIELD_PAWN_SELECT&& from) noexcept
+    : S_FIELD_PAWN_SELECT() {
+    *this = ::std::move(from);
+  }
+
+  inline S_FIELD_PAWN_SELECT& operator=(const S_FIELD_PAWN_SELECT& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_FIELD_PAWN_SELECT& operator=(S_FIELD_PAWN_SELECT&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_FIELD_PAWN_SELECT& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_FIELD_PAWN_SELECT* internal_default_instance() {
+    return reinterpret_cast<const S_FIELD_PAWN_SELECT*>(
+               &_S_FIELD_PAWN_SELECT_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    55;
+
+  friend void swap(S_FIELD_PAWN_SELECT& a, S_FIELD_PAWN_SELECT& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_FIELD_PAWN_SELECT* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_FIELD_PAWN_SELECT* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_FIELD_PAWN_SELECT* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_FIELD_PAWN_SELECT>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_FIELD_PAWN_SELECT& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const S_FIELD_PAWN_SELECT& from) {
+    S_FIELD_PAWN_SELECT::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_FIELD_PAWN_SELECT* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_FIELD_PAWN_SELECT";
+  }
+  protected:
+  explicit S_FIELD_PAWN_SELECT(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kReasonFieldNumber = 2,
+    kSuccessFieldNumber = 1,
+    kPawnClassFieldNumber = 4,
+    kObjectIdFieldNumber = 3,
+  };
+  // string reason = 2;
+  void clear_reason();
+  const std::string& reason() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_reason(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_reason();
+  PROTOBUF_NODISCARD std::string* release_reason();
+  void set_allocated_reason(std::string* reason);
+  private:
+  const std::string& _internal_reason() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_reason(const std::string& value);
+  std::string* _internal_mutable_reason();
+  public:
+
+  // bool success = 1;
+  void clear_success();
+  bool success() const;
+  void set_success(bool value);
+  private:
+  bool _internal_success() const;
+  void _internal_set_success(bool value);
+  public:
+
+  // .Protocol.PawnClass pawn_class = 4;
+  void clear_pawn_class();
+  ::Protocol::PawnClass pawn_class() const;
+  void set_pawn_class(::Protocol::PawnClass value);
+  private:
+  ::Protocol::PawnClass _internal_pawn_class() const;
+  void _internal_set_pawn_class(::Protocol::PawnClass value);
+  public:
+
+  // uint64 object_id = 3;
+  void clear_object_id();
+  uint64_t object_id() const;
+  void set_object_id(uint64_t value);
+  private:
+  uint64_t _internal_object_id() const;
+  void _internal_set_object_id(uint64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_FIELD_PAWN_SELECT)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reason_;
+    bool success_;
+    int pawn_class_;
+    uint64_t object_id_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
 // ===================================================================
 
 
@@ -18523,9 +18865,151 @@ inline void C_QUEST_ABANDON::set_allocated_quest_id(std::string* quest_id) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.C_QUEST_ABANDON.quest_id)
 }
 
+// -------------------------------------------------------------------
+
+// C_FIELD_PAWN_SELECT
+
+// .Protocol.PawnClass pawn_class = 1;
+inline void C_FIELD_PAWN_SELECT::clear_pawn_class() {
+  _impl_.pawn_class_ = 0;
+}
+inline ::Protocol::PawnClass C_FIELD_PAWN_SELECT::_internal_pawn_class() const {
+  return static_cast< ::Protocol::PawnClass >(_impl_.pawn_class_);
+}
+inline ::Protocol::PawnClass C_FIELD_PAWN_SELECT::pawn_class() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_FIELD_PAWN_SELECT.pawn_class)
+  return _internal_pawn_class();
+}
+inline void C_FIELD_PAWN_SELECT::_internal_set_pawn_class(::Protocol::PawnClass value) {
+  
+  _impl_.pawn_class_ = value;
+}
+inline void C_FIELD_PAWN_SELECT::set_pawn_class(::Protocol::PawnClass value) {
+  _internal_set_pawn_class(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_FIELD_PAWN_SELECT.pawn_class)
+}
+
+// -------------------------------------------------------------------
+
+// S_FIELD_PAWN_SELECT
+
+// bool success = 1;
+inline void S_FIELD_PAWN_SELECT::clear_success() {
+  _impl_.success_ = false;
+}
+inline bool S_FIELD_PAWN_SELECT::_internal_success() const {
+  return _impl_.success_;
+}
+inline bool S_FIELD_PAWN_SELECT::success() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_FIELD_PAWN_SELECT.success)
+  return _internal_success();
+}
+inline void S_FIELD_PAWN_SELECT::_internal_set_success(bool value) {
+  
+  _impl_.success_ = value;
+}
+inline void S_FIELD_PAWN_SELECT::set_success(bool value) {
+  _internal_set_success(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_FIELD_PAWN_SELECT.success)
+}
+
+// string reason = 2;
+inline void S_FIELD_PAWN_SELECT::clear_reason() {
+  _impl_.reason_.ClearToEmpty();
+}
+inline const std::string& S_FIELD_PAWN_SELECT::reason() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_FIELD_PAWN_SELECT.reason)
+  return _internal_reason();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void S_FIELD_PAWN_SELECT::set_reason(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.reason_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.S_FIELD_PAWN_SELECT.reason)
+}
+inline std::string* S_FIELD_PAWN_SELECT::mutable_reason() {
+  std::string* _s = _internal_mutable_reason();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_FIELD_PAWN_SELECT.reason)
+  return _s;
+}
+inline const std::string& S_FIELD_PAWN_SELECT::_internal_reason() const {
+  return _impl_.reason_.Get();
+}
+inline void S_FIELD_PAWN_SELECT::_internal_set_reason(const std::string& value) {
+  
+  _impl_.reason_.Set(value, GetArenaForAllocation());
+}
+inline std::string* S_FIELD_PAWN_SELECT::_internal_mutable_reason() {
+  
+  return _impl_.reason_.Mutable(GetArenaForAllocation());
+}
+inline std::string* S_FIELD_PAWN_SELECT::release_reason() {
+  // @@protoc_insertion_point(field_release:Protocol.S_FIELD_PAWN_SELECT.reason)
+  return _impl_.reason_.Release();
+}
+inline void S_FIELD_PAWN_SELECT::set_allocated_reason(std::string* reason) {
+  if (reason != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.reason_.SetAllocated(reason, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.reason_.IsDefault()) {
+    _impl_.reason_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_FIELD_PAWN_SELECT.reason)
+}
+
+// uint64 object_id = 3;
+inline void S_FIELD_PAWN_SELECT::clear_object_id() {
+  _impl_.object_id_ = uint64_t{0u};
+}
+inline uint64_t S_FIELD_PAWN_SELECT::_internal_object_id() const {
+  return _impl_.object_id_;
+}
+inline uint64_t S_FIELD_PAWN_SELECT::object_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_FIELD_PAWN_SELECT.object_id)
+  return _internal_object_id();
+}
+inline void S_FIELD_PAWN_SELECT::_internal_set_object_id(uint64_t value) {
+  
+  _impl_.object_id_ = value;
+}
+inline void S_FIELD_PAWN_SELECT::set_object_id(uint64_t value) {
+  _internal_set_object_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_FIELD_PAWN_SELECT.object_id)
+}
+
+// .Protocol.PawnClass pawn_class = 4;
+inline void S_FIELD_PAWN_SELECT::clear_pawn_class() {
+  _impl_.pawn_class_ = 0;
+}
+inline ::Protocol::PawnClass S_FIELD_PAWN_SELECT::_internal_pawn_class() const {
+  return static_cast< ::Protocol::PawnClass >(_impl_.pawn_class_);
+}
+inline ::Protocol::PawnClass S_FIELD_PAWN_SELECT::pawn_class() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_FIELD_PAWN_SELECT.pawn_class)
+  return _internal_pawn_class();
+}
+inline void S_FIELD_PAWN_SELECT::_internal_set_pawn_class(::Protocol::PawnClass value) {
+  
+  _impl_.pawn_class_ = value;
+}
+inline void S_FIELD_PAWN_SELECT::set_pawn_class(::Protocol::PawnClass value) {
+  _internal_set_pawn_class(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_FIELD_PAWN_SELECT.pawn_class)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

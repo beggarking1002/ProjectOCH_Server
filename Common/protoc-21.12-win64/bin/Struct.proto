@@ -21,6 +21,8 @@ message ObjectInfo
 	ObjectType object_type = 2;
 	CreatureType creature_type = 3;
 	Vec2Fixed position = 4;
+	// Player-only field avatar. Non-player objects leave this as NONE.
+	PawnClass field_pawn_class = 5;
 }
 
 message BattleResourceState

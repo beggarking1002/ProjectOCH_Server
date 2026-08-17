@@ -409,3 +409,17 @@ message S_QUEST_TRACKER_STATE {
 message C_QUEST_ABANDON {
 	string quest_id = 1;
 }
+
+// Changes the authenticated player's field representation. The server
+// validates the class, persists it, then broadcasts the successful result to
+// every player sharing the field room.
+message C_FIELD_PAWN_SELECT {
+	PawnClass pawn_class = 1;
+}
+
+message S_FIELD_PAWN_SELECT {
+	bool success = 1;
+	string reason = 2;
+	uint64 object_id = 3;
+	PawnClass pawn_class = 4;
+}

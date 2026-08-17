@@ -140,6 +140,26 @@ bool Handle_C_LEAVE_GAME(PacketSessionRef& session, Protocol::C_LEAVE_GAME& pkt)
 	return true;
 }
 
+bool Handle_C_FIELD_PAWN_SELECT(PacketSessionRef& session, Protocol::C_FIELD_PAWN_SELECT& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->player.load();
+	RoomRef room = player != nullptr ? player->room.load().lock() : nullptr;
+	if (room == nullptr)
+	{
+		Protocol::S_FIELD_PAWN_SELECT result;
+		result.set_success(false);
+		result.set_reason("player is not in the field");
+		result.set_object_id(player != nullptr ? player->objectInfo->object_id() : 0);
+		result.set_pawn_class(pkt.pawn_class());
+		SEND_PACKET(result);
+		return true;
+	}
+
+	room->DoAsync(&Room::HandleFieldPawnSelect, gameSession, pkt);
+	return true;
+}
+
 bool Handle_C_RESET_PLAYER_DATA(PacketSessionRef& session, Protocol::C_RESET_PLAYER_DATA& pkt)
 {
 	auto gameSession = static_pointer_cast<GameSession>(session);

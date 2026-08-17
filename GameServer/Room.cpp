@@ -392,6 +392,63 @@ void Room::HandleQuestAbandon(GameSessionRef session, Protocol::C_QUEST_ABANDON 
 	GQuestService.HandleAbandon(session, player, pkt.quest_id());
 }
 
+void Room::HandleFieldPawnSelect(GameSessionRef session, Protocol::C_FIELD_PAWN_SELECT pkt)
+{
+	PlayerRef player = GetPlayerInRoom(session);
+	Protocol::S_FIELD_PAWN_SELECT result;
+	result.set_object_id(player != nullptr ? player->objectInfo->object_id() : 0);
+	result.set_pawn_class(pkt.pawn_class());
+
+	if (player == nullptr)
+	{
+		result.set_success(false);
+		result.set_reason("player is not in the field");
+		if (session)
+			session->Send(ServerPacketHandler::MakeSendBuffer(result));
+		return;
+	}
+	if (GetBattleClassFamily(pkt.pawn_class()) < 0)
+	{
+		result.set_success(false);
+		result.set_reason("unsupported field pawn class");
+		session->Send(ServerPacketHandler::MakeSendBuffer(result));
+		return;
+	}
+
+	const uint64 nowMs = ::GetTickCount64();
+	Protocol::PawnClass previousClass = Protocol::PAWN_CLASS_NONE;
+	bool persisted = true;
+	{
+		lock_guard economyLock(player->EconomyMutex());
+		previousClass = player->FieldPawnClass();
+		player->SetFieldPawnClass(pkt.pawn_class());
+		if (player->hasPersistentIdentity && GDatabase.IsEnabled())
+		{
+			persisted = GDatabase.SavePlayerEconomy(player->objectInfo->object_id(), player->ExportEconomyState());
+			if (persisted)
+				player->MarkEconomyPersisted(nowMs);
+			else
+				player->SetFieldPawnClass(previousClass);
+		}
+	}
+
+	if (!persisted)
+	{
+		result.set_success(false);
+		result.set_reason("failed to persist field pawn selection");
+		result.set_pawn_class(previousClass);
+		session->Send(ServerPacketHandler::MakeSendBuffer(result));
+		return;
+	}
+
+	result.set_success(true);
+	result.set_pawn_class(player->FieldPawnClass());
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(result);
+	Broadcast(sendBuffer);
+	cout << "FIELD_PAWN_SELECT player_id=" << player->objectInfo->object_id()
+		<< " pawn_class=" << Protocol::PawnClass_Name(player->FieldPawnClass()) << endl;
+}
+
 void Room::HandleQuestAccept(GameSessionRef session, Protocol::C_QUEST_ACCEPT pkt)
 {
 	PlayerRef player = GetPlayerInRoom(session);
@@ -458,6 +515,11 @@ void Room::HandleResetPlayerData(GameSessionRef session, Protocol::C_RESET_PLAYE
 	player->MarkEconomyPersisted(nowMs);
 	cout << "PLAYER_DATA_RESET player_id=" << player->objectInfo->object_id() << endl;
 	sendResponse(true, "");
+	Protocol::S_FIELD_PAWN_SELECT fieldPawnReset;
+	fieldPawnReset.set_success(true);
+	fieldPawnReset.set_object_id(player->objectInfo->object_id());
+	fieldPawnReset.set_pawn_class(player->FieldPawnClass());
+	Broadcast(ServerPacketHandler::MakeSendBuffer(fieldPawnReset));
 	GEconomyService.SendExpeditionState(player);
 	if (!player->activeVillageId.empty())
 		GQuestService.HandleBoardOpen(session, player, player->activeVillageId);

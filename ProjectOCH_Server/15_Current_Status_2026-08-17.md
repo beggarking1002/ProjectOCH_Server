@@ -27,6 +27,7 @@ Google 로그인
 | Google 로그인과 계정 식별 | 구현 완료, 영속성 확인 완료 |
 | MySQL 마이그레이션과 진행 데이터 저장 | 구현 완료, 마이그레이션 006까지 적용 |
 | 필드 이동·A* 우회·마을 장애물 | 구현 완료 |
+| 계정별 Field Pawn 선택·동기화 | 구현 완료, 8개 클래스 지원 |
 | 서버 권위 마을 입장 | 구현 완료 |
 | 개인별 상점 재고·식료품·교역 | 구현 완료 |
 | 포만도·유통기한·자동 음식 소비 | 구현 완료 |
@@ -69,6 +70,7 @@ Google 로그인
 | 004 | `004_player_quests.sql` | 플레이어별 퀘스트 상태와 목표 진행도 |
 | 005 | `005_player_quest_instances.sql` | 플레이어별로 생성된 게시판 퀘스트 인스턴스·목표·보상 |
 | 006 | `006_account_fame.sql` | 계정 단위 명성 및 기존 퀘스트 명성 보상 보정 |
+| 007 | `007_field_pawn_class.sql` | 계정별 Field Pawn 클래스 선택값 |
 
 ### 안정성 보강 사항
 
@@ -83,6 +85,20 @@ Google 로그인
 아이템 원본은 DB가 아니라 `Data/Item.csv`다. DB의 인벤토리 행은 `item_id`와 플레이어별 런타임 수량·유통기한만 저장한다.
 
 ## 필드 이동과 마을
+
+### Field Pawn 선택
+
+- FieldSceneHUD의 `PlayerEmblem`을 누르면 기존 전투 클래스 선택 prefab을 단일 선택 모드로 재사용한 UI가 열린다.
+- Suen, Beige, Alen, Zillian의 구현된 두 클래스씩 총 8개 엠블렘 중 하나를 선택한다.
+- 선택은 `C_FIELD_PAWN_SELECT`로 서버에 요청한다.
+- 서버는 지원 클래스와 필드 입장 상태를 검증하고 `player_profiles.field_pawn_class`에 즉시 저장한다.
+- 성공한 `S_FIELD_PAWN_SELECT`는 같은 필드에 있는 모든 플레이어에게 방송되어 다른 클라이언트도 외형을 교체한다.
+- 신규 입장과 기존 플레이어 동기화는 `ObjectInfo.field_pawn_class`를 사용한다.
+- 클라이언트는 클래스별 `Pawn_*` Addressable prefab을 사용한다.
+- 이동 중 선택되면 현재 이동 연출이 끝난 뒤 외형을 교체하여 보간 경로를 끊지 않는다.
+- 선택값은 재로그인 후 유지되며 개발용 진행 데이터 초기화 시 기본 `Beige Ice`로 돌아간다.
+
+관련 패킷 ID는 `C_FIELD_PAWN_SELECT = 1048`, `S_FIELD_PAWN_SELECT = 1049`다.
 
 ### 서버 권위 이동
 

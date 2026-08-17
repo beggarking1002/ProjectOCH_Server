@@ -9,6 +9,7 @@ Player::Player()
 {
 	_isPlayer = true;
 	objectInfo->set_creature_type(Protocol::CreatureType::CREATURE_TYPE_PLAYER);
+	objectInfo->set_field_pawn_class(_fieldPawnClass);
 }
 
 Player::~Player()
@@ -44,6 +45,8 @@ void Player::InitializeEconomy(uint64 nowMs)
 	_thirst = _maxThirst;
 	_gold = GEconomyData.GetConfigValue("expedition_starting_gold", 0);
 	_fame = 0;
+	_fieldPawnClass = Protocol::PAWN_CLASS_BEIGE_ICE;
+	objectInfo->set_field_pawn_class(_fieldPawnClass);
 	_lastEconomyTickMs = nowMs;
 	_satietyDrainNumerator = 0;
 	_shopRestockElapsedMs = 0;
@@ -72,6 +75,23 @@ void Player::RestoreEconomyState(const PersistentPlayerEconomyState& state, uint
 	_thirst = (max)(0, (min)(state.thirst, _maxThirst));
 	_gold = (max)(0, state.gold);
 	_fame = state.fame;
+	switch (state.fieldPawnClass)
+	{
+	case Protocol::PAWN_CLASS_SUEN_AXE_SWORD:
+	case Protocol::PAWN_CLASS_SUEN_PARVIS:
+	case Protocol::PAWN_CLASS_BEIGE_FIRE:
+	case Protocol::PAWN_CLASS_BEIGE_ICE:
+	case Protocol::PAWN_CLASS_ZILLIAN_LONGBOW:
+	case Protocol::PAWN_CLASS_ZILLIAN_MACE:
+	case Protocol::PAWN_CLASS_ALEN_SPEAR:
+	case Protocol::PAWN_CLASS_ALEN_SWORD_SHIELD:
+		_fieldPawnClass = state.fieldPawnClass;
+		break;
+	default:
+		_fieldPawnClass = Protocol::PAWN_CLASS_BEIGE_ICE;
+		break;
+	}
+	objectInfo->set_field_pawn_class(_fieldPawnClass);
 	_satietyDrainNumerator = (max)(int64{ 0 }, state.satietyDrainNumerator);
 	_inventory.clear();
 	_inventory.reserve(state.inventory.size());
@@ -124,6 +144,7 @@ PersistentPlayerEconomyState Player::ExportEconomyState() const
 	PersistentPlayerEconomyState state;
 	state.gold = _gold;
 	state.fame = _fame;
+	state.fieldPawnClass = _fieldPawnClass;
 	state.satiety = _satiety;
 	state.maxSatiety = _maxSatiety;
 	state.thirst = _thirst;
@@ -411,6 +432,15 @@ void Player::ModifyFame(int32 amount)
 	const int64 next = static_cast<int64>(_fame) + amount;
 	_fame = static_cast<int32>((max)(static_cast<int64>((numeric_limits<int32>::min)()),
 		(min)(static_cast<int64>((numeric_limits<int32>::max)()), next)));
+	_economyDirty = true;
+}
+
+void Player::SetFieldPawnClass(Protocol::PawnClass pawnClass)
+{
+	if (_fieldPawnClass == pawnClass)
+		return;
+	_fieldPawnClass = pawnClass;
+	objectInfo->set_field_pawn_class(pawnClass);
 	_economyDirty = true;
 }
 

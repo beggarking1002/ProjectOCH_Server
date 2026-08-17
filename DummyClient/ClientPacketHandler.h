@@ -54,6 +54,8 @@ enum : uint16
 	PKT_C_QUEST_TRACKER_OPEN = 1045,
 	PKT_S_QUEST_TRACKER_STATE = 1046,
 	PKT_C_QUEST_ABANDON = 1047,
+	PKT_C_FIELD_PAWN_SELECT = 1048,
+	PKT_S_FIELD_PAWN_SELECT = 1049,
 };
 
 // Custom Handlers
@@ -83,6 +85,7 @@ bool Handle_S_VILLAGE_SHOP_STATE(PacketSessionRef& session, Protocol::S_VILLAGE_
 bool Handle_S_RESET_PLAYER_DATA(PacketSessionRef& session, Protocol::S_RESET_PLAYER_DATA& pkt);
 bool Handle_S_VILLAGE_QUEST_STATE(PacketSessionRef& session, Protocol::S_VILLAGE_QUEST_STATE& pkt);
 bool Handle_S_QUEST_TRACKER_STATE(PacketSessionRef& session, Protocol::S_QUEST_TRACKER_STATE& pkt);
+bool Handle_S_FIELD_PAWN_SELECT(PacketSessionRef& session, Protocol::S_FIELD_PAWN_SELECT& pkt);
 
 class ClientPacketHandler
 {
@@ -116,6 +119,7 @@ public:
 		GPacketHandler[PKT_S_RESET_PLAYER_DATA] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_RESET_PLAYER_DATA>(Handle_S_RESET_PLAYER_DATA, session, buffer, len); };
 		GPacketHandler[PKT_S_VILLAGE_QUEST_STATE] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_VILLAGE_QUEST_STATE>(Handle_S_VILLAGE_QUEST_STATE, session, buffer, len); };
 		GPacketHandler[PKT_S_QUEST_TRACKER_STATE] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_QUEST_TRACKER_STATE>(Handle_S_QUEST_TRACKER_STATE, session, buffer, len); };
+		GPacketHandler[PKT_S_FIELD_PAWN_SELECT] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_FIELD_PAWN_SELECT>(Handle_S_FIELD_PAWN_SELECT, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len)
@@ -146,6 +150,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::C_QUEST_CLAIM_REWARD& pkt) { return MakeSendBuffer(pkt, PKT_C_QUEST_CLAIM_REWARD); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_QUEST_TRACKER_OPEN& pkt) { return MakeSendBuffer(pkt, PKT_C_QUEST_TRACKER_OPEN); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_QUEST_ABANDON& pkt) { return MakeSendBuffer(pkt, PKT_C_QUEST_ABANDON); }
+	static SendBufferRef MakeSendBuffer(Protocol::C_FIELD_PAWN_SELECT& pkt) { return MakeSendBuffer(pkt, PKT_C_FIELD_PAWN_SELECT); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

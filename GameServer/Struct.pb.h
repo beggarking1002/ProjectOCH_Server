@@ -540,6 +540,7 @@ class ObjectInfo final :
     kObjectIdFieldNumber = 1,
     kObjectTypeFieldNumber = 2,
     kCreatureTypeFieldNumber = 3,
+    kFieldPawnClassFieldNumber = 5,
   };
   // .Protocol.Vec2Fixed position = 4;
   bool has_position() const;
@@ -586,6 +587,15 @@ class ObjectInfo final :
   void _internal_set_creature_type(::Protocol::CreatureType value);
   public:
 
+  // .Protocol.PawnClass field_pawn_class = 5;
+  void clear_field_pawn_class();
+  ::Protocol::PawnClass field_pawn_class() const;
+  void set_field_pawn_class(::Protocol::PawnClass value);
+  private:
+  ::Protocol::PawnClass _internal_field_pawn_class() const;
+  void _internal_set_field_pawn_class(::Protocol::PawnClass value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.ObjectInfo)
  private:
   class _Internal;
@@ -598,6 +608,7 @@ class ObjectInfo final :
     uint64_t object_id_;
     int object_type_;
     int creature_type_;
+    int field_pawn_class_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2884,6 +2895,26 @@ inline void ObjectInfo::set_allocated_position(::Protocol::Vec2Fixed* position) 
   }
   _impl_.position_ = position;
   // @@protoc_insertion_point(field_set_allocated:Protocol.ObjectInfo.position)
+}
+
+// .Protocol.PawnClass field_pawn_class = 5;
+inline void ObjectInfo::clear_field_pawn_class() {
+  _impl_.field_pawn_class_ = 0;
+}
+inline ::Protocol::PawnClass ObjectInfo::_internal_field_pawn_class() const {
+  return static_cast< ::Protocol::PawnClass >(_impl_.field_pawn_class_);
+}
+inline ::Protocol::PawnClass ObjectInfo::field_pawn_class() const {
+  // @@protoc_insertion_point(field_get:Protocol.ObjectInfo.field_pawn_class)
+  return _internal_field_pawn_class();
+}
+inline void ObjectInfo::_internal_set_field_pawn_class(::Protocol::PawnClass value) {
+  
+  _impl_.field_pawn_class_ = value;
+}
+inline void ObjectInfo::set_field_pawn_class(::Protocol::PawnClass value) {
+  _internal_set_field_pawn_class(value);
+  // @@protoc_insertion_point(field_set:Protocol.ObjectInfo.field_pawn_class)
 }
 
 // -------------------------------------------------------------------

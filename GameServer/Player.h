@@ -75,6 +75,7 @@ struct PersistentPlayerEconomyState
 {
 	int32 gold = 0;
 	int32 fame = 0;
+	Protocol::PawnClass fieldPawnClass = Protocol::PAWN_CLASS_BEIGE_ICE;
 	int32 satiety = 100;
 	int32 maxSatiety = 100;
 	int32 thirst = 100;
@@ -128,8 +129,10 @@ public:
 	bool SpendGold(int32 amount);
 	void AddGold(int32 amount);
 	void ModifyFame(int32 amount);
+	void SetFieldPawnClass(Protocol::PawnClass pawnClass);
 	int32 Gold() const { return _gold; }
 	int32 Fame() const { return _fame; }
+	Protocol::PawnClass FieldPawnClass() const { return _fieldPawnClass; }
 	int32 Satiety() const { return _satiety; }
 	int32 MaxSatiety() const { return _maxSatiety; }
 	int32 Thirst() const { return _thirst; }
@@ -149,6 +152,7 @@ private:
 	bool _economyInitialized = false;
 	int32 _gold = 0;
 	int32 _fame = 0;
+	Protocol::PawnClass _fieldPawnClass = Protocol::PAWN_CLASS_BEIGE_ICE;
 	int32 _satiety = 100;
 	int32 _maxSatiety = 100;
 	int32 _thirst = 100;
