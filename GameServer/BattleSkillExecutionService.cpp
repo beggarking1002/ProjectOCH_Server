@@ -73,12 +73,17 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 		result.logs.push_back(missLog);
 	}
 	const vector<BattleEffectTemplate>* skillEffects = GBattleTemplates.GetEffects(request.skill->effectGroupKey);
+	const bool hasAllAlliesEffect = skillEffects != nullptr && any_of(skillEffects->begin(), skillEffects->end(),
+		[](const BattleEffectTemplate& effect)
+		{
+			return effect.trigger == "ON_CAST" && effect.effectTarget == "ALL_ALLIES";
+		});
 	const bool hasAdjacentAlliesEffect = skillEffects != nullptr && any_of(skillEffects->begin(), skillEffects->end(),
 		[](const BattleEffectTemplate& effect)
 		{
 			return effect.trigger == "ON_CAST" && effect.effectTarget == "ADJACENT_ALLIES";
 		});
-	if (request.findAlliedPawns)
+	if (request.findAlliedPawns && hasAllAlliesEffect)
 	{
 		for (BattlePawn* ally : request.findAlliedPawns(caster))
 		{
@@ -110,6 +115,13 @@ BattleSkillActionResult BattleSkillExecutionService::Execute(const BattleSkillAc
 			result.extraChangedPawns.push_back(ally);
 		}
 	}
+
+	// Team-targeted effects temporarily replace the execution context. Restore
+	// the selected tile/pawn before processing the actual hit, area, or kill
+	// triggers so a preceding ally iteration cannot redirect a hostile skill.
+	effectRequest.target = MakeEffectContext(target != nullptr ? *target : caster);
+	effectRequest.targetPawn = target;
+	effectRequest.hasTargetPawn = target != nullptr;
 	auto executeOnKill = [&executor, &effectRequest, &effectResult, this](BattlePawn* defeatedPawn)
 		{
 			if (defeatedPawn == nullptr || defeatedPawn->hp > 0)
